@@ -40,20 +40,28 @@ http://cs101.openjudge.cn/practice/20742/
 
 
 
-思路：
+思路：a,b,c=b,c,a+b+c
 
 
 
 ##### 代码
 
 ```python
-# 
-
+#
+n = int(input())
+a,b,c = 0,1,1
+for i in range(n):
+    a,b,c = b,c,a+b+c
+print(a)
 ```
 
 
 
 代码运行截图 ==（至少包含有"Accepted"）==
+
+1min完成
+
+![image](https://github.com/GMyhf/2024spring-cs201/assets/160590370/024124c2-034a-482c-bf31-e0ae231245bd)
 
 
 
@@ -65,7 +73,7 @@ greedy/strings, 1000, http://codeforces.com/problemset/problem/58/A
 
 
 
-思路：
+思路：递归？
 
 
 
@@ -73,12 +81,30 @@ greedy/strings, 1000, http://codeforces.com/problemset/problem/58/A
 
 ```python
 # 
-
+def func(s,x):
+    for i in range(len(s)):
+        if s[i]==con[x]:
+            if x<=3:
+                return func(s[i+1::],x+1)
+            if x==4:
+                return 1
+    return 0
+s=input()
+con='hello'
+if func(s,0):
+    print('YES')
+else:
+    print('NO')
 ```
 
 
 
 代码运行截图 ==（至少包含有"Accepted"）==
+
+5min完成
+
+![image](https://github.com/GMyhf/2024spring-cs201/assets/160590370/afed7479-ee48-418a-86a3-3ccaaf0b79b5)
+
 
 
 
@@ -90,7 +116,7 @@ implementation/strings, 1000, http://codeforces.com/problemset/problem/118/A
 
 
 
-思路：
+思路：直接分拆就行
 
 
 
@@ -98,13 +124,24 @@ implementation/strings, 1000, http://codeforces.com/problemset/problem/118/A
 
 ```python
 # 
-
+vowels=['a','e','i','o','u','y']
+s=input()
+s=s.lower()
+ans=''
+for i in range(len(s)):
+    if s[i] not in vowels:
+        ans=ans+s[i]
+for i in range(len(ans)):
+    print('.'+ans[i],end="")
 ```
 
 
 
 代码运行截图 ==（AC代码截图，至少包含有"Accepted"）==
 
+3min完成
+
+![image](https://github.com/GMyhf/2024spring-cs201/assets/160590370/8b9d163b-9b4d-4d36-82ec-42f882b8276b)
 
 
 
@@ -115,7 +152,7 @@ http://cs101.openjudge.cn/practice/22359/
 
 
 
-思路：
+思路：枚举全体分拆
 
 
 
@@ -123,13 +160,31 @@ http://cs101.openjudge.cn/practice/22359/
 
 ```python
 # 
-
+def isprime(n):
+    if n==1:
+        return False
+    if n==2 or n==3:
+        return True
+    k=2
+    while k*k<=n:
+        if n%k==0:
+            return False
+        k+=1
+    return True
+n=int(input())
+if n>=2:
+    for i in range(1,n//2,1):
+        if isprime(i) and isprime(n-i):
+            print(str(i)+' '+str(n-i))
 ```
 
 
 
 代码运行截图 ==（AC代码截图，至少包含有"Accepted"）==
 
+4min完成
+
+![image](https://github.com/GMyhf/2024spring-cs201/assets/160590370/4283c4fc-f56c-4b7d-951f-dafd876757b3)
 
 
 
@@ -140,7 +195,7 @@ http://cs101.openjudge.cn/practice/23563/
 
 
 
-思路：
+思路：字符串操作。注意n前面系数为1的时候要单独讨论
 
 
 
@@ -148,13 +203,22 @@ http://cs101.openjudge.cn/practice/23563/
 
 ```python
 # 
-
+lst=input().split('+')
+ans=[]
+for s in lst:
+    i=s.index('n')
+    if i==0 or int(s[0:i:1])!=0:
+        ans.append(int(s[i+2:len(s):1]))
+print("n^"+str(max(ans)))
 ```
 
 
 
 代码运行截图 ==（AC代码截图，至少包含有"Accepted"）==
 
+9min完成
+
+![image](https://github.com/GMyhf/2024spring-cs201/assets/160590370/a3e38b99-cee1-4b96-9eb5-4426c656a97e)
 
 
 
@@ -165,7 +229,7 @@ http://cs101.openjudge.cn/practice/24684/
 
 
 
-思路：
+思路：用字典进行查询，join控制输出格式
 
 
 
@@ -173,12 +237,26 @@ http://cs101.openjudge.cn/practice/24684/
 
 ```python
 # 
-
+lst=list(map(int,input().split()))
+s=set(lst)
+ans=[]
+dic={num:lst.count(num) for num in s}
+m=max(dic.values())
+for key in dic.keys():
+    if dic[key]==m:
+        ans.append(key)
+ans.sort()
+ans1=[str(k) for k in ans]
+print(' '.join(ans1))
 ```
 
 
 
 代码运行截图 ==（AC代码截图，至少包含有"Accepted"）==
+
+10min完成
+
+![image](https://github.com/GMyhf/2024spring-cs201/assets/160590370/e6d6d9e4-f716-4e6c-a9ec-5aef1d4d7eed)
 
 
 
@@ -188,7 +266,7 @@ http://cs101.openjudge.cn/practice/24684/
 
 ==如果作业题目简单，有否额外练习题目，比如：OJ“数算pre每日选做”、CF、LeetCode、洛谷等网站题目。==
 
-
+题目难度适中，适合唤醒秋季学期的python基础编程知识。
 
 
 
