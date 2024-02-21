@@ -1,6 +1,6 @@
 # 20240220-Week1-数算课程概述
 
-Updated 1142 GMT+8 Feb 21, 2024
+Updated 1638 GMT+8 Feb 21, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -161,6 +161,27 @@ O365（含teams）账号申请链接：https://www.wjx.cn/vm/Y5XwfHD.aspx#
 
 
 
+1.12 2024 spring 上机说明
+
+时间：1-16周每周三7-8节（15:10~17:00）。
+地点：7号机房（理科1号楼三层1339房间）和8号机房（1338房间）。
+使用机房电脑：打开电脑后，用学号和网关密码登陆，机房电脑有pycharm和anaconda/spyder。
+
+同学可以选择去机房完成作业或其他编程练习，暂时没有固定座位，机房会有助教为大家答疑。
+有助教因为校区较远，可能无法每次都线下参与，其余时间会以线上会议的方式参与上机课的答疑。如果学生不多，答疑有可能会集中在一个机房进行。
+
+建议大家充分利用上机时间集中答疑，避免其他时间1对1找老师或助教debug。
+
+另外：
+1）网络问题，计算中心 62751023；
+2）机房上机，账号/登录等问题，计算中心值班老师。
+机房二楼值班室：理科一号楼1254W，电话：62753392
+机房三楼值班室：理科一号楼1343W，电话：62753352
+
+
+
+
+
 # 二、导论
 
 
@@ -215,7 +236,15 @@ O365（含teams）账号申请链接：https://www.wjx.cn/vm/Y5XwfHD.aspx#
 
 
 
-![../_images/blackbox.png](https://raw.githubusercontent.com/GMyhf/img/main/img/blackbox.png)
+```mermaid
+%%{init: {'theme': 'default'}}%%
+graph LR
+    style A fill:#ffffff,stroke:#ffffff;
+    style C fill:#ffffff,stroke:#ffffff;
+    A[n] --> B["sqrt()"]
+    B --> C[square root of n]
+
+```
 
  图1-1 过程抽象
 
@@ -524,7 +553,7 @@ print函数为输出Python程序的值提供了一种非常简便的方法。它
 
 
 
-### 1.4.6 Python面向对象编程：定义类
+### 1.4.6 面向对象编程
 
 前文说过，Python是一门面向对象的编程语言。到目前为止，我们已经使用了一些內建的类来展示数据和控制结构的例子。面向对象编程语言最强大的一项特性是允许程序员（问题求解者）创建全新的类来对求解问题所需的数据进行建模。
 
@@ -808,9 +837,22 @@ print(x == y)
 
 
 
-![../_images/inheritance1.png](https://raw.githubusercontent.com/GMyhf/img/main/img/inheritance1.png)
+```mermaid
+classDiagram
+	class Python_Collections 
+  Python_Collections <|-- Sequential_Collections
+  Python_Collections <|-- Non-Sequential_Collections
+
+	Sequential_Collections <|-- list
+	Sequential_Collections <|-- string
+	Sequential_Collections <|-- tuple
+	
+	Non-Sequential_Collections <|-- dictionary
+```
 
 图1-8 Python集合类的继承层次结构
+
+
 
 列表、字符串和元组都是有序集合。它们都继承了共同的数据组织和操作。不过，根据数据是否同类以及集合是否可修改，它们彼此又有区别。子类从父类继承共同的特征，但是通过额外的特征彼此区分。
 
