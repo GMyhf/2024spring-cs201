@@ -1,6 +1,6 @@
 # 20240227-Week2-时间复杂度
 
-Updated 1800 GMT+8 Feb 23, 2024
+Updated 0109 GMT+8 Feb 24, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -55,54 +55,82 @@ http://cs101.openjudge.cn/practice/18176/
 
 
 
-**Puzzle**
+# 前言
 
-22507:薛定谔的二叉树
+https://www.geeksforgeeks.org/learn-data-structures-and-algorithms-dsa-tutorial/?ref=outind
 
-http://cs101.openjudge.cn/practice/22507/
+## What is DSA?
 
-假设二叉树的节点里包含一个大写字母，每个节点的字母都不同。
-给定二叉树的前序遍历序列和后序遍历序列(长度均不超过20)，请计算二叉树可能有多少种
+DSA is defined as a combination of two separate yet interrelated topics – Data Structure and Algorithms. DSA is one of the most important skills that every computer science student must have. It is often seen that people with good knowledge of these technologies are better programmers than others and thus, crack the interviews of almost every tech giant.
 
-前序序列或后序序列中出现相同字母则直接认为不存在对应的树
-
-**输入**
-
-多组数据
-每组数据一行，包括前序遍历序列和后序遍历序列，用空格分开。
-输入数据不保证一定存在满足条件的二叉树。
-
-**输出**
-
-每组数据，输出不同的二叉树可能有多少种
-
-样例输入
-
-```
-ABCDE CDBEA
-BCD DCB
-AB C
-AA AA
-```
-
-样例输出
-
-```
-1
-4
-0
-0
-```
-
-来源: 刘宇航
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/202402232017469.png)
 
 
 
-![image-20240222105900057](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240222105900057.png)
+## What is Data Structure?
+
+A data structure is defined as a particular way of storing and organizing data in our devices to use the data efficiently and effectively. The main idea behind using data structures is to minimize the time and space complexities. An efficient data structure takes minimum memory space and requires minimum time to execute the data.
+
+## What is Algorithm?
+
+Algorithm is defined as a process or set of well-defined instructions that are typically used to solve a particular group of problems or perform a specific type of calculation. To explain in simpler terms, it is a set of operations performed in a step-by-step manner to execute a task.
+
+## How to start learning DSA?
+
+The first and foremost thing is dividing the total procedure into little pieces which need to be done sequentially. The complete process to learn DSA from scratch can be broken into 4 parts:
+
+1. Learn about Time and Space complexities
+2. Learn the basics of individual Data Structures
+3. Learn the basics of Algorithms
+4. Practice Problems on DSA
+
+### 1. Learn about Complexities
+
+Here comes one of the interesting and important topics. The primary motive to use DSA is to solve a problem effectively and efficiently. How can you decide if a program written by you is efficient or not? This is measured by complexities. Complexity is of two types:
+
+1. Time Complexity: Time complexity is used to measure the amount of time required to execute the code.
+2. Space Complexity: Space complexity means the amount of space required to execute successfully the functionalities of the code. 
+   You will also come across the term **Auxiliary Space** very commonly in DSA, which refers to the extra space used in the program other than the input data structure.
+
+Both of the above complexities are measured with respect to the input parameters. But here arises a problem. The time required for executing a code depends on several factors, such as: 
+
+- The number of operations performed in the program, 
+- The speed of the device, and also 
+- The speed of data transfer if being executed on an online platform. 
+
+So how can we determine which one is efficient? The answer is the use of asymptotic notation. 
+
+> **Asymptotic notation** is a mathematical tool that calculates the required time in terms of input size and does not require the execution of the code. 
+
+It neglects the system-dependent constants and is related to only the number of modular operations being performed in the whole program. The following 3 asymptotic notations are mostly used to represent the time complexity of algorithms:
+
+- **Big-O Notation (Ο)** – Big-O notation specifically describes the worst-case scenario.
+- **Omega Notation (Ω)** – Omega(Ω) notation specifically describes the best-case scenario.
+- **Theta Notation (θ)** – This notation represents the average complexity of an algorithm.
+
+![Rate of Growth of Algorithms](https://raw.githubusercontent.com/GMyhf/img/main/img/202402232027181.png)
 
 
 
-# 一、O-notation
+Rate of Growth of Algorithms
+
+The most used notation in the analysis of a code is the **Big O Notation** which gives an upper bound of the running time of the code (or the amount of memory used in terms of input size).
+
+To learn about complexity analysis in detail, you can refer to articles on the **Analysis of Algorithms**.
+
+
+
+### 3. Learn Algorithms
+
+Once you have cleared the concepts of Data Structures, now its time to start your journey through the Algorithms. Based on the type of nature and usage, the Algorithms are grouped together into several categories, as shown below:
+
+#### Sorting Algorithm
+
+Here is one other most used algorithm. Often we need to arrange or sort data as per a specific condition. The sorting algorithm is the one that is used in these cases. Based on conditions we can sort a set of homogeneous data in order like sorting an array in increasing or decreasing order. 
+
+
+
+# 一、Big-O notation
 
 
 
@@ -140,7 +168,7 @@ Analyzing even a simple algorithm in the RAM model can be a challenge. The mathe
 
 Even though we typically select only one machine model to analyze a given algorithm, we still face many choices in deciding how to express our analysis. We would like a way that is simple to write and manipulate, shows the important characteristics of an algorithm’s resource requirements, and suppresses tedious details.
 
-### Analysis of insertion sort
+### 1.Analysis of insertion sort
 
 The time taken by the INSERTION-SORT procedure depends on the input: sorting a thousand numbers takes longer than sorting three numbers. Moreover, INSERTIONSORT can take different amounts of time to sort two input sequences of the same size depending on how nearly sorted they already are. In general, the time taken by an algorithm grows with the size of the input, so it is traditional to describe the running time of a program as a function of the size of its input. To do so, we need to define the terms “running time” and “size of input” more carefully.
 
@@ -187,7 +215,7 @@ arr = [12, 11, 13, 5, 6]
 insertionSort(arr)
 print(' '.join(map(str, arr)))
 
-# Output 5 6 11 12 13
+# Output: 5 6 11 12 13
 # Time Complexity: O(N^2) 
 # Auxiliary Space: O(1)
 ```
@@ -243,29 +271,28 @@ Typically, as in insertion sort, the running time of an algorithm is fixed for a
 
 
 
-### Worst-case and average-case analysis
+### 2.Worst-case and average-case analysis
 
 In our analysis of insertion sort, we looked at both the best case, in which the input array was already sorted, and the worst case, in which the input array was reverse sorted. For the remainder of this book, though, we shall usually concentrate on finding only the **worst-case running time**, that is, the longest running time for any input of size n. We give three reasons for this orientation.
 
 - The worst-case running time of an algorithm gives us an upper bound on the running time for any input. Knowing it provides a guarantee that the algorithm will never take any longer. We need not make some educated guess about the running time and hope that it never gets much worse.
 - For some algorithms, the worst case occurs fairly often. For example, in searching a database for a particular piece of information, the searching algorithm’s worst case will often occur when the information is not present in the database. In some applications, searches for absent information may be frequent.
-- The “average case” is often roughly as bad as the worst case. Suppose that we randomly choose n numbers and apply insertion sort. How long does it take to determine where in subarray A[0 ..  j - 1] to insert element A[j] ? On average, half the elements in A[0 .. j - 1] are less than A[j] , and half the elements are greater. On average, therefore, we check half of the subarray A[0 ..  j - 1], and so $t_j$ is about $j/2$. The resulting average-case running time turns out to be a quadratic function of the input size, just like the worst-case running time.
+- The “average case” is often roughly as bad as the worst case. Suppose that we randomly choose n numbers and apply insertion sort. How long does it take to determine where in subarray A[0 ..  j-1] to insert element A[j] ? On average, half the elements in A[0 .. j-1] are less than A[j] , and half the elements are greater. On average, therefore, we check half of the subarray A[0 ..  j-1], and so $t_j$ is about $j/2$. The resulting average-case running time turns out to be a quadratic function of the input size, just like the worst-case running time.
 
 In some particular cases, we shall be interested in the **average-case** running time of an algorithm; we shall see the technique of **probabilistic analysis** applied to various algorithms throughout this book. The scope of average-case analysis is limited, because it may not be apparent what constitutes an “average” input for
 a particular problem. Often, we shall assume that all inputs of a given size are equally likely. In practice, this assumption may be violated, but we can sometimes use a **randomized algorithm**, which makes random choices, to allow a probabilistic analysis and yield an **expected** running time. 
 
-### Order of growth
+### 3.Order of growth
 
 We used some simplifying abstractions to ease our analysis of the INSERTIONSORT procedure. First, we ignored the actual cost of each statement, using the constants ci to represent these costs. Then, we observed that even these constants give us more detail than we really need: we expressed the worst-case running time as $an^2 + bn + c$ for some constants a, b, and c that depend on the statement costs $c_i$. We thus ignored not only the actual statement costs, but also the abstract costs $c_i$.
 
 We shall now make one more simplifying abstraction: it is the **rate of growth**, or **order of growth**, of the running time that really interests us. We therefore consider only the leading term of a formula (e.g., $an^2$), since the lower-order terms are relatively insignificant for large values of n. We also ignore the leading term’s constant coefficient, since constant factors are less significant than the rate of growth in determining computational efficiency for large inputs. For insertion sort, when we ignore the lower-order terms and the leading term’s constant coefficient, we are left with the factor of $n^2$ from the leading term. We write that insertion sort has a worst-case running time of $\Theta(n^2)$ (pronounced “theta of n-squared”). 
 
-We usually consider one algorithm to be more efficient than another if its worstcase running time has a lower order of growth. Due to constant factors and lowerorder terms, an algorithm whose running time has a higher order of growth might take less time for small inputs than an algorithm whose running time has a lower order of growth. But for large enough inputs, a $\Theta(n^2)$ algorithm, for example, will
-run more quickly in the worst case than a $\Theta(n^3)$​ algorithm.
+We usually consider one algorithm to be more efficient than another if its worstcase running time has a lower order of growth. Due to constant factors and lowerorder terms, an algorithm whose running time has a higher order of growth might take less time for small inputs than an algorithm whose running time has a lower order of growth. But for large enough inputs, a $\Theta(n^2)$ algorithm, for example, will run more quickly in the worst case than a $\Theta(n^3)$​ algorithm.
 
 
 
-### O-notation
+### 4.O-notation
 
 The $\Theta$-notation asymptotically bounds a function from above and below. When we have only an asymptotic upper bound, we use O-notation. For a given function g(n), we denote by O(g(n) (pronounced “big-oh of g of n” or sometimes just “oh of g of n”) the set of functions
 
@@ -278,6 +305,468 @@ We use O-notation to give an upper bound on a function, to within a constant fac
 Using O-notation, we can often describe the running time of an algorithm merely by inspecting the algorithm’s overall structure. For example, the doubly nested loop structure of the insertion sort algorithm immediately yields an $O(n^2)$ upper bound on the worst-case running time.
 
 Since O-notation describes an upper bound, when we use it to bound the worstcase running time of an algorithm, we have a bound on the running time of the algorithm on every input.
+
+
+
+## Sorting Algorithm
+
+**Sorting Algorithm** is used to rearrange a given array or list elements according to a comparison operator on the elements. The comparison operator is used to decide the new order of element in the respective data structure.
+
+There are a lot of different types of sorting algorithms. Some widely used algorithms are:
+
+- [Bubble Sort](http://www.geeksforgeeks.org/bubble-sort/)
+- [Selection Sort](http://www.geeksforgeeks.org/selection-sort/)
+- [Insertion Sort](http://www.geeksforgeeks.org/insertion-sort/)
+- [Quick Sort](http://www.geeksforgeeks.org/quick-sort/)
+- [Merge Sort](http://www.geeksforgeeks.org/merge-sort/)
+- [ShellSort](https://www.geeksforgeeks.org/shellsort/)
+
+There are several other sorting algorithms also and they are beneficial in different cases. You can learn about them and more in our dedicated article on [Sorting algorithms](https://www.geeksforgeeks.org/sorting-algorithms/).
+
+
+
+### 1.Bubble Sort
+
+Bubble Sort is the simplest sorting algorithm that works by repeatedly swapping the adjacent elements if they are in the wrong order. This algorithm is not suitable for large data sets as its average and worst-case time complexity is quite high.
+
+Algorithm
+
+> In Bubble Sort algorithm, 
+>
+> - traverse from left and compare adjacent elements and the higher one is placed at right side. 
+> - In this way, the largest element is moved to the rightmost end at first. 
+> - This process is then continued to find the second largest and place it and so on until the data is sorted.
+
+
+
+```python
+# Optimized Python program for implementation of Bubble Sort
+def bubbleSort(arr):
+    n = len(arr)
+
+    # Traverse through all array elements
+    for i in range(n):
+        swapped = False
+
+        # Last i elements are already in place
+        for j in range(0, n - i - 1):
+
+            # Traverse the array from 0 to n-i-1
+            # Swap if the element found is greater
+            # than the next element
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+        if (swapped == False):
+            break
+
+
+# Driver code to test above
+if __name__ == "__main__":
+    arr = [64, 34, 25, 12, 22, 11, 90]
+
+    bubbleSort(arr)
+    print(' '.join(map(str, arr)))
+
+```
+
+
+
+#### Complexity Analysis of Bubble Sort:
+
+Time Complexity: O(N2)
+Auxiliary Space: O(1)
+
+#### Advantages of Bubble Sort:
+
+- Bubble sort is easy to understand and implement.
+- It does not require any additional memory space.
+- It is a stable sorting algorithm, meaning that elements with the same key value maintain their relative order in the sorted output.
+
+#### Disadvantages of Bubble Sort:
+
+- Bubble sort has a time complexity of O(N2) which makes it very slow for large data sets.
+- Bubble sort is a comparison-based sorting algorithm, which means that it requires a comparison operator to determine the relative order of elements in the input data set. It can limit the efficiency of the algorithm in certain cases.
+
+
+
+#### Some FAQs related to Bubble Sort:
+
+**Q1. What is the Boundary Case for Bubble sort?**
+
+Bubble sort takes minimum time (Order of n) when elements are already sorted. Hence it is best to check if the array is already sorted or not beforehand, to avoid O(N2) time complexity.
+
+**Q2. Does sorting happen in place in Bubble sort?**
+
+Yes, Bubble sort performs the swapping of adjacent pairs without the use of any major data structure. Hence Bubble sort algorithm is an in-place algorithm.
+
+**Q3. Is the Bubble sort algorithm stable?**
+
+Yes, the bubble sort algorithm is stable.
+
+**Q4. Where is the Bubble sort algorithm used?**
+
+Due to its simplicity, bubble sort is often used to introduce the concept of a sorting algorithm. 
+
+
+
+
+
+### 2.Selection Sort
+
+> **Selection sort** is a simple and efficient sorting algorithm that works by repeatedly selecting the smallest (or largest) element from the unsorted portion of the list and moving it to the sorted portion of the list. 
+
+The algorithm repeatedly selects the smallest (or largest) element from the unsorted portion of the list and swaps it with the first element of the unsorted part. This process is repeated for the remaining unsorted portion until the entire list is sorted. 
+
+```python
+A = [64, 25, 12, 22, 11]
+
+# Traverse through all array elements
+for i in range(len(A)):
+
+    # Find the minimum element in remaining
+    # unsorted array
+    min_idx = i
+    for j in range(i + 1, len(A)):
+        if A[min_idx] > A[j]:
+            min_idx = j
+
+        # Swap the found minimum element with
+    # the first element
+    A[i], A[min_idx] = A[min_idx], A[i]
+
+# Driver code to test above
+print(' '.join(map(str, A)))
+
+# Output: 11 12 22 25 64 
+```
+
+
+
+#### Complexity Analysis of Selection Sort
+
+**Time Complexity:** The time complexity of Selection Sort is **O(N2)** as there are two nested loops:
+
+- One loop to select an element of Array one by one = O(N)
+- Another loop to compare that element with every other Array element = O(N)
+- Therefore overall complexity = O(N) * O(N) = O(N*N) = O(N2)
+
+**Auxiliary Space:** O(1) as the only extra memory used is for temporary variables while swapping two values in Array. The selection sort never makes more than O(N) swaps and can be useful when memory writing is costly. 
+
+
+
+#### Advantages of Selection Sort Algorithm
+
+- Simple and easy to understand.
+- Works well with small datasets.
+
+
+
+#### Disadvantages of the Selection Sort Algorithm
+
+- Selection sort has a time complexity of O(n^2) in the worst and average case.
+- Does not work well on large datasets.
+- Does not preserve the relative order of items with equal keys which means it is not stable.
+
+
+
+#### Frequently Asked Questions on Selection Sort
+
+**Q1. Is Selection Sort Algorithm stable?**
+
+The default implementation of the Selection Sort Algorithm is **not stable**. However, it can be made stable. Please see the [stable Selection Sort](https://www.geeksforgeeks.org/stable-selection-sort/) for details.
+
+**Q2. Is Selection Sort Algorithm in-place?**
+
+Yes, Selection Sort Algorithm is an in-place algorithm, as it does not require extra space.
+
+
+
+### 3.Quick Sort
+
+> quickSort is a sorting algorithm based on the[ Divide and Conquer algorithm](https://www.geeksforgeeks.org/divide-and-conquer-algorithm-introduction/) that picks an element as a pivot and partitions the given array around the picked pivot by placing the pivot in its correct position in the sorted array.
+
+How does QuickSort work?
+
+> The key process in quickSort is a partition(). The target of partitions is to place the pivot (any element can be chosen to be a pivot) at its correct position in the sorted array and put all smaller elements to the left of the pivot, and all greater elements to the right of the pivot.
+>
+> Partition is done recursively on each side of the pivot after the pivot is placed in its correct position and this finally sorts the array.
+
+
+
+```python
+# Function to find the partition position
+def partition(array, low, high):
+
+	# Choose the rightmost element as pivot
+	pivot = array[high]
+
+	# Pointer for greater element
+	i = low - 1
+
+	# Traverse through all elements
+	# compare each element with pivot
+	for j in range(low, high):
+		if array[j] <= pivot:
+
+			# If element smaller than pivot is found
+			# swap it with the greater element pointed by i
+			i = i + 1
+
+			# Swapping element at i with element at j
+			(array[i], array[j]) = (array[j], array[i])
+
+	# Swap the pivot element with
+	# the greater element specified by i
+	(array[i + 1], array[high]) = (array[high], array[i + 1])
+
+	# Return the position from where partition is done
+	return i + 1
+
+
+def quicksort(array, low, high):
+	if low < high:
+
+		# Find pivot element such that
+		# element smaller than pivot are on the left
+		# element greater than pivot are on the right
+		pi = partition(array, low, high)
+
+		# Recursive call on the left of pivot
+		quicksort(array, low, pi - 1)
+
+		# Recursive call on the right of pivot
+		quicksort(array, pi + 1, high)
+
+
+if __name__ == '__main__':
+	array = [10, 7, 8, 9, 1, 5]
+	N = len(array)
+
+	quicksort(array, 0, N - 1)
+	for x in array:
+		print(x, end=" ")
+
+# Output: 1 5 7 8 9 10 
+
+```
+
+
+
+#### Complexity Analysis of Quick Sort:
+
+Time Complexity:
+
+- Best Case: $\Omega(N log (N))$
+  The best-case scenario for quicksort occur when the pivot chosen at the each step divides the array into roughly equal halves.
+  In this case, the algorithm will make balanced partitions, leading to efficient Sorting.
+- Average Case: $\Theta ( N log (N))$
+  Quicksort’s average-case performance is usually very good in practice, making it one of the fastest sorting Algorithm.
+- Worst Case: $O(N^2)$
+  The worst-case Scenario for Quicksort occur when the pivot at each step consistently results in highly unbalanced partitions. When the array is already sorted and the pivot is always chosen as the smallest or largest element. To mitigate the worst-case Scenario, various techniques are used such as choosing a good pivot (e.g., median of three) and using Randomized algorithm (Randomized Quicksort ) to shuffle the element before sorting.
+
+Auxiliary Space: O(1), if we don’t consider the recursive stack space. If we consider the recursive stack space then, in the worst case quicksort could make O(N).
+
+#### Advantages of Quick Sort:
+
+- It is a divide-and-conquer algorithm that makes it easier to solve problems.
+- It is efficient on large data sets.
+- It has a low overhead, as it only requires a small amount of memory to function.
+
+#### Disadvantages of Quick Sort:
+
+- It has a worst-case time complexity of $O(N^2)$, which occurs when the pivot is chosen poorly.
+- It is not a good choice for small data sets.
+- It is not a stable sort, meaning that if two elements have the same key, their relative order will not be preserved in the sorted output in case of quick sort, because here we are swapping elements according to the pivot’s position (without considering their original positions).
+
+
+
+
+
+### 4.Merge Sort
+
+> Merge sort is defined as a sorting algorithm that works by dividing an array into smaller subarrays, sorting each subarray, and then merging the sorted subarrays back together to form the final sorted array.
+
+In simple terms, we can say that the process of merge sort is to divide the array into two halves, sort each half, and then merge the sorted halves back together. This process is repeated until the entire array is sorted.
+
+How does Merge Sort work?
+
+> Merge sort is a recursive algorithm that continuously splits the array in half until it cannot be further divided i.e., the array has only one element left (an array with one element is always sorted). Then the sorted subarrays are merged into one sorted array.
+
+
+
+```python
+def mergeSort(arr):
+	if len(arr) > 1:
+		mid = len(arr)//2
+
+		L = arr[:mid]	# Dividing the array elements
+		R = arr[mid:] # Into 2 halves
+
+		mergeSort(L) # Sorting the first half
+		mergeSort(R) # Sorting the second half
+
+		i = j = k = 0
+		# Copy data to temp arrays L[] and R[]
+		while i < len(L) and j < len(R):
+			if L[i] <= R[j]:
+				arr[k] = L[i]
+				i += 1
+			else:
+				arr[k] = R[j]
+				j += 1
+			k += 1
+
+		# Checking if any element was left
+		while i < len(L):
+			arr[k] = L[i]
+			i += 1
+			k += 1
+
+		while j < len(R):
+			arr[k] = R[j]
+			j += 1
+			k += 1
+
+
+if __name__ == '__main__':
+	arr = [12, 11, 13, 5, 6, 7]
+	mergeSort(arr)
+	print(' '.join(map(str, arr)))
+# Output: 5 6 7 11 12 13
+```
+
+
+
+#### Complexity Analysis of Merge Sort
+
+Time Complexity: O(N log(N)),  Merge Sort is a recursive algorithm and time complexity can be expressed as following recurrence relation. 
+
+> T(n) = 2T(n/2) + θ(n)
+
+The above recurrence can be solved either using the Recurrence Tree method or the Master method. It falls in case II of the Master Method and the solution of the recurrence is θ(Nlog(N)). The time complexity of Merge Sort isθ(Nlog(N)) in all 3 cases (worst, average, and best) as merge sort always divides the array into two halves and takes linear time to merge two halves.
+
+Auxiliary Space: O(N), In merge sort all elements are copied into an auxiliary array. So N auxiliary space is required for merge sort.
+
+#### Applications of Merge Sort:
+
+- Sorting large datasets: Merge sort is particularly well-suited for sorting large datasets due to its guaranteed worst-case time complexity of O(n log n).
+- External sorting: Merge sort is commonly used in external sorting, where the data to be sorted is too large to fit into memory.
+- Custom sorting: Merge sort can be adapted to handle different input distributions, such as partially sorted, nearly sorted, or completely unsorted data.
+- [Inversion Count Problem](https://www.geeksforgeeks.org/inversion-count-in-array-using-merge-sort/): Inversion Count for an array indicates – how far (or close) the array is from being sorted. If the array is already sorted, then the inversion count is 0, but if the array is sorted in reverse order, the inversion count is the maximum. 
+
+#### Advantages of Merge Sort:
+
+- Stability: Merge sort is a stable sorting algorithm, which means it maintains the relative order of equal elements in the input array.
+- Guaranteed worst-case performance: Merge sort has a worst-case time complexity of O(N logN), which means it performs well even on large datasets.
+- Parallelizable: Merge sort is a naturally parallelizable algorithm, which means it can be easily parallelized to take advantage of multiple processors or threads.
+
+#### Drawbacks of Merge Sort:
+
+- Space complexity: Merge sort requires additional memory to store the merged sub-arrays during the sorting process. 
+- Not in-place: Merge sort is not an in-place sorting algorithm, which means it requires additional memory to store the sorted data. This can be a disadvantage in applications where memory usage is a concern.
+- Not always optimal for small datasets: For small datasets, Merge sort has a higher time complexity than some other sorting algorithms, such as insertion sort. This can result in slower performance for very small datasets.
+
+
+
+### 5.Shell Sort
+
+Shell sort is mainly a variation of [Insertion Sort](https://www.geeksforgeeks.org/insertion-sort/). In insertion sort, we move elements only one position ahead. When an element has to be moved far ahead, many movements are involved. The idea of ShellSort is to allow the exchange of far items. In Shell sort, we make the array h-sorted for a large value of h. We keep reducing the value of h until it becomes 1. An array is said to be h-sorted if all sublists of every h’th element are sorted.
+
+**Algorithm:**
+
+Step 1 − Start
+Step 2 − Initialize the value of gap size. Example: h
+Step 3 − Divide the list into smaller sub-part. Each must have equal intervals to h
+Step 4 − Sort these sub-lists using insertion sort
+Step 5 – Repeat this step 2 until the list is sorted.
+Step 6 – Print a sorted list.
+Step 7 – Stop.
+
+
+
+```python
+def shellSort(arr, n):
+    # code here
+    gap = n // 2
+
+    while gap > 0:
+        j = gap
+        # Check the array in from left to right
+        # Till the last possible index of j
+        while j < n:
+            i = j - gap  # This will keep help in maintain gap value
+
+            while i >= 0:
+                # If value on right side is already greater than left side value
+                # We don't do swap else we swap
+                if arr[i + gap] > arr[i]:
+
+                    break
+                else:
+                    arr[i + gap], arr[i] = arr[i], arr[i + gap]
+
+                i = i - gap  # To check left side also
+            # If the element present is greater than current element
+            j += 1
+        gap = gap // 2
+
+
+# driver to check the code
+arr2 = [12, 34, 54, 2, 3]
+
+shellSort(arr2, len(arr2))
+print(' '.join(map(str, arr2)))
+
+# Output: 2 3 12 34 54
+```
+
+
+
+**Time Complexity:** Time complexity of the above implementation of Shell sort is $O(n^2)$. In the above implementation, the gap is reduced by half in every iteration. There are many other ways to reduce gaps which leads to better time complexity. See [this ](http://en.wikipedia.org/wiki/Shellsort#Gap_sequences)for more details.
+
+**Worst Case Complexity**
+The worst-case complexity for shell sort is  $O(n^2)$
+
+
+
+**Shell Sort Applications**
+
+1. Replacement for insertion sort, where it takes a long time to complete a given task.
+2. To call stack overhead we use shell sort.
+3. when recursion exceeds a particular limit we use shell sort.
+4. For medium to large-sized datasets.
+5. In insertion sort to reduce the number of operations.
+
+
+
+https://en.wikipedia.org/wiki/Shellsort
+
+The running time of Shellsort is heavily dependent on the gap sequence it uses. For many practical variants, determining their [time complexity](https://en.wikipedia.org/wiki/Time_complexity) remains an [open problem](https://en.wikipedia.org/wiki/Open_problem).
+
+Unlike [insertion sort](https://en.wikipedia.org/wiki/Insertion_sort), Shellsort is not a [stable sort](https://en.wikipedia.org/wiki/Sorting_algorithm#Stability) since gapped insertions transport equal elements past one another and thus lose their original order. It is an [adaptive sorting algorithm](https://en.wikipedia.org/wiki/Adaptive_sort) in that it executes faster when the input is partially sorted.
+
+Stable sort algorithms sort equal elements in the same order that they appear in the input. 
+
+### 6.Comparison sorts
+
+Below is a table of [comparison sorts](https://en.wikipedia.org/wiki/Comparison_sort). A comparison sort cannot perform better than *O*(*n* log *n*) on average.
+
+|        Name         |  Best   |  Average  |   Worst   | Memory | Stable |       Method        |                         Other notes                          |
+| :-----------------: | :-----: | :-------: | :-------: | :----: | :----: | :-----------------: | :----------------------------------------------------------: |
+| In-place merge sort |    —    |     —     | $nlog^2n$ |   1    |  Yes   |       Merging       | Can be implemented as a stable sort based on stable in-place merging. |
+|      Heapsort       | $nlogn$ |  $nlogn$  |  $nlogn$  |   1    |   No   |      Selection      |                                                              |
+|     Merge sort      | $nlogn$ |  $nlogn$  |  $nlogn$  |  *n*   |  Yes   |       Merging       | Highly parallelizable (up to *O*(log *n*) using the Three Hungarian's Algorithm) |
+|       Timsort       |   *n*   |  $nlogn$  |  $nlogn$  |  *n*   |  Yes   | Insertion & Merging | Makes *n-1* comparisons when the data is already sorted or reverse sorted. |
+|      Quicksort      | $nlogn$ |  $nlogn$  |   $n^2$   | $logn$ |   No   |    Partitioning     | Quicksort is usually done in-place with *O*(log *n*) stack space. |
+|      Shellsort      | $nlogn$ | $n^{4/3}$ | $n^{3/2}$ |   1    |   No   |      Insertion      |                       Small code size.                       |
+|   Insertion sort    |   *n*   |   $n^2$   |   $n^2$   |   1    |  Yes   |      Insertion      | *O*(n + d), in the worst case over sequences that have *d* inversions. |
+|     Bubble sort     |   *n*   |   $n^2$   |   $n^2$   |   1    |  Yes   |     Exchanging      |                       Tiny code size.                        |
+|   Selection sort    |  $n^2$  |   $n^2$   |   $n^2$   |   1    |   No   |      Selection      | Stable with O(n) extra space, when using linked lists, or when made as a variant of Insertion Sort instead of swapping the two items. |
+
+
+
+Highly tuned implementations use more sophisticated variants, such as [Timsort](https://en.wikipedia.org/wiki/Timsort) (merge sort, insertion sort, and additional logic), used in [Android](https://en.wikipedia.org/wiki/Android_(operating_system)), [Java](https://en.wikipedia.org/wiki/Java_(programming_language)), and [Python](https://en.wikipedia.org/wiki/Python_(programming_language)), and [introsort](https://en.wikipedia.org/wiki/Introsort) (quicksort and heapsort), used (in variant forms) in some [C++ sort](https://en.wikipedia.org/wiki/Sort_(C%2B%2B)) implementations and in [.NET](https://en.wikipedia.org/wiki/.NET).
 
 
 
@@ -300,6 +789,10 @@ math, http://cs101.openjudge.cn/practice/04146
 binary search/implementation/math/number theory, 1300
 
 http://codeforces.com/problemset/problem/230/B
+
+## 18176: 2050年成绩计算
+
+http://cs101.openjudge.cn/2024sp_routine/18176/
 
 
 
@@ -943,6 +1436,79 @@ Complexity of Python Operations 数据类型操作时间复杂度
 
 https://www.ics.uci.edu/~pattis/ICS-33/lectures/complexitypython.txt
 
-This is called "static" analysis, because we
-do not need to run any code to perform it (contrasted with Dynamic or Empirical
+This is called "static" analysis, because we do not need to run any code to perform it (contrasted with Dynamic or Empirical
 Analysis, when we do run code and take measurements of its execution).
+
+
+
+Learn Data Structures and Algorithms | DSA Tutorial
+
+https://www.geeksforgeeks.org/learn-data-structures-and-algorithms-dsa-tutorial/?ref=outind
+
+
+
+# 附录
+
+## Puzzle
+
+22507:薛定谔的二叉树
+
+http://cs101.openjudge.cn/practice/22507/
+
+假设二叉树的节点里包含一个大写字母，每个节点的字母都不同。
+给定二叉树的前序遍历序列和后序遍历序列(长度均不超过20)，请计算二叉树可能有多少种
+
+前序序列或后序序列中出现相同字母则直接认为不存在对应的树
+
+**输入**
+
+多组数据
+每组数据一行，包括前序遍历序列和后序遍历序列，用空格分开。
+输入数据不保证一定存在满足条件的二叉树。
+
+**输出**
+
+每组数据，输出不同的二叉树可能有多少种
+
+样例输入
+
+```
+ABCDE CDBEA
+BCD DCB
+AB C
+AA AA
+```
+
+样例输出
+
+```
+1
+4
+0
+0
+```
+
+来源: 刘宇航
+
+
+
+![image-20240222105900057](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240222105900057.png)
+
+
+
+## 坑
+
+## 01035: 拼写检查
+
+http://cs101.openjudge.cn/routine/01035/
+
+
+
+字典会覆盖，有时候得避免（一个常见的坑）
+
+
+
+y第一次输出正确，第二次为什么不输出了
+
+![image-20240224011332795](https://raw.githubusercontent.com/GMyhf/img/main/img/202402240113210.png)
+
