@@ -1,6 +1,6 @@
 # 20240227-Week2-时间复杂度
 
-Updated 1720 GMT+8 Feb 23, 2024
+Updated 1800 GMT+8 Feb 23, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -102,7 +102,7 @@ AA AA
 
 
 
-# 一、$\Theta$-notation
+# 一、O-notation
 
 
 
@@ -262,6 +262,22 @@ We shall now make one more simplifying abstraction: it is the **rate of growth**
 
 We usually consider one algorithm to be more efficient than another if its worstcase running time has a lower order of growth. Due to constant factors and lowerorder terms, an algorithm whose running time has a higher order of growth might take less time for small inputs than an algorithm whose running time has a lower order of growth. But for large enough inputs, a $\Theta(n^2)$ algorithm, for example, will
 run more quickly in the worst case than a $\Theta(n^3)$​ algorithm.
+
+
+
+### O-notation
+
+The $\Theta$-notation asymptotically bounds a function from above and below. When we have only an asymptotic upper bound, we use O-notation. For a given function g(n), we denote by O(g(n) (pronounced “big-oh of g of n” or sometimes just “oh of g of n”) the set of functions
+
+$O(g(n) = \{f(n):  there \space exist \space positive \space constants \space c \space and \space n_0 \space such \space that$​
+
+$\quad\quad\quad\quad\quad\quad\quad  0 \le f(n) \le  cg(n)  for \space all \space n \ge n0\}$
+
+We use O-notation to give an upper bound on a function, to within a constant factor.
+
+Using O-notation, we can often describe the running time of an algorithm merely by inspecting the algorithm’s overall structure. For example, the doubly nested loop structure of the insertion sort algorithm immediately yields an $O(n^2)$ upper bound on the worst-case running time.
+
+Since O-notation describes an upper bound, when we use it to bound the worstcase running time of an algorithm, we have a bound on the running time of the algorithm on every input.
 
 
 
