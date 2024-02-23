@@ -1,6 +1,6 @@
 # 20240227-Week2-时间复杂度
 
-Updated 0823 GMT+8 Feb 23, 2024
+Updated 1720 GMT+8 Feb 23, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -102,7 +102,7 @@ AA AA
 
 
 
-# 一、大O
+# 一、$\Theta$-notation
 
 
 
@@ -140,9 +140,128 @@ Analyzing even a simple algorithm in the RAM model can be a challenge. The mathe
 
 Even though we typically select only one machine model to analyze a given algorithm, we still face many choices in deciding how to express our analysis. We would like a way that is simple to write and manipulate, shows the important characteristics of an algorithm’s resource requirements, and suppresses tedious details.
 
+### Analysis of insertion sort
+
+The time taken by the INSERTION-SORT procedure depends on the input: sorting a thousand numbers takes longer than sorting three numbers. Moreover, INSERTIONSORT can take different amounts of time to sort two input sequences of the same size depending on how nearly sorted they already are. In general, the time taken by an algorithm grows with the size of the input, so it is traditional to describe the running time of a program as a function of the size of its input. To do so, we need to define the terms “running time” and “size of input” more carefully.
+
+The best notion for **input size** depends on the problem being studied. For many problems, such as sorting or computing discrete Fourier transforms, the most natural measure is the number of items in the input—for example, the array size n for sorting. For many other problems, such as multiplying two integers, the best measure of input size is the total number of bits needed to represent the input in
+ordinary binary notation. Sometimes, it is more appropriate to describe the size of the input with two numbers rather than one. For instance, if the input to an algorithm is a graph, the input size can be described by the numbers of vertices and edges in the graph. We shall indicate which input size measure is being used with each problem we study.
+
+The **running time** of an algorithm on a particular input is the number of primitive operations or “steps” executed. It is convenient to define the notion of step so that it is as machine-independent as possible. For the moment, let us adopt the following view. A constant amount of time is required to execute each line of our pseudocode. One line may take a different amount of time than another line, but we shall assume that each execution of the ith line takes time ci, where ci is a constant. This viewpoint is in keeping with the **RAM** model, and it also reflects how the pseudocode would be implemented on most actual computers.
+
+In the following discussion, our expression for the running time of INSERTIONSORT will evolve from a messy formula that uses all the statement costs ci to a much simpler notation that is more concise and more easily manipulated. This simpler notation will also make it easy to determine whether one algorithm is more efficient than another.
+
+We start by presenting the INSERTION-SORT procedure with the time “cost” of each statement and the number of times each statement is executed. For each j = 1, 3, ... , n-1, where n = len(A), we let $t_j$ denote the number of times the **while** loop test in line 8 is executed for that value of j . When a **for** or **while** loop exits in the usual way (i.e., due to the test in the loop header), the test is executed one time more than the loop body. We assume that comments are not executable statements, and so they take no time.
+
+> https://www.geeksforgeeks.org/insertion-sort/
+>
+> **Insertion sort** is a simple sorting algorithm that works similarly to the way you sort playing cards in your hands. The array is virtually split into a sorted and an unsorted part. Values from the unsorted part are picked and placed in the correct position in the sorted part.
+>
+> ## Insertion Sort Algorithm
+>
+> To sort an array of size N in ascending order iterate over the array and compare the current element (key) to its predecessor, if the key element is smaller than its predecessor, compare it to the elements before. Move the greater elements one position up to make space for the swapped element.
+>
+> Illustrations:
+>
+> <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/insertionsort.png" alt="insertion-sort" style="zoom:50%;" />
 
 
 
+Implementation of Insertion Sort Algorithm
+
+```python
+def insertionSort(A):									# cost		times
+    for j in range(1, len(A)):				# c1			n
+        key = A[j]										# c2			n - 1
+
+        # Insert A[i] into the 
+        # sorted sequence A[0..j-1]		# 0				n - 1
+        i = j - 1											# c4			n - 1
+        while i >= 0 and A[i] > key:	# c5			\sum_{j=2}^{n} t_j
+            A[i + 1] = A[i]						# c6			\sum_{j=2}^{n} t_j - 1
+            i -= 1										# c7 			\sum_{j=2}^{n} t_j - 1
+        A[i + 1] = key								# c8			n -1
+
+
+arr = [12, 11, 13, 5, 6]
+insertionSort(arr)
+print(' '.join(map(str, arr)))
+
+# Output 5 6 11 12 13
+# Time Complexity: O(N^2) 
+# Auxiliary Space: O(1)
+```
+
+“\sum_{j=2}^{n} t_j”  是     			
+
+$\sum_{j=2}^{n} t_j$ 的LaTex表示，
+
+“\sum_{j=2}^{n} t_{j}-1\” 是 $\sum_{j=2}^{n} t_{j}-1$ 的LaTex表示。
+
+
+
+The running time of the algorithm is the sum of running times for each statement executed; a statement that takes $c_i$ steps to execute and executes n times will contribute $c_in$​ to the total running time. To compute T(n), the running time of INSERTION-SORT on an input of n values, we sum the products of the cost and times columns, obtaining
+
+
+
+$T(n) = c_1n + c_2n(n-1) + c_4(n-1) + c_5\sum_{j=2}^{n} t_j + c_6\sum_{j=2}^{n} t_j-1 + c_7\sum_{j=2}^{n} t_j-1 + c_8(n-1)$
+
+
+
+Even for inputs of a given size, an algorithm’s running time may depend on which input of that size is given. For example, in INSERTION-SORT, the best case occurs if the array is already sorted. For each j = 1, 3, ... , n-1, we then find that $A[i] \le key$ in line 8 when $i$ has its initial value of $j - 1$. Thus $t_j = 1$ for j = 1, 3, ... , n-1, and the best-case running time is
+
+
+
+$T(n) = c_1n + c_2n(n-1) + c_4(n-1) + c_5(n-1) + c_8(n-1)$​
+
+$\quad = (c_1 + c_2 + c_4 + c_5 + c_8)n - (c_2 + c_4 + c_5 + c_8)$
+
+
+
+We can express this running time as `an + b` for constants a and b that depend on
+the statement costs $c_i$; it is thus a **linear function** of n.
+
+If the array is in reverse sorted order—that is, in decreasing order—the worst case results. We must compare each element A[j]  with each element in the entire sorted subarray A[0..j-1], and so tj = j for j = 1, 2, ..., n-1. Noting that
+
+$\sum_{j=2}^{n} j = \frac{n(n+1)}{2} - 1$​ 
+
+$\sum_{j=2}^{n} j-1 = \frac{n(n-1)}{2}$ 
+
+we find that in the worst case, the running time of INSERTION-SORT is
+
+
+
+$T(n) = c_1n + c_2n(n-1) + c_4(n-1) + c_5(\frac{n(n+1)}{2} -1) + c_6(\frac{n(n-1)}{2}) + + c_7(\frac{n(n-1)}{2}) + c_8(n-1)$
+
+$\quad = (\frac{c_5}2 + \frac{c_6}2 + \frac{c_7}2)n^2 + (c_1 + c_2 + c_4 + \frac{c_5}2 - \frac{c_6}2 - \frac{c_7}2 + c_8)n - (c_2 + c_4 + c_5 + c_8)$
+
+
+
+We can express this worst-case running time as $an^2 + bn + c$ for constants a, b, and c that again depend on the statement costs ci; it is thus a **quadratic function** of n.
+
+Typically, as in insertion sort, the running time of an algorithm is fixed for a given input, although in later chapters we shall see some interesting “randomized” algorithms whose behavior can vary even for a fixed input.
+
+
+
+### Worst-case and average-case analysis
+
+In our analysis of insertion sort, we looked at both the best case, in which the input array was already sorted, and the worst case, in which the input array was reverse sorted. For the remainder of this book, though, we shall usually concentrate on finding only the **worst-case running time**, that is, the longest running time for any input of size n. We give three reasons for this orientation.
+
+- The worst-case running time of an algorithm gives us an upper bound on the running time for any input. Knowing it provides a guarantee that the algorithm will never take any longer. We need not make some educated guess about the running time and hope that it never gets much worse.
+- For some algorithms, the worst case occurs fairly often. For example, in searching a database for a particular piece of information, the searching algorithm’s worst case will often occur when the information is not present in the database. In some applications, searches for absent information may be frequent.
+- The “average case” is often roughly as bad as the worst case. Suppose that we randomly choose n numbers and apply insertion sort. How long does it take to determine where in subarray A[0 ..  j - 1] to insert element A[j] ? On average, half the elements in A[0 .. j - 1] are less than A[j] , and half the elements are greater. On average, therefore, we check half of the subarray A[0 ..  j - 1], and so $t_j$ is about $j/2$. The resulting average-case running time turns out to be a quadratic function of the input size, just like the worst-case running time.
+
+In some particular cases, we shall be interested in the **average-case** running time of an algorithm; we shall see the technique of **probabilistic analysis** applied to various algorithms throughout this book. The scope of average-case analysis is limited, because it may not be apparent what constitutes an “average” input for
+a particular problem. Often, we shall assume that all inputs of a given size are equally likely. In practice, this assumption may be violated, but we can sometimes use a **randomized algorithm**, which makes random choices, to allow a probabilistic analysis and yield an **expected** running time. 
+
+### Order of growth
+
+We used some simplifying abstractions to ease our analysis of the INSERTIONSORT procedure. First, we ignored the actual cost of each statement, using the constants ci to represent these costs. Then, we observed that even these constants give us more detail than we really need: we expressed the worst-case running time as $an^2 + bn + c$ for some constants a, b, and c that depend on the statement costs $c_i$. We thus ignored not only the actual statement costs, but also the abstract costs $c_i$.
+
+We shall now make one more simplifying abstraction: it is the **rate of growth**, or **order of growth**, of the running time that really interests us. We therefore consider only the leading term of a formula (e.g., $an^2$), since the lower-order terms are relatively insignificant for large values of n. We also ignore the leading term’s constant coefficient, since constant factors are less significant than the rate of growth in determining computational efficiency for large inputs. For insertion sort, when we ignore the lower-order terms and the leading term’s constant coefficient, we are left with the factor of $n^2$ from the leading term. We write that insertion sort has a worst-case running time of $\Theta(n^2)$ (pronounced “theta of n-squared”). 
+
+We usually consider one algorithm to be more efficient than another if its worstcase running time has a lower order of growth. Due to constant factors and lowerorder terms, an algorithm whose running time has a higher order of growth might take less time for small inputs than an algorithm whose running time has a lower order of growth. But for large enough inputs, a $\Theta(n^2)$ algorithm, for example, will
+run more quickly in the worst case than a $\Theta(n^3)$​ algorithm.
 
 
 
