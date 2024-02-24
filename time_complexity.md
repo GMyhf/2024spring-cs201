@@ -1,6 +1,6 @@
 # 20240227-Week2-时间复杂度
 
-Updated 0109 GMT+8 Feb 24, 2024
+Updated 1001 GMT+8 Feb 24, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -13,30 +13,6 @@ Updated 0109 GMT+8 Feb 24, 2024
 **TODO本周发布作业：**
 
 Assignment2, https://github.com/GMyhf/2024spring-cs201
-
-27653: Fraction类
-
-http://cs101.openjudge.cn/2024sp_routine/27653/
-
-04110: 圣诞老人的礼物-Santa Clau’s Gifts
-
-greedy/dp, http://cs101.openjudge.cn/practice/04110
-
-18182: 打怪兽
-
-implementation/sortings/data structures, http://cs101.openjudge.cn/practice/18182/
-
-230B. T-primes
-
-binary search/implementation/math/number theory, 1300, http://codeforces.com/problemset/problem/230/B
-
-1364A. XXXXX
-
-brute force/data structures/number theory/two pointers, 1200, https://codeforces.com/problemset/problem/1364/A
-
-18176: 2050年成绩计算
-
-http://cs101.openjudge.cn/practice/18176/
 
 
 
