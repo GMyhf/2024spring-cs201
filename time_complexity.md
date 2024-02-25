@@ -1,6 +1,6 @@
 # 20240227-Week2-时间复杂度
 
-Updated 2145 GMT+8 Feb 24, 2024
+Updated 2117 GMT+8 Feb 25, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -106,16 +106,6 @@ Here is one other most used algorithm. Often we need to arrange or sort data as 
 
 # 一、Big-O notation
 
-
-
-https://stackoverflow.com/questions/44421828/is-this-sieve-really-on
-
-
-
-https://www.geeksforgeeks.org/sieve-eratosthenes-0n-time-complexity/
-
-
-
 ## Analyzing algorithms
 
 **Analyzing** an algorithm has come to mean predicting the resources that the algorithm requires. Occasionally, resources such as memory, communication bandwidth, or computer hardware are of primary concern, but most often it is computational time that we want to measure. Generally, by analyzing several candidate algorithms for a problem, we can identify a most efficient one. Such analysis may indicate more than one viable candidate, but we can often discard several inferior algorithms in the process.
@@ -198,7 +188,16 @@ print(' '.join(map(str, arr)))
 
 $\sum_{j=2}^{n} t_j$ 的LaTex表示，
 
-“\sum_{j=2}^{n} t_{j}-1\” 是 $\sum_{j=2}^{n} t_{j}-1$ 的LaTex表示。
+“\sum_{j=2}^{n} t_{j}-1\” 是 $\sum_{j=2}^{n} t_{j}-1$​ 的LaTex表示。
+
+
+
+> **Q:** Suppose you have the following list of numbers to sort: [15, 5, 4, 18, 12, 19, 14, 10, 8, 20] which list represents the partially sorted list after three complete passes of insertion sort? (C)
+>
+> A. [4, 5, 12, 15, 14, 10, 8, 18, 19, 20]
+> B. [15, 5, 4, 10, 12, 8, 14, 18, 19, 20]
+> **C. [4, 5, 15, 18, 12, 19, 14, 10, 8, 20]**
+> D. [15, 5, 4, 18, 12, 19, 14, 8, 10, 20]
 
 
 
@@ -346,25 +345,25 @@ if __name__ == "__main__":
 
 
 
-#### Complexity Analysis of Bubble Sort:
+**Complexity Analysis of Bubble Sort:**
 
 Time Complexity: O(N2)
 Auxiliary Space: O(1)
 
-#### Advantages of Bubble Sort:
+**Advantages of Bubble Sort:**
 
 - Bubble sort is easy to understand and implement.
 - It does not require any additional memory space.
 - It is a stable sorting algorithm, meaning that elements with the same key value maintain their relative order in the sorted output.
 
-#### Disadvantages of Bubble Sort:
+**Disadvantages of Bubble Sort:**
 
 - Bubble sort has a time complexity of O(N2) which makes it very slow for large data sets.
 - Bubble sort is a comparison-based sorting algorithm, which means that it requires a comparison operator to determine the relative order of elements in the input data set. It can limit the efficiency of the algorithm in certain cases.
 
 
 
-#### Some FAQs related to Bubble Sort:
+**Some FAQs related to Bubble Sort:**
 
 **Q1. What is the Boundary Case for Bubble sort?**
 
@@ -383,6 +382,12 @@ Yes, the bubble sort algorithm is stable.
 Due to its simplicity, bubble sort is often used to introduce the concept of a sorting algorithm. 
 
 
+
+**Q:** Suppose you have the following list of numbers to sort: [19, 1, 9, 7, 3, 10, 13, 15, 8, 12] which list represents the partially sorted list after three complete passes of bubble sort?? （ B ）
+
+A： [1, 9, 19, 7, 3, 10, 13, 15, 8, 12]	B： **[1, 3, 7, 9, 10, 8, 12, 13, 15, 19]**	
+
+C： [1, 7, 3, 9, 10, 13, 8, 12, 15, 19]	D：[1, 9, 19, 7, 3, 10, 13, 15, 8, 12]
 
 
 
@@ -417,7 +422,41 @@ print(' '.join(map(str, A)))
 
 
 
-#### Complexity Analysis of Selection Sort
+The **selection sort** improves on the bubble sort by making only one exchange for every pass through the list. In order to do this, a selection sort looks for the largest value as it makes a pass and, after completing the pass, places it in the proper location. As with a bubble sort, after the first pass, the largest item is in the correct place. After the second pass, the next largest is in place. This process continues and requires n−1 passes to sort *n* items, since the final item must be in place after the (n−1) st pass.
+
+Figure 3 shows the entire sorting process. On each pass, the largest remaining item is selected and then placed in its proper location. The first pass places 93, the second pass places 77, the third places 55, and so on. 
+
+![../_images/selectionsortnew.png](https://raw.githubusercontent.com/GMyhf/img/main/img/selectionsortnew.png)
+
+Figure 3: `selectionSort`
+
+
+
+```python
+def selectionSort(alist):
+    for fillslot in range(len(alist)-1, 0, -1):
+        positionOfMax = 0
+        for location in range(1, fillslot+1):
+            if alist[location] > alist[positionOfMax]:
+                positionOfMax = location
+
+        if positionOfMax != fillslot:
+            alist[fillslot], alist[positionOfMax] = alist[positionOfMax], alist[fillslot]
+
+alist = [54, 26, 93, 17, 77, 31, 44, 55, 20]
+selectionSort(alist)
+print(alist)
+
+# [17, 20, 26, 31, 44, 54, 55, 77, 93]
+```
+
+
+
+You may see that the selection sort makes the same number of comparisons as the bubble sort and is therefore also $(O^2)$. However, due to the reduction in the number of exchanges, the selection sort typically executes faster in benchmark studies. In fact, for our list, the bubble sort makes 20 exchanges, while the selection sort makes only 8.
+
+
+
+**Complexity Analysis of Selection Sort**
 
 **Time Complexity:** The time complexity of Selection Sort is **O(N2)** as there are two nested loops:
 
@@ -429,14 +468,14 @@ print(' '.join(map(str, A)))
 
 
 
-#### Advantages of Selection Sort Algorithm
+**Advantages of Selection Sort Algorithm**
 
 - Simple and easy to understand.
 - Works well with small datasets.
 
 
 
-#### Disadvantages of the Selection Sort Algorithm
+**Disadvantages of the Selection Sort Algorithm**
 
 - Selection sort has a time complexity of O(n^2) in the worst and average case.
 - Does not work well on large datasets.
@@ -444,7 +483,7 @@ print(' '.join(map(str, A)))
 
 
 
-#### Frequently Asked Questions on Selection Sort
+**Frequently Asked Questions on Selection Sort**
 
 **Q1. Is Selection Sort Algorithm stable?**
 
@@ -453,6 +492,15 @@ The default implementation of the Selection Sort Algorithm is **not stable**. Ho
 **Q2. Is Selection Sort Algorithm in-place?**
 
 Yes, Selection Sort Algorithm is an in-place algorithm, as it does not require extra space.
+
+
+
+**Q:** Suppose you have the following list of numbers to sort: [11, 7, 12, 14, 19, 1, 6, 18, 8, 20] which list represents the partially sorted list after three complete passes of selection sort? (D)
+
+A. [7, 11, 12, 1, 6, 14, 8, 18, 19, 20]
+B. [7, 11, 12, 14, 19, 1, 6, 18, 8, 20]
+C. [11, 7, 12, 14, 1, 6, 8, 18, 19, 20]
+D. **[11, 7, 12, 14, 8, 1, 6, 18, 19, 20]**
 
 
 
@@ -468,6 +516,29 @@ How does QuickSort work?
 
 
 
+> https://www.geeksforgeeks.org/introduction-to-divide-and-conquer-algorithm-data-structure-and-algorithm-tutorials/
+>
+> **Divide And Conquer** 
+> This technique can be divided into the following three parts:
+>
+> 1. **Divide:** This involves dividing the problem into smaller sub-problems.
+> 2. **Conquer:** Solve sub-problems by calling recursively until solved.
+> 3. **Combine:** Combine the sub-problems to get the final solution of the whole problem.
+>     
+>
+> The following are some standard algorithms that follow Divide and Conquer algorithm. 
+>
+> 1. [**Quicksort**](https://www.geeksforgeeks.org/quick-sort/) is a sorting algorithm. The algorithm picks a pivot element and rearranges the array elements so that all elements smaller than the picked pivot element move to the left side of the pivot, and all greater elements move to the right side. Finally, the algorithm recursively sorts the subarrays on the left and right of the pivot element.
+>
+> 2. [**Merge Sort**](https://www.geeksforgeeks.org/merge-sort/) is also a sorting algorithm. The algorithm divides the array into two halves, recursively sorts them, and finally merges the two sorted halves.
+>
+>    
+>
+> What does not qualifies as Divide and Conquer:
+> Binary Search is a searching algorithm. In each step, the algorithm compares the input element x with the value of the middle element in the array. If the values match, return the index of the middle. Otherwise, if x is less than the middle element, then the algorithm recurs for the left side of the middle element, else recurs for the right side of the middle element. Contrary to popular belief, this is not an example of Divide and Conquer because there is only one sub-problem in each step (Divide and conquer requires that there must be two or more sub-problems) and hence this is a case of Decrease and Conquer.
+
+
+
 ```python
 # Function to find the partition position
 def partition(array, low, high):
@@ -480,9 +551,9 @@ def partition(array, low, high):
 
 	# Traverse through all elements
 	# compare each element with pivot
-	for j in range(low, high):
-		if array[j] <= pivot:
-
+	for j in range(low, high):	#从左到右遍历数组，每当遇到一个比枢轴小的元素，
+		if array[j] <= pivot:			#就将其与枢轴左边的第一个比枢轴大的元素交换位置。
+															#最后，将枢轴放到正确的位置上。
 			# If element smaller than pivot is found
 			# swap it with the greater element pointed by i
 			i = i + 1
@@ -527,7 +598,15 @@ if __name__ == '__main__':
 
 
 
-#### Complexity Analysis of Quick Sort:
+To analyze the `quickSort` function, note that for a list of length *n*, if the partition always occurs in the middle of the list, there will again be $log⁡n$ divisions. In order to find the split point, each of the *n* items needs to be checked against the pivot value. The result is $nlogn$. In addition, there is no need for additional memory as in the merge sort process.
+
+Unfortunately, in the worst case, the split points may not be in the middle and can be very skewed to the left or the right, leaving a very uneven division. In this case, sorting a list of *n* items divides into sorting a list of 0 items and a list of n−1 items. Then sorting a list of n−1 divides into a list of size 0 and a list of size n−2, and so on. The result is an $O(n^2)$ sort with all of the overhead that recursion requires.
+
+We mentioned earlier that there are different ways to choose the pivot value. In particular, we can attempt to alleviate some of the potential for an uneven division by using a technique called **median of three**. To choose the pivot value, we will consider the first, the middle, and the last element in the list. In our example, those are 54, 77, and 20. Now pick the median value, in our case 54, and use it for the pivot value (of course, that was the pivot value we used originally). The idea is that in the case where the first item in the list does not belong toward the middle of the list, the median of three will choose a better “middle” value. This will be particularly useful when the original list is somewhat sorted to begin with.
+
+
+
+**Complexity Analysis of Quick Sort:**
 
 Time Complexity:
 
@@ -541,19 +620,52 @@ Time Complexity:
 
 Auxiliary Space: O(1), if we don’t consider the recursive stack space. If we consider the recursive stack space then, in the worst case quicksort could make O(N).
 
-#### Advantages of Quick Sort:
+
+
+**Advantages of Quick Sort:**
 
 - It is a divide-and-conquer algorithm that makes it easier to solve problems.
 - It is efficient on large data sets.
 - It has a low overhead, as it only requires a small amount of memory to function.
 
-#### Disadvantages of Quick Sort:
+**Disadvantages of Quick Sort:**
 
 - It has a worst-case time complexity of $O(N^2)$, which occurs when the pivot is chosen poorly.
 - It is not a good choice for small data sets.
 - It is not a stable sort, meaning that if two elements have the same key, their relative order will not be preserved in the sorted output in case of quick sort, because here we are swapping elements according to the pivot’s position (without considering their original positions).
 
 
+
+**Q.** Choose the leftmost element as pivot, given the following list of numbers [14, 17, 13, 15, 19, 10, 3, 16, 9, 12] which answer shows the contents of the list after the second partitioning according to the quicksort algorithm? (D)
+
+A. [9, 3, 10, 13, 12]
+B. [9, 3, 10, 13, 12, 14]
+C. [9, 3, 10, 13, 12, 14, 17, 16, 15, 19]
+**D. [9, 3, 10, 13, 12, 14, 19, 16, 15, 17]**
+
+The first partitioning works on the entire list, and the second partitioning works on the left partition not the right. It's important to remember that quicksort works on the entire list and sorts it in place.
+
+
+
+**Q:** Given the following list of numbers [1, 20, 11, 5, 2, 9, 16, 14, 13, 19] what would be the first pivot value using the median of 3 method? (B)
+
+A. 1
+**B. 9**
+C. 16
+D. 19
+
+ although 16 would be the median of 1, 16, 19 the middle is at len(list) // 2.
+
+
+
+**Q:** Which of the following sort algorithms are guaranteed to be O(n log n) even in the worst case? (C)
+
+A. Shell Sort
+B. Quick Sort
+**C. Merge Sort**
+D. Insertion Sort
+
+Merge Sort is the only guaranteed O(n log n) even in the worst case. The cost is that merge sort uses more memory.
 
 
 
@@ -612,7 +724,7 @@ if __name__ == '__main__':
 
 
 
-#### Complexity Analysis of Merge Sort
+**Complexity Analysis of Merge Sort**
 
 Time Complexity: O(N log(N)),  Merge Sort is a recursive algorithm and time complexity can be expressed as following recurrence relation. 
 
@@ -622,20 +734,20 @@ The above recurrence can be solved either using the Recurrence Tree method or th
 
 Auxiliary Space: O(N), In merge sort all elements are copied into an auxiliary array. So N auxiliary space is required for merge sort.
 
-#### Applications of Merge Sort:
+**Applications of Merge Sort:**
 
 - Sorting large datasets: Merge sort is particularly well-suited for sorting large datasets due to its guaranteed worst-case time complexity of O(n log n).
 - External sorting: Merge sort is commonly used in external sorting, where the data to be sorted is too large to fit into memory.
 - Custom sorting: Merge sort can be adapted to handle different input distributions, such as partially sorted, nearly sorted, or completely unsorted data.
 - [Inversion Count Problem](https://www.geeksforgeeks.org/inversion-count-in-array-using-merge-sort/): Inversion Count for an array indicates – how far (or close) the array is from being sorted. If the array is already sorted, then the inversion count is 0, but if the array is sorted in reverse order, the inversion count is the maximum. 
 
-#### Advantages of Merge Sort:
+**Advantages of Merge Sort:**
 
 - Stability: Merge sort is a stable sorting algorithm, which means it maintains the relative order of equal elements in the input array.
 - Guaranteed worst-case performance: Merge sort has a worst-case time complexity of O(N logN), which means it performs well even on large datasets.
 - Parallelizable: Merge sort is a naturally parallelizable algorithm, which means it can be easily parallelized to take advantage of multiple processors or threads.
 
-#### Drawbacks of Merge Sort:
+**Drawbacks of Merge Sort:**
 
 - Space complexity: Merge sort requires additional memory to store the merged sub-arrays during the sorting process. 
 - Not in-place: Merge sort is not an in-place sorting algorithm, which means it requires additional memory to store the sorted data. This can be a disadvantage in applications where memory usage is a concern.
@@ -643,9 +755,27 @@ Auxiliary Space: O(N), In merge sort all elements are copied into an auxiliary a
 
 
 
+**Q:** 给定排序列表 [21,1,26,45,29,28,2,9,16,49,39,27,43,34,46,40]，在归并排序的第 3 次递归调用时，排序的是哪个子表? （ B ）
+
+A： [16, 49,39,27,43,34,46,40]	B： **[21,1]**	C： [21,1,26,45]	D：[21]
+
+Remember mergesort doesn't work on the right half of the list until the left half is completely sorted.
+
+
+
+**Q:** 排序数据同上，归并排序中，哪两个子表是最先归并的?（ C ）
+
+A： [21,1] and [26,45]	B：[1, 2, 9,21,26,28,29,45] and [16,27,34,39,40,43, 46,49] 	
+
+C： **[21] and [1]**	D：[9] and [16]
+
+The lists [21] and [1] are the first two base cases encountered by mergesort and will therefore be the first two lists merged.
+
+
+
 ### 5.Shell Sort
 
-Shell sort is mainly a variation of [Insertion Sort](https://www.geeksforgeeks.org/insertion-sort/). In insertion sort, we move elements only one position ahead. When an element has to be moved far ahead, many movements are involved. The idea of ShellSort is to allow the exchange of far items. In Shell sort, we make the array h-sorted for a large value of h. We keep reducing the value of h until it becomes 1. An array is said to be h-sorted if all sublists of every h’th element are sorted.
+Shell sort is mainly a variation of **Insertion Sort**. In insertion sort, we move elements only one position ahead. When an element has to be moved far ahead, many movements are involved. The idea of ShellSort is to allow the exchange of far items. In Shell sort, we make the array h-sorted for a large value of h. We keep reducing the value of h until it becomes 1. An array is said to be h-sorted if all sublists of every h’th element are sorted.
 
 **Algorithm:**
 
@@ -675,7 +805,6 @@ def shellSort(arr, n):
                 # If value on right side is already greater than left side value
                 # We don't do swap else we swap
                 if arr[i + gap] > arr[i]:
-
                     break
                 else:
                     arr[i + gap], arr[i] = arr[i], arr[i + gap]
@@ -716,11 +845,24 @@ The worst-case complexity for shell sort is  $O(n^2)$
 
 https://en.wikipedia.org/wiki/Shellsort
 
-The running time of Shellsort is heavily dependent on the gap sequence it uses. For many practical variants, determining their [time complexity](https://en.wikipedia.org/wiki/Time_complexity) remains an [open problem](https://en.wikipedia.org/wiki/Open_problem).
+The running time of Shellsort is heavily dependent on the gap sequence it uses. For many practical variants, determining their time complexity remains an open problem.
 
-Unlike [insertion sort](https://en.wikipedia.org/wiki/Insertion_sort), Shellsort is not a [stable sort](https://en.wikipedia.org/wiki/Sorting_algorithm#Stability) since gapped insertions transport equal elements past one another and thus lose their original order. It is an [adaptive sorting algorithm](https://en.wikipedia.org/wiki/Adaptive_sort) in that it executes faster when the input is partially sorted.
+Unlike **insertion sort**, Shellsort is not a **stable sort** since gapped insertions transport equal elements past one another and thus lose their original order. It is an **adaptive sorting algorithm** in that it executes faster when the input is partially sorted.
 
-Stable sort algorithms sort equal elements in the same order that they appear in the input. 
+**Stable sort** algorithms sort equal elements in the same order that they appear in the input. 
+
+
+
+**Q:** Given the following list of numbers: [5, 16, 20, 12, 3, 8, 9, 17, 19, 7] Which answer illustrates the contents of the list after all swapping is complete for a gap size of 3? (A)
+
+**A. [5, 3, 8, 7, 16, 19, 9, 17, 20, 12]**
+B. [3, 7, 5, 8, 9, 12, 19, 16, 20, 17]
+C. [3, 5, 7, 8, 9, 12, 16, 17, 19, 20]
+D. [5, 16, 20, 3, 8, 12, 9, 17, 20, 7]
+
+Each group of numbers represented by index positions 3 apart are sorted correctly.
+
+
 
 ### 6.Comparison sorts
 
@@ -768,11 +910,15 @@ http://codeforces.com/problemset/problem/230/B
 
 http://cs101.openjudge.cn/2024sp_routine/18176/
 
+## 12559: 最大最小整数
+
+greedy/strings/sortings, http://cs101.openjudge.cn/practice/12559
+
+## 27373: 最大整数
+
+http://cs101.openjudge.cn/practice/27373
 
 
-作业
-
-assignment2.md,  at https://github.com/GMyhf/2024spring-cs201
 
 
 
@@ -781,13 +927,13 @@ assignment2.md,  at https://github.com/GMyhf/2024spring-cs201
 ## 选择（30分，每题2分）
 
 **Q:** 下列不影响算法时间复杂性的因素有（ C ）。
-A：问题的规模	B：输入值	C：计算结果	D：算法的策略
+A：问题的规模	B：输入值	C：**计算结果**	D：算法的策略
 
 
 
 **Q:** 有 $n^2$​ 个整数，找到其中最小整数需要比较次数至少为（ C ）次。
 
-A:$n$	B: $log_{2}{n}$	C:$n^2-1$	D:$n-1$
+A:$n$	B: $log_{2}{n}$	C:**$n^2-1$**	D:$n-1$
 
 
 
@@ -871,7 +1017,7 @@ WPL = 12 + 16 + 20 + 24 + 27 + 24 + 22 + 24 = 169
 
 
 **Q：**假设需要对存储开销 1GB (GigaBytes) 的数据进行排序，但主存储器（RAM）当前可用的存储空间只有 100MB (MegaBytes)。针对这种情况，（ B ）排序算法是最适合的。
-A：堆排序	B：归并排序	C：快速排序	D：插入排序
+A：堆排序	B：**归并排序**	C：快速排序	D：插入排序
 
 
 
@@ -888,7 +1034,7 @@ A：堆排序	B：归并排序	C：快速排序	D：插入排序
 
 
 **Q:** 若按照排序的稳定性和不稳定性对排序算法进行分类，则（ D ）是不稳定排序。
-A：冒泡排序	B：归并排序	C：直接插入排序	D：希尔排序
+A：冒泡排序	B：归并排序	C：直接插入排序	D：**希尔排序**
 
 
 
@@ -905,7 +1051,7 @@ A：冒泡排序	B：归并排序	C：直接插入排序	D：希尔排序
 
 
 **Q:** 以下（ C ）分组中的两个排序算法的最坏情况下时间复杂度的大 O 表示相同。
-A：快速排序和堆排序 B：归并排序和插入排序 C：快速排序和选择排序 D：堆排序和冒泡排序
+A：快速排序和堆排序 B：归并排序和插入排序 C：**快速排序和选择排序** D：堆排序和冒泡排序
 
 
 
@@ -931,7 +1077,7 @@ A：N	B：N/2	C：$\lceil \log_{2}(N) \rceil$	D：$\lceil \log_{2}(N+1) \rceil$�
 
 
 **Q:** 数据结构有三个基本要素:逻辑结构、存储结构以及基于结构定义的行为(运算)。下列概念中( B )属于存储结构。
-A:线性表	B:链表	C:字符串	D:二叉树
+A:线性表	B:**链表**	C:字符串	D:二叉树
 
 
 
@@ -949,7 +1095,7 @@ D: 二叉树 - 这是一种逻辑结构，它描述每个节点最多有两个�
 **Q:** 回溯法是一类广泛使用的算法，以下叙述中不正确的是（ C ）。
 A：回溯法可以系统地搜索一个问题的所有解或者任意解
 B：回溯法是一种既具备系统性又具备跳跃性的搜索算法
-C：回溯算法需要借助队列数据结构来保存从根结点到当前扩展结点的路径
+C：**回溯算法需要借助队列数据结构来保存从根结点到当前扩展结点的路径**
 D：回溯算法在生成解空间的任一结点时，先判断当前结点是否可能包含问题的有效解，如果肯定不包含，则跳过对该结点为根的子树的搜索，逐层向祖先结点回溯
 
 
@@ -963,7 +1109,7 @@ D：回溯算法在生成解空间的任一结点时，先判断当前结点是�
 
 
 **Q：**假设线性表中每个元素有两个数据项 key1 和 key2，现对线性表按以下规则进行排序：先根据数据项 key1 的值进行非递减排序；在 key1 值相同的情况下，再根据数据项 key2 的值进行非递减排序。满足这种要求的排序方法是（ A ）。
-A: 先按 key1 值进行冒泡排序，再按 key2 值进行直接选择排序
+A: **先按 key1 值进行冒泡排序，再按 key2 值进行直接选择排序**
 B: 先按 key2 值进行冒泡排序，再按 key1 值进行直接选择排序
 C: 先按 key1 值进行直接选择排序，再按 key2 值进行冒泡排序
 D: 先按 key2 值进行直接选择排序，再按 key1 值进行冒泡排序
@@ -995,7 +1141,7 @@ A: 先按 `key1` 值进行冒泡排序，再按 `key2` 值进行直接选择排�
 
 
 **Q：**下列选项中最适合实现数据的频繁增删及高效查找的组织结构是（ C ）。
-A： 有序表	B： 堆排序	C： 二叉排序树	D： 快速排序
+A： 有序表	B： 堆排序	C： **二叉排序树**	D： 快速排序
 
 解释：在这些选项中，要实现数据的频繁增删及高效查找，我们应该选择一种数据结构，而不是排序算法。排序算法（如堆排序和快速排序）主要是对数据进行排序，并不提供数据结构的功能。
 
@@ -1012,20 +1158,6 @@ D：快速排序 - 这也是一种排序算法，不是数据结构，不适合�
 因此，最适合实现数据的频繁增删及高效查找的组织结构是：C：二叉排序树
 
 如果是在一个平衡的二叉搜索树中，如 AVL 树或红黑树，那么插入、删除和查找操作的平均时间复杂度都是 O(log n)，这是非常高效的。
-
-
-
-**Q:** 给定排序列表 [21,1,26,45,29,28,2,9,16,49,39,27,43,34,46,40]，在归并排序的第 3 次递归调用时，排序的是哪个子表? （ B ）
-
-A： [16, 49,39,27,43,34,46,40]	B： [21,1]	C： [21,1,26,45]	D：[21]
-
-
-
-**Q:** 排序数据同上，归并排序中，哪两个子表是最先归并的?（ C ）
-
-A： [21,1] and [26,45]	B：[1, 2, 9,21,26,28,29,45] and [16,27,34,39,40,43, 46,49] 	
-
-C： [21] and [1]	D：[9] and [16]
 
 
 
@@ -1486,7 +1618,7 @@ AA AA
 
 ## 坑
 
-## 01035: 拼写检查
+### 01035: 拼写检查
 
 http://cs101.openjudge.cn/routine/01035/
 
