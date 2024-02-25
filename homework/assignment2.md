@@ -40,7 +40,7 @@ C/C++编程环境：Mac terminal vi (version 9.0.1424), g++/gcc (Apple clang ver
 
 ### 27653: Fraction类
 
-http://cs101.openjudge.cn/2024sp_routine/27653/
+http://cs101.openjudge.cn/practice/27653/
 
 
 
