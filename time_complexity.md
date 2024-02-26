@@ -1,6 +1,6 @@
 # 20240227-Week2-时间复杂度
 
-Updated 2117 GMT+8 Feb 25, 2024
+Updated 1010 GMT+8 Feb 26, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -539,6 +539,43 @@ How does QuickSort work?
 
 
 
+在partition函数中两个指针 `i` 和 `j` 的方式实现。快排中的partition可以用双指针或者单指针实现，前者更容易理解，也是机考中喜欢出的题目类型。
+
+```python
+def quicksort(arr, left, right):
+    if left < right:
+        partition_pos = partition(arr, left, right)
+        quicksort(arr, left, partition_pos - 1)
+        quicksort(arr, partition_pos + 1, right)
+
+
+def partition(arr, left, right):
+    i = left
+    j = right - 1
+    pivot = arr[right]
+    while i <= j:
+        while i <= right and arr[i] < pivot:
+            i += 1
+        while j >= left and arr[j] >= pivot:
+            j -= 1
+        if i < j:
+            arr[i], arr[j] = arr[j], arr[i]
+    if arr[i] > pivot:
+        arr[i], arr[right] = arr[right], arr[i]
+    return i
+
+
+arr = [22, 11, 88, 66, 55, 77, 33, 44]
+quicksort(arr, 0, len(arr) - 1)
+print(arr)
+
+# [11, 22, 33, 44, 55, 66, 77, 88]
+```
+
+
+
+在partition函数中单指针j实现。
+
 ```python
 # Function to find the partition position
 def partition(array, low, high):
@@ -593,7 +630,6 @@ if __name__ == '__main__':
 		print(x, end=" ")
 
 # Output: 1 5 7 8 9 10 
-
 ```
 
 
