@@ -1,6 +1,6 @@
 # 20240227-Week2-时间复杂度
 
-Updated 1010 GMT+8 Feb 26, 2024
+Updated 1351 GMT+8 Feb 26, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -143,7 +143,7 @@ The **running time** of an algorithm on a particular input is the number of prim
 
 In the following discussion, our expression for the running time of INSERTIONSORT will evolve from a messy formula that uses all the statement costs ci to a much simpler notation that is more concise and more easily manipulated. This simpler notation will also make it easy to determine whether one algorithm is more efficient than another.
 
-We start by presenting the INSERTION-SORT procedure with the time “cost” of each statement and the number of times each statement is executed. For each j = 1, 3, ... , n-1, where n = len(A), we let $t_j$ denote the number of times the **while** loop test in line 8 is executed for that value of j . When a **for** or **while** loop exits in the usual way (i.e., due to the test in the loop header), the test is executed one time more than the loop body. We assume that comments are not executable statements, and so they take no time.
+We start by presenting the INSERTION-SORT procedure with the time “cost” of each statement and the number of times each statement is executed. For each j = 2, 3, ... , n, where n = A.length, we let $t_j$ denote the number of times the **while** loop test in line 7 is executed for that value of j . When a **for** or **while** loop exits in the usual way (i.e., due to the test in the loop header), the test is executed one time more than the loop body. We assume that comments are not executable statements, and so they take no time.
 
 > https://www.geeksforgeeks.org/insertion-sort/
 >
@@ -161,34 +161,30 @@ We start by presenting the INSERTION-SORT procedure with the time “cost” of 
 
 Implementation of Insertion Sort Algorithm
 
-```python
-def insertionSort(A):									# cost		times
-    for j in range(1, len(A)):				# c1			n
-        key = A[j]										# c2			n - 1
-
-        # Insert A[i] into the 
-        # sorted sequence A[0..j-1]		# 0				n - 1
-        i = j - 1											# c4			n - 1
-        while i >= 0 and A[i] > key:	# c5			\sum_{j=2}^{n} t_j
-            A[i + 1] = A[i]						# c6			\sum_{j=2}^{n} t_j - 1
-            i -= 1										# c7 			\sum_{j=2}^{n} t_j - 1
-        A[i + 1] = key								# c8			n -1
-
-
-arr = [12, 11, 13, 5, 6]
-insertionSort(arr)
-print(' '.join(map(str, arr)))
-
-# Output: 5 6 11 12 13
-# Time Complexity: O(N^2) 
-# Auxiliary Space: O(1)
-```
-
 “\sum_{j=2}^{n} t_j”  是     			
 
 $\sum_{j=2}^{n} t_j$ 的LaTex表示，
 
 “\sum_{j=2}^{n} t_{j}-1\” 是 $\sum_{j=2}^{n} t_{j}-1$​ 的LaTex表示。
+
+```python
+def insertion_sort(arr):														# cost	times
+    for i in range(1, len(arr)):										# c1		n
+        j = i																				# c2 		n - 1
+        
+        # Insert arr[j] into the
+        # sorted sequence arry[0..j-1]							#	0			n - 1
+        while arr[j - 1] > arr[j] and j > 0:				# c4		\sum_{j=2}^{n} t_j
+            arr[j - 1], arr[j] = arr[j], arr[j - 1] # c5		\sum_{j=2}^{n} t_j - 1
+            j -= 1																	# c6		\sum_{j=2}^{n} t_j - 1
+
+
+arr = [2, 6, 5, 1, 3, 4]
+insertion_sort(arr)
+print(arr)
+
+# [1, 2, 3, 4, 5, 6]
+```
 
 
 
@@ -205,17 +201,17 @@ The running time of the algorithm is the sum of running times for each statement
 
 
 
-$T(n) = c_1n + c_2n(n-1) + c_4(n-1) + c_5\sum_{j=2}^{n} t_j + c_6\sum_{j=2}^{n} t_j-1 + c_7\sum_{j=2}^{n} t_j-1 + c_8(n-1)$
+$T(n) = c_1n + c_2n(n-1) + c_4\sum_{j=2}^{n} t_j + c_5\sum_{j=2}^{n} t_j-1 + c_6\sum_{j=2}^{n} t_j-1$
 
 
 
-Even for inputs of a given size, an algorithm’s running time may depend on which input of that size is given. For example, in INSERTION-SORT, the best case occurs if the array is already sorted. For each j = 1, 3, ... , n-1, we then find that $A[i] \le key$ in line 8 when $i$ has its initial value of $j - 1$. Thus $t_j = 1$ for j = 1, 3, ... , n-1, and the best-case running time is
+Even for inputs of a given size, an algorithm’s running time may depend on which input of that size is given. For example, in INSERTION-SORT, the best case occurs if the array is already sorted. For each i = 1, 2, 3, ... , n-1, we then find that $arr[j-1] \le arr[j]$ in line 7 when $j$ has its initial value of $i$. Thus $t_j = 1$ for i = 1, 2, 3, ... , n-1, and the best-case running time is
 
 
 
-$T(n) = c_1n + c_2n(n-1) + c_4(n-1) + c_5(n-1) + c_8(n-1)$​
+$T(n) = c_1n + c_2n(n-1) + c_4(n-1)$​
 
-$\quad = (c_1 + c_2 + c_4 + c_5 + c_8)n - (c_2 + c_4 + c_5 + c_8)$
+$\quad = (c_1 + c_2 + c_4)n - (c_2 + c_4)$
 
 
 
@@ -232,9 +228,9 @@ we find that in the worst case, the running time of INSERTION-SORT is
 
 
 
-$T(n) = c_1n + c_2n(n-1) + c_4(n-1) + c_5(\frac{n(n+1)}{2} -1) + c_6(\frac{n(n-1)}{2}) + + c_7(\frac{n(n-1)}{2}) + c_8(n-1)$
+$T(n) = c_1n + c_2n(n-1) + c_4(\frac{n(n+1)}{2} -1) + c_5(\frac{n(n-1)}{2}) + + c_6(\frac{n(n-1)}{2})$
 
-$\quad = (\frac{c_5}2 + \frac{c_6}2 + \frac{c_7}2)n^2 + (c_1 + c_2 + c_4 + \frac{c_5}2 - \frac{c_6}2 - \frac{c_7}2 + c_8)n - (c_2 + c_4 + c_5 + c_8)$
+$\quad = (\frac{c_4}2 + \frac{c_5}2 + \frac{c_6}2)n^2 + (c_1 + c_2 + \frac{c_4}2 - \frac{c_5}2 - \frac{c_6}2)n - (c_2 + c_4)$
 
 
 
@@ -924,35 +920,69 @@ Highly tuned implementations use more sophisticated variants, such as [Timsort](
 
 # 二、编程题目
 
-## 02810: 完美立方
+02810: 完美立方
 
 bruteforce, http://cs101.openjudge.cn/practice/02810
 
-## 02808: 校门外的树
+可以用字典或者桶优化
+
+
+
+02808: 校门外的树
 
 implementation, http://cs101.openjudge.cn/practice/02808
 
-## 04146: 数字方格
+
+
+04146: 数字方格
 
 math, http://cs101.openjudge.cn/practice/04146
 
-## 230B. T-primes
+
+
+230B. T-primes
 
 binary search/implementation/math/number theory, 1300
 
 http://codeforces.com/problemset/problem/230/B
 
-## 18176: 2050年成绩计算
+提示：筛法
+
+
+
+18176: 2050年成绩计算
 
 http://cs101.openjudge.cn/2024sp_routine/18176/
 
-## 12559: 最大最小整数
+提示：筛法
+
+
+
+12559: 最大最小整数
 
 greedy/strings/sortings, http://cs101.openjudge.cn/practice/12559
 
-## 27373: 最大整数
+提示：可以考虑冒泡排序
+
+
+
+27373: 最大整数
 
 http://cs101.openjudge.cn/practice/27373
+
+
+
+27301:给植物浇水
+
+tow pointers, http://cs101.openjudge.cn/practice/27301
+
+
+
+
+
+27274:字符串提炼
+
+tow pointers, http://cs101.openjudge.cn/practice/27274
 
 
 
