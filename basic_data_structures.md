@@ -2,7 +2,7 @@
 
 
 
-Updated 1504 GMT+8 Feb 27, 2024
+Updated 2238 GMT+8 Feb 27, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -98,7 +98,7 @@ Table 1: Sample Stack Operations
 
 
 
-### 1.1 Implementing a Stack in Python
+## 1.1 Implementing a Stack in Python
 
 Now that we have clearly defined the stack as an abstract data type we will turn our attention to using Python to implement the stack. Recall that when we give an abstract data type a physical implementation we refer to the implementation as a data structure.
 
@@ -191,7 +191,7 @@ print(rev_string(test_string))
 
 
 
-### 1.2 匹配括号
+## 1.2 匹配括号
 
 We now turn our attention to using stacks to solve real computer science problems. You have no doubt written arithmetic expressions such as
 
@@ -269,7 +269,7 @@ print(par_checker('(()'))
 
 
 
-#### 1.2.1 Balanced Symbols (A General Case)
+### 1.2.1 Balanced Symbols (A General Case)
 
 The balanced parentheses problem shown above is a specific case of a more general situation that arises in many programming languages. The general problem of balancing and nesting different kinds of opening and closing symbols occurs frequently. For example, in Python square brackets, `[` and `]`, are used for lists; curly braces, `{` and `}`, are used for dictionaries; and parentheses, `(` and `)`, are used for tuples and arithmetic expressions. It is possible to mix symbols as long as each maintains its own open and close relationship. Strings of symbols such as
 
@@ -329,7 +329,7 @@ print(par_checker('{{}}[]]'))
 
 
 
-### 1.3 将十进制数转换成二进制数
+## 1.3 将十进制数转换成二进制数
 
 In your study of computer science, you have probably been exposed in one way or another to the idea of a binary number. Binary representation is important in computer science since all values stored within a computer exist as a string of binary digits, a string of 0s and 1s. Without the ability to convert back and forth between common representations and binary numbers, we would need to interact with computers in very awkward ways.
 
@@ -402,7 +402,7 @@ print(base_converter(2555, 16))
 
 
 
-### 1.4 中序、前序和后序表达式
+## 1.4 中序、前序和后序表达式
 
 When you write an arithmetic expression such as B * C, the form of the expression provides you with information so that you can interpret it correctly. In this case we know that the variable B is being multiplied by the variable C since the multiplication operator * appears between them in the expression. This type of notation is referred to as **infix** since the operator is *in between* the two operands that it is working on.
 
@@ -631,7 +631,7 @@ As an example, if we assume that `q` is a queue that has been created and is cur
 
 It is again appropriate to create a new class for the implementation of the abstract data type queue. As before, we will use the power and simplicity of the list collection to build the internal representation of the queue.
 
-We need to decide which end of the list to use as the rear and which to use as the front. The implementation shown in [Listing 1](https://runestone.academy/ns/books/published/pythonds/BasicDS/ImplementingaQueueinPython.html#lst-queuecode) assumes that the rear is at position 0 in the list. This allows us to use the `insert` function on lists to add new elements to the rear of the queue. The `pop` operation can be used to remove the front element (the last element of the list). Recall that this also means that enqueue will be O(n) and dequeue will be O(1).
+We need to decide which end of the list to use as the rear and which to use as the front. The implementation shown in Listing 1 assumes that the rear is at position 0 in the list. This allows us to use the `insert` function on lists to add new elements to the rear of the queue. The `pop` operation can be used to remove the front element (the last element of the list). Recall that this also means that enqueue will be O(n) and dequeue will be O(1).
 
 ```mermaid
 classDiagram
@@ -645,6 +645,8 @@ classDiagram
 ```
 
 
+
+Listing 1
 
 ```python
 class Queue:
@@ -677,6 +679,10 @@ print(q.items)
 # [3, 'dog', 'hello']
 # [3, 'dog']
 ```
+
+
+
+![image-20240227223254341](https://raw.githubusercontent.com/GMyhf/img/main/img/202402272233609.png)
 
 
 
