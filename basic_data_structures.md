@@ -2,7 +2,7 @@
 
 
 
-Updated 2247 GMT+8 Feb 25, 2024
+Updated 1504 GMT+8 Feb 27, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -627,15 +627,75 @@ As an example, if we assume that `q` is a queue that has been created and is cur
 
 
 
+## 2.1 Implementing a Queue in Python
 
+It is again appropriate to create a new class for the implementation of the abstract data type queue. As before, we will use the power and simplicity of the list collection to build the internal representation of the queue.
+
+We need to decide which end of the list to use as the rear and which to use as the front. The implementation shown in [Listing 1](https://runestone.academy/ns/books/published/pythonds/BasicDS/ImplementingaQueueinPython.html#lst-queuecode) assumes that the rear is at position 0 in the list. This allows us to use the `insert` function on lists to add new elements to the rear of the queue. The `pop` operation can be used to remove the front element (the last element of the list). Recall that this also means that enqueue will be O(n) and dequeue will be O(1).
+
+```mermaid
+classDiagram
+    class Queue {
+        -items: list
+        +is_empty(): boolean
+        +enqueue(item: T): void
+        +dequeue(): T
+        +size(): number
+    }
+```
 
 
 
 ```python
+class Queue:
+    def __init__(self):
+        self.items = []
 
+    def is_empty(self):
+        return self.items == []
+
+    def enqueue(self, item):
+        self.items.insert(0, item)
+
+    def dequeue(self):
+        return self.items.pop()
+
+    def size(self):
+        return len(self.items)
+
+
+q = Queue()
+
+q.enqueue('hello')
+q.enqueue('dog')
+q.enqueue(3)
+print(q.items)
+
+q.dequeue()
+print(q.items)
+# output:
+# [3, 'dog', 'hello']
+# [3, 'dog']
 ```
 
 
+
+**Q:** Suppose you have the following series of queue operations.
+
+```
+q = Queue()
+q.enqueue('hello')
+q.enqueue('dog')
+q.enqueue(3)
+q.dequeue()
+```
+
+What items are left on the queue? (B)
+
+A. 'hello', 'dog'
+**B. 'dog', 3**
+C. 'hello', 3
+D. 'hello', 'dog', 3
 
 
 
