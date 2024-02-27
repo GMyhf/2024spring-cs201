@@ -2,7 +2,7 @@
 
 
 
-Updated 2238 GMT+8 Feb 27, 2024
+Updated 2338 GMT+8 Feb 27, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -705,6 +705,88 @@ D. 'hello', 'dog', 3
 
 
 
+## 02746: 约瑟夫问题
+
+implementation, http://cs101.openjudge.cn/practice/02746
+
+约瑟夫问题：有ｎ只猴子，按顺时针方向围成一圈选大王（编号从１到ｎ），从第１号开始报数，一直数到ｍ，数到ｍ的猴子退出圈外，剩下的猴子再接着从1开始报数。就这样，直到圈内只剩下一只猴子时，这个猴子就是猴王，编程求输入ｎ，ｍ后，输出最后猴王的编号。
+
+**输入**
+
+每行是用空格分开的两个整数，第一个是 n, 第二个是 m ( 0 < m,n <=300)。最后一行是：
+
+0 0
+
+**输出**
+
+对于每行输入数据（最后一行除外)，输出数据也是一行，即最后猴王的编号
+
+样例输入
+
+```
+6 2
+12 4
+8 3
+0 0
+```
+
+样例输出
+
+```
+5
+1
+7
+```
+
+
+
+说明：使用 队列queue 这种数据结构会方便。它有三种实现方式，我们最常用的 list 就支持，说明，https://www.geeksforgeeks.org/queue-in-python/
+
+```python
+def hot_potato(name_list, num):
+    queue = []
+    for name in name_list:
+        queue.append(name)
+
+    while len(queue) > 1:
+        for i in range(num):
+            queue.append(queue.pop(0))
+        queue.pop(0)
+    return queue.pop(0)
+
+# 先使用pop从列表中取出，如果不符合要求再append回列表，相当于构成了一个圈
+while True:
+    n, m = map(int, input().split())
+    if {n,m} == {0}:
+        break
+    monkey = [i for i in range(1, n+1)]
+    print(hot_potato(monkey, m-1))
+
+```
+
+
+
+```python
+# 2021cs101, 留美琪，1800090104
+# 先使用pop从列表中取出，如果不符合要求再append回列表，相当于构成了一个圈
+while True:
+    n, m = map(int, input().split())
+    if {n,m} == {0}:
+        break
+    monkey = [i for i in range(1, n+1)]
+    index = 0
+    while len(monkey) != 1:
+        temp = monkey.pop(0)
+        index += 1
+        if index == m:
+            index = 0
+            continue
+        monkey.append(temp)
+    print(monkey[0])
+```
+
+
+
 
 
 
@@ -910,23 +992,31 @@ You have attempted 1 of 1 activities on this page
 
 # 二、编程题目
 
-## 02694:波兰表达式
+02694:波兰表达式
 
 http://cs101.openjudge.cn/practice/02694/
 
-## 24588:后序表达式求值
+24588:后序表达式求值
 
 http://cs101.openjudge.cn/practice/24588/
 
-## 02734:十进制到八进制
+02734:十进制到八进制
 
 http://cs101.openjudge.cn/practice/02734/
 
-## 24591:中序表达式转后序表达式
+04099:队列和栈
+
+http://cs101.openjudge.cn/practice/04099/
+
+02746:约瑟夫问题
+
+http://cs101.openjudge.cn/practice/02746
+
+24591:中序表达式转后序表达式
 
 http://cs101.openjudge.cn/practice/24591/
 
-## 22068:合法出栈序列
+22068:合法出栈序列
 
 http://cs101.openjudge.cn/practice/22068/
 
