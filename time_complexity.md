@@ -1,6 +1,6 @@
 # 20240227-Week2-时间复杂度
 
-Updated 1611 GMT+8 Feb 26, 2024
+Updated 1613 GMT+8 Feb 26, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -200,7 +200,7 @@ The running time of the algorithm is the sum of running times for each statement
 
 
 
-$T(n) = c_1n + c_2n(n-1) + c_4\sum_{j=2}^{n} t_j + c_5\sum_{j=2}^{n} t_j-1 + c_6\sum_{j=2}^{n} t_j-1$
+$T(n) = c_1n + c_2(n-1) + c_4\sum_{j=2}^{n} t_j + c_5\sum_{j=2}^{n} t_j-1 + c_6\sum_{j=2}^{n} t_j-1$
 
 
 
@@ -208,7 +208,7 @@ Even for inputs of a given size, an algorithm’s running time may depend on whi
 
 
 
-$T(n) = c_1n + c_2n(n-1) + c_4(n-1)$​
+$T(n) = c_1n + c_2(n-1) + c_4(n-1)$​
 
 $\quad = (c_1 + c_2 + c_4)n - (c_2 + c_4)$
 
@@ -227,7 +227,7 @@ we find that in the worst case, the running time of INSERTION-SORT is
 
 
 
-$T(n) = c_1n + c_2n(n-1) + c_4(\frac{n(n+1)}{2} -1) + c_5(\frac{n(n-1)}{2}) + + c_6(\frac{n(n-1)}{2})$
+$T(n) = c_1n + c_2(n-1) + c_4(\frac{n(n+1)}{2} -1) + c_5(\frac{n(n-1)}{2}) + + c_6(\frac{n(n-1)}{2})$
 
 $\quad = (\frac{c_4}2 + \frac{c_5}2 + \frac{c_6}2)n^2 + (c_1 + c_2 + \frac{c_4}2 - \frac{c_5}2 - \frac{c_6}2)n - (c_2 + c_4)$
 
