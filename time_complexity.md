@@ -1,6 +1,6 @@
 # 20240227-Week2-时间复杂度
 
-Updated 1613 GMT+8 Feb 26, 2024
+Updated 2120 GMT+8 Feb 28, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1589,7 +1589,7 @@ def searchMaze(path, vcurrent, mGraph): # 从 vcurrent 节点开始 DFS 搜索�
                     break
         if not done:
             path.pop() # 这条语句空着，填空（2分）
-            vcurrent.setColor("black")
+            vcurrent.setColor("white")
     else:
         done = True
     return done # 返回是否成功找到通路
@@ -1601,6 +1601,7 @@ searchMaze(path, vstart, g)
 print(path)
 
 # [(8, 14), (7, 14), (6, 14), (5, 14), (4, 14), (4, 13), (5, 13), (6, 13), (6, 12), (6, 11), (6, 10), (5, 10), (5, 9), (4, 9), (3, 9), (2, 9), (2, 8), (2, 7), (1, 7), (1, 6), (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (5, 4), (4, 4), (3, 4), (2, 4), (2, 3), (1, 3), (1, 2), (2, 2), (2, 1), (2, 0)]
+
 ```
 
 
