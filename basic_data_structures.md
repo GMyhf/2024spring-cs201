@@ -17,14 +17,14 @@ todo: assignment3, https://github.com/GMyhf/2024spring-cs201
 目标：
 
 - To understand the abstract data types stack, queue, deque, and list.
-- To be able to implement the ADTs stack, queue, and deque using Python lists.
+- To be able to implement the ADTs **stack**, **queue**, and **deque** using Python lists.
 - To understand the performance of the implementations of basic linear data structures.
 - To understand prefix, infix, and postfix expression formats.
 - To use stacks to evaluate postfix expressions.
 - To use stacks to convert expressions from infix to postfix.
 - To use queues for basic timing simulations.
 - To be able to recognize problem properties where stacks, queues, and deques are appropriate data structures.
-- To be able to implement the abstract data type list as a linked list using the node and reference pattern.
+- To be able to implement the abstract data type **LinkedList** using the node and reference pattern.
 - To be able to compare the performance of our linked list implementation with Python’s list implementation.
 
 # 一、基本数据结构
@@ -1319,7 +1319,7 @@ As an example, if we assume that `d` is a deque that has been created and is cur
 
 
 
-# 4. Lists
+# 4. LinkedList 链表
 
 Throughout the discussion of basic data structures, we have used Python lists to implement the abstract data types presented. The list is a powerful, yet simple, collection mechanism that provides the programmer with a wide variety of operations. However, not all programming languages include a list collection. In these cases, the notion of a list must be implemented by the programmer.
 
