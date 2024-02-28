@@ -1621,8 +1621,7 @@ Complexity of Python Operations 数据类型操作时间复杂度
 
 https://www.ics.uci.edu/~pattis/ICS-33/lectures/complexitypython.txt
 
-This is called "static" analysis, because we do not need to run any code to perform it (contrasted with Dynamic or Empirical
-Analysis, when we do run code and take measurements of its execution).
+This is called "static" analysis, because we do not need to run any code to perform it (contrasted with Dynamic or Empirical Analysis, when we do run code and take measurements of its execution).
 
 
 
