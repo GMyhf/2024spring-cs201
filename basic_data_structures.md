@@ -2,7 +2,7 @@
 
 
 
-Updated 2338 GMT+8 Feb 27, 2024
+Updated 2232 GMT+8 Feb 28, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -107,12 +107,13 @@ As we described in Chapter 1, in Python, as in any object-oriented programming l
 ```mermaid
 classDiagram
     class Stack {
-        -items: list
-        +isEmpty(): boolean
-        +push(item: T): void
-        +pop(): T
-        +peek(): T 
-        +size(): number
+        - items: list
+        
+        + isEmpty(): boolean
+        + push(item: T): void
+        + pop(): T
+        + peek(): T 
+        + size(): number
     }
 ```
 
@@ -598,7 +599,251 @@ print(postfixEval('7 8 + 3 2 + /'))
 
 
 
+## 1.5 OJ02754: 八皇后
+
+dfs and similar, http://cs101.openjudge.cn/practice/02754
+
+描述：会下国际象棋的人都很清楚：皇后可以在横、竖、斜线上不限步数地吃掉其他棋子。如何将8个皇后放在棋盘上（有8 * 8个方格），使它们谁也不能被吃掉！这就是著名的八皇后问题。
+		对于某个满足要求的8皇后的摆放方法，定义一个皇后串a与之对应，即$a=b_1b_2...b_8~$,其中$b_i$为相应摆法中第i行皇后所处的列数。已经知道8皇后问题一共有92组解（即92个不同的皇后串）。
+		给出一个数b，要求输出第b个串。串的比较是这样的：皇后串x置于皇后串y之前，当且仅当将x视为整数时比y小。
+
+​	八皇后是一个古老的经典问题：**如何在一张国际象棋的棋盘上，摆放8个皇后，使其任意两个皇后互相不受攻击。**该问题由一位德国**国际象棋排局家** **Max Bezzel** 于 1848年提出。严格来说，那个年代，还没有“德国”这个国家，彼时称作“普鲁士”。1850年，**Franz Nauck** 给出了第一个解，并将其扩展成了“ **n皇后** ”问题，即**在一张 n** x **n 的棋盘上，如何摆放 n 个皇后，使其两两互不攻击**。历史上，八皇后问题曾惊动过“数学王子”高斯(Gauss)，而且正是 Franz Nauck 写信找高斯请教的。
+
+**输入**
+
+第1行是测试数据的组数n，后面跟着n行输入。每组测试数据占1行，包括一个正整数b(1 ≤  b ≤  92)
+
+**输出**
+
+输出有n行，每行输出对应一个输入。输出应是一个正整数，是对应于b的皇后串。
+
+样例输入
+
+```
+2
+1
+92
+```
+
+样例输出
+
+```
+15863724
+84136275
+```
+
+
+
+先给出两个dfs回溯实现的八皇后，接着给出两个stack迭代实现的八皇后。
+
+八皇后思路：回溯算法通过尝试不同的选择，逐步构建解决方案，并在达到某个条件时进行回溯，以找到所有的解决方案。从第一行第一列开始放置皇后，然后在每一行的不同列都放置，如果与前面不冲突就继续，有冲突则回到上一行继续下一个可能性。
+
+```python
+def solve_n_queens(n):
+    solutions = []  # 存储所有解决方案的列表
+    queens = [-1] * n  # 存储每一行皇后所在的列数
+    
+    def backtrack(row):
+        if row == n:  # 找到一个合法解决方案
+            solutions.append(queens.copy())
+        else:
+            for col in range(n):
+                if is_valid(row, col):  # 检查当前位置是否合法
+                    queens[row] = col  # 在当前行放置皇后
+                    backtrack(row + 1)  # 递归处理下一行
+                    queens[row] = -1  # 回溯，撤销当前行的选择
+    
+    def is_valid(row, col):
+        for r in range(row):
+            if queens[r] == col or abs(row - r) == abs(col - queens[r]):
+                return False
+        return True
+    
+    backtrack(0)  # 从第一行开始回溯
+    
+    return solutions
+
+
+# 获取第 b 个皇后串
+def get_queen_string(b):
+    solutions = solve_n_queens(8)
+    if b > len(solutions):
+        return None
+    queen_string = ''.join(str(col + 1) for col in solutions[b - 1])
+    return queen_string
+
+
+test_cases = int(input())  # 输入的测试数据组数
+for _ in range(test_cases):
+    b = int(input())  # 输入的 b 值
+    queen_string = get_queen_string(b)
+    print(queen_string)
+```
+
+
+
+```python
+def is_safe(board, row, col):
+    # 检查当前位置是否安全
+    # 检查同一列是否有皇后
+    for i in range(row):
+        if board[i] == col:
+            return False
+    # 检查左上方是否有皇后
+    i = row - 1
+    j = col - 1
+    while i >= 0 and j >= 0:
+        if board[i] == j:
+            return False
+        i -= 1
+        j -= 1
+    # 检查右上方是否有皇后
+    i = row - 1
+    j = col + 1
+    while i >= 0 and j < 8:
+        if board[i] == j:
+            return False
+        i -= 1
+        j += 1
+    return True
+
+def queen_dfs(board, row):
+    if row == 8:
+        # 找到第b个解，将解存储到result列表中
+        ans.append(''.join([str(x+1) for x in board]))
+        return
+    for col in range(8):
+        if is_safe(board, row, col):
+            # 当前位置安全，放置皇后
+            board[row] = col
+            # 继续递归放置下一行的皇后
+            queen_dfs(board, row + 1)
+            # 回溯，撤销当前位置的皇后
+            board[row] = 0
+
+ans = []
+queen_dfs([None]*8, 0)
+#print(ans)
+for _ in range(int(input())):
+    print(ans[int(input()) - 1])
+```
+
+
+
+如果要使用栈来实现八皇后问题，可以采用迭代的方式，模拟递归的过程。在每一步迭代中，使用栈来保存状态，并根据规则进行推进和回溯。
+
+```python
+def queen_stack(n):
+    stack = []  # 用于保存状态的栈
+    solutions = [] # 存储所有解决方案的列表
+
+    stack.append((0, []))  # 初始状态为第一行，所有列都未放置皇后,栈中的元素是 (row, queens) 的元组
+
+    while stack:
+        row, cols = stack.pop() # 从栈中取出当前处理的行数和已放置的皇后位置
+        if row == n:    # 找到一个合法解决方案
+            solutions.append(cols)
+        else:
+            for col in range(n):
+                if is_valid(row, col, cols): # 检查当前位置是否合法
+                    stack.append((row + 1, cols + [col]))
+
+    return solutions
+
+def is_valid(row, col, queens):
+    for r in range(row):
+        if queens[r] == col or abs(row - r) == abs(col - queens[r]):
+            return False
+    return True
+
+
+# 获取第 b 个皇后串
+def get_queen_string(b):
+    solutions = queen_stack(8)
+    if b > len(solutions):
+        return None
+    b = len(solutions) + 1 - b
+
+    queen_string = ''.join(str(col + 1) for col in solutions[b - 1])
+    return queen_string
+
+test_cases = int(input())  # 输入的测试数据组数
+for _ in range(test_cases):
+    b = int(input())  # 输入的 b 值
+    queen_string = get_queen_string(b)
+    print(queen_string)
+```
+
+
+
+```python
+def solve_n_queens(n):
+    stack = []  # 用于保存状态的栈
+    solutions = []  # 存储所有解决方案的列表
+
+    stack.append((0, [-1] * n))  # 初始状态为第一行，所有列都未放置皇后
+
+    while stack:
+        row, queens = stack.pop()
+
+        if row == n:  # 找到一个合法解决方案
+            solutions.append(queens.copy())
+        else:
+            for col in range(n):
+                if is_valid(row, col, queens):  # 检查当前位置是否合法
+                    new_queens = queens.copy()
+                    new_queens[row] = col  # 在当前行放置皇后
+                    stack.append((row + 1, new_queens))  # 推进到下一行
+
+    return solutions
+
+
+def is_valid(row, col, queens):
+    for r in range(row):
+        if queens[r] == col or abs(row - r) == abs(col - queens[r]):
+            return False
+    return True
+
+
+# 获取第 b 个皇后串
+def get_queen_string(b):
+    solutions = solve_n_queens(8)
+    if b > len(solutions):
+        return None
+    b = len(solutions) + 1 - b
+
+    queen_string = ''.join(str(col + 1) for col in solutions[b - 1])
+    return queen_string
+
+
+test_cases = int(input())  # 输入的测试数据组数
+for _ in range(test_cases):
+    b = int(input())  # 输入的 b 值
+    queen_string = get_queen_string(b)
+    print(queen_string)
+
+```
+
+
+
+
+
 # 2. The Queue Abstract Data Type
+
+Like a stack, the queue is a linear data structure that stores items in a First In First Out (FIFO) manner. With a queue, the least recently added item is removed first. A good example of a queue is any queue of consumers for a resource where the consumer that came first is served first.
+
+
+![Queue in Python](https://raw.githubusercontent.com/GMyhf/img/main/img/Queue.png)
+
+
+Operations associated with queue are: 
+
+- Enqueue: Adds an item to the queue. If the queue is full, then it is said to be an Overflow condition – Time Complexity : O(1)
+- Dequeue: Removes an item from the queue. The items are popped in the same order in which they are pushed. If the queue is empty, then it is said to be an Underflow condition – Time Complexity : O(1)
+- Front: Get the front item from queue – Time Complexity : O(1)
+- Rear: Get the last item from queue – Time Complexity : O(1)
+
+
 
 The queue abstract data type is defined by the following structure and operations. A queue is structured, as described above, as an ordered collection of items which are added at one end, called the “rear,” and removed from the other end, called the “front.” Queues maintain a FIFO ordering property. The queue operations are given below.
 
@@ -636,11 +881,12 @@ We need to decide which end of the list to use as the rear and which to use as t
 ```mermaid
 classDiagram
     class Queue {
-        -items: list
-        +is_empty(): boolean
-        +enqueue(item: T): void
-        +dequeue(): T
-        +size(): number
+        - items: list
+        
+        + is_empty(self): boolean
+        + enqueue(self, item: T): void
+        + dequeue(self): T
+        + size(self): int
     }
 ```
 
@@ -705,7 +951,7 @@ D. 'hello', 'dog', 3
 
 
 
-## 02746: 约瑟夫问题
+## 2.2 OJ02746: 约瑟夫问题
 
 implementation, http://cs101.openjudge.cn/practice/02746
 
@@ -742,7 +988,12 @@ implementation, http://cs101.openjudge.cn/practice/02746
 
 说明：使用 队列queue 这种数据结构会方便。它有三种实现方式，我们最常用的 list 就支持，说明，https://www.geeksforgeeks.org/queue-in-python/
 
+
+
+用list实现队列，O(n)
+
 ```python
+# 先使用pop从列表中取出，如果不符合要求再append回列表，相当于构成了一个圈
 def hot_potato(name_list, num):
     queue = []
     for name in name_list:
@@ -750,11 +1001,11 @@ def hot_potato(name_list, num):
 
     while len(queue) > 1:
         for i in range(num):
-            queue.append(queue.pop(0))
-        queue.pop(0)
-    return queue.pop(0)
+            queue.append(queue.pop(0))	# O(N)
+        queue.pop(0)										# O(N)
+    return queue.pop(0)									# O(N)
 
-# 先使用pop从列表中取出，如果不符合要求再append回列表，相当于构成了一个圈
+
 while True:
     n, m = map(int, input().split())
     if {n,m} == {0}:
@@ -766,118 +1017,248 @@ while True:
 
 
 
+用内置deque，O(1)
+
 ```python
-# 2021cs101, 留美琪，1800090104
+from collections import deque
+
 # 先使用pop从列表中取出，如果不符合要求再append回列表，相当于构成了一个圈
+def hot_potato(name_list, num):
+    queue = deque()
+    for name in name_list:
+        queue.append(name)
+
+    while len(queue) > 1:
+        for i in range(num):
+            queue.append(queue.popleft()) # O(1)
+        queue.popleft()
+    return queue.popleft()
+
+
 while True:
     n, m = map(int, input().split())
     if {n,m} == {0}:
         break
     monkey = [i for i in range(1, n+1)]
-    index = 0
-    while len(monkey) != 1:
-        temp = monkey.pop(0)
-        index += 1
-        if index == m:
-            index = 0
-            continue
-        monkey.append(temp)
-    print(monkey[0])
+    print(hot_potato(monkey, m-1))
 ```
 
 
 
+## 2.3 模拟器打印机
+
+一个更有趣的例子是模拟打印任务队列。学生向共享打印机发送打印请求，这些打印任务被存在一个队列中，并且按照先到先得的顺序执行。这样的设定可能导致很多问题。其中最重要的是，打印机能否处理一定量的工作。如果不能，学生可能会由于等待过长时间而错过
+要上的课。
+考虑计算机科学实验室里的这样一个场景：在任何给定的一小时内，实验室里都有约 10 个学生。他们在这一小时内最多打印 2 次，并且打印的页数从 1 到 20 不等。实验室的打印机比较老旧，每分钟只能以低质量打印 10 页。可以将打印质量调高，但是这样做会导致打印机每分钟只能打印 5 页。降低打印速度可能导致学生等待过长时间。那么，应该如何设置打印速度呢？
+可以通过构建一个实验室模型来解决该问题。我们需要为学生、打印任务和打印机构建对象，如图 3-15 所示。当学生提交打印任务时，我们需要将它们加入等待列表中，该列表是打印机上的打印任务队列。当打印机执行完一个任务后，它会检查该队列，看看其中是否还有需要处理的任务。我们感兴趣的是学生平均需要等待多久才能拿到打印好的文章。这个时间等于打印任务在队列中的平均等待时间。
+
+![../_images/simulationsetup.png](https://raw.githubusercontent.com/GMyhf/img/main/img/simulationsetup.png)
+
+Figure 4: Computer Science Laboratory Printing Queue
+
+在模拟时，需要应用一些概率学知识。举例来说，学生打印的文章可能有 1~20 页。如果各页数出现的概率相等，那么打印任务的实际时长可以通过 1~20 的一个随机数来模拟。
+如果实验室里有 10 个学生，并且在一小时内每个人都打印两次，那么每小时平均就有 20 个打印任务。在任意一秒，创建一个打印任务的概率是多少？回答这个问题需要考虑任务与时间的比值。每小时 20 个任务相当于每 180 秒 1 个任务。
+
+
+
+$\frac {20\ tasks}{1\ hour} \times \frac {1\ hour}  {60\ minutes} \times \frac {1\ minute} {60\ seconds}=\frac {1\ task} {180\ seconds}$
+
+
+
+1．主要模拟步骤
+下面是主要的模拟步骤。
+(1) 创建一个打印任务队列。每一个任务到来时都会有一个时间戳。一开始，队列是空的。
+
+(2) 针对每一秒（currentSecond），执行以下操作。
+❏ 是否有新创建的打印任务？如果是，以currentSecond作为其时间戳并将该任务加入到队列中。
+❏ 如果打印机空闲，并且有正在等待执行的任务，执行以下操作：
+■ 从队列中取出第一个任务并提交给打印机；
+■ 用currentSecond减去该任务的时间戳，以此计算其等待时间；
+■ 将该任务的等待时间存入一个列表，以备后用；
+■ 根据该任务的页数，计算执行时间。
+❏ 打印机进行一秒的打印，同时从该任务的执行时间中减去一秒。
+❏ 如果打印任务执行完毕，或者说任务需要的时间减为0，则说明打印机回到空闲状态。
+
+(3) 当模拟完成之后，根据等待时间列表中的值计算平均等待时间。
+
+2. Python实现
+    我们创建3个类：Printer、Task和PrintQueue。它们分别模拟打印机、打印任务和队列。
+
+Printer类需要检查当前是否有待完成的任务。如果有，那么打印机就处于工作状态（busy方法），并且其工作所需的时间可以通过要打印的页数来计算。其构造方法会初始化打印速度，即每分钟打印多少页。tick方法会减量计时，并且在执行完任务之后将打印机设置成空闲状态None。
+
+Task类代表单个打印任务。当任务被创建时，随机数生成器会随机提供页数，取值范围是1～20。我们使用random模块中的randrange函数来生成随机数。
 
 
 
 
+```mermaid
+classDiagram
+		class Queue {
+        - items: list
+        
+        + is_empty(self)
+        + enqueue(self, item)
+        + dequeue(self)
+        + size(self): int
+    }
 
+    class Printer {
+        - pagerate: int
+        - currentTask: Task
+        - timeRemaining: int
+        
+        + tick(self)
+        + busy(self)
+        + startNext(self, newtask)
+    }
+
+    class Task {
+        - timestamp: int
+        - pages: int
+        
+        + getStamp(self)
+        + getPages(self)
+        + waitTime(self, currenttime)
+    }
+```
+
+
+
+代码清单3-11 Printer类
 
 ```python
+import random
 
+class Queue:
+    def __init__(self):
+        self.items = []
+
+    def is_empty(self):
+        return self.items == []
+
+    def enqueue(self, item):
+        self.items.insert(0, item)
+
+    def dequeue(self):
+        return self.items.pop()
+
+    def size(self):
+        return len(self.items)
+
+
+class Printer:
+    def __init__(self, ppm):
+        self.pagerate = ppm
+        self.currentTask = None
+        self.timeRemaining = 0
+
+    def tick(self):
+        if self.currentTask != None:
+            self.timeRemaining = self.timeRemaining - 1
+            if self.timeRemaining <= 0:
+                self.currentTask = None
+
+    def busy(self):
+        if self.currentTask != None:
+            return True
+        else:
+            return False
+
+    def startNext(self, newtask):
+        self.currentTask = newtask
+        self.timeRemaining = newtask.getPages() * 60 / self.pagerate
+
+
+class Task:
+    def __init__(self, time):
+        self.timestamp = time
+        self.pages = random.randrange(1, 21)
+
+    def getStamp(self):
+        return self.timestamp
+
+    def getPages(self):
+        return self.pages
+
+    def waitTime(self, currenttime):
+        return currenttime - self.timestamp
+
+
+def simulation(numSeconds, pagesPerMinute):
+    labprinter = Printer(pagesPerMinute)
+    printQueue = Queue()
+    waitingtimes = []
+
+    for currentSecond in range(numSeconds):
+
+        if newPrintTask():
+            task = Task(currentSecond)
+            printQueue.enqueue(task)
+
+        if (not labprinter.busy()) and (not printQueue.is_empty()):
+            nexttask = printQueue.dequeue()
+            waitingtimes.append(nexttask.waitTime(currentSecond))
+            labprinter.startNext(nexttask)
+
+        labprinter.tick()
+
+    averageWait = sum(waitingtimes) / len(waitingtimes)
+    print("Average Wait %6.2f secs %3d tasks remaining." % (averageWait, printQueue.size()))
+
+
+def newPrintTask():
+    num = random.randrange(1, 181)
+    if num == 180:
+        return True
+    else:
+        return False
+
+
+for i in range(10):
+    simulation(3600, 10) # 设置总时间和打印机每分钟打印多少页
+
+"""
+Average Wait  20.05 secs   0 tasks remaining.
+Average Wait  20.12 secs   0 tasks remaining.
+Average Wait  28.32 secs   0 tasks remaining.
+Average Wait   7.65 secs   0 tasks remaining.
+Average Wait  13.17 secs   1 tasks remaining.
+Average Wait  45.97 secs   0 tasks remaining.
+Average Wait  14.94 secs   0 tasks remaining.
+Average Wait   1.81 secs   0 tasks remaining.
+Average Wait   0.00 secs   0 tasks remaining.
+Average Wait   6.71 secs   0 tasks remaining.
+"""
 ```
 
 
 
+每一个任务都需要保存一个时间戳，用于计算等待时间。这个时间戳代表任务被创建并放入打印任务队列的时间。 waitTime 方法可以获得任务在队列中等待的时间。
 
+主模拟程序simulation实现了之前描述的算法。 printQueue 对象是队列抽象数据类型的实例。布尔辅助函数newPrintTask判断是否有新创建的打印任务。我们再一次使用random模块中的 randrange 函数来生成随机数，不过这一次的取值范围是 1~180。平均每 180 秒有一个打印任务。通过从随机数中选取 180，可以模拟这个随机事件。
 
+每次模拟的结果不一定相同。对此，我们不需要在意。这是由于随机数的本质导致的。我们感兴趣的是当参数改变时结果出现的趋势。
 
+首先，模拟 60 分钟（ 3600 秒）内打印速度为每分钟 5 页。并且，我们进行 10 次这样的模拟。由于模拟中使用了随机数，因此每次返回的结果都不同。
+在模拟 10 次之后，可以看到平均等待时间是 122.092 秒，并且等待时间的差异较大，从最短的 17.27 秒到最长的 376.05 秒。此外，只有 2 次在给定时间内完成了所有任务。
+现在把打印速度改成每分钟 10 页，然后再模拟 10 次。由于加快了打印速度，因此我们希望一小时内能完成更多打印任务。
 
 
 
 
+3. 讨论
+在之前的内容中，我们试图解答这样一个问题：如果提高打印质量并降低打印速度，打印机能否及时完成所有任务？我们编写了一个程序来模拟随机提交的打印任务，待打印的页数也是随机的。
 
-```python
+上面的输出结果显示，按每分钟5页的打印速度，任务的等待时间在17.27秒和376.05秒之间，相差约6分钟。提高打印速度之后，等待时间在1.29秒和28.96秒之间。此外，在每分钟5页的速度下，10次模拟中有8次没有按时完成所有任务。
 
-```
+可见，降低打印速度以提高打印质量，并不是明智的做法。学生不能等待太长时间，当他们要赶去上课时尤其如此。6分钟的等待时间实在是太长了。
 
+这种模拟分析能帮助我们回答很多“如果”问题。只需改变参数，就可以模拟感兴趣的任意行为。以下是几个例子。
+  ❏ 如果实验室里的学生增加到20个，会怎么样？
+  ❏ 如果是周六，学生不需要上课，他们是否愿意等待？
+  ❏ 如果每个任务的页数变少了，会怎么样？
 
-
-
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-
-
-
-
-```python
-
-```
-
-
+这些问题都能通过修改本例中的模拟程序来解答。但是，模拟的准确度取决于它所基于的假设和参数。真实的打印任务数量和学生数目是准确构建模拟程序必不可缺的数据。
 
 
 
@@ -942,6 +1323,24 @@ As an example, if we assume that `d` is a deque that has been created and is cur
 
 Throughout the discussion of basic data structures, we have used Python lists to implement the abstract data types presented. The list is a powerful, yet simple, collection mechanism that provides the programmer with a wide variety of operations. However, not all programming languages include a list collection. In these cases, the notion of a list must be implemented by the programmer.
 
+> <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240228230417320.png" alt="image-20240228230417320" style="zoom: 33%;" />
+>
+> 在 Python 中，`list` 是使用动态数组（Dynamic Array）实现的，而不是链表。动态数组是一种连续的、固定大小的内存块，可以在需要时自动调整大小。这使得 `list` 支持快速的随机访问和高效的尾部操作，例如附加（append）和弹出（pop）。
+>
+> 与链表不同，动态数组中的元素在内存中是连续存储的。这允许通过索引在 `list` 中的任何位置进行常数时间（O(1)）的访问。此外，动态数组还具有较小的内存开销，因为它们不需要为每个元素存储额外的指针。
+>
+> 当需要在 `list` 的中间进行插入或删除操作时，动态数组需要进行元素的移动，因此这些操作的时间复杂度是线性的（O(n)）。如果频繁地插入或删除元素，而不仅仅是在尾部进行操作，那么链表可能更适合，因为链表的插入和删除操作在平均情况下具有常数时间复杂度。
+>
+> 总结起来，Python 中的 `list` 是使用动态数组实现的，具有支持快速随机访问和高效尾部操作的优点。但是，如果需要频繁进行插入和删除操作，可能需要考虑使用链表或其他数据结构。
+>
+> 
+>
+> Python 中的 list 和 C++ 中的 STL（Standard Template Library）中的 vector 具有相似的实现和用法。vector 也是使用动态数组实现的，提供了类似于 list 的功能，包括随机访问、尾部插入和删除等操作。
+>
+> 
+>
+> 链表在某种意义上可以给树打基础。
+
 A **list** is a collection of items where each item holds a relative position with respect to the others. More specifically, we will refer to this type of list as an unordered list. We can consider the list as having a first item, a second item, a third item, and so on. We can also refer to the beginning of the list (the first item) or the end of the list (the last item). For simplicity we will assume that lists cannot contain duplicate items.
 
 For example, the collection of integers 54, 26, 93, 17, 77, and 31 might represent a simple unordered list of exam scores. Note that we have written them as comma-delimited values, a common way of showing the list structure. Of course, Python would show this list as [54,26,93,17,77,31].
@@ -962,12 +1361,61 @@ The structure of an unordered list, as described above, is a collection of items
 - `pop()` removes and returns the last item in the list. It needs nothing and returns an item. Assume the list has at least one item.
 - `pop(pos)` removes and returns the item at position pos. It needs the position and returns the item. Assume the item is in the list.
 
-You have attempted 1 of 1 activities on this page
+
+
+
 
 
 
 ```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
 
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert(self, value):
+        new_node = Node(value)
+        if self.head is None:
+            self.head = new_node
+        else:
+            current = self.head
+            while current.next:
+                current = current.next
+            current.next = new_node
+
+    def delete(self, value):
+        if self.head is None:
+            return
+
+        if self.head.value == value:
+            self.head = self.head.next
+        else:
+            current = self.head
+            while current.next:
+                if current.next.value == value:
+                    current.next = current.next.next
+                    break
+                current = current.next
+
+    def display(self):
+        current = self.head
+        while current:
+            print(current.value, end=" ")
+            current = current.next
+        print()
+
+# 使用示例
+linked_list = LinkedList()
+linked_list.insert(1)
+linked_list.insert(2)
+linked_list.insert(3)
+linked_list.display()  # 输出：1 2 3
+linked_list.delete(2)
+linked_list.display()  # 输出：1 3
 ```
 
 
@@ -987,12 +1435,50 @@ You have attempted 1 of 1 activities on this page
 ```python
 
 ```
+
+
+
+
+
+
+
+# 5 小结
+
+❏ 线性数据结构以有序的方式来维护其数据。
+❏ 栈是简单的数据结构，其排序原则是LIFO，即后进先出。
+❏ 栈的基本操作有push、pop和isEmpty。
+❏ 队列是简单的数据结构，其排序原则是FIFO，即先进先出。
+❏ 队列的基本操作有enqueue、dequeue和isEmpty。
+❏ 表达式有3种写法：前序、中序和后序。
+❏ 栈在计算和转换表达式的算法中十分有用。
+❏ 栈具有反转特性。
+❏ 队列有助于构建时序模拟。
+❏ 模拟程序使用随机数生成器来模拟实际情况，并且帮助我们回答“如果”问题。
+❏ 双端队列是栈和队列的结合。
+❏ 双端队列的基本操作有addFront、addRear、removeFront、removeRear和isEmpty。
+❏ 列表是元素的集合，其中每一个元素都有一个相对于其他元素的位置。
+❏ 链表保证逻辑顺序，对实际的存储顺序没有要求。
+❏ 修改链表头部是一种特殊情况。
+
+
+
+# 6 关键术语
+
+|                           |                          |                       |
+| ------------------------- | ------------------------ | --------------------- |
+| balanced parentheses      | data field               | deque                 |
+| first-in first-out (FIFO) | fully parenthesized      | head                  |
+| infix                     | last-in first-out (LIFO) | linear data structure |
+| linked list               | linked list traversal    | list                  |
+| node                      | palindrome               | postfix               |
+| precedence                | prefix                   | queue                 |
+| simulation                | stack                    |                       |
 
 
 
 # 二、编程题目
 
-02694:波兰表达式
+02694:波兰表达式。要求用stack实现
 
 http://cs101.openjudge.cn/practice/02694/
 
@@ -1008,7 +1494,7 @@ http://cs101.openjudge.cn/practice/02734/
 
 http://cs101.openjudge.cn/practice/04099/
 
-02746:约瑟夫问题
+02746:约瑟夫问题。要求用queue实现
 
 http://cs101.openjudge.cn/practice/02746
 
@@ -1205,3 +1691,9 @@ Brad Miller and David Ranum, Problem Solving with Algorithms and Data Structures
 
 
 https://github.com/wesleyjtann/Problem-Solving-with-Algorithms-and-Data-Structures-Using-Python
+
+
+
+Complexity of Python Operations 数据类型操作时间复杂度
+
+https://www.ics.uci.edu/~pattis/ICS-33/lectures/complexitypython.txt
