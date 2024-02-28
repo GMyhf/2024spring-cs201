@@ -1488,56 +1488,56 @@ WPL = 12 + 18 + 24 + 27 + 18 = 99
 阅读下列程序，完成图的深度优先周游算法实现的迷宫探索。已知图采用邻接表表示，Graph 类和 Vertex 类基本定义如下：
 
 ```python
-import sys													#这个程序运行不起来,可能是mazelist输入问题。
+import sys
 sys.setrecursionlimit(10000000)
 
 class Graph:
     def __init__(self):
         self.vertices = {}
 
-    def addVertex(self, key, label):	# #添加节点，id 为key，附带数据 label
+    def addVertex(self, key, label): #添加节点，id 为key，附带数据 label
         self.vertices[key] = Vertex(key, label)
 
-    def getVertex(self, key):	# 返回 id 为 key 的节点
+    def getVertex(self, key): # 返回 id 为 key 的节点
         return self.vertices.get(key)
 
-    def __contains__(self, key):	# 判断 key 节点是否在图中
+    def __contains__(self, key): # 判断 key 节点是否在图中
         return key in self.vertices
 
-    def addEdge(self, f, t, cost=0):	# 添加从节点 id==f 到 id==t 的边
+    def addEdge(self, f, t, cost=0): # 添加从节点 id==f 到 id==t 的边
         if f in self.vertices and t in self.vertices:
             self.vertices[f].addNeighbor(t, cost)
 
-    def getVertices(self):	# 返回所有的节点 key
+    def getVertices(self): # 返回所有的节点 key
         return self.vertices.keys()
 
-    def __iter__(self):	# 迭代每一个节点对象
+    def __iter__(self): # 迭代每一个节点对象
         return iter(self.vertices.values())
 
 
 class Vertex:
-    def __init__(self, key, label=None):	# 缺省颜色为"white
+    def __init__(self, key, label=None): # 缺省颜色为"white“
         self.id = key
         self.label = label
         self.color = "white"
         self.connections = {}
 
-    def addNeighbor(self, nbr, weight=0):	# 添加到节点 nbr 的边
+    def addNeighbor(self, nbr, weight=0): # 添加到节点 nbr 的边
         self.connections[nbr] = weight
 
-    def setColor(self, color):	# 设置节点颜色标记
+    def setColor(self, color): # 设置节点颜色标记
         self.color = color
 
-    def getColor(self):	# 返回节点颜色标记
+    def getColor(self): # 返回节点颜色标记
         return self.color
 
-    def getConnections(self):	# 返回节点的所有邻接节点列表
+    def getConnections(self): # 返回节点的所有邻接节点列表
         return self.connections.keys()
 
-    def getId(self):	# 返回节点的 id
+    def getId(self): # 返回节点的 id
         return self.id
 
-    def getLabel(self):	# 返回节点的附带数据 label
+    def getLabel(self): # 返回节点的附带数据 label
         return self.label
 
 
@@ -1556,7 +1556,7 @@ mazelist = [
 ]
 
 
-def mazeGraph(mlist, rows, cols):	# 从 mlist 创建图，迷宫有 rows 行 cols 列
+def mazeGraph(mlist, rows, cols): # 从 mlist 创建图，迷宫有 rows 行 cols 列
     mGraph = Graph()
     vstart = None
     for row in range(rows):
@@ -1564,21 +1564,21 @@ def mazeGraph(mlist, rows, cols):	# 从 mlist 创建图，迷宫有 rows 行 col
             if mlist[row][col] != "+":
                 mGraph.addVertex((row, col), mlist[row][col])
                 if mlist[row][col] == "S":
-                    vstart = mGraph.getVertex((row, col))   # 等号右侧填空（1分）
+                    vstart = mGraph.getVertex((row, col)) # 等号右侧填空（1分）
 
     for v in mGraph:
         row, col = v.getId()
-        for i in [(-1, 0), (1, 0), (0, -1), (0, +1)]:
+        for i in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             if 0 <= row + i[0] < rows and 0 <= col + i[1] < cols:
                 if (row + i[0], col + i[1]) in mGraph:
                     mGraph.addEdge((row, col), (row + i[0], col + i[1])) #括号中两个参数填空（1分）
 
-    return mGraph, vstart	# 返回图对象，和开始节点
+    return mGraph, vstart # 返回图对象，和开始节点
 
 
-def searchMaze(path, vcurrent, mGraph):	# 从 vcurrent 节点开始 DFS 搜索迷宫
+def searchMaze(path, vcurrent, mGraph): # 从 vcurrent 节点开始 DFS 搜索迷宫，path 保存路径
     path.append(vcurrent.getId())
-    #print(path)
+    vcurrent.setColor("gray")
     if vcurrent.getLabel() != "E":
         done = False
         for nbr in vcurrent.getConnections(): # in 后面部分填空（2分）
@@ -1588,17 +1588,19 @@ def searchMaze(path, vcurrent, mGraph):	# 从 vcurrent 节点开始 DFS 搜索�
                 if done:
                     break
         if not done:
-            path.pop()  # 这条语句空着，填空（2分）
-            vcurrent.setColor("white")
+            path.pop() # 这条语句空着，填空（2分）
+            vcurrent.setColor("black")
     else:
         done = True
-    return done	 返回是否成功找到通路
+    return done # 返回是否成功找到通路
 
 
 g, vstart = mazeGraph(mazelist, len(mazelist), len(mazelist[0]))
 path = []
 searchMaze(path, vstart, g)
 print(path)
+
+# [(8, 14), (7, 14), (6, 14), (5, 14), (4, 14), (4, 13), (5, 13), (6, 13), (6, 12), (6, 11), (6, 10), (5, 10), (5, 9), (4, 9), (3, 9), (2, 9), (2, 8), (2, 7), (1, 7), (1, 6), (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (5, 4), (4, 4), (3, 4), (2, 4), (2, 3), (1, 3), (1, 2), (2, 2), (2, 1), (2, 0)]
 ```
 
 
