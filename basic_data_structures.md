@@ -2,9 +2,19 @@
 
 
 
-Updated 2232 GMT+8 Feb 28, 2024
+Updated 2357 GMT+8 Feb 29, 2024
 
 2024 spring, Complied by Hongfei Yan
+
+
+
+说明：
+
+1）栈（stack）和队列（queue）是两个容易理解的数据结构，但一旦开始学习它们，就像打开了潘多拉魔盒一样，会引出很多相关的题目。此外三月的树（3月12日植树节）近在咫尺，注定三月份会迎来惊涛骇浪。Plan: March Tree, April Graph, May Review, June Excellent work. 
+
+2月份拉平大家Python编程技术，3月份树为主，4月份图为主，5月份复习，6月份优秀！
+
+2）待3月1日Canvas开了，5位助教负责批改大家的作业（已经分配好），前3次作业的截止时间都是3月12日 23:59，之后每周作业都是下周二23:59截止（就是每次作业持续一周）。assignment3 是3月份月考题目，3月6日17:00发布。
 
 
 
@@ -16,18 +26,17 @@ todo: assignment3, https://github.com/GMyhf/2024spring-cs201
 
 目标：
 
-- To understand the abstract data types stack, queue, deque, and list.
-- To be able to implement the ADTs **stack**, **queue**, and **deque** using Python lists.
-- To understand the performance of the implementations of basic linear data structures.
-- To understand prefix, infix, and postfix expression formats.
-- To use stacks to evaluate postfix expressions.
-- To use stacks to convert expressions from infix to postfix.
-- To use queues for basic timing simulations.
-- To be able to recognize problem properties where stacks, queues, and deques are appropriate data structures.
-- To be able to implement the abstract data type **LinkedList** using the node and reference pattern.
-- To be able to compare the performance of our linked list implementation with Python’s list implementation.
+- 会用类实现Stack, Queue，为了笔试。但是实际编程时候，直接使用系统的list, queue更好，OJ支持.
 
-# 一、基本数据结构
+- 理解基础线性数据结构的性能.
+- 理解前序、中序和后序表达式.
+- 掌握Shunting Yard 算法，是一种使用栈将中序表达式转换成后序表达式的算法.
+- 使用栈来计算后序表达式，培养题目关联的习惯，如：哈夫曼编码，与 stack 实现 波兰表达式 类似.
+- 链表（LinkedList）实现，为笔试，更为3月12日（植树节）树的理解做准备.
+- 掌握经典题目：如 八皇后、约瑟夫.
+- 能读懂长一点的程序，能看懂UML类图，如：模拟打印机，理解其中的随机产生数就是生成OJ测试数据的方法.
+
+# 一、基本数据结构及其编程题目
 
 **What Are Linear Structures?**
 
@@ -54,6 +63,112 @@ Many examples of stacks occur in everyday situations. Almost any cafeteria has a
 A queue is an ordered collection of items where the addition of new items happens at one end, called the “rear,” and the removal of existing items occurs at the other end, commonly called the “front.” As an element enters the queue it starts at the rear and makes its way toward the front, waiting until that time when it is the next element to be removed.
 
 The most recently added item in the queue must wait at the end of the collection. The item that has been in the collection the longest is at the front. This ordering principle is sometimes called **FIFO**, **first-in first-out**. It is also known as “first-come first-served.”
+
+
+
+## 概念题目练习
+
+### OJ04099: 队列和栈
+
+http://cs101.openjudge.cn/practice/04099/
+
+队列和栈是两种重要的数据结构，它们具有push k和pop操作。push k是将数字k加入到队列或栈中，pop则是从队列和栈取一个数出来。队列和栈的区别在于取数的位置是不同的。
+
+队列是先进先出的：把队列看成横向的一个通道，则push k是将k放到队列的最右边，而pop则是从队列的最左边取出一个数。
+
+栈是后进先出的：把栈也看成横向的一个通道，则push k是将k放到栈的最右边，而pop也是从栈的最右边取出一个数。
+
+假设队列和栈当前从左至右都含有1和2两个数，则执行push 5和pop操作示例图如下：
+
+​     push 5     pop
+
+队列 1 2 -------> 1 2 5 ------> 2 5
+
+​     push 5     pop
+
+栈  1 2 -------> 1 2 5 ------> 1 2
+
+现在，假设队列和栈都是空的。给定一系列push k和pop操作之后，输出队列和栈中存的数字。若队列或栈已经空了，仍然接收到pop操作，则输出error。
+
+
+
+**输入**
+
+第一行为m，表示有m组测试输入，m<100。
+每组第一行为n，表示下列有n行push k或pop操作。（n<150）
+接下来n行，每行是push k或者pop，其中k是一个整数。
+（输入保证同时在队列或栈中的数不会超过100个）
+
+**输出**
+
+对每组测试数据输出两行，正常情况下，第一行是队列中从左到右存的数字，第二行是栈中从左到右存的数字。若操作过程中队列或栈已空仍然收到pop，则输出error。输出应该共2*m行。
+
+样例输入
+
+```
+2
+4
+push 1
+push 3
+pop
+push 5
+1
+pop
+```
+
+样例输出
+
+```
+3 5
+1 5
+error
+error
+```
+
+
+
+"若操作过程中队列或栈已空仍然收到pop，则输出error。输出应该共`2*m`行"。就是：如果错了，先输出error，然后把正确的输出，凑够`2*m`。
+
+```python
+m = int(input())
+for _ in range(m):
+    queue = []
+    stack = []
+    error = False
+    n = int(input())
+    for _ in range(n):
+        operation = input().split()
+        if operation[0] == 'push':
+            queue.append(int(operation[1]))
+            stack.append(int(operation[1]))
+        elif operation[0] == 'pop':
+            if queue:
+                queue.pop(0)
+            else:
+                error = True
+            if stack:
+                stack.pop()
+            else:
+                error = True
+    if error:
+        print('error')
+        print('error')
+    else:
+        print(' '.join(map(str, queue)))
+        print(' '.join(map(str, stack)))
+```
+
+
+
+### OJ02694:波兰表达式。要求用stack实现
+
+http://cs101.openjudge.cn/practice/02694/
+
+### OJ22068:合法出栈序列
+
+http://cs101.openjudge.cn/practice/22068/
+
+
 
 
 
@@ -330,7 +445,81 @@ print(par_checker('{{}}[]]'))
 
 
 
-## 1.3 将十进制数转换成二进制数
+#### OJ03704: 括号匹配
+
+stack, http://cs101.openjudge.cn/practice/03704
+
+在某个字符串（长度不超过100）中有左括号、右括号和大小写字母；规定（与常见的算数式子一样）任何一个左括号都从内到外与在它右边且距离最近的右括号匹配。写一个程序，找到无法匹配的左括号和右括号，输出原来字符串，并在下一行标出不能匹配的括号。不能匹配的左括号用"$"标注，不能匹配的右括号用"?"标注.
+
+**输入**
+
+输入包括多组数据，每组数据一行，包含一个字符串，只包含左右括号和大小写字母，**字符串长度不超过100**
+**注意：cin.getline(str,100)最多只能输入99个字符！**
+
+**输出**
+
+对每组输出数据，输出两行，第一行包含原始输入字符，第二行由"\$","?"和空格组成，"$"和"?"表示与之对应的左括号和右括号不能匹配。
+
+样例输入
+
+```
+((ABCD(x)
+)(rttyy())sss)(
+```
+
+样例输出
+
+```
+((ABCD(x)
+$$
+)(rttyy())sss)(
+?            ?$
+```
+
+
+
+```python
+# https://www.cnblogs.com/huashanqingzhu/p/6546598.html
+
+lines = []
+while True:
+    try:
+        lines.append(input())
+    except EOFError:
+        break
+    
+ans = []
+for s in lines:
+    stack = []
+    Mark = []
+    for i in range(len(s)):
+        if s[i] == '(':
+            stack.append(i)
+            Mark += ' '
+        elif s[i] == ')':
+            if len(stack) == 0:
+                Mark += '?'
+            else:
+                Mark += ' '
+                stack.pop()
+        else:
+            Mark += ' '
+    
+    while(len(stack)):
+        Mark[stack[-1]] = '$'
+        stack.pop()
+    
+    print(s)
+    print(''.join(map(str, Mark)))
+```
+
+
+
+
+
+## 1.3 进制转换
+
+### 1.3.1 将十进制数转换成二进制数
 
 In your study of computer science, you have probably been exposed in one way or another to the idea of a binary number. Binary representation is important in computer science since all values stored within a computer exist as a string of binary digits, a string of 0s and 1s. Without the ability to convert back and forth between common representations and binary numbers, we would need to interact with computers in very awkward ways.
 
@@ -403,6 +592,58 @@ print(base_converter(2555, 16))
 
 
 
+#### OJ02734: 十进制到八进制
+
+http://cs101.openjudge.cn/practice/02734/
+
+把一个十进制正整数转化成八进制。
+
+**输入**
+
+一行，仅含一个十进制表示的整数a(0 < a < 65536)。
+
+**输出**
+
+一行，a的八进制表示。
+
+样例输入
+
+`9`
+
+样例输出
+
+`11`
+
+
+
+使用栈来实现十进制到八进制的转换可以通过不断除以8并将余数压入栈中的方式来实现。然后，将栈中的元素依次出栈，构成八进制数的各个位。
+
+```python
+decimal = int(input())  # 读取十进制数
+
+# 创建一个空栈
+stack = []
+
+# 特殊情况：如果输入的数为0，直接输出0
+if decimal == 0:
+    print(0)
+else:
+    # 不断除以8，并将余数压入栈中
+    while decimal > 0:
+        remainder = decimal % 8
+        stack.append(remainder)
+        decimal = decimal // 8
+
+    # 依次出栈，构成八进制数的各个位
+    octal = ""
+    while stack:
+        octal += str(stack.pop())
+
+    print(octal)
+```
+
+
+
 ## 1.4 中序、前序和后序表达式
 
 When you write an arithmetic expression such as B * C, the form of the expression provides you with information so that you can interpret it correctly. In this case we know that the variable B is being multiplied by the variable C since the multiplication operator * appears between them in the expression. This type of notation is referred to as **infix** since the operator is *in between* the two operands that it is working on.
@@ -457,7 +698,7 @@ Table 4: Additional Examples of Infix, Prefix and Postfix
 
 
 
-#### 1.4.1 Conversion of Infix Expressions to Prefix and Postfix
+### 1.4.1 Conversion of Infix Expressions to Prefix and Postfix
 
 So far, we have used ad hoc methods to convert between infix expressions and the equivalent prefix and postfix expression notations. As you might expect, there are algorithmic ways to perform the conversion that allow any expression of any complexity to be correctly transformed.
 
@@ -485,7 +726,7 @@ Figure 8: Converting a Complex Expression to Prefix and Postfix Notations
 
 
 
-#### 1.4.2 通用的中缀转后缀算法
+### 1.4.2 通用的中缀转后缀算法
 
 We need to develop an algorithm to convert any infix expression to a postfix expression. To do this we will look closer at the conversion process.
 
@@ -563,7 +804,112 @@ A B C * +
 
 
 
-#### 1.4.3 Postfix Evaluation
+#### OJ24591:中序表达式转后序表达式
+
+http://cs101.openjudge.cn/practice/24591/
+
+中序表达式是运算符放在两个数中间的表达式。乘、除运算优先级高于加减。可以用"()"来提升优先级 --- 就是小学生写的四则算术运算表达式。中序表达式可用如下方式递归定义：
+
+1）一个数是一个中序表达式。该表达式的值就是数的值。
+
+2) 若a是中序表达式，则"(a)"也是中序表达式(引号不算)，值为a的值。
+3) 若a,b是中序表达式，c是运算符，则"acb"是中序表达式。"acb"的值是对a和b做c运算的结果，且a是左操作数，b是右操作数。
+
+输入一个中序表达式，要求转换成一个后序表达式输出。
+
+**输入**
+
+第一行是整数n(n<100)。接下来n行，每行一个中序表达式，数和运算符之间没有空格，长度不超过700。
+
+**输出**
+
+对每个中序表达式，输出转成后序表达式后的结果。后序表达式的数之间、数和运算符之间用一个空格分开。
+
+样例输入
+
+```
+3
+7+8.3 
+3+4.5*(7+2)
+(3)*((3+4)*(2+3.5)/(4+5)) 
+```
+
+样例输出
+
+```
+7 8.3 +
+3 4.5 7 2 + * +
+3 3 4 + 2 3.5 + * 4 5 + / *
+```
+
+来源: Guo wei
+
+
+
+Shunting Yard 算法是一种用于将中缀表达式转换为后缀表达式的算法。它由荷兰计算机科学家 Edsger Dijkstra 在1960年代提出，用于解析和计算数学表达式。
+
+Shunting Yard 算法的主要思想是使用两个栈（运算符栈和输出栈）来处理表达式的符号。算法按照运算符的优先级和结合性，将符号逐个处理并放置到正确的位置。最终，输出栈中的元素就是转换后的后缀表达式。
+
+以下是 Shunting Yard 算法的基本步骤：
+
+1. 初始化运算符栈和输出栈为空。
+2. 从左到右遍历中缀表达式的每个符号。
+   - 如果是操作数（数字），则将其添加到输出栈。
+   - 如果是左括号，则将其推入运算符栈。
+   - 如果是运算符：
+     - 如果运算符的优先级大于运算符栈顶的运算符，或者运算符栈顶是左括号，则将当前运算符推入运算符栈。
+     - 否则，将运算符栈顶的运算符弹出并添加到输出栈中，直到满足上述条件（或者运算符栈为空）。
+     - 将当前运算符推入运算符栈。
+   - 如果是右括号，则将运算符栈顶的运算符弹出并添加到输出栈中，直到遇到左括号。将左括号弹出但不添加到输出栈中。
+3. 如果还有剩余的运算符在运算符栈中，将它们依次弹出并添加到输出栈中。
+4. 输出栈中的元素就是转换后的后缀表达式。
+
+
+
+```python
+def infix_to_postfix(expression):
+    precedence = {'+':1, '-':1, '*':2, '/':2}
+    stack = []
+    postfix = []
+    number = ''
+
+    for char in expression:
+        if char.isnumeric() or char == '.':
+            number += char
+        else:
+            if number:
+                num = float(number)
+                postfix.append(int(num) if num.is_integer() else num)
+                number = ''
+            if char in '+-*/':
+                while stack and stack[-1] in '+-*/' and precedence[char] <= precedence[stack[-1]]:
+                    postfix.append(stack.pop())
+                stack.append(char)
+            elif char == '(':
+                stack.append(char)
+            elif char == ')':
+                while stack and stack[-1] != '(':
+                    postfix.append(stack.pop())
+                stack.pop()
+
+    if number:
+        num = float(number)
+        postfix.append(int(num) if num.is_integer() else num)
+
+    while stack:
+        postfix.append(stack.pop())
+
+    return ' '.join(str(x) for x in postfix)
+
+n = int(input())
+for _ in range(n):
+    expression = input()
+    print(infix_to_postfix(expression))
+```
+
+
+
+### 1.4.3 Postfix Evaluation
 
 As a final stack example, we will consider the evaluation of an expression that is already in postfix notation. In this case, a stack is again the data structure of choice. However, as you scan the postfix expression, it is the operands that must wait, not the operators as in the conversion algorithm above. Another way to think about the solution is that whenever an operator is seen on the input, the two most recent operands will be used in the evaluation.
 
@@ -599,7 +945,103 @@ print(postfixEval('7 8 + 3 2 + /'))
 
 
 
-## 1.5 OJ02754: 八皇后
+#### OJ24588: 后序表达式求值
+
+http://cs101.openjudge.cn/practice/24588/
+
+后序表达式由操作数和运算符构成。操作数是整数或小数，运算符有 + - * / 四种，其中 * / 优先级高于 + -。后序表达式可用如下方式递归定义：
+
+1) 一个操作数是一个后序表达式。该表达式的值就是操作数的值。
+2) 若a,b是后序表达式，c是运算符，则"a b c"是后序表达式。“a b c”的值是 (a) c (b),即对a和b做c运算，且a是第一个操作数，b是第二个操作数。下面是一些后序表达式及其值的例子(操作数、运算符之间用空格分隔)：
+
+3.4       值为：3.4
+5        值为：5
+5 3.4 +     值为：5 + 3.4
+5 3.4 + 6 /   值为：(5+3.4)/6
+5 3.4 + 6 * 3 + 值为：(5+3.4)*6+3
+
+
+
+**输入**
+
+第一行是整数n(n<100)，接下来有n行，每行是一个后序表达式，长度不超过1000个字符
+
+**输出**
+
+对每个后序表达式，输出其值，保留小数点后面2位
+
+样例输入
+
+```
+3
+5 3.4 +
+5 3.4 + 6 /
+5 3.4 + 6 * 3 +
+```
+
+样例输出
+
+```
+8.40
+1.40
+53.40
+```
+
+来源: Guo wei
+
+
+
+要解决这个问题，需要理解如何计算后序表达式。后序表达式的计算可以通过使用一个栈来完成，按照以下步骤：
+
+1. 从左到右扫描后序表达式。
+2. 遇到数字时，将其压入栈中。
+3. 遇到运算符时，从栈中弹出两个数字，先弹出的是右操作数，后弹出的是左操作数。将这两个数字进行相应的运算，然后将结果压入栈中。
+4. 当表达式扫描完毕时，栈顶的数字就是表达式的结果。
+
+```python
+def evaluate_postfix(expression):
+    stack = []
+    tokens = expression.split()
+    
+    for token in tokens:
+        if token in '+-*/':
+            # 弹出栈顶的两个元素
+            right_operand = stack.pop()
+            left_operand = stack.pop()
+            # 执行运算
+            if token == '+':
+                stack.append(left_operand + right_operand)
+            elif token == '-':
+                stack.append(left_operand - right_operand)
+            elif token == '*':
+                stack.append(left_operand * right_operand)
+            elif token == '/':
+                stack.append(left_operand / right_operand)
+        else:
+            # 将操作数转换为浮点数后入栈
+            stack.append(float(token))
+    
+    # 栈顶元素就是表达式的结果
+    return stack[0]
+
+# 读取输入行数
+n = int(input())
+
+# 对每个后序表达式求值
+for _ in range(n):
+    expression = input()
+    result = evaluate_postfix(expression)
+    # 输出结果，保留两位小数
+    print(f"{result:.2f}")
+```
+
+这个程序将读取输入行数，然后对每行输入的后序表达式求值，并按要求保留两位小数输出结果。
+
+
+
+## 1.5 经典八皇后用递归或者栈实现
+
+### OJ02754: 八皇后
 
 dfs and similar, http://cs101.openjudge.cn/practice/02754
 
@@ -1264,7 +1706,9 @@ Average Wait   6.71 secs   0 tasks remaining.
 
 
 
-# 3. The Deque Abstract Data Type
+# 3. 双端队列
+
+与栈和队列不同的是，双端队列的限制很少。双端队列是与队列类似的有序集合。它有一前、一后两端，元素在其中保持自己的位置。与队列不同的是，双端队列对在哪一端添加和移除元素没有任何限制。新元素既可以被添加到前端，也可以被添加到后端。同理，已有的元素也能从任意一端移除。
 
 The deque abstract data type is defined by the following structure and operations. A deque is structured, as described above, as an ordered collection of items where items are added and removed from either end, either front or rear. The deque operations are given below.
 
@@ -1295,14 +1739,88 @@ As an example, if we assume that `d` is a deque that has been created and is cur
 
 
 
-```python
+### 3.1 实现双端队列
 
+
+
+
+
+```python
+class Deque:
+    def __init__(self):
+        self.items = []
+
+    def isEmpty(self):
+        return self.items == []
+
+    def addFront(self, item):
+        self.items.append(item)
+
+    def addRear(self, item):
+        self.items.insert(0, item)
+
+    def removeFront(self):
+        return self.items.pop()
+
+    def removeRear(self):
+        return self.items.pop(0)
+
+    def size(self):
+        return len(self.items)
+
+
+d = Deque()
+print(d.isEmpty())
+d.addRear(4)
+d.addRear('dog')
+d.addFront('cat')
+d.addFront(True)
+print(d.size())
+print(d.isEmpty())
+d.addRear(8.4)
+print(d.removeRear())
+print(d.removeFront())
+"""
+True
+4
+False
+8.4
+True
+"""
 ```
 
+在双端队列的Python实现中，在前端进行的添加操作和移除操作的时间复杂度是O(1)，在后端的则是O( )n。
 
+
+
+### 3.2 OJ04099: 队列和栈
+
+http://cs101.openjudge.cn/practice/04099/
 
 ```python
-
+from collections import deque
+for _ in range(int(input())):
+    queue = deque()
+    stack = deque()
+    stop = False
+    for _ in range(int(input())):
+        s = input()
+        if s=='pop':
+            try:
+                queue.popleft()
+                stack.pop()
+            except IndexError:
+                stop = True
+        else:
+            a = int(s.split()[1])
+            queue.append(a)
+            stack.append(a)
+    if not stop:
+        print(' '.join(list(map(str,queue))))
+        print(' '.join(list(map(str,stack))))
+    elif stop:
+        print('error')
+        print('error')
 ```
 
 
@@ -1321,7 +1839,27 @@ As an example, if we assume that `d` is a deque that has been created and is cur
 
 # 4. LinkedList 链表
 
-Throughout the discussion of basic data structures, we have used Python lists to implement the abstract data types presented. The list is a powerful, yet simple, collection mechanism that provides the programmer with a wide variety of operations. However, not all programming languages include a list collection. In these cases, the notion of a list must be implemented by the programmer.
+链表是一种常见的数据结构，用于存储和组织数据。它由一系列节点组成，每个节点包含一个数据元素和一个指向下一个节点（或前一个节点）的指针。
+
+在链表中，每个节点都包含两部分：
+
+1. 数据元素（或数据项）：这是节点存储的实际数据。可以是任何数据类型，例如整数、字符串、对象等。
+
+2. 指针（或引用）：该指针指向链表中的下一个节点（或前一个节点）。它们用于建立节点之间的连接关系，从而形成链表的结构。
+
+根据指针的类型和连接方式，链表可以分为不同类型，包括：
+
+1. 单向链表（单链表）：每个节点只有一个指针，指向下一个节点。链表的头部指针指向第一个节点，而最后一个节点的指针为空（指向 `None`）。
+
+2. 双向链表：每个节点有两个指针，一个指向前一个节点，一个指向后一个节点。双向链表可以从头部或尾部开始遍历，并且可以在任意位置插入或删除节点。
+
+3. 循环链表：最后一个节点的指针指向链表的头部，形成一个环形结构。循环链表可以从任意节点开始遍历，并且可以无限地循环下去。
+
+链表相对于数组的一个重要特点是，链表的大小可以动态地增长或缩小，而不需要预先定义固定的大小。这使得链表在需要频繁插入和删除元素的场景中更加灵活。
+
+然而，链表的访问和搜索操作相对较慢，因为需要遍历整个链表才能找到目标节点。与数组相比，链表的优势在于插入和删除操作的效率较高，尤其是在操作头部或尾部节点时。因此，链表在需要频繁插入和删除元素而不关心随机访问的情况下，是一种常用的数据结构。
+
+
 
 > <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240228230417320.png" alt="image-20240228230417320" style="zoom: 33%;" />
 >
@@ -1341,31 +1879,11 @@ Throughout the discussion of basic data structures, we have used Python lists to
 >
 > 链表在某种意义上可以给树打基础。
 
-A **list** is a collection of items where each item holds a relative position with respect to the others. More specifically, we will refer to this type of list as an unordered list. We can consider the list as having a first item, a second item, a third item, and so on. We can also refer to the beginning of the list (the first item) or the end of the list (the last item). For simplicity we will assume that lists cannot contain duplicate items.
-
-For example, the collection of integers 54, 26, 93, 17, 77, and 31 might represent a simple unordered list of exam scores. Note that we have written them as comma-delimited values, a common way of showing the list structure. Of course, Python would show this list as [54,26,93,17,77,31].
-
-## 4.1 The Unordered List Abstract Data Type
-
-The structure of an unordered list, as described above, is a collection of items where each item holds a relative position with respect to the others. Some possible unordered list operations are given below.
-
-- `List()` creates a new list that is empty. It needs no parameters and returns an empty list.
-- `add(item)` adds a new item to the list. It needs the item and returns nothing. Assume the item is not already in the list.
-- `remove(item)` removes the item from the list. It needs the item and modifies the list. Assume the item is present in the list.
-- `search(item)` searches for the item in the list. It needs the item and returns a boolean value.
-- `isEmpty()` tests to see whether the list is empty. It needs no parameters and returns a boolean value.
-- `size()` returns the number of items in the list. It needs no parameters and returns an integer.
-- `append(item)` adds a new item to the end of the list making it the last item in the collection. It needs the item and returns nothing. Assume the item is not already in the list.
-- `index(item)` returns the position of item in the list. It needs the item and returns the index. Assume the item is in the list.
-- `insert(pos,item)` adds a new item to the list at position pos. It needs the item and returns nothing. Assume the item is not already in the list and there are enough existing items to have position pos.
-- `pop()` removes and returns the last item in the list. It needs nothing and returns an item. Assume the list has at least one item.
-- `pop(pos)` removes and returns the item at position pos. It needs the position and returns the item. Assume the item is in the list.
 
 
 
 
-
-
+单向链表实现
 
 ```python
 class Node:
@@ -1420,6 +1938,115 @@ linked_list.display()  # 输出：1 3
 
 
 
+双向链表实现
+
+```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.prev = None
+        self.next = None
+
+class DoublyLinkedList:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+
+    def insert_before(self, node, new_node):
+        if node is None:  # 如果链表为空，将新节点设置为头部和尾部
+            self.head = new_node
+            self.tail = new_node
+        else:
+            new_node.next = node
+            new_node.prev = node.prev
+            if node.prev is not None:
+                node.prev.next = new_node
+            else:  # 如果在头部插入新节点，更新头部指针
+                self.head = new_node
+            node.prev = new_node
+
+    def display_forward(self):
+        current = self.head
+        while current is not None:
+            print(current.value, end=" ")
+            current = current.next
+        print()
+
+    def display_backward(self):
+        current = self.tail
+        while current is not None:
+            print(current.value, end=" ")
+            current = current.prev
+        print()
+
+# 使用示例
+linked_list = DoublyLinkedList()
+
+# 创建节点
+node1 = Node(1)
+node2 = Node(2)
+node3 = Node(3)
+
+# 将节点插入链表
+linked_list.insert_before(None, node1)  # 在空链表中插入节点1
+linked_list.insert_before(node1, node2)  # 在节点1前插入节点2
+linked_list.insert_before(node1, node3)  # 在节点1前插入节点3
+
+# 显示链表内容
+linked_list.display_forward()  # 输出：3 2 1
+linked_list.display_backward()  # 输出：1 2 3
+```
+
+在这个示例中，定义了一个 `Node` 类表示双向链表中的节点。每个节点都有一个 `value` 值，以及一个指向前一个节点的 `prev` 指针和一个指向后一个节点的 `next` 指针。
+
+`DoublyLinkedList` 类表示双向链表，它具有 `head` 和 `tail` 两个指针，分别指向链表的头部和尾部。可以使用 `insert_before` 方法在给定节点 `node` 的前面插入新节点 `new_node`。如果 `node` 为 `None`，表示在空链表中插入新节点，将新节点设置为头部和尾部。否则，将新节点的 `next` 指针指向 `node`，将新节点的 `prev` 指针指向 `node.prev`，并更新相邻节点的指针，把新节点插入到链表中。
+
+`display_forward` 方法用于正向遍历并显示链表中的所有节点。它从头部开始，依次打印每个节点的值。
+
+`display_backward` 方法用于反向遍历并显示链表中的所有节点。它从尾部开始，依次打印每个节点的值。
+
+在示例的最后，创建了一个空的 `DoublyLinkedList` 对象，并创建了三个节点 `node1`、`node2` 和 `node3`。然后，我们按照顺序将这些节点插入到链表中，并调用 `display_forward` 和 `display_backward` 方法来显示链表的内容。输出结果应为 `3 2 1` 和 `1 2 3`，分别表示正向和反向遍历链表时节点的值。
+
+
+
+**Q.** 双向链表中的每个结点有两个引用域，prev 和 next，分别引用当前结点的前驱与后继，设 p 引用
+链表中的一个结点，q 引用一待插入结点，现要求在 p 前插入 q，则正确的插入操作为（ D  ）。
+A：p.prev=q; q.next=p; p.prev.next=q; q.prev=p.prev;
+B：q.prev=p.prev; p.prev.next=q; q.next=p; p.prev=q.next;
+C：q.next=p; p.next=q; p.prev.next=q; q.next=p;
+**D：p.prev.next=q; q.next=p; q.prev=p.prev; p.prev=q.**
+
+
+
+假设链表是 ![$A <-> B <-> C$](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)*A*<−>*B*<−>*C*，要在 B 前插入 Q，那么会得到 ![$A <-> Q <-> B <-> C $](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)*A*<−>*Q*<−>*B*<−>*C*的链表。这是在结点 B 前插入 Q 结点的步骤：
+
+1. `p.prev.next = q;` 这一步是把 p 的前一个结点的 next 指针指向 q。在例子中，是把 A 的 next 指针指向 Q。
+2. `q.next = p;` 这一步是把 q 的 next 指针指向 p。在例子中，是把 Q 的 next 指针指向 B。
+3. `q.prev = p.prev;` 这一步是把 q 的 prev 指针指向 p 的前一个结点。在例子中，是把 Q 的 prev 指针指向 A。
+4. `p.prev = q;` 这一步是把 p 的 prev 指针指向 q。在例子中，是把 B 的 prev 指针指向 Q。
+
+
+
+**Q:** 数据结构有三个基本要素:逻辑结构、存储结构以及基于结构定义的行为(运算)。下列概念中( B )属于存储结构。
+A:线性表	B:**链表**	C:字符串	D:二叉树
+
+
+
+解释：在这些选项中，有些描述的是数据的逻辑结构，而有些是存储结构。逻辑结构指的是数据对象中数据元素之间的相互关系，而存储结构是指数据结构在计算机中的表示（也就是内存中的存储形式）。
+
+A: **线性表** - 这是一种逻辑结构，它描述元素按线性顺序排列的规则。
+B: 链表 - 这是一种存储结构，它是线性表的链式存储方式，通过节点的相互链接来实现。
+C: 字符串 - 这通常指的是一种逻辑结构，是一系列字符的集合。
+D: 二叉树 - 这是一种逻辑结构，它描述每个节点最多有两个子节点的树状结构。
+
+正确答案是 B: 链表，因为它指的是数据的物理存储方式，即内存中的链式存储结构。
+
+
+
+**Q:** 线性表的**顺序存储**与**链式存储**是两种常见存储形式；当表元素有序排序进行二分检索时，应采用哪种存储形式？顺序存储 
+
+
+
 ```python
 
 ```
@@ -1440,29 +2067,7 @@ linked_list.display()  # 输出：1 3
 
 
 
-
-
-# 5 小结
-
-❏ 线性数据结构以有序的方式来维护其数据。
-❏ 栈是简单的数据结构，其排序原则是LIFO，即后进先出。
-❏ 栈的基本操作有push、pop和isEmpty。
-❏ 队列是简单的数据结构，其排序原则是FIFO，即先进先出。
-❏ 队列的基本操作有enqueue、dequeue和isEmpty。
-❏ 表达式有3种写法：前序、中序和后序。
-❏ 栈在计算和转换表达式的算法中十分有用。
-❏ 栈具有反转特性。
-❏ 队列有助于构建时序模拟。
-❏ 模拟程序使用随机数生成器来模拟实际情况，并且帮助我们回答“如果”问题。
-❏ 双端队列是栈和队列的结合。
-❏ 双端队列的基本操作有addFront、addRear、removeFront、removeRear和isEmpty。
-❏ 列表是元素的集合，其中每一个元素都有一个相对于其他元素的位置。
-❏ 链表保证逻辑顺序，对实际的存储顺序没有要求。
-❏ 修改链表头部是一种特殊情况。
-
-
-
-# 6 关键术语
+# 5 关键术语
 
 |                           |                          |                       |
 | ------------------------- | ------------------------ | --------------------- |
@@ -1476,39 +2081,17 @@ linked_list.display()  # 输出：1 3
 
 
 
-# 二、编程题目
-
-02694:波兰表达式。要求用stack实现
-
-http://cs101.openjudge.cn/practice/02694/
-
-24588:后序表达式求值
-
-http://cs101.openjudge.cn/practice/24588/
-
-02734:十进制到八进制
-
-http://cs101.openjudge.cn/practice/02734/
-
-04099:队列和栈
-
-http://cs101.openjudge.cn/practice/04099/
-
-02746:约瑟夫问题。要求用queue实现
-
-http://cs101.openjudge.cn/practice/02746
-
-24591:中序表达式转后序表达式
-
-http://cs101.openjudge.cn/practice/24591/
-
-22068:合法出栈序列
-
-http://cs101.openjudge.cn/practice/22068/
 
 
 
-# 三、笔试题目
+
+# 二、笔试题目
+
+2022年5个大题：图Dijkstra，二叉树，排序，单链表，二叉树。
+
+2021年6个大题：森林dfs、bfs，哈夫曼树，二叉树建堆，图prim，二叉树遍历，图走迷宫。
+
+
 
 ## 选择（30分，每题2分）
 
@@ -1644,41 +2227,132 @@ c) 在序列为初始状态为“正序”和“逆序”两种情况下，试�
 
 a) 序列 {18, 73, 5, 10, 68, 99, 27, 10} 在前4趟排序中每趟排序后的结果如下：
 
-第一趟排序：
-18, 5, 73, 10, 68, 27, 99, 10
+```python
+def ExSort(a, n):  # a[1..n]为待排序记录，n为记录数目
+    change1 = change2 = True  # 标志变量, bool型
+    if n <= 0:
+        return "Error"
+    cnt = 0
+    while (change1 or change2):
+        change1 = False  # 奇数，
+        for i in range(1, n, 2):
+            if a[i] > a[i+1]:
+               a[i], a[i+1] = a[i+1], a[i]
+               change1 = True
 
-第二趟排序：
-5, 18, 10, 73, 27, 68, 10, 99
+        cnt += 1; print(f"pass {cnt}: {a[1:]}")
+        if not change1 and not change2:
+            break
 
-第三趟排序：
-5, 10, 18, 27, 10, 73, 68, 99
+        change2 = False  # 偶数
+        for i in range(2, n, 2):
+            if a[i] > a[i+1]:
+                a[i], a[i+1] = a[i+1], a[i]
+                change2 = True
 
-第四趟排序：
-5, 10, 18, 10, 27, 68, 73, 99
+        cnt += 1; print(f"pass {cnt}: {a[1:]}")
+        if cnt == 4:
+            break
+
+# 题面是奇数第一趟，偶数是第二趟，这也没有都都比较，才一半，怎么算一趟？题面有问题吧
+a = [0] + [18, 73, 5, 10, 68, 99, 27, 10]
+ExSort(a, len(a)-1)
+"""
+pass 1: [18, 73, 5, 10, 68, 99, 10, 27]
+pass 2: [18, 5, 73, 10, 68, 10, 99, 27]
+pass 3: [5, 18, 10, 73, 10, 68, 27, 99]
+pass 4: [5, 10, 18, 10, 73, 27, 68, 99]
+"""
+```
+
+
 
 b) 奇偶交换排序是稳定的排序。稳定排序是指如果两个元素相等，在排序后它们的相对顺序仍然保持不变。奇偶交换排序在交换过程中只涉及相邻的两个元素，因此相等元素之间的相对顺序不会改变。
 
 c) 在初始状态为“正序”和“逆序”两种情况下，奇偶交换排序的关键码比较次数和记录交换次数如下：
 
 - 正序情况下：
-  关键码比较次数：0
-  记录交换次数：0
+  关键码比较次数：每趟排序将比较 ![$n/2 $](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)*n*/2 
+  记录交换次数：0。由于序列已经有序，不需要进行交换，
 
 - 逆序情况下：
-  关键码比较次数：2(n/2) = n
+  关键码比较次数：每趟排序将比较 ![$n/2 $](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)*n*/2 
   记录交换次数：n/2
 
-在正序情况下，序列已经是有序的，不需要进行任何交换操作，因此关键码比较次数和记录交换次数都为0。
-
-在逆序情况下，每一趟排序都需要进行一次比较，并且在奇数趟和偶数趟交替进行交换操作。因此关键码比较次数为2(n/2) = n，记录交换次数为n/2。
 
 
 
 
+## 算法（16～20分，每题8～10分）
 
-## 算法（16分，每题8分）
+1.填空完成下列程序：读入一个整数序列，用单链表存储之，然后将该单链表颠倒后输出该单链表内容。算法输入的一行行是 n 个整数，即要存入单链表的整数序列。
 
-程序
+样例输入
+1 2 3 4 5
+样例输出
+5 4 3 2 1
+
+![image-20240229230534964](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240229230534964.png)
+
+
+
+```python
+class Node:
+    def __init__(self, data, next = None):
+        self.data, self.next = data, next
+
+class LinkedList:
+    def __init__(self, lst):
+        self.head = Node(lst[0])
+        p = self.head
+        for i in lst[1:]:
+            p.next = Node(i)    # 等号右侧填空（1分）
+            p = p.next  # 等号右侧填空（2分）
+
+    def reverse(self): # 把head当pre用，天才 said by 胡睿诚
+        p = self.head.next
+        self.head.next = None        # 等号右侧填空（2分）
+        while p is not None:
+            q = p
+            p = p.next  # 等号右侧填空（1分）
+            q.next = self.head    # 等号右侧填空（2分）
+            self.head = q    # 等号右侧填空（2分）
+
+    def reverse_3p(self):
+        prev = None
+        current = self.head
+        while current:
+            next_node = current.next
+            current.next = prev
+            prev = current
+            current = next_node
+        self.head = prev
+
+    def print_list(self):
+        p = self.head
+        while p:
+            print(p.data, end=" ")
+            p = p.next
+        print()
+
+#a = list(map(int, input().split()))
+a = [1, 2, 3, 4, 5]
+b = a.copy()
+a = LinkedList(a)
+b = LinkedList(b)
+a.reverse()
+b.reverse_3p()
+a.print_list()
+b.print_list()
+"""
+5 4 3 2 1 
+5 4 3 2 1 
+"""
+
+"""
+5 4 3 2 1 
+"""
+```
 
 
 
