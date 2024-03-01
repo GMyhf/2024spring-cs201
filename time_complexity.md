@@ -1,6 +1,6 @@
 # 20240227-Week2-时间复杂度
 
-Updated 0917 GMT+8 Mar 1, 2024
+Updated 0917 GMT+8 March 1, 2024
 
 2024 spring, Complied by Hongfei Yan
 
