@@ -2,7 +2,7 @@
 
 
 
-Updated 2357 GMT+8 Feb 29, 2024
+Updated 1126 GMT+8 March 1, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -28,7 +28,7 @@ todo: assignment3, https://github.com/GMyhf/2024spring-cs201
 
 - 会用类实现Stack, Queue，为了笔试。但是实际编程时候，直接使用系统的list, queue更好，OJ支持.
 
-- 理解基础线性数据结构的性能.
+- 理解基础线性数据结构的性能，如：list, set, dict.
 - 理解前序、中序和后序表达式.
 - 掌握Shunting Yard 算法，是一种使用栈将中序表达式转换成后序表达式的算法.
 - 使用栈来计算后序表达式，培养题目关联的习惯，如：哈夫曼编码，与 stack 实现 波兰表达式 类似.
@@ -63,6 +63,24 @@ Many examples of stacks occur in everyday situations. Almost any cafeteria has a
 A queue is an ordered collection of items where the addition of new items happens at one end, called the “rear,” and the removal of existing items occurs at the other end, commonly called the “front.” As an element enters the queue it starts at the rear and makes its way toward the front, waiting until that time when it is the next element to be removed.
 
 The most recently added item in the queue must wait at the end of the collection. The item that has been in the collection the longest is at the front. This ordering principle is sometimes called **FIFO**, **first-in first-out**. It is also known as “first-come first-served.”
+
+
+
+**线性表**是一种逻辑结构，描述了元素按线性顺序排列的规则。常见的线性表存储方式有**数组**和**链表**，它们在不同场景下具有各自的优势和劣势。
+
+数组是一种连续存储结构，它将线性表的元素按照一定的顺序依次存储在内存中的连续地址空间上。数组需要预先分配一定的内存空间，每个元素占用相同大小的内存空间，并可以通过索引来进行快速访问和操作元素。访问元素的时间复杂度为O(1)，因为可以直接计算元素的内存地址。然而，插入和删除元素的时间复杂度较高，平均为O(n)，因为需要移动其他元素来保持连续存储的特性。
+
+**链表**是一种存储结构，它是线性表的链式存储方式。链表通过节点的相互链接来实现元素的存储。每个节点包含元素本身以及指向下一个节点的指针。链表的插入和删除操作非常高效，时间复杂度为O(1)，因为只需要调整节点的指针。然而，访问元素的时间复杂度较高，平均为O(n)，因为必须从头节点开始遍历链表直到找到目标元素。
+
+选择使用数组还是链表作为存储方式取决于具体问题的需求和限制。如果需要频繁进行随机访问操作，数组是更好的选择。如果需要频繁进行插入和删除操作，链表更适合。通过了解它们的特点和性能，可以根据实际情况做出选择。
+
+
+
+在Python中，list 更接近于数组的存储结构。
+
+![image-20240301094904537](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240301094904537.png)
+
+
 
 
 
@@ -2047,24 +2065,6 @@ D: 二叉树 - 这是一种逻辑结构，它描述每个节点最多有两个�
 
 
 
-```python
-
-```
-
-
-
-```python
-
-```
-
-
-
-```python
-
-```
-
-
-
 
 
 # 5 关键术语
@@ -2095,6 +2095,12 @@ D: 二叉树 - 这是一种逻辑结构，它描述每个节点最多有两个�
 
 ## 选择（30分，每题2分）
 
+**Q:** 链表不具有的特点是（ ）。
+A: 可随机访问任意元素	B: 插入和删除不需要移动元素
+C: 不必事先估计存储空间	D: 所需空间与线性表长度成正比
+
+
+
 **Q:** 设有三个元素 X， Y， Z 顺序进栈（进的过程中允许出栈），下列得不到的出栈排列是？（C）
 
 A： XYZ 	B： YZX 	**C： ZXY** 	D： ZYX
@@ -2113,11 +2119,26 @@ A: 2	**B: 3**	C: 4	D:5
 
 
 
+**Q:** 为了实现一个循环队列（或称环形队列），采用数组 Q[0..m-1]作为存储结构,其中变量 rear 表示这个循环队列中队尾元素的实际位置，添加结点时按 rear=(rear+1) % m 进行指针移动，变量length 表示当前队列中的元素个数，请问这个循环队列的队列首位元素的实际位置是（ C ）。
+A：rear-length	B：(1+rear+m-length) % m	**C：(rear-length+m) % m**	D：m-length
+
+
+
+**Q:** 判定一个无序表 Q（链表实现）为空的条件是（A, B ）。
+**A： Q.head == None**	B： Q == None
+C： Q.head == 0	D： Q.head != None
+
+
+
+
+
 
 
 ## 判断（10分，每题1分）
 
 对填写"Y"，错填写"N"
+
+**Q:** （Y）考虑一个长度为 n 的顺序表中各个位置插入新元素的概率是相同的，则顺序表的插入算法平均时间复杂度为 O(n) 。
 
 **Q:** （Y）队列是动态集合，其定义的出队列操作所移除的元素总是在集合中存在时间最长的元素。
 
@@ -2133,7 +2154,11 @@ A: 2	**B: 3**	C: 4	D:5
 
 ## 填空（20分，每题2分）
 
-**Q:** 现有中缀表达式 $E=((20+5)/5+5*(30-7))*4$， 与 E 等价的后缀表达式为?
+**Q:** 线性表的顺序存储与链式存储是两种常见存储形式；当表元素有序排序进行二分检索时，应采用（**顺序存储**）存储形式。
+
+
+
+Q:** 现有中缀表达式 $E=((20+5)/5+5*(30-7))*4$， 与 E 等价的后缀表达式为?
 
 20 ![$5 + 5 / 5 $](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)5 + 5 / 5 30 ![$7 - * 4 * +$](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)7 − ∗ 4 ∗ +
 
@@ -2170,6 +2195,12 @@ A: 2	**B: 3**	C: 4	D:5
 19. 将栈中剩余运算符弹出并输出：20 5 + 5 / + 5 30 7 - * 4 * +
 
 所以，该中缀表达式 $E=((20+5)/5+5*(30-7))*4$ 的后缀表达式为：20 5 + 5 / 5 30 7 - * 4 * +
+
+
+
+**Q.** 删除长度为 n 的顺序表的第 i 个数据元素需要移动表中的 个数据元素。（1<=i<=n）？n - i
+
+当删除顺序表中的第 i 个数据元素时，通常需要将位于 i 之后的数据元素向前移动一个位置，以填补被删除元素的空缺。由于顺序表是有序的，每个元素的位置是固定的，因此需要移动的数据元素数量为 n - i 个。
 
 
 
@@ -2307,18 +2338,18 @@ class LinkedList:
         p = self.head
         for i in lst[1:]:
             p.next = Node(i)    # 等号右侧填空（1分）
-            p = p.next  # 等号右侧填空（2分）
+            p = p.next  				# 等号右侧填空（2分）
 
     def reverse(self): # 把head当pre用，天才 said by 胡睿诚
         p = self.head.next
-        self.head.next = None        # 等号右侧填空（2分）
+        self.head.next = None   # 等号右侧填空（2分）
         while p is not None:
             q = p
-            p = p.next  # 等号右侧填空（1分）
-            q.next = self.head    # 等号右侧填空（2分）
-            self.head = q    # 等号右侧填空（2分）
+            p = p.next  				# 等号右侧填空（1分）
+            q.next = self.head  # 等号右侧填空（2分）
+            self.head = q    		# 留空行，此行代码需要填写（2分）
 
-    def reverse_3p(self):
+    def reverse_3p(self): # 常规思维：三个指针来反转链表的指针指向关系
         prev = None
         current = self.head
         while current:
