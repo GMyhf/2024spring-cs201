@@ -1,6 +1,6 @@
 # 20240227-Week2-时间复杂度
 
-Updated 1723 GMT+8 Feb 29, 2024
+Updated 0917 GMT+8 Mar 1, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -142,7 +142,7 @@ The **running time** of an algorithm on a particular input is the number of prim
 
 In the following discussion, our expression for the running time of INSERTIONSORT will evolve from a messy formula that uses all the statement costs ci to a much simpler notation that is more concise and more easily manipulated. This simpler notation will also make it easy to determine whether one algorithm is more efficient than another.
 
-We start by presenting the INSERTION-SORT procedure with the time “cost” of each statement and the number of times each statement is executed. For each j = 2, 3, ... , n, where n = A.length, we let $t_j$ denote the number of times the **while** loop test in line 7 is executed for that value of j . When a **for** or **while** loop exits in the usual way (i.e., due to the test in the loop header), the test is executed one time more than the loop body. We assume that comments are not executable statements, and so they take no time.
+We start by presenting the INSERTION-SORT procedure with the time “cost” of each statement and the number of times each statement is executed. For each `j = 2, 3, ... , n`, where `n = A.length`, we let $t_j$ denote the number of times the **while** loop test in line 7 is executed for that value of j . When a **for** or **while** loop exits in the usual way (i.e., due to the test in the loop header), the test is executed one time more than the loop body. We assume that comments are not executable statements, and so they take no time.
 
 > https://www.geeksforgeeks.org/insertion-sort/
 >
@@ -217,7 +217,7 @@ $\quad = (c_1 + c_2 + c_4)n - (c_2 + c_4)$
 We can express this running time as `an + b` for constants a and b that depend on
 the statement costs $c_i$; it is thus a **linear function** of n.
 
-If the array is in reverse sorted order—that is, in decreasing order—the worst case results. We must compare each element A[j]  with each element in the entire sorted subarray A[0..j-1], and so tj = j for j = 1, 2, ..., n-1. Noting that
+If the array is in reverse sorted order—that is, in decreasing order—the worst case results. We must compare each element A[j]  with each element in the entire sorted subarray `A[0..j-1]`, and so `tj = j for j = 1, 2, ..., n-1`. Noting that
 
 $\sum_{j=2}^{n} j = \frac{n(n+1)}{2} - 1$​ 
 
@@ -245,10 +245,9 @@ In our analysis of insertion sort, we looked at both the best case, in which the
 
 - The worst-case running time of an algorithm gives us an upper bound on the running time for any input. Knowing it provides a guarantee that the algorithm will never take any longer. We need not make some educated guess about the running time and hope that it never gets much worse.
 - For some algorithms, the worst case occurs fairly often. For example, in searching a database for a particular piece of information, the searching algorithm’s worst case will often occur when the information is not present in the database. In some applications, searches for absent information may be frequent.
-- The “average case” is often roughly as bad as the worst case. Suppose that we randomly choose n numbers and apply insertion sort. How long does it take to determine where in subarray A[0 ..  j-1] to insert element A[j] ? On average, half the elements in A[0 .. j-1] are less than A[j] , and half the elements are greater. On average, therefore, we check half of the subarray A[0 ..  j-1], and so $t_j$ is about $j/2$. The resulting average-case running time turns out to be a quadratic function of the input size, just like the worst-case running time.
+- The “average case” is often roughly as bad as the worst case. Suppose that we randomly choose n numbers and apply insertion sort. How long does it take to determine where in subarray `A[0 ..  j-1]` to insert element A[j] ? On average, half the elements in `A[0 .. j-1]` are less than `A[j]` , and half the elements are greater. On average, therefore, we check half of the subarray `A[0 ..  j-1]`, and so $t_j$ is about $j/2$. The resulting average-case running time turns out to be a quadratic function of the input size, just like the worst-case running time.
 
-In some particular cases, we shall be interested in the **average-case** running time of an algorithm; we shall see the technique of **probabilistic analysis** applied to various algorithms throughout this book. The scope of average-case analysis is limited, because it may not be apparent what constitutes an “average” input for
-a particular problem. Often, we shall assume that all inputs of a given size are equally likely. In practice, this assumption may be violated, but we can sometimes use a **randomized algorithm**, which makes random choices, to allow a probabilistic analysis and yield an **expected** running time. 
+In some particular cases, we shall be interested in the **average-case** running time of an algorithm; we shall see the technique of **probabilistic analysis** applied to various algorithms throughout this book. The scope of average-case analysis is limited, because it may not be apparent what constitutes an “average” input for a particular problem. Often, we shall assume that all inputs of a given size are equally likely. In practice, this assumption may be violated, but we can sometimes use a **randomized algorithm**, which makes random choices, to allow a probabilistic analysis and yield an **expected** running time. 
 
 ### 3.Order of growth
 
@@ -262,17 +261,107 @@ We usually consider one algorithm to be more efficient than another if its worst
 
 ### 4.O-notation
 
+> 通用的记号应该是，O表示上界，$\Omega$表示下界，$\Theta$表示渐进阶，就是既上界又下界。
+
 The $\Theta$-notation asymptotically bounds a function from above and below. When we have only an asymptotic upper bound, we use O-notation. For a given function g(n), we denote by O(g(n) (pronounced “big-oh of g of n” or sometimes just “oh of g of n”) the set of functions
 
 $O(g(n) = \{f(n):  there \space exist \space positive \space constants \space c \space and \space n_0 \space such \space that$​
 
-$\quad\quad\quad\quad\quad\quad\quad  0 \le f(n) \le  cg(n)  for \space all \space n \ge n0\}$
+$\quad\quad\quad\quad\quad\quad\quad  0 \le f(n) \le  cg(n)  for \space all \space n \ge n_0\}$
 
 We use O-notation to give an upper bound on a function, to within a constant factor.
 
 Using O-notation, we can often describe the running time of an algorithm merely by inspecting the algorithm’s overall structure. For example, the doubly nested loop structure of the insertion sort algorithm immediately yields an $O(n^2)$ upper bound on the worst-case running time.
 
 Since O-notation describes an upper bound, when we use it to bound the worstcase running time of an algorithm, we have a bound on the running time of the algorithm on every input.
+
+
+
+**举例：**$2n + 10$ is $O(n)$
+
+$2n + 10 \le cn$
+
+$(c - 2) n \ge 10$
+
+$n \ge 10/(c - 2)$
+
+Pick $c = 3 \space and \space n_0 = 10$
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240301083003567.png" alt="image-20240301083003567" style="zoom:50%;" />
+
+**举例：**the function $n^2$ is not O(n)
+
+$n^2 \le cn$
+
+$n \le c$, the inequality cannot be satisfied since $c$​ must be a constant 
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240301083805826.png" alt="image-20240301083805826" style="zoom:50%;" />
+
+**More Big-Oh Examples**
+
+$7n - 2$​ is O(n)
+
+need $c \gt 0$ and $n_0 \ge 1$ such that $7n - 2 \le cn$ for $n \ge n_0$​
+
+
+
+$3n^3 + 20n^2 + 5$ is $O(n^3)$
+
+need $c \gt 0$ and $n_0 \ge 1$ such that $3n^3 + 20n^2 + 5 \le cn^3$ for $n \ge n_0$
+
+This is true for $c = 4$ and $n_0 = 21$
+
+
+
+$3logn + 5$ is $O(logn)$
+
+need $c \gt 0$ and $n_0 \gt 1$ such that $3logn + 5 \le clogn$ for $n \ge n_0$
+
+this is true for $c=8$ and $n_0 = 2$
+
+
+
+The big-Oh notation gives an upper bound on the growth rate of a function. The statement `f(n) is O(g(n))` means that the growth rate of `f(n)` is no more than the growth rate of `g(n)`. •We can use the big-Oh notation to rank functions according to their growth rate.
+
+
+
+**Big-Oh Rules**
+
+If is `f(n)` a polynomial of degree `d`, then `f(n)` is $O(n^d)$, i.e.,
+
+​	Drop lower-order terms
+
+​	Drop constant factors
+
+Use the smallest possible class of functions
+
+​	Say $2n$ is $O(n)$ instead of $2n$ is $O(n^2)$
+
+Use the simplest expression of the class
+
+​	Say $3n + 5$ is $O(n)$ instead of $3n + 5$ is $O(3n)$
+
+
+
+**Asymptotic Algorithm Analysis**
+
+The asymptotic analysis of an algorithm determines the running time in big-Oh notation.
+
+To perform the asymptotic analysis, find the worst-case number of primitive operations executed as a function of the input size, express this function with big-Oh notation
+
+Example:
+
+say that algorithm **find_max** “runs in **O**(**n**) time”
+
+Since constant factors and lower-order terms are eventually dropped anyhow, disregard them when counting primitive operations
+
+
+
+https://www.ics.uci.edu/~pattis/ICS-33/lectures/complexitypython.txt
+
+![image-20240301091407727](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240301091407727.png)
 
 
 
@@ -569,64 +658,6 @@ print(arr)
 
 
 
-在partition函数中单指针j实现。
-
-```python
-# Function to find the partition position
-def partition(array, low, high):
-
-	# Choose the rightmost element as pivot
-	pivot = array[high]
-
-	# Pointer for greater element
-	i = low - 1
-
-	# Traverse through all elements
-	# compare each element with pivot
-	for j in range(low, high):	#从左到右遍历数组，每当遇到一个比枢轴小的元素，
-		if array[j] <= pivot:			#就将其与枢轴左边的第一个比枢轴大的元素交换位置。
-															#最后，将枢轴放到正确的位置上。
-			# If element smaller than pivot is found
-			# swap it with the greater element pointed by i
-			i = i + 1
-
-			# Swapping element at i with element at j
-			(array[i], array[j]) = (array[j], array[i])
-
-	# Swap the pivot element with
-	# the greater element specified by i
-	(array[i + 1], array[high]) = (array[high], array[i + 1])
-
-	# Return the position from where partition is done
-	return i + 1
-
-
-def quicksort(array, low, high):
-	if low < high:
-
-		# Find pivot element such that
-		# element smaller than pivot are on the left
-		# element greater than pivot are on the right
-		pi = partition(array, low, high)
-
-		# Recursive call on the left of pivot
-		quicksort(array, low, pi - 1)
-
-		# Recursive call on the right of pivot
-		quicksort(array, pi + 1, high)
-
-
-if __name__ == '__main__':
-	array = [10, 7, 8, 9, 1, 5]
-	N = len(array)
-
-	quicksort(array, 0, N - 1)
-	for x in array:
-		print(x, end=" ")
-
-# Output: 1 5 7 8 9 10 
-```
-
 
 
 To analyze the `quickSort` function, note that for a list of length *n*, if the partition always occurs in the middle of the list, there will again be $log⁡n$ divisions. In order to find the split point, each of the *n* items needs to be checked against the pivot value. The result is $nlogn$. In addition, there is no need for additional memory as in the merge sort process.
@@ -896,6 +927,10 @@ Each group of numbers represented by index positions 3 apart are sorted correctl
 
 
 ### 6.Comparison sorts
+
+> 在排序算法中，稳定性是指相等元素的相对顺序是否在排序后保持不变。换句话说，如果排序算法在排序过程中保持了相等元素的相对顺序，则称该算法是稳定的，否则是不稳定的。
+>
+> 对于判断一个排序算法是否稳定，一种常见的方法是观察交换操作。挨着交换（相邻元素交换）是稳定的，而隔着交换（跳跃式交换）可能会导致不稳定性。
 
 Below is a table of [comparison sorts](https://en.wikipedia.org/wiki/Comparison_sort). A comparison sort cannot perform better than *O*(*n* log *n*) on average.
 
