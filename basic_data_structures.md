@@ -2,7 +2,7 @@
 
 
 
-Updated 1126 GMT+8 March 1, 2024
+Updated 2019 GMT+8 March 2, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1811,7 +1811,68 @@ True
 
 
 
-### 3.2 OJ04099: 队列和栈
+### 3.2 OJ04067: 回文数字（Palindrome Number）
+
+http://cs101.openjudge.cn/practice/04067/
+
+给出一系列非负整数，判断是否是一个回文数。回文数指的是正着写和倒着写相等的数。
+
+**输入**
+
+若干行，每行是一个非负整数（不超过99999999）
+
+**输出**
+
+对每行输入，如果其是一个回文数，输出YES。否则输出NO。
+
+样例输入
+
+```
+11
+123
+0
+14277241
+67945497
+```
+
+样例输出
+
+```
+YES
+NO
+YES
+YES
+NO
+```
+
+
+
+Use the deque from the collections module. The is_palindrome function checks if a number is a palindrome by converting it to a string, storing it in a deque, and then comparing the first and last elements until the deque is empty or only contains one element.
+
+```python
+from collections import deque
+
+def is_palindrome(num):
+    num_str = str(num)
+    num_deque = deque(num_str)
+    while len(num_deque) > 1:
+        if num_deque.popleft() != num_deque.pop():
+            return "NO"
+    return "YES"
+
+while True:
+    try:
+        num = int(input())
+        print(is_palindrome(num))
+    except EOFError:
+        break
+```
+
+
+
+
+
+### 3.3 OJ04099: 队列和栈
 
 http://cs101.openjudge.cn/practice/04099/
 
@@ -1842,16 +1903,6 @@ for _ in range(int(input())):
 ```
 
 
-
-```python
-
-```
-
-
-
-```python
-
-```
 
 
 
@@ -2124,11 +2175,13 @@ A：rear-length	B：(1+rear+m-length) % m	**C：(rear-length+m) % m**	D：m-leng
 
 
 
-**Q:** 判定一个无序表 Q（链表实现）为空的条件是（A, B ）。
+**Q:** 判定一个无序表 Q（链表实现）为空的条件是（A）。
 **A： Q.head == None**	B： Q == None
 C： Q.head == 0	D： Q.head != None
 
 
+
+Q不是None，是LinkList类的实例对象
 
 
 
