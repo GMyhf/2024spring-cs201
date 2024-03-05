@@ -2,7 +2,7 @@
 
 
 
-Updated 2019 GMT+8 March 2, 2024
+Updated 2019 GMT+8 March 5, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -14,7 +14,9 @@ Updated 2019 GMT+8 March 2, 2024
 
 2月份拉平大家Python编程技术，3月份树为主，4月份图为主，5月份复习，6月份优秀！
 
-2）待3月1日Canvas开了，5位助教负责批改大家的作业（已经分配好），前3次作业的截止时间都是3月12日 23:59，之后每周作业都是下周二23:59截止（就是每次作业持续一周）。assignment3 是3月份月考题目，3月6日17:00发布。
+2）3月1日Canvas开了，5位助教/我负责批改大家的作业（已经分配好），前3次作业的截止时间都是3月12日 23:59，之后每周作业都是下周二23:59截止（就是每次作业持续一周）。
+
+3）assignment3 是三月份月考题目（简单dp,greedy,递归等6个题目），3月6日17:00发布。
 
 
 
@@ -28,10 +30,10 @@ todo: assignment3, https://github.com/GMyhf/2024spring-cs201
 
 - 会用类实现Stack, Queue，为了笔试。但是实际编程时候，直接使用系统的list, queue更好，OJ支持.
 
-- 理解基础线性数据结构的性能，如：list, set, dict.
+- 理解基础线性数据结构的性能——时间复杂度，如：list, set, dict.
 - 理解前序、中序和后序表达式.
 - 掌握Shunting Yard 算法，是一种使用栈将中序表达式转换成后序表达式的算法.
-- 使用栈来计算后序表达式，培养题目关联的习惯，如：哈夫曼编码，与 stack 实现 波兰表达式 类似.
+- 使用栈来计算后序表达式，培养题目关联的习惯，如：哈夫曼编码，与 stack 实现 波兰表达式 类似；快排与二叉树搜索树.
 - 链表（LinkedList）实现，为笔试，更为3月12日（植树节）树的理解做准备.
 - 掌握经典题目：如 八皇后、约瑟夫.
 - 能读懂长一点的程序，能看懂UML类图，如：模拟打印机，理解其中的随机产生数就是生成OJ测试数据的方法.
@@ -864,7 +866,9 @@ http://cs101.openjudge.cn/practice/24591/
 
 
 
-Shunting Yard 算法是一种用于将中缀表达式转换为后缀表达式的算法。它由荷兰计算机科学家 Edsger Dijkstra 在1960年代提出，用于解析和计算数学表达式。
+Shunting yard algorightm（调度场算法）是一种用于将中缀表达式转换为后缀表达式的算法。它由荷兰计算机科学家 Edsger Dijkstra 在1960年代提出，用于解析和计算数学表达式。
+
+![image-20240305142138853](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240305142138853.png)
 
 Shunting Yard 算法的主要思想是使用两个栈（运算符栈和输出栈）来处理表达式的符号。算法按照运算符的优先级和结合性，将符号逐个处理并放置到正确的位置。最终，输出栈中的元素就是转换后的后缀表达式。
 
@@ -1761,8 +1765,6 @@ As an example, if we assume that `d` is a deque that has been created and is cur
 
 
 
-
-
 ```python
 class Deque:
     def __init__(self):
@@ -2211,7 +2213,7 @@ Q不是None，是LinkList类的实例对象
 
 
 
-Q:** 现有中缀表达式 $E=((20+5)/5+5*(30-7))*4$， 与 E 等价的后缀表达式为?
+**Q:** 现有中缀表达式 $E=((20+5)/5+5*(30-7))*4$， 与 E 等价的后缀表达式为?
 
 20 ![$5 + 5 / 5 $](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)5 + 5 / 5 30 ![$7 - * 4 * +$](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)7 − ∗ 4 ∗ +
 
