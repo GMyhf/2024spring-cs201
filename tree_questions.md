@@ -1,6 +1,6 @@
-# 树
+# 20240312-Week4-植树节（Arbor day）
 
-Updated 1458 GMT+8 Feb 11, 2024
+Updated 2147 GMT+8 March 5, 2024
 
 
 
@@ -9,6 +9,10 @@ Updated 1458 GMT+8 Feb 11, 2024
 
 
 ## 6.3 术语及定义
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240305220241219.png" alt="image-20240305220241219" style="zoom: 50%;" />
+
+
 
 在看了一些树的例子之后，现在来正式地定义树及其构成。
 节点 Node：节点是树的基础部分。
@@ -1417,13 +1421,13 @@ for _ in range(n):
 
 ## 6.7 二叉搜索树
 
-本节将探讨二叉搜索树，它是映射的另一种实现。我们感兴趣的不是元素在树中的确切位置，而是如何利用二叉树结构提供高效的搜索。
+二叉搜索树（Binary Search Tree，BST），它是映射的另一种实现。我们感兴趣的不是元素在树中的确切位置，而是如何利用二叉树结构提供高效的搜索。
 
 二叉搜索树依赖于这样一个性质：小于父节点的键都在左子树中，大于父节点的键则都在右子树中。我们称这个性质为二叉搜索性。
 
 
 
-#### P1320:二叉搜索树的层次遍历
+### P1320:二叉搜索树的层次遍历
 
 http://dsbpython.openjudge.cn/dspythonbook/P1320/
 
@@ -1513,6 +1517,67 @@ print(' '.join(map(str, traversal)))
 This code reads the sequence of numbers from the input, removes duplicates, constructs the BST, performs the level order traversal, and prints the result.
 
 
+
+### 二叉搜索树实现快排
+
+快速排序是一种基于分治法的排序算法，它通过选择一个元素作为基准（pivot），将数组分割为两个子数组，其中一个子数组的元素都小于基准，另一个子数组的元素都大于基准。然后，对两个子数组递归地应用相同的排序过程，直到排序完成。
+
+二叉搜索树是一种有序的二叉树，它满足以下性质：
+- 左子树中的所有节点的值都小于根节点的值。
+- 右子树中的所有节点的值都大于根节点的值。
+- 左子树和右子树也分别是二叉搜索树。
+
+可以使用二叉搜索树来实现快速排序的过程。具体步骤如下：
+1. 选择数组中的一个元素作为基准。
+2. 创建一个空的二叉搜索树。
+3. 将数组中的其他元素逐个插入二叉搜索树中。
+4. 按照二叉搜索树的中序遍历（左子树、根节点、右子树）得到排序后的结果。
+
+这种方法的时间复杂度为 O(n log n)，其中 n 是数组的长度。每次插入操作都需要 O(log n) 的时间复杂度，总共进行 n-1 次插入操作。
+
+需要注意的是，二叉搜索树的性能取决于树的平衡性。如果二叉搜索树变得不平衡，性能可能会下降到 O(n^2) 的时间复杂度。因此，在实际应用中，为了确保性能，通常会使用平衡二叉搜索树（如红黑树、AVL树）来实现快速排序。
+
+```python
+class TreeNode:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+def insert(root, val):
+    if root is None:
+        return TreeNode(val)
+    if val < root.val:
+        root.left = insert(root.left, val)
+    else:
+        root.right = insert(root.right, val)
+    return root
+
+def inorder_traversal(root, result):
+    if root:
+        inorder_traversal(root.left, result)
+        result.append(root.val)
+        inorder_traversal(root.right, result)
+
+def quicksort(nums):
+    if not nums:
+        return []
+    root = TreeNode(nums[0])
+    for num in nums[1:]:
+        insert(root, num)
+    result = []
+    inorder_traversal(root, result)
+    return result
+
+# 示例输入
+nums = [5, 2, 7, 1, 8, 3]
+
+# 使用二叉搜索树实现快速排序
+sorted_nums = quicksort(nums)
+
+# 打印排序结果
+print(sorted_nums)
+```
 
 
 
