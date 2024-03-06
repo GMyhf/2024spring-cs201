@@ -2,7 +2,7 @@
 
 
 
-Updated 1021 GMT+8 March 6, 2024
+Updated 18:38 GMT+8 March 6, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2082,6 +2082,8 @@ linked_list.display_backward()  # 输出：1 2 3
 
 ## 4.3 颠倒链表
 
+http://dsbpython.openjudge.cn/dspythonbook/P0040/
+
 程序填空题目，需要掌握“补充代码”题型，例如写出某个函数的实现代码，如 def reverse(self):
 
 ```python
@@ -2098,7 +2100,7 @@ class LinkList:
             p.next = node
             p = p.next
 
-    def reverse(self):  # 填空补充代码
+    def reverse(self):  # 填空：实现函数
         prev = None
         curr = self.head
         while curr:
@@ -2124,6 +2126,8 @@ a.print()
 
 
 ## 4.4 删除链表元素
+
+http://dsbpython.openjudge.cn/dspythonbook/P0020/
 
 程序填空题目，需要掌握“补充代码”题型，例如写出某个函数的实现代码，如 def remove(self,data):
 
@@ -2177,7 +2181,7 @@ class LinkList:  # 循环链表
                 ptr = ptr.next
             print("")
 
-    def remove(self, data):  # 填空补充代码
+    def remove(self, data):  # 填空：实现函数
         if self.size == 0:
             return None
         else:
@@ -2236,6 +2240,174 @@ EMPTY
 
 
 
+## 4.5 插入链表元素
+
+http://dsbpython.openjudge.cn/2024allhw/004/
+
+程序填空题目，需要掌握“补充代码”题型，例如写出某个函数的实现代码，如 def insertCat(self):
+
+```python
+class Node:
+    def __init__(self, data, next=None):
+        self.data, self.next = data, next
+
+class LinkList:
+    def __init__(self):
+        self.head = None
+
+    def initList(self, data):
+        self.head = Node(data[0])
+        p = self.head
+        for i in data[1:]:
+            node = Node(i)
+            p.next = node
+            p = p.next
+
+    def insertCat(self):
+        # 计算链表的长度
+        length = 0
+        p = self.head
+        while p:
+            length += 1
+            p = p.next
+
+        # 找到插入位置
+        position = length // 2 if length % 2 == 0 else (length // 2) + 1
+        p = self.head
+        for _ in range(position - 1):
+            p = p.next
+
+        # 在插入位置处插入数字6
+        node = Node(6)
+        node.next = p.next
+        p.next = node
+
+    def printLk(self):
+        p = self.head
+        while p:
+            print(p.data, end=" ")
+            p = p.next
+        print()
+
+lst = list(map(int, input().split()))
+lkList = LinkList()
+lkList.initList(lst)
+lkList.insertCat()
+lkList.printLk()
+
+"""
+### 样例输入1
+8 1 0 9 7 5
+### 样例输入2
+1 2 3
+
+### 样例输出1
+8 1 0 6 9 7 5
+### 样例输出2
+1 2 6 3
+"""
+```
+
+
+
+# 5 其他
+
+## 5.1 练习写类——运算符的实现
+
+http://dsbpython.openjudge.cn/2024allhw/002/
+
+程序填空题目，需要掌握“补充代码”题型，例如写出某个函数的实现代码，如 def insertCat(self):
+
+```python
+class A:
+    def __init__(self, x):
+        self.x = x
+
+    def __lt__(self, other):
+        if isinstance(other, A):
+            return self.x < other.x
+        elif isinstance(other, int):
+            return self.x < other
+        else:
+            return NotImplemented
+
+    def __ge__(self, other):
+        if isinstance(other, A):
+            return self.x >= other.x
+        elif isinstance(other, int):
+            return self.x >= other
+        else:
+            return NotImplemented
+
+
+a, b, c = map(int, input().split())
+print(isinstance(A(2), A))
+print(A(a) < A(b))
+print(A(a) >= A(c))
+print(A(a) < c)
+
+"""
+1 2 3
+True
+True
+False
+True
+"""
+```
+
+
+
+## 5.2 Python语法——复合函数
+
+http://dsbpython.openjudge.cn/2024allhw/001/
+
+下面程序输入一个整数n，输出(n+1)2，请填空
+
+```python
+def combine(f,g):
+    return lambda x: g(f(x))	# 补充这句代码
+def inc(x):
+    return x + 1
+def square(x):
+    return x * x
+c  = int(input())
+fx = combine(inc,square)
+print(fx(c))
+
+"""
+3
+16
+"""
+```
+
+**输入**
+
+整数n
+
+**输出**
+
+(n+1)的平方
+
+样例输入
+
+```
+3
+```
+
+样例输出
+
+```
+16
+```
+
+提示
+
+返回一个lambda表达式
+
+来源：Guo Wei
+
+
+
 
 
 **Q.** 双向链表中的每个结点有两个引用域，prev 和 next，分别引用当前结点的前驱与后继，设 p 引用
@@ -2276,7 +2448,7 @@ B: 链表 - 这是一种存储结构，它是线性表的链式存储方式，�
 
 
 
-# 5 关键术语
+# 6 关键术语
 
 |                           |                          |                       |
 | ------------------------- | ------------------------ | --------------------- |
