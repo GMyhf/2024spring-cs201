@@ -2,7 +2,7 @@
 
 
 
-Updated 2254 GMT+8 March 5, 2024
+Updated 1021 GMT+8 March 6, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1761,7 +1761,7 @@ As an example, if we assume that `d` is a deque that has been created and is cur
 
 
 
-### 3.1 实现双端队列
+## 3.1 实现双端队列
 
 
 
@@ -1813,7 +1813,7 @@ True
 
 
 
-### 3.2 OJ04067: 回文数字（Palindrome Number）
+## 3.2 OJ04067: 回文数字（Palindrome Number）
 
 http://cs101.openjudge.cn/practice/04067/
 
@@ -1874,7 +1874,7 @@ while True:
 
 
 
-### 3.3 OJ04099: 队列和栈
+## 3.3 OJ04099: 队列和栈
 
 http://cs101.openjudge.cn/practice/04099/
 
@@ -1954,7 +1954,7 @@ for _ in range(int(input())):
 
 
 
-单向链表实现
+## 4.1 单向链表实现
 
 ```python
 class Node:
@@ -2009,7 +2009,7 @@ linked_list.display()  # 输出：1 3
 
 
 
-双向链表实现
+## 4.2 双向链表实现
 
 ```python
 class Node:
@@ -2077,6 +2077,164 @@ linked_list.display_backward()  # 输出：1 2 3
 `display_backward` 方法用于反向遍历并显示链表中的所有节点。它从尾部开始，依次打印每个节点的值。
 
 在示例的最后，创建了一个空的 `DoublyLinkedList` 对象，并创建了三个节点 `node1`、`node2` 和 `node3`。然后，我们按照顺序将这些节点插入到链表中，并调用 `display_forward` 和 `display_backward` 方法来显示链表的内容。输出结果应为 `3 2 1` 和 `1 2 3`，分别表示正向和反向遍历链表时节点的值。
+
+
+
+## 4.3 颠倒链表
+
+程序填空题目，需要掌握“补充代码”题型，例如写出某个函数的实现代码，如 def reverse(self):
+
+```python
+class Node:
+    def __init__(self, data, next=None):
+        self.data, self.next = data, next
+
+class LinkList:
+    def __init__(self, lst):
+        self.head = Node(lst[0])
+        p = self.head
+        for i in lst[1:]:
+            node = Node(i)
+            p.next = node
+            p = p.next
+
+    def reverse(self):  # 填空补充代码
+        prev = None
+        curr = self.head
+        while curr:
+            next_node = curr.next
+            curr.next = prev
+            prev = curr
+            curr = next_node
+        self.head = prev
+
+    def print(self):
+        p = self.head
+        while p:
+            print(p.data, end=" ")
+            p = p.next
+        print()
+
+a = list(map(int, input().split()))
+a = LinkList(a)
+a.reverse()
+a.print()
+```
+
+
+
+## 4.4 删除链表元素
+
+程序填空题目，需要掌握“补充代码”题型，例如写出某个函数的实现代码，如 def remove(self,data):
+
+```python
+class Node:
+    def __init__(self, data, next=None):
+        self.data, self.next = data, next
+
+
+class LinkList:  # 循环链表
+    def __init__(self):
+        self.tail = None
+        self.size = 0
+
+    def isEmpty(self):
+        return self.size == 0
+
+    def pushFront(self, data):
+        nd = Node(data)
+        if self.tail == None:
+            self.tail = nd
+            nd.next = self.tail
+        else:
+            nd.next = self.tail.next
+            self.tail.next = nd
+        self.size += 1
+
+    def pushBack(self, data):
+        self.pushFront(data)
+        self.tail = self.tail.next
+
+    def popFront(self):
+        if self.size == 0:
+            return None
+        else:
+            nd = self.tail.next
+            self.size -= 1
+            if self.size == 0:
+                self.tail = None
+            else:
+                self.tail.next = nd.next
+        return nd.data
+
+    def printList(self):
+        if self.size > 0:
+            ptr = self.tail.next
+            while True:
+                print(ptr.data, end=" ")
+                if ptr == self.tail:
+                    break
+                ptr = ptr.next
+            print("")
+
+    def remove(self, data):  # 填空补充代码
+        if self.size == 0:
+            return None
+        else:
+            ptr = self.tail
+            while ptr.next.data != data:
+                ptr = ptr.next
+                if ptr == self.tail:
+                    return False
+            self.size -= 1
+            if ptr.next == self.tail:
+                self.tail = ptr
+            ptr.next = ptr.next.next
+            return True
+
+
+t = int(input())
+for i in range(t):
+    lst = list(map(int, input().split()))
+    lkList = LinkList()
+    for x in lst:
+        lkList.pushBack(x)
+    lst = list(map(int, input().split()))
+    for a in lst:
+        result = lkList.remove(a)
+        if result == True:
+            lkList.printList()
+        elif result == False:
+            print("NOT FOUND")
+        else:
+            print("EMPTY")
+    print("----------------")
+
+"""
+样例输入
+2
+1 2 3
+3 2 2 9 5 1 1 4
+1
+9 88 1 23
+
+样例输出
+1 2 
+1 
+NOT FOUND
+NOT FOUND
+NOT FOUND
+EMPTY
+EMPTY
+----------------
+NOT FOUND
+NOT FOUND
+EMPTY
+----------------
+"""
+```
+
+
 
 
 
