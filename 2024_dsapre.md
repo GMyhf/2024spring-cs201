@@ -897,121 +897,222 @@ if __name__ == "__main__":
 
 # 21-30
 
-```python
+## 02488: A Knight's Journey
 
+http://cs101.openjudge.cn/dsapre/02488/
+
+
+
+```python
+move = [(-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1)]
+
+
+def dfs(x, y, step, p, q, visited, ans):
+    if step == p * q:
+        return True
+    for i in range(8):
+        dx, dy = x + move[i][0], y + move[i][1]
+        if 1 <= dx <= q and 1 <= dy <= p and not visited[dx][dy]:
+            visited[dx][dy] = True
+            ans[step] = chr(dx + 64) + str(dy)
+            if dfs(dx, dy, step + 1, p, q, visited, ans):
+                return True
+            visited[dx][dy] = False
+    return False
+
+
+n = int(input())
+for m in range(1, n + 1):
+    p, q = map(int, input().split())
+    ans = ["" for _ in range(p * q)]
+    visited = [[False] * (p + 1) for _ in range(q + 1)]
+    visited[1][1] = True
+    ans[0] = "A1"
+    if dfs(1, 1, 1, p, q, visited, ans):
+        result = "".join(ans)
+    else:
+        result = "impossible"
+    print(f"Scenario #{m}:")
+    print(result)
+    print()
 ```
 
 
 
 
 
-```python
+## 02524: 宗教信仰
 
-```
-
-
+http://cs101.openjudge.cn/dsapre/02524/
 
 
 
 ```python
+def init_set(n):
+    return list(range(n))
 
+def get_father(x, father):
+    if father[x] != x:
+        father[x] = get_father(father[x], father)
+    return father[x]
+
+def join(x, y, father):
+    fx = get_father(x, father)
+    fy = get_father(y, father)
+    if fx == fy:
+        return
+    father[fx] = fy
+
+def is_same(x, y, father):
+    return get_father(x, father) == get_father(y, father)
+
+def main():
+    case_num = 0
+    while True:
+        n, m = map(int, input().split())
+        if n == 0 and m == 0:
+            break
+        count = 0
+        father = init_set(n)
+        for _ in range(m):
+            s1, s2 = map(int, input().split())
+            join(s1 - 1, s2 - 1, father)
+        for i in range(n):
+            if father[i] == i:
+                count += 1
+        case_num += 1
+        print(f"Case {case_num}: {count}")
+
+if __name__ == "__main__":
+    main()
 ```
 
 
+
+## 02694: 波兰表达式
+
+http://cs101.openjudge.cn/dsapre/02694/
+
+
+
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+
+的 Basic Exercise 部分相应题目
+
+
+
+## 02756: 二叉树（1）
+
+http://cs101.openjudge.cn/dsapre/02756/
+
+
+
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+
+的 “数算pre每日选做” 中 “H5: 树及算法-下”
+
+
+
+## 02766: 最大子矩阵
+
+http://cs101.openjudge.cn/dsapre/02766/
+
+
+
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+
+的 Optional Problems 部分相应题目
+
+
+
+## 02773: 采药
+
+http://cs101.openjudge.cn/dsapre/02773/
+
+
+
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+
+的 Optional Problems 部分相应题目
+
+
+
+## 02774: 木材加工
+
+http://cs101.openjudge.cn/dsapre/02774/
 
 
 
 ```python
+n, k = map(int, input().split())
+expenditure = []
+for _ in range(n):
+    expenditure.append(int(input()))
 
+
+def check(x):
+    num = 0
+    for i in range(n):
+        num += expenditure[i] // x
+
+    return num >= k
+
+lo = 1
+hi = max(expenditure) + 1
+
+if sum(expenditure) < k:
+    print(0)
+    exit()
+
+ans = 1
+while lo < hi:
+    mid = (lo + hi) // 2
+    if check(mid):
+        ans = mid
+        lo = mid + 1
+    else:
+        hi = mid
+
+print(ans)
 ```
 
 
 
+## 02788: 二叉树（2）
 
-
-```python
-
-```
-
+http://cs101.openjudge.cn/dsapre/02788/
 
 
 
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-```python
-
-```
-
+的 “数算pre每日选做” 中 “H5: 树及算法-上”
 
 
 
+## 02945: 拦截导弹
 
-```python
-
-```
-
+http://cs101.openjudge.cn/dsapre/02945/
 
 
 
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-```python
-
-```
-
+的 “数算pre每日选做” 中 “H3: 递归与动态规划”
 
 
 
+## 03720: 文本二叉树
 
-```python
-
-```
-
+http://cs101.openjudge.cn/dsapre/03720/
 
 
 
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-```python
-
-```
-
+的 “数算pre每日选做” 中 “2023期末上机考试（数算B）7题”
 
 
-
-
-```python
-
-```
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-```python
-
-```
 
 
 
