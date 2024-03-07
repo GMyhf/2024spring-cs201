@@ -1,6 +1,6 @@
 # 数据结构与算法pre每日选做
 
-Updated 0802 GMT+8 March 7, 2024
+Updated 2331 GMT+8 March 7, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -380,19 +380,111 @@ while True:
 
 
 
-
-
-
-
 ## 01178: Camelot
 
-http://cs101.openjudge.cn/dsapre/01178/
+Centuries ago, King Arthur and the Knights of the Round Table used to meet every year on New Year's Day to celebrate their fellowship. In remembrance of these events, we consider a board game for one player, on which one king and several knight pieces are placed at random on distinct squares.
+The Board is an 8x8 array of squares. The King can move to any adjacent square, as shown in Figure 2, as long as it does not fall off the board. A Knight can jump as shown in Figure 3, as long as it does not fall off the board.
+![img](http://media.openjudge.cn/images/g180/1178_1.jpg)
+During the play, the player can place more than one piece in the same square. The board squares are assumed big enough so that a piece is never an obstacle for other piece to move freely.
+The player?s goal is to move the pieces so as to gather them all in the same square, in the smallest possible number of moves. To achieve this, he must move the pieces as prescribed above. Additionally, whenever the king and one or more knights are placed in the same square, the player may choose to move the king and one of the knights together henceforth, as a single knight, up to the final gathering point. Moving the knight together with the king counts as a single move.
+
+Write a program to compute the minimum number of moves the player must perform to produce the gathering.
+
+**输入**
+
+Your program is to read from standard input. The input contains the initial board configuration, encoded as a character string. The string contains a sequence of up to 64 distinct board positions, being the first one the position of the king and the remaining ones those of the knights. Each position is a letter-digit pair. The letter indicates the horizontal board coordinate, the digit indicates the vertical board coordinate.
+
+0 <= number of knights <= 63
+
+**输出**
+
+Your program is to write to standard output. The output must contain a single line with an integer indicating the minimum number of moves the player must perform to produce the gathering.
+
+样例输入
+
+```
+D4A3A8H1H8
+```
+
+样例输出
+
+```
+10
+```
+
+来源
+
+IOI 1998
 
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+```python
+import sys
 
-的 Optional Problems 部分相应题目
+inf = float('infinity')
+kmove = [(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1)]
+knmove = [(2,1),(1,2),(-1,2),(-2,1),(-2,-1),(-1,-2),(1,-2),(2,-1)]
+kmap = [[inf]*64 for _ in range(64)]
+knmap = [[inf]*64 for _ in range(64)]
+
+def ok(x, y):
+    return 0 <= x < 8 and 0 <= y < 8
+
+def getxy(p):
+    return p % 8, p // 8
+
+def getPosition(x, y):
+    return x + y * 8
+
+def init():
+    for i in range(64):
+        kmap[i][i] = 0
+        knmap[i][i] = 0
+        x, y = getxy(i)
+        for j in range(8):
+            tx, ty = kmove[j][0] + x, kmove[j][1] + y
+            if ok(tx, ty):
+                next = getPosition(tx, ty)
+                kmap[i][next] = 1
+            tx, ty = knmove[j][0] + x, knmove[j][1] + y
+            if ok(tx, ty):
+                next = getPosition(tx, ty)
+                knmap[i][next] = 1
+
+def floyd():
+    for k in range(64):
+        for i in range(64):
+            for j in range(64):
+                kmap[i][j] = min(kmap[i][j], kmap[i][k] + kmap[k][j])
+                knmap[i][j] = min(knmap[i][j], knmap[i][k] + knmap[k][j])
+
+init()
+floyd()
+
+s = input().strip()
+size = len(s)
+num = 0
+position = [0]*64
+
+for i in range(0, size, 2):
+    position[num] = ord(s[i]) - ord('A') + (ord(s[i+1]) - ord('1')) * 8
+    num += 1
+
+minmove = inf
+total = 0  # Renamed 'sum' to 'total'
+for ds in range(64):
+    for m in range(64):
+        for k in range(1, num):
+            total = sum(knmap[position[i]][ds] for i in range(1, num))
+            total += kmap[position[0]][m]
+            total += knmap[position[k]][m] + knmap[m][ds]
+            total -= knmap[position[k]][ds]
+            minmove = min(minmove, total)
+
+print(minmove)
+```
+
+
 
 
 
@@ -535,11 +627,103 @@ while True:
 
 http://cs101.openjudge.cn/dsapre/01376/
 
+The Robot Moving Institute is using a robot in their local store to transport different items. Of course the robot should spend only the minimum time necessary when travelling from one place in the store to another. The robot can move only along a straight line (track). All tracks form a rectangular grid. Neighbouring tracks are one meter apart. The store is a rectangle N x M meters and it is entirely covered by this grid. The distance of the track closest to the side of the store is exactly one meter. The robot has a circular shape with diameter equal to 1.6 meter. The track goes through the center of the robot. The robot always faces north, south, west or east. The tracks are in the south-north and in the west-east directions. The robot can move only in the direction it faces. The direction in which it faces can be changed at each track crossing. Initially the robot stands at a track crossing. The obstacles in the store are formed from pieces occupying 1m x 1m on the ground. Each obstacle is within a 1 x 1 square formed by the tracks. The movement of the robot is controlled by two commands. These commands are GO and TURN. 
+The GO command has one integer parameter n in {1,2,3}. After receiving this command the robot moves n meters in the direction it faces. 
+
+The TURN command has one parameter which is either left or right. After receiving this command the robot changes its orientation by 90o in the direction indicated by the parameter. 
+
+The execution of each command lasts one second. 
+
+Help researchers of RMI to write a program which will determine the minimal time in which the robot can move from a given starting point to a given destination.
+
+**输入**
+
+The input consists of blocks of lines. The first line of each block contains two integers M <= 50 and N <= 50 separated by one space. In each of the next M lines there are N numbers one or zero separated by one space. One represents obstacles and zero represents empty squares. (The tracks are between the squares.) The block is terminated by a line containing four positive integers B1 B2 E1 E2 each followed by one space and the word indicating the orientation of the robot at the starting point. B1, B2 are the coordinates of the square in the north-west corner of which the robot is placed (starting point). E1, E2 are the coordinates of square to the north-west corner of which the robot should move (destination point). The orientation of the robot when it has reached the destination point is not prescribed. We use (row, column)-type coordinates, i.e. the coordinates of the upper left (the most north-west) square in the store are 0,0 and the lower right (the most south-east) square are M - 1, N - 1. The orientation is given by the words north or west or south or east. The last block contains only one line with N = 0 and M = 0.
+
+**输出**
+
+The output contains one line for each block except the last block in the input. The lines are in the order corresponding to the blocks in the input. The line contains minimal number of seconds in which the robot can reach the destination point from the starting point. If there does not exist any path from the starting point to the destination point the line will contain -1. 
+![img](http://media.openjudge.cn/images/g378/1376_1.jpg)
+
+样例输入
+
+```
+9 10
+0 0 0 0 0 0 1 0 0 0
+0 0 0 0 0 0 0 0 1 0
+0 0 0 1 0 0 0 0 0 0
+0 0 1 0 0 0 0 0 0 0
+0 0 0 0 0 0 1 0 0 0
+0 0 0 0 0 1 0 0 0 0
+0 0 0 1 1 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+1 0 0 0 0 0 0 0 1 0
+7 2 2 7 south
+0 0
+```
+
+样例输出
+
+```
+12
+```
+
+来源
+
+Central Europe 1996
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 Optional Problems 部分相应题目
+```python
+from collections import deque
+
+# Directions: north(0), east(1), south(2), west(3)
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
+
+def bfs(sx, sy, ex, ey, sdir):
+    queue = deque([(sx, sy, 0, sdir)])
+    visited = [[[0]*4 for _ in range(m+1)] for _ in range(n+1)]
+    visited[sx][sy][sdir] = 1
+
+    while queue:
+        x, y, time, dir = queue.popleft()
+        for i in range(1, 4):  # 1, 2, 3 steps
+            nx, ny = x + dx[dir]*i, y + dy[dir]*i
+            if nx < 1 or nx >= n or ny < 1 or ny >= m or grid[nx][ny] or grid[nx+1][ny] or grid[nx][ny+1] or grid[nx+1][ny+1]:
+                break
+            if not visited[nx][ny][dir]:
+                visited[nx][ny][dir] = 1
+                if nx == ex and ny == ey:
+                    return time + 1
+                queue.append((nx, ny, time + 1, dir))
+        for i in range(4):
+            if abs(dir - i) == 2:  # Don't go back
+                continue
+            if not visited[x][y][i]:  # Turn in place, no need to check boundaries
+                visited[x][y][i] = 1
+                queue.append((x, y, time + 1, i))
+    return -1
+
+while True:
+    n, m = map(int, input().split())
+    if n == 0 and m == 0:
+        break
+
+    grid = [[0]*(m+2) for _ in range(n+2)]
+    for i in range(1, n+1):
+        grid[i] = [0] + list(map(int, input().split())) + [0]
+
+    sx, sy, ex, ey, sdir = input().split()
+    sx, sy, ex, ey = map(int, [sx, sy, ex, ey])
+    sdir = {'n': 0, 'e': 1, 's': 2, 'w': 3}[sdir[0]]
+
+    if sx == ex and sy == ey:
+        print(0)
+        continue
+
+    print(bfs(sx, sy, ex, ey, sdir))
+```
 
 
 
@@ -551,9 +735,26 @@ http://cs101.openjudge.cn/dsapre/01426/
 
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
-
-的 Optional Problems 部分相应题目
+```python
+#23n2300011072(X)
+from collections import deque
+while 1:
+    n=int(input())
+    if n==0:
+        break
+    q=deque([(1,'1')])
+    vis={1}
+    while q:
+        remainder,num=q.popleft()
+        if remainder==0:
+            print(num)
+            break
+        for digit in [0,1]:
+            new_remainder=(remainder*10+digit)%n
+            if new_remainder not in vis:
+                vis.add(new_remainder)
+                q.append((new_remainder,num+str(digit)))
+```
 
 
 
@@ -1059,11 +1260,156 @@ print(original)
 
 http://cs101.openjudge.cn/dsapre/02049/
 
+Nemo is a naughty boy. One day he went into the deep sea all by himself. Unfortunately, he became lost and couldn't find his way home. Therefore, he sent a signal to his father, Marlin, to ask for help.
+After checking the map, Marlin found that the sea is like a labyrinth with walls and doors. All the walls are parallel to the X-axis or to the Y-axis. The thickness of the walls are assumed to be zero.
+All the doors are opened on the walls and have a length of 1. Marlin cannot go through a wall unless there is a door on the wall. Because going through a door is dangerous (there may be some virulent medusas near the doors), Marlin wants to go through as few doors as he could to find Nemo.
+Figure-1 shows an example of the labyrinth and the path Marlin went through to find Nemo.
+![img](http://media.openjudge.cn/images/2049_1.jpg)
+We assume Marlin's initial position is at (0, 0). Given the position of Nemo and the configuration of walls and doors, please write a program to calculate the minimum number of doors Marlin has to go through in order to reach Nemo.
+
+**输入**
+
+The input consists of several test cases. Each test case is started by two non-negative integers M and N. M represents the number of walls in the labyrinth and N represents the number of doors. 
+Then follow M lines, each containing four integers that describe a wall in the following format: 
+x y d t 
+(x, y) indicates the lower-left point of the wall, d is the direction of the wall -- 0 means it's parallel to the X-axis and 1 means that it's parallel to the Y-axis, and t gives the length of the wall. 
+The coordinates of two ends of any wall will be in the range of [1,199]. 
+Then there are N lines that give the description of the doors: 
+x y d 
+x, y, d have the same meaning as the walls. As the doors have fixed length of 1, t is omitted. 
+The last line of each case contains two positive float numbers: 
+f1 f2 
+(f1, f2) gives the position of Nemo. And it will not lie within any wall or door. 
+A test case of M = -1 and N = -1 indicates the end of input, and should not be processed.
+
+**输出**
+
+For each test case, in a separate line, please output the minimum number of doors Marlin has to go through in order to rescue his son. If he can't reach Nemo, output -1.
+
+样例输入
+
+```
+8 9
+1 1 1 3
+2 1 1 3
+3 1 1 3
+4 1 1 3
+1 1 0 3
+1 2 0 3
+1 3 0 3
+1 4 0 3
+2 1 1
+2 2 1
+2 3 1
+3 1 1
+3 2 1
+3 3 1
+1 2 0
+3 3 0
+4 3 1
+1.5 1.5
+4 0
+1 1 0 1
+1 1 1 1
+2 1 1 1
+1 2 0 1
+1.5 1.7
+-1 -1
+```
+
+样例输出
+
+```
+5
+-1
+```
+
+来源
+
+Beijing 2004
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H7: 图应用”
+```python
+from collections import deque
+
+N = 210
+Size = 999999
+INF = 1<<20
+mv = [(1,0),(0,-1),(0,1),(-1,0)]
+mapp = [[[0]*2 for _ in range(N)] for _ in range(N)]
+vis = [[0]*N for _ in range(N)]
+
+def init():
+    global result
+    result = 0
+    for i in range(N):
+        for j in range(N):
+            mapp[i][j] = [0, 0]
+            vis[i][j] = 0
+
+def BFS(x, y):
+    global result
+    q = deque()
+    q.append((x, y, 0))
+    vis[x][y] = 1
+    result = INF
+    while q:
+        t = q.popleft()
+        if t[0] == 0 or t[1] == 0 or t[0] > 198 or t[1] > 198:
+            result = min(result, t[2])
+            continue
+        for i in range(4):
+            f = [t[0] + mv[i][0], t[1] + mv[i][1]]
+            if i == 0 and not vis[f[0]][f[1]] and mapp[t[0]][t[1]][1] != 3:
+                f.append(t[2] + 1 if mapp[t[0]][t[1]][1] == 4 else t[2])
+                vis[f[0]][f[1]] = 1
+                q.append(tuple(f))
+            elif i == 1 and not vis[f[0]][f[1]] and mapp[f[0]][f[1]][0] != 3:
+                f.append(t[2] + 1 if mapp[f[0]][f[1]][0] == 4 else t[2])
+                vis[f[0]][f[1]] = 1
+                q.append(tuple(f))
+            elif i == 2 and not vis[f[0]][f[1]] and mapp[t[0]][t[1]][0] != 3:
+                f.append(t[2] + 1 if mapp[t[0]][t[1]][0] == 4 else t[2])
+                vis[f[0]][f[1]] = 1
+                q.append(tuple(f))
+            elif i == 3 and not vis[f[0]][f[1]] and mapp[f[0]][f[1]][1] != 3:
+                f.append(t[2] + 1 if mapp[f[0]][f[1]][1] == 4 else t[2])
+                vis[f[0]][f[1]] = 1
+                q.append(tuple(f))
+
+while True:
+    m, n = map(int, input().split())
+    if m == -1 and n == -1:
+        break
+    init()
+    for _ in range(m):
+        x, y, d, t = map(int, input().split())
+        if d:
+            for num in range(t):
+                mapp[x-1][y+num][1] = 3
+        else:
+            for num in range(t):
+                mapp[x+num][y-1][0] = 3
+    for _ in range(n):
+        x, y, d = map(int, input().split())
+        if d:
+            mapp[x-1][y][1] = 4
+        else:
+            mapp[x][y-1][0] = 4
+    Nemo_x, Nemo_y = map(float, input().split())
+    xx, yy = int(Nemo_x + 0.0001), int(Nemo_y + 0.0001)
+    if n == 0 and m == 0:
+        print(0)
+        continue
+    if xx <= 0 or yy <= 0 or xx >= 199 or yy >= 199:
+        print(0)
+    else:
+        BFS(xx, yy)
+        print(result if result != INF else -1)
+```
+
+
 
 
 
@@ -1670,11 +2016,77 @@ http://cs101.openjudge.cn/dsapre/02773/
 
 http://cs101.openjudge.cn/dsapre/02774/
 
+木材厂有一些原木，现在想把这些木头切割成一些长度相同的小段木头，需要得到的小段的数目是给定了。当然，我们希望得到的小段越长越好，你的任务是计算能够得到的小段木头的最大长度。
+
+木头长度的单位是厘米。原木的长度都是正整数，我们要求切割得到的小段木头的长度也要求是正整数。
+
+**输入**
+
+第一行是两个正整数*N*和*K*(1 ≤ *N* ≤ 10000, 1 ≤ *K* ≤ 10000)，*N*是原木的数目，*K*是需要得到的小段的数目。
+接下来的*N*行，每行有一个1到10000之间的正整数，表示一根原木的长度。
+　
+
+**输出**
+
+输出能够切割得到的小段的最大长度。如果连1厘米长的小段都切不出来，输出"0"。
+
+样例输入
+
+```
+3 7
+232
+124
+456
+```
+
+样例输出
+
+```
+114
+```
+
+来源
+
+NOIP 2004
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2023期末上机考试（数算B）7题”
+可以参考04135: 月度开销，08210: 河中跳房子
+
+```python
+n, k = map(int, input().split())
+expenditure = []
+for _ in range(n):
+    expenditure.append(int(input()))
+
+
+def check(x):
+    num = 0
+    for i in range(n):
+        num += expenditure[i] // x
+
+    return num >= k
+
+lo = 1
+hi = max(expenditure) + 1
+
+if sum(expenditure) < k:
+    print(0)
+    exit()
+
+ans = 1
+while lo < hi:
+    mid = (lo + hi) // 2
+    if check(mid):
+        ans = mid
+        lo = mid + 1
+    else:
+        hi = mid
+
+print(ans)
+```
+
+
 
 
 
@@ -1807,7 +2219,7 @@ http://cs101.openjudge.cn/dsapre/02945/
 
 题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H3: 递归与动态规划”
+的 Optional problems 部分
 
 
 
@@ -1817,9 +2229,156 @@ http://cs101.openjudge.cn/dsapre/03720/
 
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/202401302229085.jpg)
+如上图，一棵每个节点都是一个字母，且字母互不相同的二叉树，可以用以下若干行文本表示:
 
-的 “数算pre每日选做” 中 “2023期末上机考试（数算B）7题”
+
+
+```
+A
+-B
+--*
+--C
+-D
+--E
+---*
+---F
+```
+
+
+
+在这若干行文本中：
+
+1) 每个字母代表一个节点。该字母在文本中是第几行，就称该节点的行号是几。根在第1行
+2) 每个字母左边的'-'字符的个数代表该结点在树中的层次（树根位于第0层）
+3) 若某第 i 层的非根节点在文本中位于第n行，则其父节点必然是第 i-1 层的节点中，行号小于n,且行号与n的差最小的那个
+4) 若某文本中位于第n行的节点(层次是i) 有两个子节点，则第n+1行就是其左子节点，右子节点是n+1行以下第一个层次为i+1的节点
+5) 若某第 i 层的节点在文本中位于第n行，且其没有左子节点而有右子节点，那么它的下一行就是 i+1个'-' 字符再加上一个 '*' 
+
+
+
+给出一棵树的文本表示法，要求输出该数的前序、后序、中序遍历结果
+
+输入
+
+第一行是树的数目 n
+
+接下来是n棵树，每棵树以'0'结尾。'0'不是树的一部分
+每棵树不超过100个节点
+
+输出
+
+对每棵树，分三行先后输出其前序、后序、中序遍历结果
+两棵树之间以空行分隔
+
+样例输入
+
+```
+2
+A
+-B
+--*
+--C
+-D
+--E
+---*
+---F
+0
+A
+-B
+-C
+0
+```
+
+样例输出
+
+```
+ABCDEF
+CBFEDA
+BCAEFD
+
+ABC
+BCA
+BAC
+```
+
+来源: Guo Wei
+
+
+
+```python
+class Node:
+    def __init__(self, x, depth):
+        self.x = x
+        self.depth = depth
+        self.lchild = None
+        self.rchild = None
+
+    def preorder_traversal(self):
+        nodes = [self.x]
+        if self.lchild and self.lchild.x != '*':
+            nodes += self.lchild.preorder_traversal()
+        if self.rchild and self.rchild.x != '*':
+            nodes += self.rchild.preorder_traversal()
+        return nodes
+
+    def inorder_traversal(self):
+        nodes = []
+        if self.lchild and self.lchild.x != '*':
+            nodes += self.lchild.inorder_traversal()
+        nodes.append(self.x)
+        if self.rchild and self.rchild.x != '*':
+            nodes += self.rchild.inorder_traversal()
+        return nodes
+
+    def postorder_traversal(self):
+        nodes = []
+        if self.lchild and self.lchild.x != '*':
+            nodes += self.lchild.postorder_traversal()
+        if self.rchild and self.rchild.x != '*':
+            nodes += self.rchild.postorder_traversal()
+        nodes.append(self.x)
+        return nodes
+
+
+def build_tree():
+    n = int(input())
+    for _ in range(n):
+        tree = []
+        stack = []
+        while True:
+            s = input()
+            if s == '0':
+                break
+            depth = len(s) - 1
+            node = Node(s[-1], depth)
+            tree.append(node)
+
+            # Finding the parent for the current node
+            while stack and tree[stack[-1]].depth >= depth:
+                stack.pop()
+            if stack:  # There is a parent
+                parent = tree[stack[-1]]
+                if not parent.lchild:
+                    parent.lchild = node
+                else:
+                    parent.rchild = node
+            stack.append(len(tree) - 1)
+
+        # Now tree[0] is the root of the tree
+        yield tree[0]
+
+
+# Read each tree and perform traversals
+for root in build_tree():
+    print("".join(root.preorder_traversal()))
+    print("".join(root.postorder_traversal()))
+    print("".join(root.inorder_traversal()))
+    print()
+
+```
+
+
 
 
 
@@ -2844,11 +3403,92 @@ print(expression_value)
 
 http://cs101.openjudge.cn/dsapre/05442/
 
+很久很久以前，森林里住着一群兔子。兔子们无聊的时候就喜欢研究星座。如图所示，天空中已经有了n颗星星，其中有些星星有边相连。兔子们希望删除掉一些边，然后使得保留下的边仍能是n颗星星连通。他们希望计算，保留的边的权值之和最小是多少？
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H7: 图应用”
+
+
+![img](http://media.openjudge.cn/images/upload/1353513346.jpg)
+
+**输入**
+
+第一行只包含一个表示星星个数的数n，n不大于26，并且这n个星星是由大写字母表里的前n个字母表示。接下来的n-1行是由字母表的前n-1个字母开头。最后一个星星表示的字母不用输入。对于每一行，以每个星星表示的字母开头，然后后面跟着一个数字，表示有多少条边可以从这个星星到后面字母表中的星星。如果k是大于0，表示该行后面会表示k条边的k个数据。每条边的数据是由表示连接到另一端星星的字母和该边的权值组成。权值是正整数的并且小于100。该行的所有数据字段分隔单一空白。该星星网络将始终连接所有的星星。该星星网络将永远不会超过75条边。没有任何一个星星会有超过15条的边连接到其他星星（之前或之后的字母）。在下面的示例输入，数据是与上面的图相一致的。
+
+**输出**
+
+输出是一个整数，表示最小的权值和
+
+样例输入
+
+```
+9
+A 2 B 12 I 25
+B 3 C 10 H 40 I 8
+C 2 D 18 G 55
+D 1 E 44
+E 2 F 60 G 38
+F 0
+G 1 H 35
+H 1 I 35
+```
+
+样例输出
+
+```
+216
+```
+
+提示
+
+考虑看成最小生成树问题，注意输入表示。
+
+
+
+The problem you're describing is a classic Minimum Spanning Tree (MST) problem. The MST problem is a common problem in graph theory that asks for a spanning tree of a graph such that the sum of its edge weights is as small as possible.  In this case, the stars represent the nodes of the graph, and the edges between them represent the connections between the stars. The weight of each edge is given in the problem statement. The goal is to find a subset of these edges such that all stars are connected and the sum of the weights of these edges is minimized.
+
+```python
+import heapq
+
+def prim(graph, start):
+    mst = []
+    used = set([start])
+    edges = [
+        (cost, start, to)
+        for to, cost in graph[start].items()
+    ]
+    heapq.heapify(edges)
+
+    while edges:
+        cost, frm, to = heapq.heappop(edges)
+        if to not in used:
+            used.add(to)
+            mst.append((frm, to, cost))
+            for to_next, cost2 in graph[to].items():
+                if to_next not in used:
+                    heapq.heappush(edges, (cost2, to, to_next))
+
+    return mst
+
+def solve():
+    n = int(input())
+    graph = {chr(i+65): {} for i in range(n)}
+    for i in range(n-1):
+        data = input().split()
+        star = data[0]
+        m = int(data[1])
+        for j in range(m):
+            to_star = data[2+j*2]
+            cost = int(data[3+j*2])
+            graph[star][to_star] = cost
+            graph[to_star][star] = cost
+    mst = prim(graph, 'A')
+    print(sum(x[2] for x in mst))
+
+solve()
+```
+
+
 
 
 
@@ -2856,11 +3496,116 @@ http://cs101.openjudge.cn/dsapre/05442/
 
 http://cs101.openjudge.cn/dsapre/05443/
 
+很久很久之前，森林里住着一群兔子。有一天，兔子们希望去赏樱花，但当他们到了上野公园门口却忘记了带地图。现在兔子们想求助于你来帮他们找到公园里的最短路。
+
+**输入**
+
+输入分为三个部分。
+第一个部分有P+1行（P<30），第一行为一个整数P，之后的P行表示上野公园的地点, 字符串长度不超过20。
+第二个部分有Q+1行（Q<50），第一行为一个整数Q，之后的Q行每行分别为两个字符串与一个整数，表示这两点有直线的道路，并显示二者之间的矩离（单位为米）。
+第三个部分有R+1行（R<20），第一行为一个整数R，之后的R行每行为两个字符串，表示需要求的路线。
+
+**输出**
+
+输出有R行，分别表示每个路线最短的走法。其中两个点之间，用->(矩离)->相隔。
+
+样例输入
+
+```
+6
+Ginza
+Sensouji
+Shinjukugyoen
+Uenokouen
+Yoyogikouen
+Meijishinguu
+6
+Ginza Sensouji 80
+Shinjukugyoen Sensouji 40
+Ginza Uenokouen 35
+Uenokouen Shinjukugyoen 85
+Sensouji Meijishinguu 60
+Meijishinguu Yoyogikouen 35
+2
+Uenokouen Yoyogikouen
+Meijishinguu Meijishinguu
+```
+
+样例输出
+
+```
+Uenokouen->(35)->Ginza->(80)->Sensouji->(60)->Meijishinguu->(35)->Yoyogikouen
+Meijishinguu
+```
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H7: 图应用”
+使用图论中的经典算法，如迪杰斯特拉（Dijkstra）算法，来找到两点之间的最短路径。输出格式的要求,每步都需要显示两个地点和它们之间的距离。
+
+```python
+import heapq
+
+def dijkstra(adjacency, start):
+    distances = {vertex: float('infinity') for vertex in adjacency}
+    previous = {vertex: None for vertex in adjacency}
+    distances[start] = 0
+    pq = [(0, start)]
+
+    while pq:
+        current_distance, current_vertex = heapq.heappop(pq)
+        if current_distance > distances[current_vertex]:
+            continue
+
+        for neighbor, weight in adjacency[current_vertex].items():
+            distance = current_distance + weight
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                previous[neighbor] = current_vertex
+                heapq.heappush(pq, (distance, neighbor))
+
+    return distances, previous
+
+def shortest_path_to(adjacency, start, end):
+    distances, previous = dijkstra(adjacency, start)
+    path = []
+    current = end
+    while previous[current] is not None:
+        path.insert(0, current)
+        current = previous[current]
+    path.insert(0, start)
+    return path, distances[end]
+
+# Read the input data
+P = int(input())
+places = {input().strip() for _ in range(P)}
+
+Q = int(input())
+graph = {place: {} for place in places}
+for _ in range(Q):
+    src, dest, dist = input().split()
+    dist = int(dist)
+    graph[src][dest] = dist
+    graph[dest][src] = dist  # Assuming the graph is bidirectional
+
+R = int(input())
+requests = [input().split() for _ in range(R)]
+
+# Process each request
+for start, end in requests:
+    if start == end:
+        print(start)
+        continue
+
+    path, total_dist = shortest_path_to(graph, start, end)
+    output = ""
+    for i in range(len(path) - 1):
+        output += f"{path[i]}->({graph[path[i]][path[i+1]]})->"
+    output += f"{end}"
+    print(output)
+
+```
+
+
 
 
 
@@ -2949,11 +3694,111 @@ for _ in range(int(input())):
 
 http://cs101.openjudge.cn/dsapre/05907/
 
+给定一棵二叉树，在二叉树上执行两个操作：
+
+1. 节点交换
+
+把二叉树的两个节点交换。
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1368411159.jpg)
+
+2. 前驱询问
+
+询问二叉树的一个节点对应的子树最左边的节点。
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1368411165.jpg)
+
+**输入**
+
+第一行输出一个整数t(t <= 100)，代表测试数据的组数。
+
+对于每组测试数据，第一行输入两个整数n m，n代表二叉树节点的个数，m代表操作的次数。
+
+随后输入n行，每行包含3个整数X Y Z，对应二叉树一个节点的信息。X表示节点的标识，Y表示其左孩子的标识，Z表示其右孩子的标识。
+
+再输入m行，每行对应一次操作。每次操作首先输入一个整数type。
+
+当type=1，节点交换操作，后面跟着输入两个整数x y，表示将标识为x的节点与标识为y的节点交换。输入保证对应的节点不是祖先关系。
+
+当type=2，前驱询问操作，后面跟着输入一个整数x，表示询问标识为x的节点对应子树最左的孩子。
+
+1<=n<=100，节点的标识从0到n-1，根节点始终是0.
+m<=100
+
+**输出**
+
+对于每次询问操作，输出相应的结果。
+
+样例输入
+
+```
+2
+5 5
+0 1 2
+1 -1 -1
+2 3 4
+3 -1 -1
+4 -1 -1
+2 0
+1 1 2
+2 0
+1 3 4
+2 2
+3 2
+0 1 2
+1 -1 -1
+2 -1 -1
+1 1 2
+2 0
+```
+
+样例输出
+
+```
+1
+3
+4
+2
+```
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2023期末上机考试（数算B）7题”
+```python
+# 23n2300011072(X) 蒋子轩
+class TreeNode:
+    def __init__(self,val=0):
+        self.val=val
+        self.left=None
+        self.right=None
+def build_tree(nodes_info):
+    nodes=[TreeNode(i) for i in range(n)]
+    for val,left,right in nodes_info:
+        if left!=-1:
+            nodes[val].left=nodes[left]
+        if right!=-1:
+            nodes[val].right=nodes[right]
+    return nodes
+def swap_nodes(nodes,x,y):
+    for node in nodes:
+        if node.left and node.left.val in[x,y]:
+            node.left=nodes[y] if node.left.val==x else nodes[x]
+        if node.right and node.right.val in[x,y]:
+            node.right=nodes[y] if node.right.val==x else nodes[x]
+def find_leftmost(node):
+    while node and node.left:
+        node=node.left
+    return node.val if node else -1
+for _ in range(int(input())):
+    n,m=map(int,input().split())
+    nodes_info=[tuple(map(int,input().split())) for _ in range(n)]
+    ops=[tuple(map(int,input().split())) for _ in range(m)]
+    nodes=build_tree(nodes_info)
+    for op in ops:
+        if op[0]==1:
+            swap_nodes(nodes,op[1],op[2])
+        elif op[0]==2:
+            print(find_leftmost(nodes[op[1]]))
+```
+
+
 
 
 
@@ -3005,11 +3850,55 @@ except (TypeError, AssertionError):
 
 http://cs101.openjudge.cn/dsapre/06364/
 
+现在有N（1<=N<=50000）头牛在选举它们的总统，选举包括两轮：第一轮投票选举出票数最多的K（1<=K<=N）头牛进入第二轮；第二轮对K头牛重新投票，票数最多的牛当选为总统。
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2023期末上机考试（数算B）7题”
+现在给出每头牛i在第一轮期望获得的票数Ai（1<=Ai<=1,000,000,000），以及在第二轮中（假设它进入第二轮）期望获得的票数Bi（1<=Bi<=1,000,000,000），请你预测一下哪头牛将当选总统。幸运的是，每轮投票都不会出现票数相同的情况。    
+
+
+
+**输入**
+
+第1行：N和K
+第2至N+1行：第i+1行包括两个数字：Ai和Bi
+
+**输出**
+
+当选总统的牛的编号（牛的编号从1开始）
+
+样例输入
+
+```
+5 3
+3 10
+9 2
+5 6
+8 4
+6 5
+```
+
+样例输出
+
+```
+5
+```
+
+
+
+```python
+n, k = map(int, input().split())
+cows = []
+for i in range(n):
+    a, b = map(int, input().split())
+    cows.append((a, b, i + 1))
+cows.sort(key=lambda x: x[0], reverse=True)
+second_round_cows = cows[:k]
+second_round_cows.sort(key=lambda x: x[1], reverse=True)
+print(second_round_cows[0][2])
+```
+
+
 
 
 
@@ -3623,11 +4512,60 @@ print(ans)
 
 http://cs101.openjudge.cn/dsapre/20449/
 
+给定由0 和 1 组成的字串 A，我们定义 N_i：从 A[0] 到 A[i] 的第 i 个子数组被解释为一个二进制数 
+
+返回0和 1 组成的字串 answer，只有当 N_i 可以被 5 整除时，答案 answer[i] 为 1，否则为 0
+
+具体请看例子 
+
+**输入**
+
+一个0和1组成的字串
+
+**输出**
+
+一行长度等同于输入的0和1组成的字串
+
+样例输入
+
+```
+011
+```
+
+样例输出
+
+```
+100
+```
+
+提示
+
+0可以被5整除->1
+01不可以被5整除->0
+011不可以被5整除->0
+结果是100
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2020模拟上机”
+遍历输入的字符串，然后将每个字符解释为二进制数并检查是否可以被5整除来解决。我们可以使用Python的内置函数int()将二进制字符串转换为整数，并使用模运算符%来检查是否可以被5整除。
+
+```python
+def binary_divisible_by_five(binary_string):
+    result = ''
+    num = 0
+    for bit in binary_string:
+        num = (num * 2 + int(bit)) % 5
+        if num == 0:
+            result += '1'
+        else:
+            result += '0'
+    return result
+
+binary_string = input().strip()
+print(binary_divisible_by_five(binary_string))
+```
+
+
 
 
 
@@ -3635,11 +4573,58 @@ http://cs101.openjudge.cn/dsapre/20449/
 
 http://cs101.openjudge.cn/dsapre/20453/
 
+给定一组整数数字和一个整数 k，你需要找到该数组中和为 k 的连续的子数组的个数。
+
+**输入**
+
+第一行:由空格区分的一组数字
+第二行:整数k
+
+**输出**
+
+一个整数，代表多少子数组等于k
+
+样例输入
+
+```
+1 1 1
+2
+```
+
+样例输出
+
+```
+2
+```
+
+提示
+
+有两组1 1 和为2
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2020模拟上机”
+通过使用一个哈希表来存储前缀和的频率来解决。我们遍历输入的数组，每次迭代时，我们都会更新当前的前缀和。然后，我们检查哈希表中是否存在当前前缀和减去目标值k的条目。如果存在，我们就将其值添加到结果中。最后，我们将当前的前缀和添加到哈希表中。
+
+```python
+def subarray_sum(nums, k):
+    count = 0
+    sums = 0
+    d = dict()
+    d[0] = 1
+
+    for i in range(len(nums)):
+        sums += nums[i]
+        count += d.get(sums - k, 0)
+        d[sums] = d.get(sums, 0) + 1
+
+    return count
+
+nums = list(map(int, input().split()))
+k = int(input().strip())
+print(subarray_sum(nums, k))
+```
+
+
 
 
 
@@ -3647,11 +4632,85 @@ http://cs101.openjudge.cn/dsapre/20453/
 
 http://cs101.openjudge.cn/dsapre/20456/
 
+给定10行，每行有10个数字的方形地图 ，每个位置要么是陆地（记号为 0 ）要么是水域（记号为 1 ）。 我们从一块陆地出发，每次可以往上下左右 4 个方向相邻区域走，能走到的所有陆地区域，我们将其称为一座「岛屿」。 如果一座岛屿 完全 由水域包围，即陆地边缘上下左右所有相邻区域都是水域，那么我们将其称为 「封闭岛屿」。 请输出封闭岛屿的数目。
+
+**输入**
+
+10行，每行有10个数字(0或1)
+
+**输出**
+
+一个整数，封闭岛屿的数目
+
+样例输入
+
+```
+1,0,0,0,0,0,1,0,1,0
+1,1,1,1,1,0,0,0,0,0
+1,0,0,0,1,1,1,1,0,0
+1,0,0,1,0,1,0,1,1,0
+1,0,0,0,0,1,0,1,0,0
+0,0,1,0,0,0,0,1,0,0
+1,1,1,0,0,0,0,0,0,0
+1,0,1,1,0,0,1,1,1,0
+1,0,1,0,0,1,0,0,1,0
+0,0,0,0,0,0,1,1,1,1
+```
+
+样例输出
+
+```
+1
+```
+
+提示
+
+1个封闭岛屿
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2020模拟上机”
+```python
+def closedIsland(grid):
+    rows, cols = len(grid), len(grid[0])
+
+    # 检查岛屿是否封闭的DFS函数
+    def dfs(r, c):
+        if grid[r][c] == 1:
+            return True
+        if r == 0 or r == rows - 1 or c == 0 or c == cols - 1:
+            return False
+        
+        # 标记当前单元格为已访问
+        grid[r][c] = 1
+        
+        # 检查所有方向
+        up = dfs(r - 1, c)
+        down = dfs(r + 1, c)
+        left = dfs(r, c - 1)
+        right = dfs(r, c + 1)
+        
+        return up and down and left and right
+
+    closed_islands = 0
+    for r in range(1, rows - 1):  # 从1开始，忽略边界
+        for c in range(1, cols - 1):  # 从1开始，忽略边界
+            if grid[r][c] == 0 and dfs(r, c):
+                closed_islands += 1
+
+    return closed_islands
+
+# 读取输入
+grid = []
+for _ in range(10):
+    row = list(map(int, input().split(',')))
+    grid.append(row)
+
+# 输出结果
+print(closedIsland(grid))
+
+```
+
+
 
 
 
@@ -3663,11 +4722,113 @@ http://cs101.openjudge.cn/dsapre/20456/
 
 http://cs101.openjudge.cn/dsapre/20472/
 
+在无限的平面上，机器人最初位于 (0, 0) 处，面朝北方。机器人可以接受下列三条指令之一： "G"：直走 1 个单位 "L"：左转 90 度 "R"：右转 90 度 机器人按顺序执行指令，并一直重复它们。 只有在平面中存在死循环使得机器人永远无法离开时，返回 1。否则，返回 0。
+
+**输入**
+
+由G L R组成的字符串
+
+**输出**
+
+如果存在死循环输出1，否则0
+
+样例输入
+
+```
+GGLLGG
+```
+
+样例输出
+
+```
+1
+```
+
+提示
+
+样例中的机器人会在长度为4的直线徘徊(本来打错成2)
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2020模拟上机”
+模拟机器人的移动，并检查它是否最终会回到原点并面向原来的方向，因为这是死循环的必要条件。如果在执行一系列指令后，机器人回到原点并且面向原来的方向，那么它将循环执行同样的指令序列，形成一个循环。
+
+下面是一个 Python 函数，它实现了这个逻辑：
+
+```python
+def is_robot_making_loop(commands):
+    # 初始位置和方向
+    x, y = 0, 0
+    direction = 'N'
+
+    # 方向变换的规则，用字典表示
+    left_turns = {'N': 'W', 'W': 'S', 'S': 'E', 'E': 'N'}
+    right_turns = {'N': 'E', 'E': 'S', 'S': 'W', 'W': 'N'}
+
+    # 模拟机器人的移动
+    for command in commands:
+        if command == 'G':
+            if direction == 'N':
+                y += 1
+            elif direction == 'S':
+                y -= 1
+            elif direction == 'E':
+                x += 1
+            elif direction == 'W':
+                x -= 1
+        elif command == 'L':
+            direction = left_turns[direction]
+        elif command == 'R':
+            direction = right_turns[direction]
+
+    # 如果机器人回到原点，或者不是面向北方（说明它会改变方向然后可能回到原点）
+    return (x == 0 and y == 0) or direction != 'N'
+
+# 读取输入并输出结果
+commands = input().strip()
+print(1 if is_robot_making_loop(commands) else 0)
+
+```
+
+这个函数首先定义了机器人的初始位置和方向。然后，它根据指令移动机器人，并在完成所有指令后检查机器人的位置和方向。
+
+- 如果机器人回到了原点 `(0, 0)` 并且方向不是北（意味着它改变了方向并且可能在执行更多指令后回到原点），函数返回 `True`。
+- 如果机器人没有回到原点，或者回到原点时方向是北（意味着它将沿直线移动而不是循环），函数返回 `False`。
+
+最后，程序读取用户输入的指令，调用函数，并输出相应的结果，如果存在死循环输出 `1`，否则 `0`。
+
+
+
+```python
+def is_robot_making_loop(commands):
+    # 初始位置和方向
+    x, y = 0, 0
+    # 方向变换的规则，用列表表示，0=N, 1=E, 2=S, 3=W
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    # 初始方向北
+    dir_index = 0
+
+    # 模拟机器人的移动
+    for command in commands:
+        if command == 'G':
+            # 沿着当前方向前进一步
+            x += directions[dir_index][0]
+            y += directions[dir_index][1]
+        elif command == 'L':
+            # 左转90度就是方向列表中的前一个方向
+            dir_index = (dir_index - 1) % 4
+        elif command == 'R':
+            # 右转90度就是方向列表中的下一个方向
+            dir_index = (dir_index + 1) % 4
+    
+    # 如果机器人回到原点，或者方向发生改变（不再是北），则会形成循环
+    return (x == 0 and y == 0) or (dir_index != 0)
+
+# 读取输入并输出结果
+commands = input().strip()
+print(1 if is_robot_making_loop(commands) else 0)
+```
+
+
 
 
 
@@ -3787,11 +4948,79 @@ main()
 
 http://cs101.openjudge.cn/dsapre/20625/
 
+给一个由0跟1组成的字串，请问有多少个子字串(非空)的0跟1数量相等而且0跟1分别是连续的
+如果一个子字串出现n次记作n
+
+**输入**
+
+一个1跟0组成的字串
+
+**输出**
+
+一个整数
+
+样例输入
+
+```
+10101
+```
+
+样例输出
+
+```
+4
+```
+
+提示
+
+总个有4个子字串，10 01 10 01
+1010不算，因为1跟0不是连续的
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2020模拟上机”
+考虑到这个问题的特殊性（0和1必须是连续的），我们可以采取另一种方法，即只计算每段连续的0或1结束时的子串数量。我们不需要关心整个串的子串，只要关心局部的连续部分即可。
+
+在遍历字符串时，需要统计当前连续相同字符的数量，并在遇到不同字符时，检查之前的连续字符部分可以组成多少合法子串。
+
+解释代码逻辑：
+
+- 我们用 `curr_count` 来跟踪当前字符连续出现的次数，用 `prev_count` 来跟踪上一组字符连续出现的次数。
+- 每次字符发生变化时，我们可以创建 `min(curr_count, prev_count)` 个子字符串，因为新的字符将断开之前的连续性。
+- 然后我们更新 `prev_count` 为 `curr_count`（因为我们要开始统计新的字符了），并将 `curr_count` 重置为1。
+- 在字符串遍历结束后，我们还需要再加上最后一组字符可以形成的子字符串数。
+
+```python
+def count_balanced_substrings(s):
+    # 初始化当前字符和前一个字符的计数器
+    curr_count = 1
+    prev_count = 0
+    result = 0
+
+    # 遍历字符串的每个字符
+    for i in range(1, len(s)):
+        # 如果当前字符和前一个字符相同，增加当前计数器
+        if s[i] == s[i - 1]:
+            curr_count += 1
+        else:
+            # 如果当前字符和前一个字符不同，那么我们可以创建
+            # min(curr_count, prev_count) 个子串
+            result += min(curr_count, prev_count)
+            # 将当前计数器值赋给前一个计数器，并重置当前计数器为1
+            prev_count = curr_count
+            curr_count = 1
+
+    # 出循环后，处理最后一组字符
+    result += min(curr_count, prev_count)
+
+    return result
+
+# 测试样例输入
+#print(count_balanced_substrings("10101"))  # 输出应该是4
+#print(count_balanced_substrings("00110011"))  # 输出应该是6
+print(count_balanced_substrings(input()))
+```
+
+
 
 
 
@@ -3799,11 +5028,95 @@ http://cs101.openjudge.cn/dsapre/20625/
 
 http://cs101.openjudge.cn/dsapre/20626/
 
+给定一个正整数数列V，V的下标从零开始。
+
+对V的子数列W进行XOR查询，输入的查询指令有2个数L,R，L<=R，分别为W中第一个和最后一个元素在V中的下标。计算W中所有元素的XOR值，即：V[L] xor V[L+1] xor ... xor V[R]
+
+输入不同的L, R，对V进行10000次查询。
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2021模拟上机/2020finaltest”
+**输入**
+
+第一行是一个空格分开的正整数数列V
+第2-10001行每行有2个数L, R，中间用空格分开
+
+**输出**
+
+10000行整数
+
+样例输入
+
+```
+1 3 4 8
+0 1
+1 2
+0 3
+3 3
+```
+
+样例输出
+
+```
+2
+7
+14
+8
+```
+
+提示
+
+对照样例输入：数列为1,3,4,8。它们用二进制表示：1 = 0001，3 = 0011， 4 = 0100 ，8 = 1000；当L, R的值依次为
+0，1时，求得 1 xor 3 = 2
+1，2时，求得 3 xor 4 = 7
+0，3时，求得 1 xor 3 xor 4 xor 8 = 14 
+3，3时，求得 8
+顾输出 2 7 14 8。
+实际上会有10000行查询指令，请按照样例格式按行输出查询结果。
+
+
+
+```python
+def precompute_xor_prefixes(values):
+    xor_prefixes = [0] * (len(values) + 1)
+    for i in range(len(values)):
+        xor_prefixes[i+1] = xor_prefixes[i] ^ values[i]
+    return xor_prefixes
+
+# 读取输入并处理
+values = list(map(int, input().split()))
+xor_prefixes = precompute_xor_prefixes(values)
+
+# 读取查询并处理
+for _ in range(10000):
+    L, R = map(int, input().split())
+    result = xor_prefixes[R+1] ^ xor_prefixes[L]
+    print(result)
+```
+
+
+
+i/o优化啊，1w输入输出
+
+```python
+# 23n2300017735(夏天明BrightSummer)
+import sys
+input = sys.stdin.readline
+
+V = [int(i) for i in input().split()]
+preV = [0]*(len(V)+1)
+for i in range(len(V)):
+    preV[i+1] = preV[i] ^ V[i]
+
+results = []
+for i in range(10000):
+    L, R = map(int, input().split())
+    results.append(str(preV[R+1] ^ preV[L]))
+
+sys.stdout.write('\n'.join(results) + '\n')
+```
+
+
 
 
 
@@ -3811,11 +5124,86 @@ http://cs101.openjudge.cn/dsapre/20626/
 
 http://cs101.openjudge.cn/dsapre/20644/
 
+给一个 m * n 的矩阵，矩阵中的元素不是 0 就是 1，
+
+请你统计并输出其中完全由 1 组成的 正方形 子矩阵的个数。
+
+备注:请尽量用动态规划
+
+**输入**
+
+第一行是m n 两个数字，空格分开
+m行，每行有n个数
+
+**输出**
+
+一个非负整数
+
+样例输入
+
+```
+3 4
+0111
+1111
+0111
+```
+
+样例输出
+
+```
+15
+```
+
+提示
+
+边为1的矩阵有10个
+边为2的矩阵有4个
+边为3的矩阵有1个
+总共15个
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2020模拟上机”
+```python
+#23n2300017735(夏天明BrightSummer)
+m, n = map(int, input().split())
+mat = [[int(k) for k in input()] for i in range(m)]
+dp = [[0 for j in range(n+1)] for i in range(m+1)]
+for i in range(m):
+    for j in range(n):
+        if mat[i][j]:
+            dp[i+1][j+1] = min(dp[i][j], dp[i][j+1], dp[i+1][j])+1
+print(sum(dp[i][j] for j in range(n+1) for i in range(m+1)))
+```
+
+
+
+```python
+m,n = map(int, input().split())
+matrix = []
+for i in range(m):
+    matrix.append(list(map(int, list(input()))))
+
+def check(matrix, i, j, step):
+    for x in range(i, i+step+1):
+        for y in range(j, j+step+1):
+            if matrix[x][y] == 0:
+                return False
+    return True
+
+cnt = 0
+step = 0
+
+while step <= min(m, n):
+    for i in range(m-step):
+        for j in range(n-step):
+            if check(matrix, i, j, step):
+                cnt += 1
+    step += 1
+
+print(cnt)
+```
+
+
 
 
 
@@ -3875,11 +5263,180 @@ print(longest_common_subsequence(s1, s2))
 
 http://cs101.openjudge.cn/dsapre/20741/
 
+给一个由1跟0组成的方形地图，1代表土地，0代表水域
+
+相邻(上下左右4个方位当作相邻)的1组成孤岛
+
+现在你可以将0转成1，搭建出一个链接2个孤岛的桥
+
+请问最少要将几个0转成1，才能建成链接孤岛的桥。
+
+题目中恰好有2个孤岛(顾答案不会是0)
+
+**输入**
+
+一个正整数n，代表几行输入
+n行0跟1字串
+
+**输出**
+
+一个正整数k，代表最短距离
+
+样例输入
+
+```
+3
+110
+000
+001
+```
+
+样例输出
+
+```
+2
+```
+
+提示
+
+样例输入中的两个孤岛最短距离为2
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2021模拟考试/2020finaltest”
+dfs + bfs
+
+```python
+from collections import deque
+
+
+class Solution:
+    def shortestBridge(self, grid) -> int:
+        m, n = len(grid), len(grid[0])
+        points = deque()
+
+        def dfs(points, grid, m, n, i, j):
+            if i < 0 or i == m or j < 0 or j == n or grid[i][j] == 2:
+                return
+            if grid[i][j] == 0:
+                points.append((i, j))
+                return
+
+            grid[i][j] = 2
+            dfs(points, grid, m, n, i - 1, j)
+            dfs(points, grid, m, n, i + 1, j)
+            dfs(points, grid, m, n, i, j - 1)
+            dfs(points, grid, m, n, i, j + 1)
+
+        flag = False
+        for i in range(m):
+            if flag:
+                break
+            for j in range(n):
+                if grid[i][j] == 1:
+                    dfs(points, grid, m, n, i, j)
+                    flag = True
+                    break
+
+        x, y, count = 0, 0, 0
+        while points:
+            count += 1
+            n_points = len(points)
+            while n_points > 0:
+                point = points.popleft()
+                r, c = point[0], point[1]
+                for k in range(4):
+                    x, y = r + direction[k], c + direction[k + 1]
+                    if x >= 0 and y >= 0 and x < m and y < n:
+                        if grid[x][y] == 2:
+                            continue
+                        if grid[x][y] == 1:
+                            return count
+                        points.append((x, y))
+                        grid[x][y] = 2
+                n_points -= 1
+
+        return 0
+
+
+direction = [-1, 0, 1, 0, -1]
+
+n = int(input())
+grid = []
+for i in range(n):
+    row = list(map(int, list(input())))
+    grid.append(row)
+
+print(Solution().shortestBridge(grid))
+```
+
+
+
+只有一个break，(sr,sc)是最右下的陆地点，先入队列。从它开始找是可能最近的桥。
+
+for r in range(n):
+    for c in range(n):
+        if grid\[r][c] == 1:
+            sr, sc = r, c
+            break
+
+```python
+import collections
+def main():
+    n=int(input())
+    #grid=[[0]*(n+2)]
+    grid=[]
+    for i in range(n):
+        p=list(int(x) for x in input())
+        #p.insert(0,0)
+        #p.append(0)
+        grid.append(p)
+    grid.append([0]*(n+2))
+    visited = [[False for _ in range(n)] for _ in range(n)]
+    dirs = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+
+    sr, sc = -1, -1
+    for r in range(n):
+        for c in range(n):
+            if grid[r][c] == 1:
+                sr, sc = r, c
+                break
+    q = collections.deque()
+    q.append((sr, sc))
+    visited[sr][sc] = True
+    while q:
+        r, c = q.popleft()
+        for dr, dc in dirs:
+            nr = r + dr
+            nc = c + dc
+            if 0 <= nr < n and 0 <= nc < n:
+                if grid[nr][nc] == 1 and visited[nr][nc] == False:
+                    visited[nr][nc] = True
+                    q.append((nr, nc))
+
+    #------------ 计算最短距离。多源bfs
+    for r in range(n):
+        for c in range(n):
+            if visited[r][c] == True and grid[r][c] == 1:
+                q.append((r, c))
+    step = 0
+    while q:
+        curLen = len(q)
+        for _ in range(curLen):
+            r, c = q.popleft()
+            for dr, dc in dirs:
+                nr = r + dr
+                nc = c + dc
+                if 0 <= nr < n and 0 <= nc < n and visited[nr][nc] == False:
+                    visited[nr][nc] = True
+                    if grid[nr][nc] == 1:
+                        return step
+                    q.append((nr, nc))
+        step += 1
+    return step
+print(main())
+```
+
+
 
 
 
@@ -3887,11 +5444,60 @@ http://cs101.openjudge.cn/dsapre/20741/
 
 http://cs101.openjudge.cn/dsapre/20742/
 
+泰波拿契数列 Tn 定义是
+
+$T_0 = 0, T_1 = 1, T_2 = 1, and T_{n+3} = T_n + T_{n+1} + T_{n+2} \space for \space n >= 0$.
+
+给定n请算出Tn
+
+n的范围:1<=n<=30
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2021模拟考试/2020finaltest”
+**输入**
+
+一个正整数n
+
+**输出**
+
+一个正整数k
+
+样例输入
+
+```
+4
+```
+
+样例输出
+
+```
+4
+```
+
+提示
+
+T3=0 + 1 + 1 = 2
+T4=1 + 1 + 2 = 4
+
+
+
+```python
+def tribonacci(n):
+    if n == 0:
+        return 0
+    elif n <= 2:
+        return 1
+    trib = [0, 1, 1] + [0] * (n - 2)
+    for i in range(3, n + 1):
+        trib[i] = trib[i - 1] + trib[i - 2] + trib[i - 3]
+    return trib[n]
+
+# 读取输入并处理
+n = int(input())
+print(tribonacci(n))
+```
+
+
 
 
 
@@ -3899,11 +5505,71 @@ http://cs101.openjudge.cn/dsapre/20742/
 
 http://cs101.openjudge.cn/dsapre/20743/
 
+剧组为了整演员，提供给他们的提词本是经过加工的
+
+提词本内容由英文字母跟括号组成，而且括号必定合法，左括号一定有对应的右括号
+
+演员必须从最里层开始翻转括号内的字母
+
+例如(dcba) 要翻转成abcd
+
+最终演员所念的台词不能含有括号
+
+请输出演员应该念出来的台词
+
+**输入**
+
+一个字串s
+
+**输出**
+
+一个字串s2
+
+样例输入
+
+```
+(eg(en(duj))po)
+```
+
+样例输出
+
+```
+openjudge
+```
+
+提示
+
+先反转duj
+再反转enjud
+最后反转全部台词
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2021模拟考试/2020finaltest”
+use a stack to keep track of the characters inside each pair of parentheses. When you encounter a closing parenthesis, you pop characters from the stack and reverse them until you reach an opening parenthesis, then push the reversed characters back onto the stack. Continue this process until you've processed the entire string. Finally, join the characters in the stack to form the final string.
+
+```python
+def reverse_parentheses(s):
+    stack = []
+    for char in s:
+        if char == ')':
+            temp = []
+            while stack and stack[-1] != '(':
+                temp.append(stack.pop())
+            # remove the opening parenthesis
+            if stack:
+                stack.pop()
+            # add the reversed characters back to the stack
+            stack.extend(temp)
+        else:
+            stack.append(char)
+    return ''.join(stack)
+
+# 读取输入并处理
+s = input().strip()
+print(reverse_parentheses(s))
+```
+
+
 
 
 
@@ -3911,11 +5577,113 @@ http://cs101.openjudge.cn/dsapre/20743/
 
 http://cs101.openjudge.cn/dsapre/20744/
 
+给一个整数组成的数列，其中每个数字代表商品价值(可能为负)
+
+土豪买东西的方法是 "从第n个到第k个商品我全要了!!!" (n<=k)，
+
+换句话说土豪一定会买下连续的几个商品
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2021模拟考试/2020finaltest”
+买完以后土豪会看心情最多放回去其中一个商品(可以不放回)
+
+但土豪不能空手而归，他至少要带回去一个商品
+
+请问聪明的(?)土豪可以买到最大价值总和为多少的商品?
+
+样例:
+
+商品价值:1,-5,0,3 输出:4 最大价值总和是买[1,-5,0,3]，并放回-5后的总和
+
+商品价值:-2,-2,-2 输出:-2 最大价值总和是买[-2]，不放回的总和(至少要带回去一个商品)
+
+
+
+**输入**
+
+一个逗号分隔，由整数组成的商品价值
+
+**输出**
+
+一个整数
+
+样例输入
+
+```
+1,-5,0,3
+```
+
+样例输出
+
+```
+4
+```
+
+提示
+
+最大价值总和是买[1,-5,0,3]，并放回-5后的总和
+
+
+
+需要考虑两种情况：
+
+1. 不放回商品时的最大连续子数组和（Kadane算法）。
+2. 放回一个商品时的最大连续子数组和。
+
+由于我们可以选择放回任何一个商品，因此需要考虑放回每一个商品对最大连续子数组和的影响。我们可以通过两次遍历数组来解决这个问题：
+
+- 第一次遍历从左到右计算以每个元素结尾的最大子数组和。
+- 第二次遍历从右到左计算以每个元素开始的最大子数组和。
+
+然后，我们遍历数组，对于每个位置，我们尝试放回该位置的商品，并检查如果放回这个商品后，左边子序列的最大和加上右边子序列的最大和是否会比当前的最大值还要大。
+
+```python
+def kadane(nums):
+    max_ending_here = max_so_far = nums[0]
+    for x in nums[1:]:
+        max_ending_here = max(x, max_ending_here + x)
+        max_so_far = max(max_so_far, max_ending_here)
+    return max_so_far
+
+def max_sum_shopping(values):
+    # 不放回商品的情况下的最大价值总和
+    max_without_deletion = kadane(values)
+
+    # 如果整个数列的和都是负的，则土豪只能选择一个价值最大的商品
+    if max_without_deletion < 0:
+        return max(values)
+
+    # 准备两个数组来存储从左到右和从右到左的最大子数组和
+    left_max_sums = [0] * len(values)
+    right_max_sums = [0] * len(values)
+
+    # 从左到右的最大子数组和
+    current = 0
+    for i in range(len(values)):
+        current = max(0, current + values[i])
+        left_max_sums[i] = current
+
+    # 从右到左的最大子数组和
+    current = 0
+    for i in range(len(values) - 1, -1, -1):
+        current = max(0, current + values[i])
+        right_max_sums[i] = current
+
+    # 放回一个商品时的最大价值总和
+    max_with_deletion = 0
+    for i in range(1, len(values) - 1):
+        max_with_deletion = max(max_with_deletion, left_max_sums[i - 1] + right_max_sums[i + 1])
+
+    # 返回放回一个商品和不放回一个商品两种情况下的最大价值
+    return max(max_with_deletion, max_without_deletion)
+
+# 读取输入并处理
+values_str = input().strip()
+values = list(map(int, values_str.split(',')))
+print(max_sum_shopping(values))
+```
+
+
 
 
 
@@ -3925,13 +5693,78 @@ http://cs101.openjudge.cn/dsapre/20744/
 
 http://cs101.openjudge.cn/dsapre/20746/
 
+若干个工作任务，需要在一天内完成。给一个正整数数列，存储每个任务所需的工时。
+
+国家法律规定，员工的日工作时长不能超过t。
+
+公司决定雇佣k个员工，每个任务都会让所有员工一同分担，于是每个任务执行的时间等于它所需的工时除以k。
+
+所有任务执行的时间累加起来得到s。
+
+为了满足合法工作不加班，请在s<=t的前提下，找出所需的最少员工数量k。
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “2021模拟考试/2020finaltest”
+分担说明:每个任务分担后的时间都是小数点无条件进位取整
+
+7个工时/3个员工 = 3小时, 10个工时/2个员工=5小时
 
 
+
+必定存在结果(不用考虑t<数列长度的状况)
+
+
+
+**输入**
+
+一个逗号分隔的数列
+一个正整数
+
+**输出**
+
+一个正整数
+
+样例输入
+
+```
+1,2,5,9
+5
+```
+
+样例输出
+
+```
+5
+```
+
+提示
+
+如果员工数是4，sum(1+1+2+3)=7
+如果员工数是5，sum(1+1+1+2)=5
+如果员工数是6，sum(1+1+1+2)=5
+所以答案是5
+
+
+
+use a binary search approach. The minimum number of employees can be 1 and the maximum can be the maximum work hours in the tasks. For each mid value in the binary search, calculate the total work hours and compare it with the legal work hours. If it's more, increase the number of employees, else decrease it.
+
+```python
+def min_employees(tasks, t):
+    left, right = 1, max(tasks)
+    while left < right:
+        mid = (left + right) // 2
+        total_hours = sum((task + mid - 1) // mid for task in tasks)
+        if total_hours > t:
+            left = mid + 1
+        else:
+            right = mid
+    return left
+
+# 读取输入并处理
+tasks = list(map(int, input().split(',')))
+t = int(input())
+print(min_employees(tasks, t))
+```
 
 
 
@@ -4018,19 +5851,166 @@ print(dp[n][m])
 
 
 
-
-
-
-
 ## 22067: 快速堆猪
 
 http://cs101.openjudge.cn/dsapre/22067/
 
+小明有很多猪，他喜欢玩叠猪游戏，就是将猪一头头叠起来。猪叠上去后，还可以把顶上的猪拿下来。小明知道每头猪的重量，而且他还随时想知道叠在那里的猪最轻的是多少斤。
+
+输入
+
+有三种输入
+1)push n
+n是整数(0<=0 <=20000)，表示叠上一头重量是n斤的新猪
+2)pop
+表示将猪堆顶的猪赶走。如果猪堆没猪，就啥也不干
+3)min
+表示问现在猪堆里最轻的猪多重。如果猪堆没猪，就啥也不干
+
+输入总数不超过100000条
+
+输出
+
+对每个min输入，输出答案。如果猪堆没猪，就啥也不干
+
+样例输入
+
+```
+pop
+min
+push 5
+push 2
+push 3
+min
+push 4
+min
+```
+
+样例输出
+
+```
+2
+2
+```
+
+来源: Guo wei
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 Optional problems
+辅助栈
+
+```python
+a = []
+m = []
+
+while True:
+    try:
+        s = input().split()
+    
+        if s[0] == "pop":
+            if a:
+                a.pop()
+                if m:
+                    m.pop()
+        elif s[0] == "min":
+            if m:
+                print(m[-1])
+        else:
+            h = int(s[1])
+            a.append(h)
+            if not m:
+                m.append(h)
+            else:
+                k = m[-1]
+                m.append(min(k, h))
+    except EOFError:
+        break
+```
+
+ 
+
+字典标记，懒删除
+
+```python
+import heapq
+from collections import defaultdict
+
+out = defaultdict(int)
+pigs_heap = []
+pigs_stack = []
+
+while True:
+    try:
+        s = input()
+    except EOFError:
+        break
+
+    if s == "pop":
+        if pigs_stack:
+            out[pigs_stack.pop()] += 1
+    elif s == "min":
+        if pigs_stack:
+            while True:
+                x = heapq.heappop(pigs_heap)
+                if not out[x]:
+                    heapq.heappush(pigs_heap, x)
+                    print(x)
+                    break
+                out[x] -= 1
+    else:
+        y = int(s.split()[1])
+        pigs_stack.append(y)
+        heapq.heappush(pigs_heap, y)
+```
+
+
+
+集合标记，懒删除。如果有重复项就麻烦了，可能刚好赶上题目数据友好。
+
+```python
+import heapq
+
+class PigStack:
+    def __init__(self):
+        self.stack = []
+        self.min_heap = []
+        self.popped = set()
+
+    def push(self, weight):
+        self.stack.append(weight)
+        heapq.heappush(self.min_heap, weight)
+
+    def pop(self):
+        if self.stack:
+            weight = self.stack.pop()
+            self.popped.add(weight)
+
+    def min(self):
+        while self.min_heap and self.min_heap[0] in self.popped:
+            self.popped.remove(heapq.heappop(self.min_heap))
+        if self.min_heap:
+            return self.min_heap[0]
+        else:
+            return None
+
+pig_stack = PigStack()
+
+while True:
+    try:
+        command = input().split()
+        if command[0] == 'push':
+            pig_stack.push(int(command[1]))
+        elif command[0] == 'pop':
+            pig_stack.pop()
+        elif command[0] == 'min':
+            min_weight = pig_stack.min()
+            if min_weight is not None:
+                print(min_weight)
+    except EOFError:
+        break
+```
+
+
 
 
 
@@ -4686,9 +6666,86 @@ http://cs101.openjudge.cn/dsapre/23570/
 
 
 
+```python
+"""
+the toggle function is used to flip the bit, which simplifies the flip function. 
+using a for-loop to iterate over the two cases: pressing the first button or not. 
+"""
+def toggle(bit):
+    return '0' if bit == '1' else '1'
+
+def flip(lock, i):
+    if i > 0:
+        lock[i-1] = toggle(lock[i-1])
+    lock[i] = toggle(lock[i])
+    if i + 1 < len(lock):
+        lock[i+1] = toggle(lock[i+1])
+
+def main():
+    s = input()
+    fin = input()
+    n = len(s)
+    ans = float('inf')
+
+    for press_first in [False, True]:
+        tmp = 0
+        lock = list(s)
+        if press_first:
+            flip(lock, 0)
+            tmp += 1
+        for i in range(1, n):
+            if lock[i-1] != fin[i-1]:
+                flip(lock, i)
+                tmp += 1
+        if lock[n-1] == fin[n-1]:
+            ans = min(ans, tmp)
+
+    if ans == float('inf'):
+        print("impossible")
+    else:
+        print(ans)
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
 ## 23660:7的倍数取法有多少种
 
 http://cs101.openjudge.cn/dsapre/23660/
+
+
+
+```python
+def count_combinations(numbers, index, current_sum, count):
+    if index >= len(numbers):
+        if current_sum % 7 == 0:
+            return count + 1
+        else:
+            return count
+    
+    # 选择取当前位置的数
+    count = count_combinations(numbers, index + 1, current_sum + numbers[index], count)
+    
+    # 选择不取当前位置的数
+    count = count_combinations(numbers, index + 1, current_sum, count)
+    
+    return count
+
+
+# 主程序
+t = int(input())
+for _ in range(t):
+    data = list(map(int, input().split()))
+    n = data[0]
+    numbers = data[1:]
+    
+    result = count_combinations(numbers, 0, 0, 0)
+    print(result)
+```
+
+
 
 
 
@@ -4776,9 +6833,89 @@ http://cs101.openjudge.cn/dsapre/24588/
 
 
 
+```python
+def compute(stack, operator):
+    op1 = stack.pop()
+    op2 = stack.pop()
+    if operator == '+':
+        return op2 + op1
+    elif operator == '-':
+        return op2 - op1
+    elif operator == '*':
+        return op2 * op1
+    elif operator == '/':
+        return op2 / op1
+
+def post_eva(formula):
+    comp = '+-*/'
+    wordlist = formula.split()
+    opStack = []
+    for word in wordlist:
+        if word not in comp:
+            opStack.append(float(word))
+        else:
+            op = compute(opStack, word)
+            opStack.append(op)
+    return opStack[0]
+
+n = int(input())
+for _ in range(n):
+    result = post_eva(input())
+    print(f"{result:.2f}")
+```
+
+
+
+
+
 ## 24591:中序表达式转后序表达式
 
 http://cs101.openjudge.cn/dsapre/24591/
+
+
+
+```python
+def infix_to_postfix(expression):
+    precedence = {'+':1, '-':1, '*':2, '/':2}
+    stack = []
+    postfix = []
+    number = ''
+
+    for char in expression:
+        if char.isnumeric() or char == '.':
+            number += char
+        else:
+            if number:
+                num = float(number)
+                postfix.append(int(num) if num.is_integer() else num)
+                number = ''
+            if char in '+-*/':
+                while stack and stack[-1] in '+-*/' and precedence[char] <= precedence[stack[-1]]:
+                    postfix.append(stack.pop())
+                stack.append(char)
+            elif char == '(':
+                stack.append(char)
+            elif char == ')':
+                while stack and stack[-1] != '(':
+                    postfix.append(stack.pop())
+                stack.pop()
+
+    if number:
+        num = float(number)
+        postfix.append(int(num) if num.is_integer() else num)
+
+    while stack:
+        postfix.append(stack.pop())
+
+    return ' '.join(str(x) for x in postfix)
+
+n = int(input())
+for _ in range(n):
+    expression = input()
+    print(infix_to_postfix(expression))
+```
+
+
 
 
 
@@ -4786,11 +6923,166 @@ http://cs101.openjudge.cn/dsapre/24591/
 
 http://cs101.openjudge.cn/dsapre/24676/
 
+Z&Z公司设计了一种发奖金的规则：把n个人的总奖金分成n x n份，放入一个矩阵中，每一份都为正整数，每个人最终拿到的奖金是矩阵中某一列的和。
+
+但财务认为其中运气成分太高，所以提出了一种平衡性调整：可以对奖金矩阵的任意一行进行右移。具体来说，如果对某一行ai1, ai2, ..., ain进行一次右移，最右侧的奖金移动到这一行的开头：ain, ai1, ai2, ..., ai(n-1)。每一行都可以进行任意次右移操作。
+
+最终的目标是希望在对奖金矩阵的每一行经过若干次右移后，个人拿到奖金的最高值最小，即每列和的最大值最小。
+
+**输入**
+
+输入包括多组数据，每一组数据的第一行包含一个正整数n（n不大于5），代表有n个人参与奖金发放，接下来的n行，每行包含n个正整数，代表奖金矩阵。输入数据以一个0为结尾代表结束
+
+**输出**
+
+对于每组数据，输出一行，包括一个正整数，为奖金最高值的最小值
+
+样例输入
+
+```
+2
+4 6
+3 7
+3
+1 2 3
+4 5 6
+7 8 9
+0
+```
+
+样例输出
+
+```
+11
+15
+```
+
+
+
+itertools product permutation区别？
+
+itertools.product和itertools.permutation是Python标准库中的两个模块，用于处理组合和排列的操作。
+
+itertools.product函数返回两个或多个可迭代对象的笛卡尔积。它接受多个可迭代对象作为输入，并返回一个迭代器，该迭代器生成包含所有输入可迭代对象元素的元组。换句话说，它返回了所有可能的组合情况。例如，itertools.product('ABCD', 'xy')将生成('A', 'x')，('A', 'y')，('B', 'x')，('B', 'y')，('C', 'x')和('C', 'y')。
+
+itertools.permutation函数返回一个可迭代对象，该对象生成指定长度的所有可能排列。它接受一个可迭代对象和一个整数作为参数，整数表示每个排列的长度。它生成的排列中的元素顺序不同，但保持了原始集合中元素的顺序。例如，itertools.permutation('ABCD', 2)将生成('A', 'B')，('A', 'C')，('A', 'D')，('B', 'A')，('B', 'C')，('B', 'D')，('C', 'A')，('C', 'B')，('C', 'D')，('D', 'A')，('D', 'B')和('D', 'C')。
+
+因此，itertools.product用于生成多个可迭代对象的所有可能组合，而itertools.permutation用于生成一个可迭代对象的所有可能排列。
+
+
+
+为了解决这个问题，我们可以用暴力搜索的方法来尝试每一行的所有可能的右移操作，然后寻找每一列的最大值，最终得到所有情况中的最小值。
+
+为了进行暴力搜索，我们可以利用Python的`itertools`库中的`product`函数来产生所有可能的行移动组合。对于每一种组合，我们计算每一列的和，并保留所有组合中的最大列和的最小值。
+
+下面是对应的Python代码实现：
+
+```python
+from itertools import product
+
+def right_shift(row, shift):
+    return row[-shift:] + row[:-shift]
+
+def calculate_max_column_sum(matrix):
+    n = len(matrix)
+    column_sums = [0] * n
+    for row in matrix:
+        for i, val in enumerate(row):
+            column_sums[i] += val
+    return max(column_sums)
+
+def find_min_max_column_sum(n, original_matrix):
+    min_max_sum = float('inf')
+
+    # 产生所有行可能的移动方式
+    all_shifts = list(product(range(n), repeat=n))
+    for shifts in all_shifts:
+        # 应用移动
+        shifted_matrix = [
+            right_shift(original_matrix[i], shifts[i]) for i in range(n)
+        ]
+        # 计算当前移动方式下的最大列和
+        max_column_sum = calculate_max_column_sum(shifted_matrix)
+        # 更新最小的最大列和
+        min_max_sum = min(min_max_sum, max_column_sum)
+    
+    return min_max_sum
+
+# 输入处理
+results = []
+while True:
+    n = int(input())
+    if n == 0:
+        break
+    
+    original_matrix = [list(map(int, input().split())) for _ in range(n)]
+    result = find_min_max_column_sum(n, original_matrix)
+    results.append(result)
+
+# 输出结果
+for result in results:
+    print(result)
+```
+
 
 
 ## 24677:安全位置
 
 http://cs101.openjudge.cn/dsapre/24677/
+
+公元2200年，人类和外星人开始了一场宇宙大战，你作为百京大学的一名本科小盆友和外星人在一个四维空间展开了一场殊死搏斗。现在给出一串密码，希望你能从中解锁出所有的安全位置。具体来说，密码是一个字符串，你可以将其分为四个部分，每个部分依次代表四维空间中该维度的坐标。如果这四个坐标均在0到500之间（包含0和500）则是一个安全位置。**注意坐标不能含有前导0，即001是不合法的坐标。**
+
+**输入**
+
+输入只有一行，是一个字符串S，0<=len(S)<=30。
+
+**输出**
+
+输出共1行，是一个数字，代表从该密码中解锁出的安全位置的个数。
+
+样例输入
+
+```
+010010
+```
+
+样例输出
+
+```
+2
+# ['0.10.0.10', '0.100.1.0']
+```
+
+
+
+```python
+"""
+GitHub Copilot Chat:
+This solution works by recursively splitting the string into four parts and 
+checking if each part is a valid coordinate. 
+The safe_locations function takes the remaining string, the current parts, 
+and the current depth as arguments. 
+If the depth is 4, it checks if the string is empty and if all parts are 
+valid coordinates. If so, it returns 1, otherwise it returns 0. 
+If the depth is less than 4, it tries to split the string at every possible 
+position and recursively calls itself with the new parts and increased depth. 
+"""
+
+
+def safe_locations(s, parts, depth=0):
+    if depth == 4:
+        if not s and all(0 <= int(part) <= 500 and 
+                (part == '0' or not part.startswith('0')) for part in parts):
+            return 1
+        return 0
+    return sum(safe_locations(s[i:], parts + [s[:i]], depth + 1) 
+               for i in range(1, len(s) + 1))
+
+
+s = input().strip()
+print(safe_locations(s, []))
+
+```
 
 
 
@@ -4798,11 +7090,66 @@ http://cs101.openjudge.cn/dsapre/24677/
 
 http://cs101.openjudge.cn/dsapre/24678/
 
+在刚刚过去的5月20日，唐老板抽到了价值为W的买房优惠券，且该优惠券的使用条件是实际支付金额不小于W。正巧618即将来临，他希望在中关村北大街买房，经中介介绍，从南至北总共有n套房，每套房价格为pi，他有一些想法：
+
+1. 能用掉优惠券，多余的钱他自己能出，这样怎么想都很赚
+2. 所购买的房屋都是相邻的，这样就能够直接打通（例如在购买k套房时，购买的是i,i+1,i+2,...,i+k-1，其中i >= 1, i + k -1 <= n）
+3. 购买的房屋数量尽可能少，使得留下尽可能多的房
+
+请你编写一个程序帮唐老板想想是否存在符合他怪异想法的方案
+
+**输入**
+
+总共两行，第一行是两个整数W和n，0 < W < 10^9, 0 < n < 10^5,中间用空格分开，分别表示优惠券的金额与房子数量；第二行是n个整数，表示第i套房的价格pi, 0 < pi < 10^5
+
+**输出**
+
+如果存在满足条件的方案，请输出购房的最小数量；如果没有，则输出0
+
+样例输入
+
+```
+7 6
+1 3 5 2 1 4
+```
+
+样例输出
+
+```
+2
+```
 
 
 
+使用一个滑动窗口算法。从左到右扫描一遍房价数组，同时维护一个窗口，使得这个窗口中的房价总和大于等于优惠券金额W。我们的目标是找到满足条件的最小窗口长度。
 
+```python
+def min_houses_to_buy(W, n, prices):
+    min_length = n + 1  # 初始化为最大长度+1，表示不可能的情况
+    current_sum = 0     # 当前窗口的价格总和
+    left = 0            # 窗口的左边界
 
+    # 遍历房屋价格数组
+    for right in range(n):
+        current_sum += prices[right]  # 扩展窗口的右边界
+
+        # 当当前总和大于等于W时，尝试缩小窗口的大小
+        while current_sum >= W and left <= right:
+            min_length = min(min_length, right - left + 1)
+            current_sum -= prices[left]  # 缩小窗口的左边界
+            left += 1
+
+    # 如果min_length没有更新，说明没有找到满足条件的窗口
+    return min_length if min_length <= n else 0
+
+# 读取输入
+W, n = map(int, input().split())
+prices = list(map(int, input().split()))
+
+# 计算结果并打印
+print(min_houses_to_buy(W, n, prices))
+
+```
 
 
 
@@ -4814,9 +7161,55 @@ http://cs101.openjudge.cn/dsapre/24678/
 
 http://cs101.openjudge.cn/dsapre/24684/
 
+直播间发起了投票活动：在屏幕上列出若干选项，观众通过发送弹幕向自己支持的选项投票。在幕后工作的你需要根据弹幕信息，向直播间的观众们展示哪个选项得票最多。
+
+这里每个选项用一个正整数编号表示。
+
+**输入**
+
+输入只有一行，由若干正整数组成，每个正整数表示这条弹幕是投票给哪个选项的。
+
+输入的正整数个数不超过100,000，且满足最多有100个不同的选项，选项的编号不超过100,000。
+
+**输出**
+
+输出只有一行，为得票最多的选项。若有并列第一的情况出现，则按编号从小到大依次输出所有得票数最多的选项，用空格隔开。
+
+样例输入
+
+```
+1 10 2 3 3 10
+```
+
+样例输出
+
+```
+3 10
+```
 
 
 
+```python
+from collections import defaultdict
+
+# 读取输入并转换成整数列表
+votes = list(map(int, input().split()))
+
+# 使用字典统计每个选项的票数
+vote_counts = defaultdict(int)
+for vote in votes:
+    vote_counts[vote] += 1
+
+# 找出得票最多的票数
+max_votes = max(vote_counts.values())
+
+# 按编号顺序收集得票最多的选项
+winners = sorted([item for item in vote_counts.items() if item[1] == max_votes])
+
+# 输出得票最多的选项，如果有多个则并列输出
+print(' '.join(str(winner[0]) for winner in winners))
+
+```
 
 
 
@@ -4824,17 +7217,265 @@ http://cs101.openjudge.cn/dsapre/24684/
 
 http://cs101.openjudge.cn/dsapre/24686/
 
+有一棵 k 层的满二叉树（一共有2k-1个节点，且从上到下从左到右依次编号为1, 2, ..., 2k-1），最开始每个节点的重量均为0。请编程实现如下两种操作：
+
+1 x y：给以 x 为根的子树的每个节点的重量分别增加 y（ y 是整数且绝对值不超过100）
+
+2 x：查询（此时的）以 x 为根的子树的所有节点重量之和
+
+
+
+**输入**
+
+输入有n+1行。第一行是两个整数k, n，分别表示满二叉树的层数和操作的个数。接下来n行，每行形如1 x y或2 x，表示一个操作。
+
+k<=15（即最多32767个节点），n<=50000。
+
+**输出**
+
+输出有若干行，对每个查询操作依次输出结果，每个结果占一行。
+
+样例输入
+
+```
+3 7
+1 2 1
+2 4
+1 6 3
+2 1
+1 3 -2
+1 4 1
+2 3
+```
+
+样例输出
+
+```
+1
+6
+-3
+```
+
+提示
+
+可以通过对数计算某节点的深度：
+
+import math
+
+math.log2(x) #以小数形式返回x的对数值，注意x不能为0
+
+
+
+满二叉树是一种特殊的二叉树，其中每个节点要么是叶子节点，要么有两个子节点。  
+
+变量k和n分别代表满二叉树的层数和操作的个数。f和g是两个列表，用于存储每个节点的权重和懒惰标记。dep列表用于存储每个节点的深度。  
+
+如果操作的长度为2，那么这是一个查询操作，需要计算以给定节点为根的子树的所有节点的权重之和。如果操作的长度为3，那么这是一个更新操作，需要更新以给定节点为根的子树的所有节点的权重。  
+
+
+
+初始化了三个列表 `f`, `g`, 和 `dep` 来存储关于树的信息。`f` 用于记录懒惰传播的值，`g` 可能是用于存储临时的累积更新，`dep` 存储每个节点的深度。`tot` 是树中节点的总数。
+
+- `f` could represent some aggregated value at each node (like a lazy propagation value).
+- `g` could represent some other value that needs to be propagated down the tree (potentially a modification that applies to all child nodes).
+
+计算深度：从下到上计算每个节点的深度。对于满二叉树来说，如果一个节点编号为 `i`，则它的子节点编号为 `2i` 和 `2i + 1`。深度是从最底层叶子节点开始反向计算的。
+
+查询操作，首先获取根节点的权重，然后逐层向上，获取每一层父节点的权重，最后加上懒惰标记的权重。  查询操作(2 x)：如果操作有两个数字，它是一个查询操作。它从根开始累积 `f` 中的值，沿着树向上移动直到达到节点 `x`。然后计算以 `x` 为根的子树中所有节点的重量之和，考虑到懒惰传播的值和直接更新的值，最后打印结果。
+
+更新操作，首先更新给定节点的权重，然后逐层向上，更新每一层父节点的懒惰标记。  增加操作(1 x y)：将 `y` 增加到 `f` 中对应节点 `x` 的值，并且将 `w`（`y` 乘以以 `x` 为根的子树的节点总数）累积到 `g` 中对应节点 `x` 的父节点中。然后它继续沿树向上更新 `g`，直到根节点。
+
+主要思想是使用懒惰标记来优化查询和更新操作的时间复杂度。
+
+
+
+问：查询时候，是计算以 x 为根的子树的所有节点重量之和，为什么要向上找根节点，一路计算？
+
+答：查询操作的目标是计算以x为根的子树的所有节点重量之和。这是通过向上找根节点并一路计算来实现的。这种方法的原因是，代码中的更新操作是延迟的，也就是说，当我们对一个区间进行更新操作时，并不立即更新区间中的所有元素，而是将更新的值存储在一个特定的数据结构中（在这个例子中是数组f和g）。然后，当我们进行查询操作时，我们需要检查这个区间是否有待更新的值，如果有，我们就需要在查询的过程中，一路向上找到根节点，将这些待更新的值加入到查询结果中。  
+
+具体来说，对于每一个节点u，我们都存储了一个值f[u]，表示这个节点及其所有子节点需要增加的值。然后，当我们进行查询操作时，我们需要从目标节点开始，一路向上找到根节点，将这些待更新的值加入到查询结果中。这就是为什么我们在查询操作中需要一路向上找根节点的原因。  
+
+同时，我们还需要注意，由于我们的更新操作是延迟的，所以在查询操作中，我们还需要处理那些还没有被实际更新的节点。这就是为什么我们在查询操作中，除了加入f[u]之外，还需要加入g[u]。g[u]存储的是这个节点及其所有子节点由于之前的更新操作而增加的值，但是这些值还没有被实际加入到这些节点中。所以，在查询操作中，我们需要将这些值也加入到查询结果中。
+
+```python
+k, n = [int(x) for x in input().split()]
+f, g, dep = [], [], []
+tot = (1 << k) - 1
+for _ in range(tot+1):
+    f.append(0)
+    g.append(0)
+    dep.append(0)
+for i in range(tot, 0, -1):
+    dep[i] = 1 if i * 2 > tot else dep[i * 2] + 1
+for _ in range(n):
+    a = [int(x) for x in input().split()]
+    if len(a) == 2:
+        u = a[1]
+        s = f[1]
+        while u != 1:
+            s += f[u]
+            u >>= 1
+        ans = s * ((1 << dep[a[1]]) - 1) + g[a[1]]
+        print(ans)
+    elif len(a) == 3:
+        u = a[1]
+        w = a[2] * ((1 << dep[u]) - 1)
+        f[u] += a[2]
+        while u != 1:
+            u >>= 1
+            g[u] += w
+```
+
 
 
 ## 24687:封锁管控
 
 http://cs101.openjudge.cn/dsapre/24687/
 
+为减少人员流动，降低疫情传播风险，某城市决定在内部施加封锁管控措施。
+
+为方便讨论，假设城市为一条线段，从左至右排布了 n 个居民区，第 i 个居民区中住有 ai 个人。现在要建设 m(m<n) 个“管控点”（可视为墙），每个管控点设在相邻两个居民区之间，使得居民的活动不能跨越该管控点。
+
+定义“人口流动指数”为每个居民（从其原住区）能到达的居民区个数的总和。求在建设 m 个管控点后，人口流动指数最小为多少？
+
+
+
+例如，5个居民区被1个管控点隔开（数字表示居民区的人数）：
+
+10 50 | 20 30 40
+
+则此时的人口流动指数为 (10 + 50) * 2 + (20 + 30 + 40) * 3 = 390 。
+
+**输入**
+
+输入有两行。第一行为两个正整数n, m（n<=100）；第二行有n个数，表示每个居民区的人数ai（ai<=1000），用空格隔开。
+
+**输出**
+
+输出只有一行。一个正整数表示人口流动指数的最小值。
+
+样例输入
+
+```
+5 1
+10 50 20 30 40
+```
+
+样例输出
+
+```
+380
+```
+
+提示
+
+对样例的解释：在第三个和第四个居民区间设管控点，此时人口流动指数为
+(10+50+20)\*3+(30+40)\*2=380。
+
+
+
+为了找到最小的人口流动指数，我们需要确定在哪里建立管控点才能最大限度地减少人口流动。一个朴素的方法是考虑所有可能的管控点设置，然后选择人口流动指数最小的设置。但是，这样做的时间复杂度是非常高的，特别是当居民区数量较多时。
+
+我们可以使用动态规划来解决这个问题。我们可以定义一个动态规划数组 `dp[i][j]` 表示前 `i` 个居民区建立 `j` 个管控点后的最小人口流动指数。
+
+状态转移方程如下：
+
+`dp[i][j] = min(dp[k][j-1] + sum[k+1 to i] * (i-k))` 对于所有 `k < i`
+
+其中 `sum[k+1 to i]` 表示从居民区 `k+1` 到居民区 `i` 的人口数总和。
+
+这样，最终答案将是 `dp[n][m]`。
+
+```python
+def min_population_flow(n, m, populations):
+    # Initialize the prefix sum array for fast range sum computation
+    prefix_sum = [0] * (n + 1)
+    for i in range(1, n + 1):
+        prefix_sum[i] = prefix_sum[i - 1] + populations[i - 1]
+    
+    # Initialize the DP table
+    dp = [[float('inf')] * (m + 1) for _ in range(n + 1)]
+    
+    # Base case: with 0 control points, the flow index is just the sum of all populations times their district count
+    for i in range(1, n + 1):
+        dp[i][0] = prefix_sum[i] * i
+    
+    # Fill the DP table
+    for i in range(1, n + 1):
+        for j in range(1, min(i, m) + 1):
+            for k in range(j-1, i):
+                dp[i][j] = min(dp[i][j], dp[k][j-1] + (prefix_sum[i] - prefix_sum[k]) * (i - k))
+    
+    # The answer is the minimum flow index after setting up m control points
+    return dp[n][m]
+
+# Input
+n, m = map(int, input().split())
+populations = list(map(int, input().split()))
+
+# Output
+print(min_population_flow(n, m, populations))
+```
+
 
 
 ## 24750:根据二叉树中后序序列建树
 
 http://cs101.openjudge.cn/dsapre/24750/
+
+
+
+```python
+"""
+定义一个递归函数。在这个递归函数中，我们将后序遍历的最后一个元素作为当前的根节点，然后在中序遍历序列中找到这个根节点的位置，
+这个位置将中序遍历序列分为左子树和右子树。
+"""
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+
+def buildTree(inorder, postorder):
+    if not inorder or not postorder:
+        return None
+
+    # 后序遍历的最后一个元素是当前的根节点
+    root_val = postorder.pop()
+    root = TreeNode(root_val)
+
+    # 在中序遍历中找到根节点的位置
+    root_index = inorder.index(root_val)
+
+    # 构建右子树和左子树
+    root.right = buildTree(inorder[root_index + 1:], postorder)
+    root.left = buildTree(inorder[:root_index], postorder)
+
+    return root
+
+
+def preorderTraversal(root):
+    result = []
+    if root:
+        result.append(root.val)
+        result.extend(preorderTraversal(root.left))
+        result.extend(preorderTraversal(root.right))
+    return result
+
+
+# 读取输入
+inorder = input().strip()
+postorder = input().strip()
+
+# 构建树
+root = buildTree(list(inorder), list(postorder))
+
+# 输出前序遍历序列
+print(''.join(preorderTraversal(root)))
+```
+
+
 
 
 
@@ -4893,11 +7534,223 @@ print(dp[0][-1])
 
 http://cs101.openjudge.cn/dsapre/26572/
 
+小明总是记不清四则运算的优先级关系，为了保险起见，他总是在算式中加上许多冗余的括号，但层层嵌套的括号可苦了批改作业的老师。现在想请你编写一个程序，在不改变算式运算顺序的前提下，删除其中多余的括号。
+
+为了简单起见，我们只考虑加法和乘法两种运算，其中乘法优先级高于加法。题目保证给出的算式是合法的，且所有出现的运算数都是非负整数，不含正负号。
+
+输入是若干行只含有非负整数、加号、乘号和括号的四则运算表达式。对于每一行输入，你的程序需要输出一行结果，即删去表达式中所有冗余括号后得到的简化表达式。
+
+输入
+
+(1+11)
+((1+2))+3*(4+5)
+
+输出
+
+1+11
+1+2+3*(4+5)
+
+样例输入
+
+```
+(1+11)
+((1+2))+3*(4+5)
+```
+
+样例输出
+
+```
+1+11
+1+2+3*(4+5)
+```
+
+来源: lxp
+
+
+
+```python
+# 23n2300011031 黄源森23工院 version2
+"""
+parsing and evaluating mathematical expressions involving addition (+) and multiplication (*)
+with a simple form of precedence (multiplication before addition) without
+using the built-in eval function.
+"""
+import re
+
+class Node:
+    def __init__(self, value, left=None, right=None):
+        self.value = value
+        self.left = left
+        self.right = right
+
+def dfs(node):
+    if isinstance(node, str):
+        return node
+    if node.value == '*':
+        left = dfs(node.left)
+        right = dfs(node.right)
+        if isinstance(node.left, Node) and node.left.value == '+':
+            left = f'({left})'
+        if isinstance(node.right, Node) and node.right.value == '+':
+            right = f'({right})'
+        return left + '*' + right
+    else:
+        return dfs(node.left) + node.value + dfs(node.right)
+
+def build_tree(tokens):
+    def helper(tokens):
+        stack = []
+        for token in tokens:
+            if token == ')':
+                sub_expr = []
+                while stack and stack[-1] != '(':
+                    sub_expr.append(stack.pop())
+                stack.pop()  # Remove the '(' symbol
+                stack.append(build_tree(sub_expr[::-1]))
+            else:
+                stack.append(token)
+        return stack
+
+    tokens = helper(tokens)
+    # Process multiplication with higher precedence
+    while '*' in tokens:
+        index = tokens.index('*')
+        node = Node('*', tokens[index - 1], tokens[index + 1])
+        tokens = tokens[:index - 1] + [node] + tokens[index + 2:]
+    # Process addition
+    if len(tokens) == 1:
+        return tokens[0]
+    left_operand = tokens[0]
+    for i in range(1, len(tokens), 2):
+        left_operand = Node(tokens[i], left_operand, tokens[i + 1])
+    return left_operand
+
+while True:
+    try:
+        expression = input()
+        tokens = [token for token in re.split(r"(\D)", expression) if token]
+        root = build_tree(tokens)
+        print(dfs(root))
+    except EOFError:
+        break
+
+```
+
+
+
+```python
+#  23 元培 夏天明
+"""
+用栈搜索括号，然后暴力枚举尝试去掉每个括号，检验是否改变表达式本身。
+
+但是数据弱了，例如：
+(1+1)*1
+1+1*1
+"""
+import re
+
+while True:
+    try:
+        s = re.split(r"(\D)", input())
+    except EOFError:
+        break
+    pf = eval(''.join(s))
+    parenthesis = []
+    stack = []
+    for i, token in enumerate(s):
+        if token == '(':
+            stack.append(len(parenthesis))
+            parenthesis.append([i])
+        elif token == ')':
+            parenthesis[stack.pop()].append(i)
+    for l, r in parenthesis:
+        s[l] = ''
+        s[r] = ''
+        if pf != eval(''.join(s)):
+            s[l] = '('
+            s[r] = ')'
+    print(''.join(s))
+```
+
+
+
 
 
 ## 26573:康托集的图像表示
 
 http://cs101.openjudge.cn/dsapre/26573/
+
+在数学上具有重要意义的康托集(cantor set)是用如下方法构造的。考虑区间[0,1]，我们第一步要做的是，将区间三等分，然后删去中间的部分(1/3, 2/3)。在后面的每一步中，取出所有剩下的小区间，将每一个小区间都三等分后删去中间的部分，这样操作无穷次，最后剩下的点即为康托集。
+
+在本题中，对于输入n，我们假设**操作n步之后剩下的每个小区间为一个单位长度**。请你用线段图表示出这些剩下的小区间。每个小区间使用一个字符‘*’表示，而[0,1]区间的其余位置按照其单位长度用相应个数的‘-’表示。
+
+例如：对于输入n=3，最后剩下的小区间为1个单位长度，则整个[0,1]区间的单位长度为27，各步删去的区间如下表示：
+
+第一步删去中间一段（一个区间，9个单位长度）：
+
+`---------*********---------`
+
+第二步删去左右区间的中间一段（两个区间，分别有3个单位长度）：
+
+`---***---------------***---`
+
+最后一步删去的小区间是（四个区间，分别有1个单位长度）：
+
+`-*-----*-----------*-----*-`
+
+剩下的没有删去的小区间是（8个区间，分别有一个单位长度）：
+
+`*-*---*-*---------*-*---*-*`
+
+注意：你的程序需要输出的只是上面示例中的最后一行，即操作n步之后剩余的小区间
+
+**输入**
+
+3
+
+**输出**
+
+`*-*---*-*---------*-*---*-*`
+
+样例输入
+
+```
+3
+```
+
+样例输出
+
+```
+*-*---*-*---------*-*---*-*
+```
+
+来源：lxp
+
+
+
+```python
+def print_cantor_set(n):
+    def cantor(start, end, level):
+        if level == 0:
+            for i in range(start, end):
+                cantor_set[i] = '*'  # Mark the segment as occupied
+        else:
+            segment_length = (end - start) // 3
+            # Recursively mark the first third and the last third
+            cantor(start, start + segment_length, level - 1)
+            cantor(end - segment_length, end, level - 1)
+
+    # Initialize the list with dashes, representing an empty line
+    cantor_set = ['-' for _ in range(3 ** n)]
+    cantor(0, 3 ** n, n)
+    return ''.join(cantor_set)
+
+# Read the input
+n = int(input())
+
+# Generate and print the Cantor set
+print(print_cantor_set(n))
+```
 
 
 
@@ -4907,15 +7760,109 @@ http://cs101.openjudge.cn/dsapre/27625/
 
 
 
+```python
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def avl_min_nodes(n):
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return avl_min_nodes(n-1) + avl_min_nodes(n-2) + 1
+
+n = int(input())
+min_nodes = avl_min_nodes(n)
+print(min_nodes)
+```
+
+
+
+
+
 ## 27626:AVL树最多有几层
 
 http://cs101.openjudge.cn/dsapre/27626/
 
 
 
+```python
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def min_nodes(h):
+    if h == 0: return 0
+    if h == 1: return 1
+    return min_nodes(h-1) + min_nodes(h-2) + 1
+
+def max_height(n):
+    h = 0
+    while min_nodes(h) <= n:
+        h += 1
+    return h - 1
+
+n = int(input())
+print(max_height(n))
+```
+
+
+
+
+
 ## 27635:判断无向图是否连通有无回路(同23163)
 
 http://cs101.openjudge.cn/dsapre/27635/
+
+
+
+```python
+def is_connected(graph, n):
+    visited = [False] * n  # 记录节点是否被访问过
+    stack = [0]  # 使用栈来进行DFS
+    visited[0] = True
+
+    while stack:
+        node = stack.pop()
+        for neighbor in graph[node]:
+            if not visited[neighbor]:
+                stack.append(neighbor)
+                visited[neighbor] = True
+
+    return all(visited)
+
+def has_cycle(graph, n):
+    def dfs(node, visited, parent):
+        visited[node] = True
+        for neighbor in graph[node]:
+            if not visited[neighbor]:
+                if dfs(neighbor, visited, node):
+                    return True
+            elif parent != neighbor:
+                return True
+        return False
+
+    visited = [False] * n
+    for node in range(n):
+        if not visited[node]:
+            if dfs(node, visited, -1):
+                return True
+    return False
+
+# 读取输入
+n, m = map(int, input().split())
+graph = [[] for _ in range(n)]
+for _ in range(m):
+    u, v = map(int, input().split())
+    graph[u].append(v)
+    graph[v].append(u)
+
+# 判断连通性和回路
+connected = is_connected(graph, n)
+has_loop = has_cycle(graph, n)
+print("connected:yes" if connected else "connected:no")
+print("loop:yes" if has_loop else "loop:no")
+```
 
 
 
@@ -5031,6 +7978,49 @@ for _ in range(n):
 http://cs101.openjudge.cn/dsapre/27638/
 
 
+
+```python
+class TreeNode:
+    def __init__(self):
+        self.left = None
+        self.right = None
+
+def tree_height(node):
+    if node is None:
+        return -1  # 根据定义，空树高度为-1
+    return max(tree_height(node.left), tree_height(node.right)) + 1
+
+def count_leaves(node):
+    if node is None:
+        return 0
+    if node.left is None and node.right is None:
+        return 1
+    return count_leaves(node.left) + count_leaves(node.right)
+
+n = int(input())  # 读取节点数量
+nodes = [TreeNode() for _ in range(n)]
+has_parent = [False] * n  # 用来标记节点是否有父节点
+
+for i in range(n):
+    left_index, right_index = map(int, input().split())
+    if left_index != -1:
+        nodes[i].left = nodes[left_index]
+        has_parent[left_index] = True
+    if right_index != -1:
+        #print(right_index)
+        nodes[i].right = nodes[right_index]
+        has_parent[right_index] = True
+
+# 寻找根节点，也就是没有父节点的节点
+root_index = has_parent.index(False)
+root = nodes[root_index]
+
+# 计算高度和叶子节点数
+height = tree_height(root)
+leaves = count_leaves(root)
+
+print(f"{height} {leaves}")
+```
 
 
 
@@ -5333,233 +8323,33 @@ http://cs101.openjudge.cn/practice/05430/
 
 ## H7: 图应用
 
-### 05442: 兔子与星空
+05442: 兔子与星空
 
 http://cs101.openjudge.cn/practice/05442/
 
-很久很久以前，森林里住着一群兔子。兔子们无聊的时候就喜欢研究星座。如图所示，天空中已经有了n颗星星，其中有些星星有边相连。兔子们希望删除掉一些边，然后使得保留下的边仍能是n颗星星连通。他们希望计算，保留的边的权值之和最小是多少？
 
 
-
-
-
-![img](http://media.openjudge.cn/images/upload/1353513346.jpg)
-
-**输入**
-
-第一行只包含一个表示星星个数的数n，n不大于26，并且这n个星星是由大写字母表里的前n个字母表示。接下来的n-1行是由字母表的前n-1个字母开头。最后一个星星表示的字母不用输入。对于每一行，以每个星星表示的字母开头，然后后面跟着一个数字，表示有多少条边可以从这个星星到后面字母表中的星星。如果k是大于0，表示该行后面会表示k条边的k个数据。每条边的数据是由表示连接到另一端星星的字母和该边的权值组成。权值是正整数的并且小于100。该行的所有数据字段分隔单一空白。该星星网络将始终连接所有的星星。该星星网络将永远不会超过75条边。没有任何一个星星会有超过15条的边连接到其他星星（之前或之后的字母）。在下面的示例输入，数据是与上面的图相一致的。
-
-**输出**
-
-输出是一个整数，表示最小的权值和
-
-样例输入
-
-```
-9
-A 2 B 12 I 25
-B 3 C 10 H 40 I 8
-C 2 D 18 G 55
-D 1 E 44
-E 2 F 60 G 38
-F 0
-G 1 H 35
-H 1 I 35
-```
-
-样例输出
-
-```
-216
-```
-
-提示
-
-考虑看成最小生成树问题，注意输入表示。
-
-
-
-The problem you're describing is a classic Minimum Spanning Tree (MST) problem. The MST problem is a common problem in graph theory that asks for a spanning tree of a graph such that the sum of its edge weights is as small as possible.  In this case, the stars represent the nodes of the graph, and the edges between them represent the connections between the stars. The weight of each edge is given in the problem statement. The goal is to find a subset of these edges such that all stars are connected and the sum of the weights of these edges is minimized.
-
-```python
-import heapq
-
-def prim(graph, start):
-    mst = []
-    used = set([start])
-    edges = [
-        (cost, start, to)
-        for to, cost in graph[start].items()
-    ]
-    heapq.heapify(edges)
-
-    while edges:
-        cost, frm, to = heapq.heappop(edges)
-        if to not in used:
-            used.add(to)
-            mst.append((frm, to, cost))
-            for to_next, cost2 in graph[to].items():
-                if to_next not in used:
-                    heapq.heappush(edges, (cost2, to, to_next))
-
-    return mst
-
-def solve():
-    n = int(input())
-    graph = {chr(i+65): {} for i in range(n)}
-    for i in range(n-1):
-        data = input().split()
-        star = data[0]
-        m = int(data[1])
-        for j in range(m):
-            to_star = data[2+j*2]
-            cost = int(data[3+j*2])
-            graph[star][to_star] = cost
-            graph[to_star][star] = cost
-    mst = prim(graph, 'A')
-    print(sum(x[2] for x in mst))
-
-solve()
-```
-
-
-
-### 05443: 兔子与樱花
+05443: 兔子与樱花
 
 http://cs101.openjudge.cn/practice/05443/
 
-很久很久之前，森林里住着一群兔子。有一天，兔子们希望去赏樱花，但当他们到了上野公园门口却忘记了带地图。现在兔子们想求助于你来帮他们找到公园里的最短路。
-
-**输入**
-
-输入分为三个部分。
-第一个部分有P+1行（P<30），第一行为一个整数P，之后的P行表示上野公园的地点, 字符串长度不超过20。
-第二个部分有Q+1行（Q<50），第一行为一个整数Q，之后的Q行每行分别为两个字符串与一个整数，表示这两点有直线的道路，并显示二者之间的矩离（单位为米）。
-第三个部分有R+1行（R<20），第一行为一个整数R，之后的R行每行为两个字符串，表示需要求的路线。
-
-**输出**
-
-输出有R行，分别表示每个路线最短的走法。其中两个点之间，用->(矩离)->相隔。
-
-样例输入
-
-```
-6
-Ginza
-Sensouji
-Shinjukugyoen
-Uenokouen
-Yoyogikouen
-Meijishinguu
-6
-Ginza Sensouji 80
-Shinjukugyoen Sensouji 40
-Ginza Uenokouen 35
-Uenokouen Shinjukugyoen 85
-Sensouji Meijishinguu 60
-Meijishinguu Yoyogikouen 35
-2
-Uenokouen Yoyogikouen
-Meijishinguu Meijishinguu
-```
-
-样例输出
-
-```
-Uenokouen->(35)->Ginza->(80)->Sensouji->(60)->Meijishinguu->(35)->Yoyogikouen
-Meijishinguu
-```
 
 
-
-使用图论中的经典算法，如迪杰斯特拉（Dijkstra）算法，来找到两点之间的最短路径。输出格式的要求,每步都需要显示两个地点和它们之间的距离。
-
-```python
-import heapq
-
-def dijkstra(adjacency, start):
-    distances = {vertex: float('infinity') for vertex in adjacency}
-    previous = {vertex: None for vertex in adjacency}
-    distances[start] = 0
-    pq = [(0, start)]
-
-    while pq:
-        current_distance, current_vertex = heapq.heappop(pq)
-        if current_distance > distances[current_vertex]:
-            continue
-
-        for neighbor, weight in adjacency[current_vertex].items():
-            distance = current_distance + weight
-            if distance < distances[neighbor]:
-                distances[neighbor] = distance
-                previous[neighbor] = current_vertex
-                heapq.heappush(pq, (distance, neighbor))
-
-    return distances, previous
-
-def shortest_path_to(adjacency, start, end):
-    distances, previous = dijkstra(adjacency, start)
-    path = []
-    current = end
-    while previous[current] is not None:
-        path.insert(0, current)
-        current = previous[current]
-    path.insert(0, start)
-    return path, distances[end]
-
-# Read the input data
-P = int(input())
-places = {input().strip() for _ in range(P)}
-
-Q = int(input())
-graph = {place: {} for place in places}
-for _ in range(Q):
-    src, dest, dist = input().split()
-    dist = int(dist)
-    graph[src][dest] = dist
-    graph[dest][src] = dist  # Assuming the graph is bidirectional
-
-R = int(input())
-requests = [input().split() for _ in range(R)]
-
-# Process each request
-for start, end in requests:
-    if start == end:
-        print(start)
-        continue
-
-    path, total_dist = shortest_path_to(graph, start, end)
-    output = ""
-    for i in range(len(path) - 1):
-        output += f"{path[i]}->({graph[path[i]][path[i+1]]})->"
-    output += f"{end}"
-    print(output)
-
-```
-
-
-
-### 01178: Camelot
+01178: Camelot
 
 http://cs101.openjudge.cn/practice/01178/
 
-参看 Optional Problems部分相应题目
 
 
-
-### 01376: Robot
+01376: Robot
 
 http://cs101.openjudge.cn/practice/01376/
 
-参看 Optional Problems部分相应题目
 
 
-
-### 02049: Finding Nemo
+02049: Finding Nemo
 
 http://cs101.openjudge.cn/practice/02049/
-
-参看 Optional Problems部分相应题目
 
 
 
@@ -5567,1564 +8357,307 @@ http://cs101.openjudge.cn/practice/02049/
 
 http://cs101.openjudge.cn/practice/01324/
 
-参看 Optional Problems部分相应题目
+During winter, the most hungry and severe time, Holedox sleeps in its lair. When spring comes, Holedox wakes up, moves to the exit of its lair, comes out, and begins its new life.
+Holedox is a special snake, but its body is not very long. Its lair is like a maze and can be imagined as a rectangle with n*m squares. Each square is either a stone or a vacant place, and only vacant places allow Holedox to move in. Using ordered pair of row and column number of the lair, the square of exit located at (1,1). 
+
+Holedox's body, whose length is L, can be represented block by block. And let B1(r1,c1) B2(r2,c2) .. BL(rL,cL) denote its L length body, where Bi is adjacent to Bi+1 in the lair for 1 <= i <=?L-1, and B1 is its head, BL is its tail. 
+
+To move in the lair, Holedox chooses an adjacent vacant square of its head, which is neither a stone nor occupied by its body. Then it moves the head into the vacant square, and at the same time, each other block of its body is moved into the square occupied by the corresponding previous block. 
+
+For example, in the Figure 2, at the beginning the body of Holedox can be represented as B1(4,1) B2(4,2) B3(3,2)B4(3,1). During the next step, observing that B1'(5,1) is the only square that the head can be moved into, Holedox moves its head into B1'(5,1), then moves B2 into B1, B3 into B2, and B4 into B3. Thus after one step, the body of Holedox locates in B1(5,1)B2(4,1)B3(4,2) B4(3,2) (see the Figure 3).
+
+Given the map of the lair and the original location of each block of Holedox's body, your task is to write a program to tell the minimal number of steps that Holedox has to take to move its head to reach the square of exit (1,1).
+![img](http://media.openjudge.cn/images/g326/1324_1.jpg)
+
+**输入**
+
+The input consists of several test cases. The first line of each case contains three integers n, m (1<=n, m<=20) and L (2<=L<=8), representing the number of rows in the lair, the number of columns in the lair and the body length of Holedox, respectively. The next L lines contain a pair of row and column number each, indicating the original position of each block of Holedox's body, from B1(r1,c1) to BL(rL,cL) orderly, where 1<=ri<=n, and 1<=ci<=m,1<=i<=L. The next line contains an integer K, representing the number of squares of stones in the lair. The following K lines contain a pair of row and column number each, indicating the location of each square of stone. Then a blank line follows to separate the cases.
+
+The input is terminated by a line with three zeros.
+
+Note: Bi is always adjacent to Bi+1 (1<=i<=L-1) and exit square (1,1) will never be a stone.
+
+**输出**
+
+For each test case output one line containing the test case number followed by the minimal number of steps Holedox has to take. "-1" means no solution for that case.
+
+样例输入
+
+```
+5 6 4
+4 1
+4 2
+3 2
+3 1
+3
+2 3
+3 3
+3 4
+
+4 4 4
+2 3
+1 3
+1 4
+2 4
+4
+
+2 1
+2 2
+3 4
+4 2
+
+0 0 0
+```
+
+样例输出
+
+```
+Case 1: 9
+Case 2: -1
+```
+
+提示
+
+In the above sample case, the head of Holedox can follows (4,1)->(5,1)->(5,2)->(5,3)->(4,3)->(4,2)->(4,1)->(3,1)->(2,1)->(1,1) to reach the square of exit with minimal number of step, which is nine.
+
+来源
+
+Beijing 2002
+
+
+
+题目大意：一个蛇，长度为l，要爬到(1,1)点，问你最短的路径是多少。如果不存在最短路径就输出-1
+
+解题思路：BFS+哈希（状态压缩BFS）。将蛇的身体当做状态，记录蛇头位置，然后以蛇头位置开始，向后面计算。比如说第一个样例。
+
+我们约定(0,1)为状态00，(1,0)为状态01，(0,-1)为状态10，(-1,0)为状态11，注意这个部分与后面运算的过程要一一对应。
+
+蛇头位置为(4,1)记录下来，然后考虑第二个位置(4,2)，发现两者差别为(0,1)，所以状态为00，第三个位置(3,2)，与第二个位置差距为(-1,0)，所以状态为11，第四个位置(3,1)，与第三个位置差距为(0,-1)，所以状态为10。
+
+那么把这三个状态组合在一起，就成为状态101100，同样的也可以轻松的按照这个把状态还原为蛇的位置。
+
+判断这个题目只需要考虑是否满足蛇的下个位置：1）不会与当前身体的任何部分相碰撞，2）没有另外一个相同的状态在下个蛇头的位置出现过。在满足这两个条件之后，就可以得到最后的结果了。
+
+```python
+# https://www.cnblogs.com/wiklvrain/p/8179443.html
+from collections import deque
+
+# Constants for the maximum grid size
+maxn = 21
+# Directions representing right, down, left, up
+dir = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+
+
+# Function to judge if a move is valid
+def judge(p, t, l):
+    a, b = p[0], p[1]
+    row, col = a + dir[t][0], b + dir[t][1]
+    if row == a and col == b:
+        return False
+    k = l - 1
+    while k:
+        q = p[2] & 3
+        p = (p[0], p[1], p[2] >> 2)
+        nx, ny = a + dir[q][0], b + dir[q][1]
+        if nx == row and ny == col:
+            return False
+        a, b = nx, ny
+        k -= 1
+    return True
+
+
+# BFS function to find the shortest path for the snake
+def bfs(s, n, m, l, g):
+    q = deque()
+    vis = [[[0] * (1 << 14) for _ in range(maxn)] for _ in range(maxn)]
+
+    q.append(s)
+    vis[s[0]][s[1]][s[2]] = 1
+
+    while q:
+        p = q.popleft()
+        if p[0] == 1 and p[1] == 1:
+            return vis[p[0]][p[1]][p[2]] - 1
+        for i in range(4):
+            nx, ny = p[0] + dir[i][0], p[1] + dir[i][1]
+            st = (p[2] & ((1 << (2 * (l - 2))) - 1)) << 2
+            st |= (i + 2) % 4
+            if 1 <= nx <= n and 1 <= ny <= m and not vis[nx][ny][st] and not g[nx][ny] and judge(p, i, l):
+                vis[nx][ny][st] = vis[p[0]][p[1]][p[2]] + 1
+                q.append((nx, ny, st))
+    return -1
+
+
+def main():
+    cas = 1
+    while True:
+        n, m, l = map(int, input().split())
+        if n == 0 and m == 0 and l == 0:
+            break
+
+        # Initialize the snake
+        ss = (0, 0, 0)
+        tmp1, tmp2 = 0, 0
+        for i in range(l):
+            a, b = map(int, input().split())
+            if i == 0:
+                ss = (a, b, 0)
+            else:
+                for j in range(4):
+                    nx = tmp1 + dir[j][0]
+                    ny = tmp2 + dir[j][1]
+                    if nx == a and ny == b:
+                        ss = (ss[0], ss[1], ss[2] | (j << (2 * (i - 1))))
+                        break
+            tmp1, tmp2 = a, b
+
+        # Read obstacles
+        k = int(input())
+        g = [[0] * maxn for _ in range(maxn)]
+        #for _ in range(k):
+        while k:
+            try:
+                a, b = map(int, input().split())
+            except ValueError:
+                continue
+            k -= 1
+
+            g[a][b] = 1
+
+        # Perform BFS
+        result = bfs(ss, n, m, l, g)
+        print(f"Case {cas}: {result}")
+        cas += 1
+        input()
+
+
+if __name__ == "__main__":
+    main()
+```
+
+
 
 
 
 ## 2023期末上机考试（数算B）7题
 
-### 02774: 木材加工
+02774: 木材加工
 
 http://cs101.openjudge.cn/practice/02774/
 
-木材厂有一些原木，现在想把这些木头切割成一些长度相同的小段木头，需要得到的小段的数目是给定了。当然，我们希望得到的小段越长越好，你的任务是计算能够得到的小段木头的最大长度。
-
-木头长度的单位是厘米。原木的长度都是正整数，我们要求切割得到的小段木头的长度也要求是正整数。
-
-**输入**
-
-第一行是两个正整数*N*和*K*(1 ≤ *N* ≤ 10000, 1 ≤ *K* ≤ 10000)，*N*是原木的数目，*K*是需要得到的小段的数目。
-接下来的*N*行，每行有一个1到10000之间的正整数，表示一根原木的长度。
-　
-
-**输出**
-
-输出能够切割得到的小段的最大长度。如果连1厘米长的小段都切不出来，输出"0"。
-
-样例输入
-
-```
-3 7
-232
-124
-456
-```
-
-样例输出
-
-```
-114
-```
-
-来源
-
-NOIP 2004
 
 
-
-可以参考04135: 月度开销，08210: 河中跳房子
-
-```python
-n, k = map(int, input().split())
-expenditure = []
-for _ in range(n):
-    expenditure.append(int(input()))
-
-
-def check(x):
-    num = 0
-    for i in range(n):
-        num += expenditure[i] // x
-
-    return num >= k
-
-lo = 1
-hi = max(expenditure) + 1
-
-if sum(expenditure) < k:
-    print(0)
-    exit()
-
-ans = 1
-while lo < hi:
-    mid = (lo + hi) // 2
-    if check(mid):
-        ans = mid
-        lo = mid + 1
-    else:
-        hi = mid
-
-print(ans)
-```
-
-
-
-### 02766: 最大子矩阵
+02766: 最大子矩阵
 
 http://cs101.openjudge.cn/practice/02766/
 
-请参看 Optional Problems 部分的 02766。
 
 
-
-### 26573: 康托集的图像表示
+26573: 康托集的图像表示
 
 http://cs101.openjudge.cn/practice/26573/
 
-在数学上具有重要意义的康托集(cantor set)是用如下方法构造的。考虑区间[0,1]，我们第一步要做的是，将区间三等分，然后删去中间的部分(1/3, 2/3)。在后面的每一步中，取出所有剩下的小区间，将每一个小区间都三等分后删去中间的部分，这样操作无穷次，最后剩下的点即为康托集。
-
-在本题中，对于输入n，我们假设**操作n步之后剩下的每个小区间为一个单位长度**。请你用线段图表示出这些剩下的小区间。每个小区间使用一个字符‘*’表示，而[0,1]区间的其余位置按照其单位长度用相应个数的‘-’表示。
-
-例如：对于输入n=3，最后剩下的小区间为1个单位长度，则整个[0,1]区间的单位长度为27，各步删去的区间如下表示：
-
-第一步删去中间一段（一个区间，9个单位长度）：
-
-`---------*********---------`
-
-第二步删去左右区间的中间一段（两个区间，分别有3个单位长度）：
-
-`---***---------------***---`
-
-最后一步删去的小区间是（四个区间，分别有1个单位长度）：
-
-`-*-----*-----------*-----*-`
-
-剩下的没有删去的小区间是（8个区间，分别有一个单位长度）：
-
-`*-*---*-*---------*-*---*-*`
-
-注意：你的程序需要输出的只是上面示例中的最后一行，即操作n步之后剩余的小区间
-
-**输入**
-
-3
-
-**输出**
-
-`*-*---*-*---------*-*---*-*`
-
-样例输入
-
-```
-3
-```
-
-样例输出
-
-```
-*-*---*-*---------*-*---*-*
-```
-
-来源：lxp
 
 
-
-```python
-def print_cantor_set(n):
-    def cantor(start, end, level):
-        if level == 0:
-            for i in range(start, end):
-                cantor_set[i] = '*'  # Mark the segment as occupied
-        else:
-            segment_length = (end - start) // 3
-            # Recursively mark the first third and the last third
-            cantor(start, start + segment_length, level - 1)
-            cantor(end - segment_length, end, level - 1)
-
-    # Initialize the list with dashes, representing an empty line
-    cantor_set = ['-' for _ in range(3 ** n)]
-    cantor(0, 3 ** n, n)
-    return ''.join(cantor_set)
-
-# Read the input
-n = int(input())
-
-# Generate and print the Cantor set
-print(print_cantor_set(n))
-```
-
-
-
-### 26572: 多余的括号
+26572: 多余的括号
 
 http://cs101.openjudge.cn/practice/26572/
 
-小明总是记不清四则运算的优先级关系，为了保险起见，他总是在算式中加上许多冗余的括号，但层层嵌套的括号可苦了批改作业的老师。现在想请你编写一个程序，在不改变算式运算顺序的前提下，删除其中多余的括号。
-
-为了简单起见，我们只考虑加法和乘法两种运算，其中乘法优先级高于加法。题目保证给出的算式是合法的，且所有出现的运算数都是非负整数，不含正负号。
-
-输入是若干行只含有非负整数、加号、乘号和括号的四则运算表达式。对于每一行输入，你的程序需要输出一行结果，即删去表达式中所有冗余括号后得到的简化表达式。
-
-输入
-
-(1+11)
-((1+2))+3*(4+5)
-
-输出
-
-1+11
-1+2+3*(4+5)
-
-样例输入
-
-```
-(1+11)
-((1+2))+3*(4+5)
-```
-
-样例输出
-
-```
-1+11
-1+2+3*(4+5)
-```
-
-来源: lxp
 
 
-
-```python
-# 23n2300011031 黄源森23工院 version2
-"""
-parsing and evaluating mathematical expressions involving addition (+) and multiplication (*)
-with a simple form of precedence (multiplication before addition) without
-using the built-in eval function.
-"""
-import re
-
-class Node:
-    def __init__(self, value, left=None, right=None):
-        self.value = value
-        self.left = left
-        self.right = right
-
-def dfs(node):
-    if isinstance(node, str):
-        return node
-    if node.value == '*':
-        left = dfs(node.left)
-        right = dfs(node.right)
-        if isinstance(node.left, Node) and node.left.value == '+':
-            left = f'({left})'
-        if isinstance(node.right, Node) and node.right.value == '+':
-            right = f'({right})'
-        return left + '*' + right
-    else:
-        return dfs(node.left) + node.value + dfs(node.right)
-
-def build_tree(tokens):
-    def helper(tokens):
-        stack = []
-        for token in tokens:
-            if token == ')':
-                sub_expr = []
-                while stack and stack[-1] != '(':
-                    sub_expr.append(stack.pop())
-                stack.pop()  # Remove the '(' symbol
-                stack.append(build_tree(sub_expr[::-1]))
-            else:
-                stack.append(token)
-        return stack
-
-    tokens = helper(tokens)
-    # Process multiplication with higher precedence
-    while '*' in tokens:
-        index = tokens.index('*')
-        node = Node('*', tokens[index - 1], tokens[index + 1])
-        tokens = tokens[:index - 1] + [node] + tokens[index + 2:]
-    # Process addition
-    if len(tokens) == 1:
-        return tokens[0]
-    left_operand = tokens[0]
-    for i in range(1, len(tokens), 2):
-        left_operand = Node(tokens[i], left_operand, tokens[i + 1])
-    return left_operand
-
-while True:
-    try:
-        expression = input()
-        tokens = [token for token in re.split(r"(\D)", expression) if token]
-        root = build_tree(tokens)
-        print(dfs(root))
-    except EOFError:
-        break
-
-```
-
-
-
-```python
-#  23 元培 夏天明
-"""
-用栈搜索括号，然后暴力枚举尝试去掉每个括号，检验是否改变表达式本身。
-
-但是数据弱了，例如：
-(1+1)*1
-1+1*1
-"""
-import re
-
-while True:
-    try:
-        s = re.split(r"(\D)", input())
-    except EOFError:
-        break
-    pf = eval(''.join(s))
-    parenthesis = []
-    stack = []
-    for i, token in enumerate(s):
-        if token == '(':
-            stack.append(len(parenthesis))
-            parenthesis.append([i])
-        elif token == ')':
-            parenthesis[stack.pop()].append(i)
-    for l, r in parenthesis:
-        s[l] = ''
-        s[r] = ''
-        if pf != eval(''.join(s)):
-            s[l] = '('
-            s[r] = ')'
-    print(''.join(s))
-```
-
-
-
-### 06364: 牛的选举
+06364: 牛的选举
 
 http://cs101.openjudge.cn/practice/06364
 
-现在有N（1<=N<=50000）头牛在选举它们的总统，选举包括两轮：第一轮投票选举出票数最多的K（1<=K<=N）头牛进入第二轮；第二轮对K头牛重新投票，票数最多的牛当选为总统。
 
 
-
-现在给出每头牛i在第一轮期望获得的票数Ai（1<=Ai<=1,000,000,000），以及在第二轮中（假设它进入第二轮）期望获得的票数Bi（1<=Bi<=1,000,000,000），请你预测一下哪头牛将当选总统。幸运的是，每轮投票都不会出现票数相同的情况。    
-
-
-
-**输入**
-
-第1行：N和K
-第2至N+1行：第i+1行包括两个数字：Ai和Bi
-
-**输出**
-
-当选总统的牛的编号（牛的编号从1开始）
-
-样例输入
-
-```
-5 3
-3 10
-9 2
-5 6
-8 4
-6 5
-```
-
-样例输出
-
-```
-5
-```
-
-
-
-```python
-n, k = map(int, input().split())
-cows = []
-for i in range(n):
-    a, b = map(int, input().split())
-    cows.append((a, b, i + 1))
-cows.sort(key=lambda x: x[0], reverse=True)
-second_round_cows = cows[:k]
-second_round_cows.sort(key=lambda x: x[1], reverse=True)
-print(second_round_cows[0][2])
-```
-
-
-
-### 03720: 文本二叉树
+03720: 文本二叉树
 
 http://cs101.openjudge.cn/practice/03720/
 
-描述
-
-![img](https://raw.githubusercontent.com/GMyhf/img/main/img/202401302229085.jpg)
-如上图，一棵每个节点都是一个字母，且字母互不相同的二叉树，可以用以下若干行文本表示:
 
 
-
-```
-A
--B
---*
---C
--D
---E
----*
----F
-```
-
-
-
-在这若干行文本中：
-
-1) 每个字母代表一个节点。该字母在文本中是第几行，就称该节点的行号是几。根在第1行
-2) 每个字母左边的'-'字符的个数代表该结点在树中的层次（树根位于第0层）
-3) 若某第 i 层的非根节点在文本中位于第n行，则其父节点必然是第 i-1 层的节点中，行号小于n,且行号与n的差最小的那个
-4) 若某文本中位于第n行的节点(层次是i) 有两个子节点，则第n+1行就是其左子节点，右子节点是n+1行以下第一个层次为i+1的节点
-5) 若某第 i 层的节点在文本中位于第n行，且其没有左子节点而有右子节点，那么它的下一行就是 i+1个'-' 字符再加上一个 '*' 
-
-
-
-给出一棵树的文本表示法，要求输出该数的前序、后序、中序遍历结果
-
-输入
-
-第一行是树的数目 n
-
-接下来是n棵树，每棵树以'0'结尾。'0'不是树的一部分
-每棵树不超过100个节点
-
-输出
-
-对每棵树，分三行先后输出其前序、后序、中序遍历结果
-两棵树之间以空行分隔
-
-样例输入
-
-```
-2
-A
--B
---*
---C
--D
---E
----*
----F
-0
-A
--B
--C
-0
-```
-
-样例输出
-
-```
-ABCDEF
-CBFEDA
-BCAEFD
-
-ABC
-BCA
-BAC
-```
-
-来源: Guo Wei
-
-
-
-```python
-class Node:
-    def __init__(self, x, depth):
-        self.x = x
-        self.depth = depth
-        self.lchild = None
-        self.rchild = None
-
-    def preorder_traversal(self):
-        nodes = [self.x]
-        if self.lchild and self.lchild.x != '*':
-            nodes += self.lchild.preorder_traversal()
-        if self.rchild and self.rchild.x != '*':
-            nodes += self.rchild.preorder_traversal()
-        return nodes
-
-    def inorder_traversal(self):
-        nodes = []
-        if self.lchild and self.lchild.x != '*':
-            nodes += self.lchild.inorder_traversal()
-        nodes.append(self.x)
-        if self.rchild and self.rchild.x != '*':
-            nodes += self.rchild.inorder_traversal()
-        return nodes
-
-    def postorder_traversal(self):
-        nodes = []
-        if self.lchild and self.lchild.x != '*':
-            nodes += self.lchild.postorder_traversal()
-        if self.rchild and self.rchild.x != '*':
-            nodes += self.rchild.postorder_traversal()
-        nodes.append(self.x)
-        return nodes
-
-
-def build_tree():
-    n = int(input())
-    for _ in range(n):
-        tree = []
-        stack = []
-        while True:
-            s = input()
-            if s == '0':
-                break
-            depth = len(s) - 1
-            node = Node(s[-1], depth)
-            tree.append(node)
-
-            # Finding the parent for the current node
-            while stack and tree[stack[-1]].depth >= depth:
-                stack.pop()
-            if stack:  # There is a parent
-                parent = tree[stack[-1]]
-                if not parent.lchild:
-                    parent.lchild = node
-                else:
-                    parent.rchild = node
-            stack.append(len(tree) - 1)
-
-        # Now tree[0] is the root of the tree
-        yield tree[0]
-
-
-# Read each tree and perform traversals
-for root in build_tree():
-    print("".join(root.preorder_traversal()))
-    print("".join(root.postorder_traversal()))
-    print("".join(root.inorder_traversal()))
-    print()
-
-```
-
-
-
-
-
-### 05907: 二叉树的操作
+05907: 二叉树的操作
 
 http://cs101.openjudge.cn/practice/05907/
 
-给定一棵二叉树，在二叉树上执行两个操作：
 
-1. 节点交换
-
-把二叉树的两个节点交换。
-![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1368411159.jpg)
-
-2. 前驱询问
-
-询问二叉树的一个节点对应的子树最左边的节点。
-![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1368411165.jpg)
-
-**输入**
-
-第一行输出一个整数t(t <= 100)，代表测试数据的组数。
-
-对于每组测试数据，第一行输入两个整数n m，n代表二叉树节点的个数，m代表操作的次数。
-
-随后输入n行，每行包含3个整数X Y Z，对应二叉树一个节点的信息。X表示节点的标识，Y表示其左孩子的标识，Z表示其右孩子的标识。
-
-再输入m行，每行对应一次操作。每次操作首先输入一个整数type。
-
-当type=1，节点交换操作，后面跟着输入两个整数x y，表示将标识为x的节点与标识为y的节点交换。输入保证对应的节点不是祖先关系。
-
-当type=2，前驱询问操作，后面跟着输入一个整数x，表示询问标识为x的节点对应子树最左的孩子。
-
-1<=n<=100，节点的标识从0到n-1，根节点始终是0.
-m<=100
-
-**输出**
-
-对于每次询问操作，输出相应的结果。
-
-样例输入
-
-```
-2
-5 5
-0 1 2
-1 -1 -1
-2 3 4
-3 -1 -1
-4 -1 -1
-2 0
-1 1 2
-2 0
-1 3 4
-2 2
-3 2
-0 1 2
-1 -1 -1
-2 -1 -1
-1 1 2
-2 0
-```
-
-样例输出
-
-```
-1
-3
-4
-2
-```
-
-
-
-```python
-# 23n2300011072(X) 蒋子轩
-class TreeNode:
-    def __init__(self,val=0):
-        self.val=val
-        self.left=None
-        self.right=None
-def build_tree(nodes_info):
-    nodes=[TreeNode(i) for i in range(n)]
-    for val,left,right in nodes_info:
-        if left!=-1:
-            nodes[val].left=nodes[left]
-        if right!=-1:
-            nodes[val].right=nodes[right]
-    return nodes
-def swap_nodes(nodes,x,y):
-    for node in nodes:
-        if node.left and node.left.val in[x,y]:
-            node.left=nodes[y] if node.left.val==x else nodes[x]
-        if node.right and node.right.val in[x,y]:
-            node.right=nodes[y] if node.right.val==x else nodes[x]
-def find_leftmost(node):
-    while node and node.left:
-        node=node.left
-    return node.val if node else -1
-for _ in range(int(input())):
-    n,m=map(int,input().split())
-    nodes_info=[tuple(map(int,input().split())) for _ in range(n)]
-    ops=[tuple(map(int,input().split())) for _ in range(m)]
-    nodes=build_tree(nodes_info)
-    for op in ops:
-        if op[0]==1:
-            swap_nodes(nodes,op[1],op[2])
-        elif op[0]==2:
-            print(find_leftmost(nodes[op[1]]))
-```
 
 
 
 ## 2022期末测试（校外）
 
-### 24684: 直播计票
+24684: 直播计票
 
 http://cs101.openjudge.cn/practice/24684/
 
-直播间发起了投票活动：在屏幕上列出若干选项，观众通过发送弹幕向自己支持的选项投票。在幕后工作的你需要根据弹幕信息，向直播间的观众们展示哪个选项得票最多。
-
-这里每个选项用一个正整数编号表示。
-
-**输入**
-
-输入只有一行，由若干正整数组成，每个正整数表示这条弹幕是投票给哪个选项的。
-
-输入的正整数个数不超过100,000，且满足最多有100个不同的选项，选项的编号不超过100,000。
-
-**输出**
-
-输出只有一行，为得票最多的选项。若有并列第一的情况出现，则按编号从小到大依次输出所有得票数最多的选项，用空格隔开。
-
-样例输入
-
-```
-1 10 2 3 3 10
-```
-
-样例输出
-
-```
-3 10
-```
 
 
-
-```python
-from collections import defaultdict
-
-# 读取输入并转换成整数列表
-votes = list(map(int, input().split()))
-
-# 使用字典统计每个选项的票数
-vote_counts = defaultdict(int)
-for vote in votes:
-    vote_counts[vote] += 1
-
-# 找出得票最多的票数
-max_votes = max(vote_counts.values())
-
-# 按编号顺序收集得票最多的选项
-winners = sorted([item for item in vote_counts.items() if item[1] == max_votes])
-
-# 输出得票最多的选项，如果有多个则并列输出
-print(' '.join(str(winner[0]) for winner in winners))
-
-```
-
-
-
-### 24677: 安全位置
+24677: 安全位置
 
 http://cs101.openjudge.cn/practice/24677/
 
-公元2200年，人类和外星人开始了一场宇宙大战，你作为百京大学的一名本科小盆友和外星人在一个四维空间展开了一场殊死搏斗。现在给出一串密码，希望你能从中解锁出所有的安全位置。具体来说，密码是一个字符串，你可以将其分为四个部分，每个部分依次代表四维空间中该维度的坐标。如果这四个坐标均在0到500之间（包含0和500）则是一个安全位置。**注意坐标不能含有前导0，即001是不合法的坐标。**
-
-**输入**
-
-输入只有一行，是一个字符串S，0<=len(S)<=30。
-
-**输出**
-
-输出共1行，是一个数字，代表从该密码中解锁出的安全位置的个数。
-
-样例输入
-
-```
-010010
-```
-
-样例输出
-
-```
-2
-# ['0.10.0.10', '0.100.1.0']
-```
 
 
-
-```python
-"""
-GitHub Copilot Chat:
-This solution works by recursively splitting the string into four parts and 
-checking if each part is a valid coordinate. 
-The safe_locations function takes the remaining string, the current parts, 
-and the current depth as arguments. 
-If the depth is 4, it checks if the string is empty and if all parts are 
-valid coordinates. If so, it returns 1, otherwise it returns 0. 
-If the depth is less than 4, it tries to split the string at every possible 
-position and recursively calls itself with the new parts and increased depth. 
-"""
-
-
-def safe_locations(s, parts, depth=0):
-    if depth == 4:
-        if not s and all(0 <= int(part) <= 500 and 
-                (part == '0' or not part.startswith('0')) for part in parts):
-            return 1
-        return 0
-    return sum(safe_locations(s[i:], parts + [s[:i]], depth + 1) 
-               for i in range(1, len(s) + 1))
-
-
-s = input().strip()
-print(safe_locations(s, []))
-
-```
-
-
-
-### 24676: 共同富裕
+24676: 共同富裕
 
 http://cs101.openjudge.cn/practice/24676/
 
-Z&Z公司设计了一种发奖金的规则：把n个人的总奖金分成n x n份，放入一个矩阵中，每一份都为正整数，每个人最终拿到的奖金是矩阵中某一列的和。
-
-但财务认为其中运气成分太高，所以提出了一种平衡性调整：可以对奖金矩阵的任意一行进行右移。具体来说，如果对某一行ai1, ai2, ..., ain进行一次右移，最右侧的奖金移动到这一行的开头：ain, ai1, ai2, ..., ai(n-1)。每一行都可以进行任意次右移操作。
-
-最终的目标是希望在对奖金矩阵的每一行经过若干次右移后，个人拿到奖金的最高值最小，即每列和的最大值最小。
-
-**输入**
-
-输入包括多组数据，每一组数据的第一行包含一个正整数n（n不大于5），代表有n个人参与奖金发放，接下来的n行，每行包含n个正整数，代表奖金矩阵。输入数据以一个0为结尾代表结束
-
-**输出**
-
-对于每组数据，输出一行，包括一个正整数，为奖金最高值的最小值
-
-样例输入
-
-```
-2
-4 6
-3 7
-3
-1 2 3
-4 5 6
-7 8 9
-0
-```
-
-样例输出
-
-```
-11
-15
-```
 
 
-
-itertools product permutation区别？
-
-itertools.product和itertools.permutation是Python标准库中的两个模块，用于处理组合和排列的操作。
-
-itertools.product函数返回两个或多个可迭代对象的笛卡尔积。它接受多个可迭代对象作为输入，并返回一个迭代器，该迭代器生成包含所有输入可迭代对象元素的元组。换句话说，它返回了所有可能的组合情况。例如，itertools.product('ABCD', 'xy')将生成('A', 'x')，('A', 'y')，('B', 'x')，('B', 'y')，('C', 'x')和('C', 'y')。
-
-itertools.permutation函数返回一个可迭代对象，该对象生成指定长度的所有可能排列。它接受一个可迭代对象和一个整数作为参数，整数表示每个排列的长度。它生成的排列中的元素顺序不同，但保持了原始集合中元素的顺序。例如，itertools.permutation('ABCD', 2)将生成('A', 'B')，('A', 'C')，('A', 'D')，('B', 'A')，('B', 'C')，('B', 'D')，('C', 'A')，('C', 'B')，('C', 'D')，('D', 'A')，('D', 'B')和('D', 'C')。
-
-因此，itertools.product用于生成多个可迭代对象的所有可能组合，而itertools.permutation用于生成一个可迭代对象的所有可能排列。
-
-
-
-为了解决这个问题，我们可以用暴力搜索的方法来尝试每一行的所有可能的右移操作，然后寻找每一列的最大值，最终得到所有情况中的最小值。
-
-为了进行暴力搜索，我们可以利用Python的`itertools`库中的`product`函数来产生所有可能的行移动组合。对于每一种组合，我们计算每一列的和，并保留所有组合中的最大列和的最小值。
-
-下面是对应的Python代码实现：
-
-```python
-from itertools import product
-
-def right_shift(row, shift):
-    return row[-shift:] + row[:-shift]
-
-def calculate_max_column_sum(matrix):
-    n = len(matrix)
-    column_sums = [0] * n
-    for row in matrix:
-        for i, val in enumerate(row):
-            column_sums[i] += val
-    return max(column_sums)
-
-def find_min_max_column_sum(n, original_matrix):
-    min_max_sum = float('inf')
-
-    # 产生所有行可能的移动方式
-    all_shifts = list(product(range(n), repeat=n))
-    for shifts in all_shifts:
-        # 应用移动
-        shifted_matrix = [
-            right_shift(original_matrix[i], shifts[i]) for i in range(n)
-        ]
-        # 计算当前移动方式下的最大列和
-        max_column_sum = calculate_max_column_sum(shifted_matrix)
-        # 更新最小的最大列和
-        min_max_sum = min(min_max_sum, max_column_sum)
-    
-    return min_max_sum
-
-# 输入处理
-results = []
-while True:
-    n = int(input())
-    if n == 0:
-        break
-    
-    original_matrix = [list(map(int, input().split())) for _ in range(n)]
-    result = find_min_max_column_sum(n, original_matrix)
-    results.append(result)
-
-# 输出结果
-for result in results:
-    print(result)
-```
-
-
-
-
-
-### 24678: 任性买房
+24678: 任性买房
 
 http://cs101.openjudge.cn/practice/24678/
 
-在刚刚过去的5月20日，唐老板抽到了价值为W的买房优惠券，且该优惠券的使用条件是实际支付金额不小于W。正巧618即将来临，他希望在中关村北大街买房，经中介介绍，从南至北总共有n套房，每套房价格为pi，他有一些想法：
-
-1. 能用掉优惠券，多余的钱他自己能出，这样怎么想都很赚
-2. 所购买的房屋都是相邻的，这样就能够直接打通（例如在购买k套房时，购买的是i,i+1,i+2,...,i+k-1，其中i >= 1, i + k -1 <= n）
-3. 购买的房屋数量尽可能少，使得留下尽可能多的房
-
-请你编写一个程序帮唐老板想想是否存在符合他怪异想法的方案
-
-**输入**
-
-总共两行，第一行是两个整数W和n，0 < W < 10^9, 0 < n < 10^5,中间用空格分开，分别表示优惠券的金额与房子数量；第二行是n个整数，表示第i套房的价格pi, 0 < pi < 10^5
-
-**输出**
-
-如果存在满足条件的方案，请输出购房的最小数量；如果没有，则输出0
-
-样例输入
-
-```
-7 6
-1 3 5 2 1 4
-```
-
-样例输出
-
-```
-2
-```
 
 
-
-使用一个滑动窗口算法。从左到右扫描一遍房价数组，同时维护一个窗口，使得这个窗口中的房价总和大于等于优惠券金额W。我们的目标是找到满足条件的最小窗口长度。
-
-```python
-def min_houses_to_buy(W, n, prices):
-    min_length = n + 1  # 初始化为最大长度+1，表示不可能的情况
-    current_sum = 0     # 当前窗口的价格总和
-    left = 0            # 窗口的左边界
-
-    # 遍历房屋价格数组
-    for right in range(n):
-        current_sum += prices[right]  # 扩展窗口的右边界
-
-        # 当当前总和大于等于W时，尝试缩小窗口的大小
-        while current_sum >= W and left <= right:
-            min_length = min(min_length, right - left + 1)
-            current_sum -= prices[left]  # 缩小窗口的左边界
-            left += 1
-
-    # 如果min_length没有更新，说明没有找到满足条件的窗口
-    return min_length if min_length <= n else 0
-
-# 读取输入
-W, n = map(int, input().split())
-prices = list(map(int, input().split()))
-
-# 计算结果并打印
-print(min_houses_to_buy(W, n, prices))
-
-```
-
-
-
-### 24686: 树的重量
+24686: 树的重量
 
 http://cs101.openjudge.cn/dsapre/24686/
 
-有一棵 k 层的满二叉树（一共有2k-1个节点，且从上到下从左到右依次编号为1, 2, ..., 2k-1），最开始每个节点的重量均为0。请编程实现如下两种操作：
-
-1 x y：给以 x 为根的子树的每个节点的重量分别增加 y（ y 是整数且绝对值不超过100）
-
-2 x：查询（此时的）以 x 为根的子树的所有节点重量之和
 
 
-
-**输入**
-
-输入有n+1行。第一行是两个整数k, n，分别表示满二叉树的层数和操作的个数。接下来n行，每行形如1 x y或2 x，表示一个操作。
-
-k<=15（即最多32767个节点），n<=50000。
-
-**输出**
-
-输出有若干行，对每个查询操作依次输出结果，每个结果占一行。
-
-样例输入
-
-```
-3 7
-1 2 1
-2 4
-1 6 3
-2 1
-1 3 -2
-1 4 1
-2 3
-```
-
-样例输出
-
-```
-1
-6
--3
-```
-
-提示
-
-可以通过对数计算某节点的深度：
-
-import math
-
-math.log2(x) #以小数形式返回x的对数值，注意x不能为0
-
-
-
-满二叉树是一种特殊的二叉树，其中每个节点要么是叶子节点，要么有两个子节点。  
-
-变量k和n分别代表满二叉树的层数和操作的个数。f和g是两个列表，用于存储每个节点的权重和懒惰标记。dep列表用于存储每个节点的深度。  
-
-如果操作的长度为2，那么这是一个查询操作，需要计算以给定节点为根的子树的所有节点的权重之和。如果操作的长度为3，那么这是一个更新操作，需要更新以给定节点为根的子树的所有节点的权重。  
-
-
-
-初始化了三个列表 `f`, `g`, 和 `dep` 来存储关于树的信息。`f` 用于记录懒惰传播的值，`g` 可能是用于存储临时的累积更新，`dep` 存储每个节点的深度。`tot` 是树中节点的总数。
-
-- `f` could represent some aggregated value at each node (like a lazy propagation value).
-- `g` could represent some other value that needs to be propagated down the tree (potentially a modification that applies to all child nodes).
-
-计算深度：从下到上计算每个节点的深度。对于满二叉树来说，如果一个节点编号为 `i`，则它的子节点编号为 `2i` 和 `2i + 1`。深度是从最底层叶子节点开始反向计算的。
-
-查询操作，首先获取根节点的权重，然后逐层向上，获取每一层父节点的权重，最后加上懒惰标记的权重。  查询操作(2 x)：如果操作有两个数字，它是一个查询操作。它从根开始累积 `f` 中的值，沿着树向上移动直到达到节点 `x`。然后计算以 `x` 为根的子树中所有节点的重量之和，考虑到懒惰传播的值和直接更新的值，最后打印结果。
-
-更新操作，首先更新给定节点的权重，然后逐层向上，更新每一层父节点的懒惰标记。  增加操作(1 x y)：将 `y` 增加到 `f` 中对应节点 `x` 的值，并且将 `w`（`y` 乘以以 `x` 为根的子树的节点总数）累积到 `g` 中对应节点 `x` 的父节点中。然后它继续沿树向上更新 `g`，直到根节点。
-
-主要思想是使用懒惰标记来优化查询和更新操作的时间复杂度。
-
-
-
-问：查询时候，是计算以 x 为根的子树的所有节点重量之和，为什么要向上找根节点，一路计算？
-
-答：查询操作的目标是计算以x为根的子树的所有节点重量之和。这是通过向上找根节点并一路计算来实现的。这种方法的原因是，代码中的更新操作是延迟的，也就是说，当我们对一个区间进行更新操作时，并不立即更新区间中的所有元素，而是将更新的值存储在一个特定的数据结构中（在这个例子中是数组f和g）。然后，当我们进行查询操作时，我们需要检查这个区间是否有待更新的值，如果有，我们就需要在查询的过程中，一路向上找到根节点，将这些待更新的值加入到查询结果中。  
-
-具体来说，对于每一个节点u，我们都存储了一个值f[u]，表示这个节点及其所有子节点需要增加的值。然后，当我们进行查询操作时，我们需要从目标节点开始，一路向上找到根节点，将这些待更新的值加入到查询结果中。这就是为什么我们在查询操作中需要一路向上找根节点的原因。  
-
-同时，我们还需要注意，由于我们的更新操作是延迟的，所以在查询操作中，我们还需要处理那些还没有被实际更新的节点。这就是为什么我们在查询操作中，除了加入f[u]之外，还需要加入g[u]。g[u]存储的是这个节点及其所有子节点由于之前的更新操作而增加的值，但是这些值还没有被实际加入到这些节点中。所以，在查询操作中，我们需要将这些值也加入到查询结果中。
-
-```python
-k, n = [int(x) for x in input().split()]
-f, g, dep = [], [], []
-tot = (1 << k) - 1
-for _ in range(tot+1):
-    f.append(0)
-    g.append(0)
-    dep.append(0)
-for i in range(tot, 0, -1):
-    dep[i] = 1 if i * 2 > tot else dep[i * 2] + 1
-for _ in range(n):
-    a = [int(x) for x in input().split()]
-    if len(a) == 2:
-        u = a[1]
-        s = f[1]
-        while u != 1:
-            s += f[u]
-            u >>= 1
-        ans = s * ((1 << dep[a[1]]) - 1) + g[a[1]]
-        print(ans)
-    elif len(a) == 3:
-        u = a[1]
-        w = a[2] * ((1 << dep[u]) - 1)
-        f[u] += a[2]
-        while u != 1:
-            u >>= 1
-            g[u] += w
-```
-
-
-
-### 24687: 封锁管控
+24687: 封锁管控
 
 http://cs101.openjudge.cn/practice/24687/
-
-为减少人员流动，降低疫情传播风险，某城市决定在内部施加封锁管控措施。
-
-为方便讨论，假设城市为一条线段，从左至右排布了 n 个居民区，第 i 个居民区中住有 ai 个人。现在要建设 m(m<n) 个“管控点”（可视为墙），每个管控点设在相邻两个居民区之间，使得居民的活动不能跨越该管控点。
-
-定义“人口流动指数”为每个居民（从其原住区）能到达的居民区个数的总和。求在建设 m 个管控点后，人口流动指数最小为多少？
-
-
-
-例如，5个居民区被1个管控点隔开（数字表示居民区的人数）：
-
-10 50 | 20 30 40
-
-则此时的人口流动指数为 (10 + 50) * 2 + (20 + 30 + 40) * 3 = 390 。
-
-**输入**
-
-输入有两行。第一行为两个正整数n, m（n<=100）；第二行有n个数，表示每个居民区的人数ai（ai<=1000），用空格隔开。
-
-**输出**
-
-输出只有一行。一个正整数表示人口流动指数的最小值。
-
-样例输入
-
-```
-5 1
-10 50 20 30 40
-```
-
-样例输出
-
-```
-380
-```
-
-提示
-
-对样例的解释：在第三个和第四个居民区间设管控点，此时人口流动指数为
-(10+50+20)\*3+(30+40)\*2=380。
-
-
-
-为了找到最小的人口流动指数，我们需要确定在哪里建立管控点才能最大限度地减少人口流动。一个朴素的方法是考虑所有可能的管控点设置，然后选择人口流动指数最小的设置。但是，这样做的时间复杂度是非常高的，特别是当居民区数量较多时。
-
-我们可以使用动态规划来解决这个问题。我们可以定义一个动态规划数组 `dp[i][j]` 表示前 `i` 个居民区建立 `j` 个管控点后的最小人口流动指数。
-
-状态转移方程如下：
-
-`dp[i][j] = min(dp[k][j-1] + sum[k+1 to i] * (i-k))` 对于所有 `k < i`
-
-其中 `sum[k+1 to i]` 表示从居民区 `k+1` 到居民区 `i` 的人口数总和。
-
-这样，最终答案将是 `dp[n][m]`。
-
-```python
-def min_population_flow(n, m, populations):
-    # Initialize the prefix sum array for fast range sum computation
-    prefix_sum = [0] * (n + 1)
-    for i in range(1, n + 1):
-        prefix_sum[i] = prefix_sum[i - 1] + populations[i - 1]
-    
-    # Initialize the DP table
-    dp = [[float('inf')] * (m + 1) for _ in range(n + 1)]
-    
-    # Base case: with 0 control points, the flow index is just the sum of all populations times their district count
-    for i in range(1, n + 1):
-        dp[i][0] = prefix_sum[i] * i
-    
-    # Fill the DP table
-    for i in range(1, n + 1):
-        for j in range(1, min(i, m) + 1):
-            for k in range(j-1, i):
-                dp[i][j] = min(dp[i][j], dp[k][j-1] + (prefix_sum[i] - prefix_sum[k]) * (i - k))
-    
-    # The answer is the minimum flow index after setting up m control points
-    return dp[n][m]
-
-# Input
-n, m = map(int, input().split())
-populations = list(map(int, input().split()))
-
-# Output
-print(min_population_flow(n, m, populations))
-```
 
 
 
 ## 2021模拟考试/2020finaltest
 
-### 20742: 泰波拿契數
+20742: 泰波拿契數
 
 http://cs101.openjudge.cn/practice/20742/
 
-泰波拿契数列 Tn 定义是
-
-$T_0 = 0, T_1 = 1, T_2 = 1, and T_{n+3} = T_n + T_{n+1} + T_{n+2} \space for \space n >= 0$.
-
-给定n请算出Tn
-
-n的范围:1<=n<=30
 
 
-
-**输入**
-
-一个正整数n
-
-**输出**
-
-一个正整数k
-
-样例输入
-
-```
-4
-```
-
-样例输出
-
-```
-4
-```
-
-提示
-
-T3=0 + 1 + 1 = 2
-T4=1 + 1 + 2 = 4
-
-
-
-```python
-def tribonacci(n):
-    if n == 0:
-        return 0
-    elif n <= 2:
-        return 1
-    trib = [0, 1, 1] + [0] * (n - 2)
-    for i in range(3, n + 1):
-        trib[i] = trib[i - 1] + trib[i - 2] + trib[i - 3]
-    return trib[n]
-
-# 读取输入并处理
-n = int(input())
-print(tribonacci(n))
-```
-
-
-
-### 20743: 整人的提词本
+20743: 整人的提词本
 
 http://cs101.openjudge.cn/practice/20743/
 
-剧组为了整演员，提供给他们的提词本是经过加工的
-
-提词本内容由英文字母跟括号组成，而且括号必定合法，左括号一定有对应的右括号
-
-演员必须从最里层开始翻转括号内的字母
-
-例如(dcba) 要翻转成abcd
-
-最终演员所念的台词不能含有括号
-
-请输出演员应该念出来的台词
-
-**输入**
-
-一个字串s
-
-**输出**
-
-一个字串s2
-
-样例输入
-
-```
-(eg(en(duj))po)
-```
-
-样例输出
-
-```
-openjudge
-```
-
-提示
-
-先反转duj
-再反转enjud
-最后反转全部台词
 
 
-
-use a stack to keep track of the characters inside each pair of parentheses. When you encounter a closing parenthesis, you pop characters from the stack and reverse them until you reach an opening parenthesis, then push the reversed characters back onto the stack. Continue this process until you've processed the entire string. Finally, join the characters in the stack to form the final string.
-
-```python
-def reverse_parentheses(s):
-    stack = []
-    for char in s:
-        if char == ')':
-            temp = []
-            while stack and stack[-1] != '(':
-                temp.append(stack.pop())
-            # remove the opening parenthesis
-            if stack:
-                stack.pop()
-            # add the reversed characters back to the stack
-            stack.extend(temp)
-        else:
-            stack.append(char)
-    return ''.join(stack)
-
-# 读取输入并处理
-s = input().strip()
-print(reverse_parentheses(s))
-```
-
-
-
-### 20741: 两座孤岛最短距离
+20741: 两座孤岛最短距离
 
 http://cs101.openjudge.cn/practice/20741
 
-请参考 Optional Problems部分的 20741
 
 
-
-### 20746: 满足合法工时的最少人数
+20746: 满足合法工时的最少人数
 
 http://cs101.openjudge.cn/practice/20746/
 
-若干个工作任务，需要在一天内完成。给一个正整数数列，存储每个任务所需的工时。
-
-国家法律规定，员工的日工作时长不能超过t。
-
-公司决定雇佣k个员工，每个任务都会让所有员工一同分担，于是每个任务执行的时间等于它所需的工时除以k。
-
-所有任务执行的时间累加起来得到s。
-
-为了满足合法工作不加班，请在s<=t的前提下，找出所需的最少员工数量k。
 
 
-
-分担说明:每个任务分担后的时间都是小数点无条件进位取整
-
-7个工时/3个员工 = 3小时, 10个工时/2个员工=5小时
-
-
-
-必定存在结果(不用考虑t<数列长度的状况)
-
-
-
-**输入**
-
-一个逗号分隔的数列
-一个正整数
-
-**输出**
-
-一个正整数
-
-样例输入
-
-```
-1,2,5,9
-5
-```
-
-样例输出
-
-```
-5
-```
-
-提示
-
-如果员工数是4，sum(1+1+2+3)=7
-如果员工数是5，sum(1+1+1+2)=5
-如果员工数是6，sum(1+1+1+2)=5
-所以答案是5
-
-
-
-use a binary search approach. The minimum number of employees can be 1 and the maximum can be the maximum work hours in the tasks. For each mid value in the binary search, calculate the total work hours and compare it with the legal work hours. If it's more, increase the number of employees, else decrease it.
-
-```python
-def min_employees(tasks, t):
-    left, right = 1, max(tasks)
-    while left < right:
-        mid = (left + right) // 2
-        total_hours = sum((task + mid - 1) // mid for task in tasks)
-        if total_hours > t:
-            left = mid + 1
-        else:
-            right = mid
-    return left
-
-# 读取输入并处理
-tasks = list(map(int, input().split(',')))
-t = int(input())
-print(min_employees(tasks, t))
-```
-
-
-
-### 20626: 对子数列做XOR运算
+20626: 对子数列做XOR运算
 
 http://cs101.openjudge.cn/practice/20626/
 
-给定一个正整数数列V，V的下标从零开始。
-
-对V的子数列W进行XOR查询，输入的查询指令有2个数L,R，L<=R，分别为W中第一个和最后一个元素在V中的下标。计算W中所有元素的XOR值，即：V[L] xor V[L+1] xor ... xor V[R]
-
-输入不同的L, R，对V进行10000次查询。
 
 
-
-**输入**
-
-第一行是一个空格分开的正整数数列V
-第2-10001行每行有2个数L, R，中间用空格分开
-
-**输出**
-
-10000行整数
-
-样例输入
-
-```
-1 3 4 8
-0 1
-1 2
-0 3
-3 3
-```
-
-样例输出
-
-```
-2
-7
-14
-8
-```
-
-提示
-
-对照样例输入：数列为1,3,4,8。它们用二进制表示：1 = 0001，3 = 0011， 4 = 0100 ，8 = 1000；当L, R的值依次为
-0，1时，求得 1 xor 3 = 2
-1，2时，求得 3 xor 4 = 7
-0，3时，求得 1 xor 3 xor 4 xor 8 = 14 
-3，3时，求得 8
-顾输出 2 7 14 8。
-实际上会有10000行查询指令，请按照样例格式按行输出查询结果。
-
-
-
-```python
-def precompute_xor_prefixes(values):
-    xor_prefixes = [0] * (len(values) + 1)
-    for i in range(len(values)):
-        xor_prefixes[i+1] = xor_prefixes[i] ^ values[i]
-    return xor_prefixes
-
-# 读取输入并处理
-values = list(map(int, input().split()))
-xor_prefixes = precompute_xor_prefixes(values)
-
-# 读取查询并处理
-for _ in range(10000):
-    L, R = map(int, input().split())
-    result = xor_prefixes[R+1] ^ xor_prefixes[L]
-    print(result)
-```
-
-
-
-i/o优化啊，1w输入输出
-
-```python
-# 23n2300017735(夏天明BrightSummer)
-import sys
-input = sys.stdin.readline
-
-V = [int(i) for i in input().split()]
-preV = [0]*(len(V)+1)
-for i in range(len(V)):
-    preV[i+1] = preV[i] ^ V[i]
-
-results = []
-for i in range(10000):
-    L, R = map(int, input().split())
-    results.append(str(preV[R+1] ^ preV[L]))
-
-sys.stdout.write('\n'.join(results) + '\n')
-```
-
-
-
-
-
-### 20744: 土豪购物
+20744: 土豪购物
 
 http://cs101.openjudge.cn/practice/20744/
-
-给一个整数组成的数列，其中每个数字代表商品价值(可能为负)
-
-土豪买东西的方法是 "从第n个到第k个商品我全要了!!!" (n<=k)，
-
-换句话说土豪一定会买下连续的几个商品
-
-
-
-买完以后土豪会看心情最多放回去其中一个商品(可以不放回)
-
-但土豪不能空手而归，他至少要带回去一个商品
-
-请问聪明的(?)土豪可以买到最大价值总和为多少的商品?
-
-样例:
-
-商品价值:1,-5,0,3 输出:4 最大价值总和是买[1,-5,0,3]，并放回-5后的总和
-
-商品价值:-2,-2,-2 输出:-2 最大价值总和是买[-2]，不放回的总和(至少要带回去一个商品)
-
-
-
-**输入**
-
-一个逗号分隔，由整数组成的商品价值
-
-**输出**
-
-一个整数
-
-样例输入
-
-```
-1,-5,0,3
-```
-
-样例输出
-
-```
-4
-```
-
-提示
-
-最大价值总和是买[1,-5,0,3]，并放回-5后的总和
-
-
-
-需要考虑两种情况：
-
-1. 不放回商品时的最大连续子数组和（Kadane算法）。
-2. 放回一个商品时的最大连续子数组和。
-
-由于我们可以选择放回任何一个商品，因此需要考虑放回每一个商品对最大连续子数组和的影响。我们可以通过两次遍历数组来解决这个问题：
-
-- 第一次遍历从左到右计算以每个元素结尾的最大子数组和。
-- 第二次遍历从右到左计算以每个元素开始的最大子数组和。
-
-然后，我们遍历数组，对于每个位置，我们尝试放回该位置的商品，并检查如果放回这个商品后，左边子序列的最大和加上右边子序列的最大和是否会比当前的最大值还要大。
-
-```python
-def kadane(nums):
-    max_ending_here = max_so_far = nums[0]
-    for x in nums[1:]:
-        max_ending_here = max(x, max_ending_here + x)
-        max_so_far = max(max_so_far, max_ending_here)
-    return max_so_far
-
-def max_sum_shopping(values):
-    # 不放回商品的情况下的最大价值总和
-    max_without_deletion = kadane(values)
-
-    # 如果整个数列的和都是负的，则土豪只能选择一个价值最大的商品
-    if max_without_deletion < 0:
-        return max(values)
-
-    # 准备两个数组来存储从左到右和从右到左的最大子数组和
-    left_max_sums = [0] * len(values)
-    right_max_sums = [0] * len(values)
-
-    # 从左到右的最大子数组和
-    current = 0
-    for i in range(len(values)):
-        current = max(0, current + values[i])
-        left_max_sums[i] = current
-
-    # 从右到左的最大子数组和
-    current = 0
-    for i in range(len(values) - 1, -1, -1):
-        current = max(0, current + values[i])
-        right_max_sums[i] = current
-
-    # 放回一个商品时的最大价值总和
-    max_with_deletion = 0
-    for i in range(1, len(values) - 1):
-        max_with_deletion = max(max_with_deletion, left_max_sums[i - 1] + right_max_sums[i + 1])
-
-    # 返回放回一个商品和不放回一个商品两种情况下的最大价值
-    return max(max_with_deletion, max_without_deletion)
-
-# 读取输入并处理
-values_str = input().strip()
-values = list(map(int, values_str.split(',')))
-print(max_sum_shopping(values))
-```
 
 
 
@@ -7132,478 +8665,39 @@ print(max_sum_shopping(values))
 
 ## 2020模拟上机
 
-### 20449: 是否被5整除
+20449: 是否被5整除
 
 http://cs101.openjudge.cn/practice/20449/
 
-给定由0 和 1 组成的字串 A，我们定义 N_i：从 A[0] 到 A[i] 的第 i 个子数组被解释为一个二进制数 
-
-返回0和 1 组成的字串 answer，只有当 N_i 可以被 5 整除时，答案 answer[i] 为 1，否则为 0
-
-具体请看例子 
-
-**输入**
-
-一个0和1组成的字串
-
-**输出**
-
-一行长度等同于输入的0和1组成的字串
-
-样例输入
-
-```
-011
-```
-
-样例输出
-
-```
-100
-```
-
-提示
-
-0可以被5整除->1
-01不可以被5整除->0
-011不可以被5整除->0
-结果是100
 
 
-
-遍历输入的字符串，然后将每个字符解释为二进制数并检查是否可以被5整除来解决。我们可以使用Python的内置函数int()将二进制字符串转换为整数，并使用模运算符%来检查是否可以被5整除。
-
-```python
-def binary_divisible_by_five(binary_string):
-    result = ''
-    num = 0
-    for bit in binary_string:
-        num = (num * 2 + int(bit)) % 5
-        if num == 0:
-            result += '1'
-        else:
-            result += '0'
-    return result
-
-binary_string = input().strip()
-print(binary_divisible_by_five(binary_string))
-```
-
-
-
-### 20453: 和为k的子数组个数
+20453: 和为k的子数组个数
 
 http://cs101.openjudge.cn/practice/20453/
 
-给定一组整数数字和一个整数 k，你需要找到该数组中和为 k 的连续的子数组的个数。
-
-**输入**
-
-第一行:由空格区分的一组数字
-第二行:整数k
-
-**输出**
-
-一个整数，代表多少子数组等于k
-
-样例输入
-
-```
-1 1 1
-2
-```
-
-样例输出
-
-```
-2
-```
-
-提示
-
-有两组1 1 和为2
 
 
-
-通过使用一个哈希表来存储前缀和的频率来解决。我们遍历输入的数组，每次迭代时，我们都会更新当前的前缀和。然后，我们检查哈希表中是否存在当前前缀和减去目标值k的条目。如果存在，我们就将其值添加到结果中。最后，我们将当前的前缀和添加到哈希表中。
-
-```python
-def subarray_sum(nums, k):
-    count = 0
-    sums = 0
-    d = dict()
-    d[0] = 1
-
-    for i in range(len(nums)):
-        sums += nums[i]
-        count += d.get(sums - k, 0)
-        d[sums] = d.get(sums, 0) + 1
-
-    return count
-
-nums = list(map(int, input().split()))
-k = int(input().strip())
-print(subarray_sum(nums, k))
-```
-
-
-
-### 20456: 统计封闭岛屿的数目
+20456: 统计封闭岛屿的数目
 
 http://cs101.openjudge.cn/practice/20456/
 
-给定10行，每行有10个数字的方形地图 ，每个位置要么是陆地（记号为 0 ）要么是水域（记号为 1 ）。 我们从一块陆地出发，每次可以往上下左右 4 个方向相邻区域走，能走到的所有陆地区域，我们将其称为一座「岛屿」。 如果一座岛屿 完全 由水域包围，即陆地边缘上下左右所有相邻区域都是水域，那么我们将其称为 「封闭岛屿」。 请输出封闭岛屿的数目。
-
-**输入**
-
-10行，每行有10个数字(0或1)
-
-**输出**
-
-一个整数，封闭岛屿的数目
-
-样例输入
-
-```
-1,0,0,0,0,0,1,0,1,0
-1,1,1,1,1,0,0,0,0,0
-1,0,0,0,1,1,1,1,0,0
-1,0,0,1,0,1,0,1,1,0
-1,0,0,0,0,1,0,1,0,0
-0,0,1,0,0,0,0,1,0,0
-1,1,1,0,0,0,0,0,0,0
-1,0,1,1,0,0,1,1,1,0
-1,0,1,0,0,1,0,0,1,0
-0,0,0,0,0,0,1,1,1,1
-```
-
-样例输出
-
-```
-1
-```
-
-提示
-
-1个封闭岛屿
 
 
-
-```python
-def closedIsland(grid):
-    rows, cols = len(grid), len(grid[0])
-
-    # 检查岛屿是否封闭的DFS函数
-    def dfs(r, c):
-        if grid[r][c] == 1:
-            return True
-        if r == 0 or r == rows - 1 or c == 0 or c == cols - 1:
-            return False
-        
-        # 标记当前单元格为已访问
-        grid[r][c] = 1
-        
-        # 检查所有方向
-        up = dfs(r - 1, c)
-        down = dfs(r + 1, c)
-        left = dfs(r, c - 1)
-        right = dfs(r, c + 1)
-        
-        return up and down and left and right
-
-    closed_islands = 0
-    for r in range(1, rows - 1):  # 从1开始，忽略边界
-        for c in range(1, cols - 1):  # 从1开始，忽略边界
-            if grid[r][c] == 0 and dfs(r, c):
-                closed_islands += 1
-
-    return closed_islands
-
-# 读取输入
-grid = []
-for _ in range(10):
-    row = list(map(int, input().split(',')))
-    grid.append(row)
-
-# 输出结果
-print(closedIsland(grid))
-
-```
-
-
-
-### 20472: 死循环的机器人
+20472: 死循环的机器人
 
 http://cs101.openjudge.cn/practice/20472/
 
-在无限的平面上，机器人最初位于 (0, 0) 处，面朝北方。机器人可以接受下列三条指令之一： "G"：直走 1 个单位 "L"：左转 90 度 "R"：右转 90 度 机器人按顺序执行指令，并一直重复它们。 只有在平面中存在死循环使得机器人永远无法离开时，返回 1。否则，返回 0。
-
-**输入**
-
-由G L R组成的字符串
-
-**输出**
-
-如果存在死循环输出1，否则0
-
-样例输入
-
-```
-GGLLGG
-```
-
-样例输出
-
-```
-1
-```
-
-提示
-
-样例中的机器人会在长度为4的直线徘徊(本来打错成2)
 
 
-
-模拟机器人的移动，并检查它是否最终会回到原点并面向原来的方向，因为这是死循环的必要条件。如果在执行一系列指令后，机器人回到原点并且面向原来的方向，那么它将循环执行同样的指令序列，形成一个循环。
-
-下面是一个 Python 函数，它实现了这个逻辑：
-
-```python
-def is_robot_making_loop(commands):
-    # 初始位置和方向
-    x, y = 0, 0
-    direction = 'N'
-
-    # 方向变换的规则，用字典表示
-    left_turns = {'N': 'W', 'W': 'S', 'S': 'E', 'E': 'N'}
-    right_turns = {'N': 'E', 'E': 'S', 'S': 'W', 'W': 'N'}
-
-    # 模拟机器人的移动
-    for command in commands:
-        if command == 'G':
-            if direction == 'N':
-                y += 1
-            elif direction == 'S':
-                y -= 1
-            elif direction == 'E':
-                x += 1
-            elif direction == 'W':
-                x -= 1
-        elif command == 'L':
-            direction = left_turns[direction]
-        elif command == 'R':
-            direction = right_turns[direction]
-
-    # 如果机器人回到原点，或者不是面向北方（说明它会改变方向然后可能回到原点）
-    return (x == 0 and y == 0) or direction != 'N'
-
-# 读取输入并输出结果
-commands = input().strip()
-print(1 if is_robot_making_loop(commands) else 0)
-
-```
-
-这个函数首先定义了机器人的初始位置和方向。然后，它根据指令移动机器人，并在完成所有指令后检查机器人的位置和方向。
-
-- 如果机器人回到了原点 `(0, 0)` 并且方向不是北（意味着它改变了方向并且可能在执行更多指令后回到原点），函数返回 `True`。
-- 如果机器人没有回到原点，或者回到原点时方向是北（意味着它将沿直线移动而不是循环），函数返回 `False`。
-
-最后，程序读取用户输入的指令，调用函数，并输出相应的结果，如果存在死循环输出 `1`，否则 `0`。
-
-
-
-```python
-def is_robot_making_loop(commands):
-    # 初始位置和方向
-    x, y = 0, 0
-    # 方向变换的规则，用列表表示，0=N, 1=E, 2=S, 3=W
-    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
-    # 初始方向北
-    dir_index = 0
-
-    # 模拟机器人的移动
-    for command in commands:
-        if command == 'G':
-            # 沿着当前方向前进一步
-            x += directions[dir_index][0]
-            y += directions[dir_index][1]
-        elif command == 'L':
-            # 左转90度就是方向列表中的前一个方向
-            dir_index = (dir_index - 1) % 4
-        elif command == 'R':
-            # 右转90度就是方向列表中的下一个方向
-            dir_index = (dir_index + 1) % 4
-    
-    # 如果机器人回到原点，或者方向发生改变（不再是北），则会形成循环
-    return (x == 0 and y == 0) or (dir_index != 0)
-
-# 读取输入并输出结果
-commands = input().strip()
-print(1 if is_robot_making_loop(commands) else 0)
-```
-
-
-
-### 20625: 1跟0数量相等的子字串
+20625: 1跟0数量相等的子字串
 
 http://cs101.openjudge.cn/practice/20625/
 
-给一个由0跟1组成的字串，请问有多少个子字串(非空)的0跟1数量相等而且0跟1分别是连续的
-如果一个子字串出现n次记作n
-
-**输入**
-
-一个1跟0组成的字串
-
-**输出**
-
-一个整数
-
-样例输入
-
-```
-10101
-```
-
-样例输出
-
-```
-4
-```
-
-提示
-
-总个有4个子字串，10 01 10 01
-1010不算，因为1跟0不是连续的
 
 
-
-考虑到这个问题的特殊性（0和1必须是连续的），我们可以采取另一种方法，即只计算每段连续的0或1结束时的子串数量。我们不需要关心整个串的子串，只要关心局部的连续部分即可。
-
-在遍历字符串时，需要统计当前连续相同字符的数量，并在遇到不同字符时，检查之前的连续字符部分可以组成多少合法子串。
-
-解释代码逻辑：
-
-- 我们用 `curr_count` 来跟踪当前字符连续出现的次数，用 `prev_count` 来跟踪上一组字符连续出现的次数。
-- 每次字符发生变化时，我们可以创建 `min(curr_count, prev_count)` 个子字符串，因为新的字符将断开之前的连续性。
-- 然后我们更新 `prev_count` 为 `curr_count`（因为我们要开始统计新的字符了），并将 `curr_count` 重置为1。
-- 在字符串遍历结束后，我们还需要再加上最后一组字符可以形成的子字符串数。
-
-```python
-def count_balanced_substrings(s):
-    # 初始化当前字符和前一个字符的计数器
-    curr_count = 1
-    prev_count = 0
-    result = 0
-
-    # 遍历字符串的每个字符
-    for i in range(1, len(s)):
-        # 如果当前字符和前一个字符相同，增加当前计数器
-        if s[i] == s[i - 1]:
-            curr_count += 1
-        else:
-            # 如果当前字符和前一个字符不同，那么我们可以创建
-            # min(curr_count, prev_count) 个子串
-            result += min(curr_count, prev_count)
-            # 将当前计数器值赋给前一个计数器，并重置当前计数器为1
-            prev_count = curr_count
-            curr_count = 1
-
-    # 出循环后，处理最后一组字符
-    result += min(curr_count, prev_count)
-
-    return result
-
-# 测试样例输入
-#print(count_balanced_substrings("10101"))  # 输出应该是4
-#print(count_balanced_substrings("00110011"))  # 输出应该是6
-print(count_balanced_substrings(input()))
-```
-
-
-
-### 20644: 统计全为 1 的正方形子矩阵
+20644: 统计全为 1 的正方形子矩阵
 
 http://cs101.openjudge.cn/practice/20644/
-
-给一个 m * n 的矩阵，矩阵中的元素不是 0 就是 1，
-
-请你统计并输出其中完全由 1 组成的 正方形 子矩阵的个数。
-
-备注:请尽量用动态规划
-
-**输入**
-
-第一行是m n 两个数字，空格分开
-m行，每行有n个数
-
-**输出**
-
-一个非负整数
-
-样例输入
-
-```
-3 4
-0111
-1111
-0111
-```
-
-样例输出
-
-```
-15
-```
-
-提示
-
-边为1的矩阵有10个
-边为2的矩阵有4个
-边为3的矩阵有1个
-总共15个
-
-
-
-```python
-#23n2300017735(夏天明BrightSummer)
-m, n = map(int, input().split())
-mat = [[int(k) for k in input()] for i in range(m)]
-dp = [[0 for j in range(n+1)] for i in range(m+1)]
-for i in range(m):
-    for j in range(n):
-        if mat[i][j]:
-            dp[i+1][j+1] = min(dp[i][j], dp[i][j+1], dp[i+1][j])+1
-print(sum(dp[i][j] for j in range(n+1) for i in range(m+1)))
-```
-
-
-
-```python
-m,n = map(int, input().split())
-matrix = []
-for i in range(m):
-    matrix.append(list(map(int, list(input()))))
-
-def check(matrix, i, j, step):
-    for x in range(i, i+step+1):
-        for y in range(j, j+step+1):
-            if matrix[x][y] == 0:
-                return False
-    return True
-
-cnt = 0
-step = 0
-
-while step <= min(m, n):
-    for i in range(m-step):
-        for j in range(n-step):
-            if check(matrix, i, j, step):
-                cnt += 1
-    step += 1
-
-print(cnt)
-```
 
 
 
