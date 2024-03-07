@@ -77,11 +77,308 @@ while True:
 
 http://cs101.openjudge.cn/dsapre/01145/
 
+LISP was one of the earliest high-level programming languages and, with FORTRAN, is one of the oldest languages currently being used. Lists, which are the fundamental data structures in LISP, can easily be adapted to represent other important data structures such as trees. 
+
+This problem deals with determining whether binary trees represented as LISP S-expressions possess a certain property. 
+Given a binary tree of integers, you are to write a program that determines whether there exists a root-to-leaf path whose nodes sum to a specified integer. For example, in the tree shown below there are exactly four root-to-leaf paths. The sums of the paths are 27, 22, 26, and 18. 
+
+![img](http://media.openjudge.cn/images/1145/1145_1.gif)
+
+Binary trees are represented in the input file as LISP S-expressions having the following form. 
+
+```
+empty tree ::= ()
+
+tree 	   ::= empty tree (integer tree tree)
+```
+
+The tree diagrammed above is represented by the expression (5 (4 (11 (7 () ()) (2 () ()) ) ()) (8 (13 () ()) (4 () (1 () ()) ) ) ) 
+
+Note that with this formulation all leaves of a tree are of the form (integer () () ) 
+
+Since an empty tree has no root-to-leaf paths, any query as to whether a path exists whose sum is a specified integer in an empty tree must be answered negatively. 
+
+**输入**
+
+The input consists of a sequence of test cases in the form of integer/tree pairs. Each test case consists of an integer followed by one or more spaces followed by a binary tree formatted as an S-expression as described above. All binary tree S-expressions will be valid, but expressions may be spread over several lines and may contain spaces. There will be one or more test cases in an input file, and input is terminated by end-of-file. 
+
+**输出**
+
+There should be one line of output for each test case (integer/tree pair) in the input file. For each pair I,T (I represents the integer, T represents the tree) the output is the string yes if there is a root-to-leaf path in T whose sum is I and no if there is no path in T whose sum is I. 
+
+样例输入
+
+```
+22 (5(4(11(7()())(2()()))()) (8(13()())(4()(1()()))))
+20 (5(4(11(7()())(2()()))()) (8(13()())(4()(1()()))))
+10 (3 
+     (2 (4 () () )
+        (8 () () ) )
+     (1 (6 () () )
+        (4 () () ) ) )
+5 ()
+```
+
+样例输出
+
+```
+yes
+no
+yes
+no
+```
+
+来源
+
+Duke Internet Programming Contest 1992,UVA 112
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H5: 树及算法-上”
+实现树：节点链接法。每个节点保存根节点的数据项，以及指向左右子树的链接。
+
+成员 val 保存根节点数据项，成员 left/rightChild 则保存指向左/右子树的引用（同样是TreeNode 对象）
+
+```python
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def has_path_sum(root, target_sum):
+    if root is None:
+        return False
+
+    if root.left is None and root.right is None:  # The current node is a leaf node
+        return root.val == target_sum
+
+    left_exists = has_path_sum(root.left, target_sum - root.val)
+    right_exists = has_path_sum(root.right, target_sum - root.val)
+
+    return left_exists or right_exists
+
+
+# Parse the input string and build a binary tree
+def parse_tree(s):
+    stack = []
+    i = 0
+
+    while i < len(s):
+        if s[i].isdigit() or s[i] == '-':
+            j = i
+            while j < len(s) and (s[j].isdigit() or s[j] == '-'):
+                j += 1
+            num = int(s[i:j])
+            node = TreeNode(num)
+            if stack:
+                parent = stack[-1]
+                if parent.left is None:
+                    parent.left = node
+                else:
+                    parent.right = node
+            stack.append(node)
+            i = j
+        elif s[i] == '[':
+            i += 1
+        elif s[i] == ']' and s[i - 1] != '[' and len(stack) > 1:
+            stack.pop()
+            i += 1
+        else:
+            i += 1
+
+    return stack[0] if len(stack) > 0 else None
+
+
+while True:
+    try:
+        s = input()
+    except:
+        break
+
+    s = s.split()
+    target_sum = int(s[0])
+    tree = ("").join(s[1:])
+    tree = tree.replace('(', ',[').replace(')', ']')
+    while True:
+        try:
+            tree = eval(tree[1:])
+            break
+        except SyntaxError:
+            s = input().split()
+            s = ("").join(s)
+            s = s.replace('(', ',[').replace(')', ']')
+            tree += s
+
+    tree = str(tree)
+    tree = tree.replace(',[', '[')
+    if tree == '[]':
+        print("no")
+        continue
+
+    root = parse_tree(tree)
+
+    if has_path_sum(root, target_sum):
+        print("yes")
+    else:
+        print("no")
+```
+
+
+
+实现二叉树：嵌套列表法。用 Python List 来实现二叉树树数据结构；递归的嵌套列表实现二叉树，由具有 3 个
+元素的列表实现：第 1 个元素为根节点的值；第 2 个元素是左子树（用列表表示）；第 3 个元素是右子树。
+
+嵌套列表法的优点子树的结构与树相同，是一种递归结构可以很容易扩展到多叉树，仅需要增加列表元素即可。
+
+定义一系列函数来辅助操作嵌套列表
+BinaryTree 创建仅有根节点的二叉树，insertLeft/insertRight 将新节点插入树中作为 root 直接的左/右子节点，
+原来的左/右子节点变为新节点的左/右子节点。为什么？不为什么，一种实现方式而已。get/setRootVal 则取得或返回根节点，getLeft/RightChild 返回左/右子树。
+
+嵌套列表示例
+
+```python
+def BinaryTree(r, left=[], right=[]):
+    return([r, left, right])
+
+
+def getLeftChild(root):
+    return(root[1])
+
+
+def getRightChild(root):
+    return(root[2])
+
+
+def insertLeft(root, newBranch):
+    root[1] = BinaryTree(newBranch, left=getLeftChild(root))
+    return(root)
+
+
+def insertRight(root, newBranch):
+    root[2] = BinaryTree(newBranch, right=getRightChild(root))
+    return(root)
+
+
+def getRootVal(root):
+    return(root[0])
+
+
+def setRootVal(root, newVal):
+    root[0] = newVal
+
+
+if __name__ == "__main__":
+    r = BinaryTree(3)
+    insertLeft(r, 4)
+    insertLeft(r, 5)
+    insertRight(r, 6)
+    insertRight(r, 7)
+    l = getLeftChild(r)
+    print(l)
+
+    setRootVal(l, 9)
+    print(r)
+    insertLeft(l, 11)
+    print(r)
+    print(getRightChild(getRightChild(r)))
+```
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240122171343441.png" alt="image-20240122171343441" style="zoom: 50%;" />
+
+
+
+01145:Tree Summing用嵌套列表法AC代码。
+
+```python
+def BinaryTree(r,left=[],right=[]):
+    return([r,left,right])
+def getLeftChild(root):
+    return(root[1])
+def getRightChild(root):
+    return(root[2])
+def insertLeft(root,newBranch):
+    root[1]=BinaryTree(newBranch,left=getLeftChild(root))
+    return(root)
+def insertRight(root,newBranch):
+    root[2]=BinaryTree(newBranch,right=getRightChild(root))
+    return(root)
+def getRootVal(root):
+    return(root[0])
+def setRootVal(root,newVal):
+    root[0]=newVal
+
+while True:
+    try:
+        left=right=0
+        astr=input().replace(' ','')
+        for i in range(len(astr)):
+            if astr[i]=='(' or astr==')':
+                bound=i
+                break
+        num=int(astr[:bound])
+        astr=astr[bound:]
+        for i in astr:
+            if i=='(':
+                left+=1
+            elif i==')':
+                right+=1
+        while left!=right:
+            bstr=input().replace(' ','')
+            for i in bstr:
+                if i=='(':
+                    left+=1
+                elif i==')':
+                    right+=1
+            astr+=bstr
+        if astr=='()':
+            print('no')
+            continue
+        atree=BinaryTree('')
+        cur=atree
+        aStack=[]
+        astr=astr[1:len(astr)-1]
+        j=0
+        while j<len(astr):
+            if astr[j]=='(':
+                aStack.append(cur)
+                if getLeftChild(cur)==[]:
+                    insertLeft(cur,None)
+                    cur=getLeftChild(cur)
+                else:
+                    insertRight(cur,None)
+                    cur=getRightChild(cur)
+                j+=1
+            elif astr[j]==')':
+                cur=aStack.pop()
+                j+=1
+            else:
+                anum=''
+                while astr[j]!='(' and astr[j]!=')':
+                    anum+=astr[j]
+                    j+=1
+                setRootVal(cur,int(anum))
+        #print(num,atree)
+        def compare(btree,bnum):
+            if getRootVal(btree)==None:
+                return(False)
+            elif getRootVal(btree)==bnum and (getRootVal(getLeftChild(btree))==None and getRootVal(getRightChild(btree))==None):
+                return(True)
+            else:
+                if compare(getLeftChild(btree),bnum-getRootVal(btree)) or compare(getRightChild(btree),bnum-getRootVal(btree)):
+                    return(True)
+            return(False)
+        if compare(atree,num):
+            print('yes')
+        else:
+            print('no')
+    except EOFError:
+        break
+```
+
+
 
 
 
@@ -329,11 +626,134 @@ if __name__ == "__main__":
 
 http://cs101.openjudge.cn/dsapre/01760/
 
+Hacker Bill has accidentally lost all the information from his workstation's hard drive and he has no backup copies of its contents. He does not regret for the loss of the files themselves, but for the very nice and convenient directory structure that he had created and cherished during years of work. Fortunately, Bill has several copies of directory listings from his hard drive. Using those listings he was able to recover full paths (like "WINNT\SYSTEM32\CERTSRV\CERTCO~1\X86") for some directories. He put all of them in a file by writing each path he has found on a separate line. Your task is to write a program that will help Bill to restore his state of the art directory structure by providing nicely formatted directory tree.
+
+**输入**
+
+The first line of the input file contains single integer number N (1 <= N <= 500) that denotes a total number of distinct directory paths. Then N lines with directory paths follow. Each directory path occupies a single line and does not contain any spaces, including leading or trailing ones. No path exceeds 80 characters. Each path is listed once and consists of a number of directory names separated by a back slash ("\"). 
+
+Each directory name consists of 1 to 8 uppercase letters, numbers, or the special characters from the following list: exclamation mark, number sign, dollar sign, percent sign, ampersand, apostrophe, opening and closing parenthesis, hyphen sign, commercial at, circumflex accent, underscore, grave accent, opening and closing curly bracket, and tilde ("!#$%&'()-@^_`{}~").
+
+**输出**
+
+Write to the output file the formatted directory tree. Each directory name shall be listed on its own line preceded by a number of spaces that indicate its depth in the directory hierarchy. The subdirectories shall be listed in lexicographic order immediately after their parent directories preceded by one more space than their parent directory. Top level directories shall have no spaces printed before their names and shall be listed in lexicographic order. See sample below for clarification of the output format.
+
+样例输入
+
+```
+7
+WINNT\SYSTEM32\CONFIG
+GAMES
+WINNT\DRIVERS
+HOME
+WIN\SOFT
+GAMES\DRIVERS
+WINNT\SYSTEM32\CERTSRV\CERTCO~1\X86
+```
+
+样例输出
+
+```
+GAMES
+ DRIVERS
+HOME
+WIN
+ SOFT
+WINNT
+ DRIVERS
+ SYSTEM32
+  CERTSRV
+   CERTCO~1
+    X86
+  CONFIG
+```
+
+来源
+
+Northeastern Europe 2000
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H5: 树及算法-下”
+```python
+# 23n2300011031
+class Node:
+    def __init__(self):
+        self.children={}
+class Trie:
+    def __init__(self):
+        self.root=Node()
+    def insert(self,w):
+        cur=self.root
+        for u in w.split('\\'):
+            if u not in cur.children:
+               cur.children[u]=Node()
+            cur=cur.children[u]
+    def dfs(self,a,layer):
+        for c in sorted(a.children):
+            print(' '*layer+c)
+            self.dfs(a.children[c], layer+1)
+s=Trie()
+for _ in range(int(input())):
+    x=input()
+    s.insert(x)
+s.dfs(s.root, 0)
+```
+
+
+
+```python
+# 23n2300011072(X)
+class Node:
+    def __init__(self,name):
+        self.name=name
+        self.children={}
+    def insert(self,path):
+        if len(path)==0:
+            return
+        head,*tail=path
+        if head not in self.children:
+            self.children[head]=Node(head)
+        self.children[head].insert(tail)
+    def print_tree(self,depth=0):
+        for name in sorted(self.children.keys()):
+            print(' '*depth+name)
+            self.children[name].print_tree(depth+1)
+def build_tree(paths):
+    root=Node('')
+    for path in paths:
+        path=path.split('\\')
+        root.insert(path)
+    return root
+paths=[input() for _ in range(int(input()))]
+tree=build_tree(paths)
+tree.print_tree()
+```
+
+
+
+```python
+#23n2300017735(夏天明BrightSummer)
+def printDir(d, h):
+    if not d:
+        return
+    else:
+        for sub in sorted(d.keys()):
+            print(' '*h + sub)
+            printDir(d[sub], h+1)
+
+n = int(input())
+computer = {}
+for o in range(n):
+    path = input().split('\\')
+    curr = computer
+    for p in path:
+        if p not in curr:
+            curr[p] = {}
+        curr = curr[p]
+printDir(computer, 0)
+```
+
+
 
 
 
@@ -797,9 +1217,73 @@ while True:
 
 http://cs101.openjudge.cn/dsapre/02255/
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+**输入**
 
-的 “数算pre每日选做” 中 “H5: 树及算法-上”
+输入可能有多组，以EOF结束。 每组输入包含两个字符串，分别为树的前序遍历和中序遍历。每个字符串中只包含大写字母且互不重复。
+
+**输出**
+
+对于每组输入，用一行来输出它后序遍历结果。
+
+样例输入
+
+`DBACEGF ABCDEFG BCAD CBAD `
+
+样例输出
+
+`ACBFGED CDAB `
+
+提示
+
+以英文题面为准
+
+
+
+```python
+ls = []
+rs = []
+root = 0
+cnt = 0
+cot = 0
+
+def Solve(l,r):
+    global cnt
+    if cnt >= len(Line1):
+        return -1
+    Pl = Line2.find(Line1[cnt])
+    if Pl < l or Pl > r:
+        return -1
+
+    x = ord(Line1[cnt]) - 65
+    cnt = cnt + 1
+    ls[x] = Solve(l,Pl-1)
+    rs[x] = Solve(Pl+1,r)
+    return x
+
+def Pout(x):
+    if ls[x] != -1:
+        Pout(ls[x])
+    if rs[x] != -1:
+        Pout(rs[x])
+    print(chr(x+65),end = '')
+
+while True:
+    try:
+        Line1,Line2 = input().split()
+        ls = [-1]*len(Line1)
+        rs = [-1]*len(Line1)
+        cnt = 0
+        
+        root = Solve(0,len(Line1) - 1)
+
+        Pout(root)
+        print()
+
+    except:
+        break
+```
+
+
 
 
 
@@ -1076,11 +1560,85 @@ http://cs101.openjudge.cn/dsapre/02694/
 
 http://cs101.openjudge.cn/dsapre/02756/
 
+描述
+
+![img](http://media.openjudge.cn/images/2756_1.jpg)
+如上图所示，由正整数1, 2, 3, ...组成了一棵无限大的二叉树。从某一个结点到根结点（编号是1的结点）都有一条唯一的路径，比如从10到根结点的路径是(10, 5, 2, 1)，从4到根结点的路径是(4, 2, 1)，从根结点1到根结点的路径上只包含一个结点1，因此路径就是(1)。对于两个结点x和y，假设他们到根结点的路径分别是(x1, x2, ... ,1)和(y1, y2, ... ,1)（这里显然有x = x1，y = y1），那么必然存在两个正整数i和j，使得从xi和 yj开始，有$x_i = y_j , x_{i + 1} = y_{j + 1}, x_{i + 2} = y_{j + 2},...$ 现在的问题就是，给定x和y，要求xi（也就是yj)。
+
+**输入**
+
+输入只有一行，包括两个正整数x和y，这两个正整数都不大于1000。
+
+**输出**
+
+输出只有一个正整数xi。
+
+样例输入
+
+```
+10 4
+```
+
+样例输出
+
+```
+2
+```
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H5: 树及算法-下”
+这个问题涉及到二叉树中两个节点的最近公共祖先问题。这里的二叉树是一个特殊的完全二叉树，其中节点编号的方式是根节点编号为1，对于任意节点`N`，其左子节点的编号为`2 * N`，右子节点的编号为`2 * N + 1`。
+
+要找到两个节点`x`和`y`的公共祖先，我们可以回溯其到根节点的路径，并找到路径上的最后一个公共节点。在这个完全二叉树中，我们可以简单地通过整除2来获得父节点的编号，即节点`N`的父节点是`N // 2`。
+
+下面是Python代码示例，用于找到任意两个节点的最近公共祖先：
+
+```python
+def find_common_ancestor(x, y):
+    # 创建两个集合用于存储x和y的所有祖先节点
+    ancestors_x = set()
+    ancestors_y = set()
+  
+    # 回溯x到根节点的路径并保存
+    while x > 0:
+        ancestors_x.add(x)
+        x //= 2
+
+    # 回溯y到根节点的路径
+    # 并在每一步检查当前节点是否也是x的祖先节点
+    while y > 0:
+        if y in ancestors_x:
+            return y  # 找到了公共祖先
+        y //= 2
+
+    return 1  # 如果没有找到公共祖先，默认返回根节点1
+
+# 读取输入
+x, y = map(int, input().split())
+
+# 查找并输出x和y的最近公共祖先
+print(find_common_ancestor(x, y))
+
+```
+
+
+
+```python
+def common(x, y):
+    if x == y:
+        return x
+    if x < y:
+        return common(x, y//2)
+    else:
+        return common(x//2, y)
+
+
+m, n = map(int, input().split())
+
+print(common(m, n))
+```
+
+
 
 
 
@@ -1126,9 +1684,118 @@ http://cs101.openjudge.cn/dsapre/02788/
 
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+![img](http://media.openjudge.cn/images/2756_1.jpg)
 
-的 “数算pre每日选做” 中 “H5: 树及算法-上”
+如上图所示，由正整数1，2，3……组成了一颗二叉树。我们已知这个二叉树的最后一个结点是n。现在的问题是，结点m所在的子树中一共包括多少个结点。
+
+比如，n = 12，m = 3那么上图中的结点13，14，15以及后面的结点都是不存在的，结点m所在子树中包括的结点有3，6，7，12，因此结点m的所在子树中共有4个结点。
+
+**输入**
+
+输入数据包括多行，每行给出一组测试数据，包括两个整数m，n (1 <= m <= n <= 1000000000)。最后一组测试数据中包括两个0，表示输入的结束，这组数据不用处理。
+
+**输出**
+
+对于每一组测试数据，输出一行，该行包含一个整数，给出结点m所在子树中包括的结点的数目。
+
+样例输入
+
+```
+3 12
+0 0
+```
+
+样例输出
+
+```
+4
+```
+
+
+
+完全二叉树
+
+​           每个结点
+
+左孩子 2\*i          右孩子 2\*i+1
+
+ 
+
+设置left right 按照完全二叉树每一行去遍历算就行，算最左结点、最右结点.
+
+```python
+while True:
+    m, n = map(int, input().split())
+    if m == 0 and n == 0:
+        break
+
+    ans = 1
+    num = 1  # Number of nodes in the first level of the complete binary tree
+    left = 2 * m
+    right = 2 * m + 1
+    while right <= n:
+        num = num * 2
+        ans += num
+        left = left * 2
+        right = right * 2 + 1
+
+    if left <= n:
+        ans += n - left + 1
+
+    print(ans)
+```
+
+
+
+
+
+```python
+#23n2300010763
+def compute(m,n):
+    cnt = 1
+    while m*cnt<=n:
+        cnt *= 2
+    return min(n-(m-1)*(cnt//2),cnt-1)
+
+
+while True:
+    m,n = map(int,input().split())
+    if not m and not n:
+        break
+    print(compute(m,n))
+```
+
+
+
+```c++
+#include<iostream>
+using namespace std;
+
+int main()
+{
+    int m,n,sum;
+    while(scanf("%d%d",&m,&n)==2 && (m||n)) {
+        sum=0;
+        int d=1;
+        while(1) {
+            if(m<=n) {
+                sum+=d;
+                m=2*m+1;
+                d=d*2;  
+            }
+            else{ 
+                if(m-n<d)
+                    sum = sum+d-(m-n);
+                break;
+            }
+        }
+
+        printf("%d\n",sum);
+    }
+}
+```
+
+
 
 
 
@@ -1164,11 +1831,165 @@ http://cs101.openjudge.cn/dsapre/03720/
 
 http://cs101.openjudge.cn/dsapre/04079/
 
+二叉搜索树在动态查表中有特别的用处，一个无序序列可以通过构造一棵二叉搜索树变成一个有序序列，构造树的过程即为对无序序列进行排序的过程。每次插入的新的结点都是二叉搜索树上新的叶子结点，在进行插入操作时，不必移动其它结点，只需改动某个结点的指针，由空变为非空即可。
+
+  这里，我们想探究二叉树的建立和序列输出。
+
+**输入**
+
+只有一行，包含若干个数字，中间用空格隔开。（数字可能会有重复）
+
+**输出**
+
+输出一行，对输入数字建立二叉搜索树后进行前序周游的结果。
+
+样例输入
+
+```
+41 467 334 500 169 724 478 358 962 464 705 145 281 827 961 491 995 942 827 436 
+```
+
+样例输出
+
+```
+41 467 334 169 145 281 358 464 436 500 478 491 724 705 962 827 961 942 995 
+```
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H5: 树及算法-下”
+要解决这个问题，首先需要了解二叉搜索树（Binary Search Tree，BST）的基本属性和操作。二叉搜索树是一种特殊的二叉树，满足以下性质：
+
+- 每个节点的键值大于其左子树上任意节点的键值。
+- 每个节点的键值小于其右子树上任意节点的键值。
+- 左右子树也分别为二叉搜索树。
+
+
+
+在BST上进行前序遍历（Preorder Traversal）可以按照以下步骤进行：
+
+1. 访问根节点。
+2. 递归地对左子树进行前序遍历。
+3. 递归地对右子树进行前序遍历。
+
+如果使用迭代而不是递归，您可以使用栈（Stack）数据结构来实现前序遍历。
+
+
+
+```python
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def insert_into_bst(root, val):
+    if root is None:
+        return TreeNode(val)
+    if val < root.val:
+        root.left = insert_into_bst(root.left, val)
+    elif val > root.val:
+        root.right = insert_into_bst(root.right, val)
+    return root
+
+def preorder_traversal(root):
+    return [root.val] + preorder_traversal(root.left) + preorder_traversal(root.right) if root else []
+
+def preorderTraversal(root):
+    if root is None:
+        return []
+
+    stack = []
+    result = []
+    stack.append(root)
+
+    while stack:
+        node = stack.pop()
+        result.append(node.val)
+
+        # 先将右子节点入栈，再将左子节点入栈
+        if node.right:
+            stack.append(node.right)
+        if node.left:
+            stack.append(node.left)
+
+    return result
+
+# 读取输入并转换成整数列表
+numbers = list(map(int, input().split()))
+
+# 构造二叉搜索树
+bst_root = None
+for num in numbers:
+    bst_root = insert_into_bst(bst_root, num)
+
+# 前序遍历二叉搜索树并输出
+#print(' '.join(map(str, preorder_traversal(bst_root))))
+print(' '.join(map(str, preorderTraversal(bst_root))))
+```
+
+
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+struct Node {
+	int num;
+	Node *left, *right;
+	
+	Node(int n) : num(n), left(NULL), right(NULL) {}
+};
+
+void insert(Node *&root, int num) {
+	if (root == NULL) {
+		root = new Node(num);
+		return;
+	}
+	
+	if (num == root->num) {
+		return;
+	}
+	
+	if (num < root->num) {
+		insert(root->left, num);
+	} else {
+		insert(root->right, num);
+	}
+}
+
+void preorder(Node *root) {
+	if (!root)
+		return;
+	cout << root->num << " ";
+	preorder(root->left);
+	preorder(root->right);
+}
+
+void deleteTree(Node *root) {
+	if (!root)
+		return;
+	deleteTree(root->left);
+	deleteTree(root->right);
+	delete root;
+}
+
+int main() {
+	Node *root = NULL;
+	int num;
+	while (cin >> num) {
+		insert(root, num);
+	}
+	
+	preorder(root);
+	cout << endl;
+	
+	deleteTree(root);
+	return 0;
+}
+```
+
+
 
 
 
@@ -1178,9 +1999,125 @@ http://cs101.openjudge.cn/dsapre/04081/
 
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+我们都知道用“左儿子右兄弟”的方法可以将一棵一般的树转换为二叉树，如：
 
-的 “数算pre每日选做” 中 “H5: 树及算法-上”
+```
+    0                             0
+  / | \                          /
+ 1  2  3       ===>             1
+   / \                           \
+  4   5                           2
+                                 / \
+                                4   3
+                                 \
+                                  5
+```
+
+现在请你将一些一般的树用这种方法转换为二叉树，并输出转换前和转换后树的高度。
+
+**输入**
+
+输入是一个由“u”和“d”组成的字符串，表示一棵树的深度优先搜索信息。比如，dudduduudu可以用来表示上文中的左树，因为搜索过程为：0 Down to 1 Up to 0 Down to 2 Down to 4 Up to 2 Down to 5 Up to 2 Up to 0 Down to 3 Up to 0。
+你可以认为每棵树的结点数至少为2，并且不超过10000。
+
+**输出**
+
+按如下格式输出转换前和转换后树的高度：
+h1 => h2
+其中，h1是转换前树的高度，h2是转换后树的高度。
+
+样例输入
+
+```
+dudduduudu
+```
+
+样例输出
+
+```
+2 => 4
+```
+
+
+
+```python
+"""
+calculates the height of a general tree and its corresponding binary tree using the 
+"left child right sibling" method. The input is a string composed of "u" and "d", 
+representing the depth-first search information of a tree. 
+
+uses a stack to keep track of the heights of the nodes in the binary tree. 
+When it encounters a "d", it increases the heights and updates the maximum heights if necessary. 
+When it encounters a "u", it decreases the old height and sets the new height to the top of the stack. 
+Finally, it returns the maximum heights of the tree and the binary tree in the required format.
+"""
+def tree_heights(s):
+    old_height = 0
+    max_old = 0
+    new_height = 0
+    max_new = 0
+    stack = []
+    for c in s:
+        if c == 'd':
+            old_height += 1
+            max_old = max(max_old, old_height)
+
+            new_height += 1
+            stack.append(new_height)
+            max_new = max(max_new, new_height)
+        else:
+            old_height -= 1
+
+            new_height = stack[-1]
+            stack.pop()
+    return f"{max_old} => {max_new}"
+
+s = input().strip()
+print(tree_heights(s))
+```
+
+
+
+```c++
+#include <iostream>
+#include <stack>
+#include <string>
+using namespace std;
+
+int main()
+{
+    string str;
+    cin >> str;
+
+    int oldheight = 0;
+    int maxold = 0;
+    int newheight = 0;
+    int maxnew = 0;
+    stack<int> s;
+    for (int i=0; i<str.size(); i++) {
+        if (str[i] == 'd') {
+            oldheight++;
+            if (oldheight > maxold)
+                maxold = oldheight;
+
+            newheight++;
+            s.push(newheight);
+            if (newheight > maxnew)
+                maxnew = newheight;
+        }
+        else {
+            oldheight--;
+
+            newheight = s.top();
+            s.pop();
+        }
+    }
+
+    cout << maxold << " => " << maxnew << endl;
+}
+```
+
+
 
 
 
@@ -1188,11 +2125,203 @@ http://cs101.openjudge.cn/dsapre/04081/
 
 http://cs101.openjudge.cn/dsapre/04082/
 
+一棵树的镜面映射指的是对于树中的每个结点，都将其子结点反序。例如，对左边的树，镜面映射后变成右边这棵树。 
+
+```
+    a                             a
+  / | \                         / | \
+ b  c  f       ===>            f  c  b
+   / \                           / \
+  d   e                         e   d
+```
+
+我们在输入输出一棵树的时候，常常会把树转换成对应的二叉树，而且对该二叉树中只有单个子结点的分支结点补充一个虚子结点“$”，形成“伪满二叉树”。
+
+例如，对下图左边的树，得到下图右边的伪满二叉树 
+
+```
+    a                             a
+  / | \                          / \
+ b  c  f       ===>             b   $
+   / \                         / \
+  d   e                       $   c                          
+                                 / \
+                                d   f
+                               / \
+                              $   e
+```
+
+然后对这棵二叉树进行前序遍历，如果是内部结点则标记为0，如果是叶结点则标记为1，而且虚结点也输出。
+
+现在我们将一棵树以“伪满二叉树”的形式输入，要求输出这棵树的镜面映射的宽度优先遍历序列。
+
+**输入**
+
+输入包含一棵树所形成的“伪满二叉树”的前序遍历。
+第一行包含一个整数，表示结点的数目。
+第二行包含所有结点。每个结点用两个字符表示，第一个字符表示结点的编号，第二个字符表示该结点为内部结点还是外部结点，内部结点为0，外部结点为1。结点之间用一个空格隔开。
+数据保证所有结点的编号都为一个小写字母。
+
+**输出**
+
+输出包含这棵树的镜面映射的宽度优先遍历序列，只需要输出每个结点的编号，编号之间用一个空格隔开。
+
+样例输入
+
+```
+9
+a0 b0 $1 c0 d0 $1 e1 f1 $1
+```
+
+样例输出
+
+```
+a f c b e d
+```
+
+提示
+
+样例输入输出对应着题目描述中的那棵树。
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H5: 树及算法-上”
+前序遍历（Preorder Traversal）是二叉树遍历的一种方式，它的遍历顺序是先访问根节点，然后按照左子树和右子树的顺序递归地遍历子树。
+
+```python
+from collections import deque
+
+class TreeNode:
+    def __init__(self, x):
+        self.x = x
+        self.children = []
+
+def create_node():
+    return TreeNode('')
+
+def build_tree(tempList, index):
+    node = create_node()
+    node.x = tempList[index][0]
+    if tempList[index][1] == '0' and node.x != '$':
+        index += 1
+        child, index = build_tree(tempList, index)
+        node.children.append(child)
+        index += 1
+        child, index = build_tree(tempList, index)
+        node.children.append(child)
+    return node, index
+
+def print_tree(p):
+    Q = deque()
+    s = deque()
+
+    # 遍历右子节点并将非虚节点加入栈s
+    while p is not None:
+        if p.x != '$':
+            s.append(p)
+        p = p.children[1] if len(p.children) > 1 else None
+
+    # 将栈s中的节点逆序放入队列Q
+    while s:
+        Q.append(s.pop())
+
+    # 宽度优先遍历队列Q并打印节点值
+    while Q:
+        p = Q.popleft()
+        print(p.x, end=' ')
+
+        # 如果节点有左子节点，将左子节点及其右子节点加入栈s
+        if p.children:
+            p = p.children[0]
+            while p is not None:
+                if p.x != '$':
+                    s.append(p)
+                p = p.children[1] if len(p.children) > 1 else None
+
+            # 将栈s中的节点逆序放入队列Q
+            while s:
+                Q.append(s.pop())
+
+# 读取输入
+n = int(input())
+tempList = input().split(' ')
+
+# 构建多叉树
+root, _ = build_tree(tempList, 0)
+
+# 执行宽度优先遍历并打印镜像映射序列
+print_tree(root)
+```
+
+
+
+```c++
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct node {
+	char ele;
+	node * l;
+	node * r;
+	node (char e) :ele(e), l(NULL), r(NULL) {}
+};
+
+node * generate() {
+	char ele;
+	int mark;
+	cin>>ele>>mark;
+	node * n = NULL;
+	if (mark == 0) {
+		n = new node(ele);
+		n->l = generate();
+		n->r = generate();
+	} else
+		if (ele != '$')
+			n = new node(ele);
+	return n;
+}
+
+void out(node * root) {
+	bool isEnd = false;
+	vector<node*> now;
+	vector<node*> next;
+	node * n = root;
+	while (n) {
+		now.push_back(n);
+		n = n->r;
+	}
+	while (!isEnd) {
+		isEnd = true;
+		for (int i=now.size()-1; i>=0; --i)
+			cout<<now[i]->ele<<" ";
+		for (int i=0; i<now.size(); ++i)
+			if (now[i]->l) {
+				n = now[i]->l;
+				while (n) {
+					next.push_back(n);
+					n = n->r;
+				}
+				isEnd = false;
+			}
+		now = next;
+		next.clear();
+	}
+
+}
+
+int main() {
+	int num;
+	cin>>num;
+
+	node * root = generate();
+	out(root);
+	cout<<endl;
+
+	return 0;
+}
+```
+
+
 
 
 
@@ -1314,11 +2443,37 @@ http://cs101.openjudge.cn/dsapre/04136/
 
 http://cs101.openjudge.cn/dsapre/04143/
 
+**输入**
+
+共三行： 第一行是整数n(0 < n <= 100,000)，表示有n个整数。 第二行是n个整数。整数的范围是在0到10^8之间。 第三行是一个整数m（0 <= m <= 2^30)，表示需要得到的和。
+
+**输出**
+
+若存在和为m的数对，输出两个整数，小的在前，大的在后，中间用单个空格隔开。若有多个数对满足条件，选择数对中较小的数更小的。若找不到符合要求的数对，输出一行No。
+
+样例输入
+
+`4 2 5 1 4 6`
+
+样例输出
+
+`1 5`
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H4: 查找与排序”
+```python
+# 23n2300011760(喜看稻菽千重浪)
+n=int(input())-1;m=0
+A=sorted(map(int,input().split()))
+s=int(input())
+while m<n:
+    while m<n and A[m]+A[n]>s:n-=1
+    while m<n and A[m]+A[n]<s:m+=1
+    if m<n and A[m]+A[n]==s:print(A[m],A[n]);break
+else:print("No")
+```
+
+
 
 
 
@@ -1471,11 +2626,217 @@ for _ in range(M):
 
 http://cs101.openjudge.cn/dsapre/05430/
 
+众所周知，任何一个表达式，都可以用一棵表达式树来表示。例如，表达式a+b*c，可以表示为如下的表达式树：
+
+  +
+ / \
+a  *
+  / \
+  b c
+
+现在，给你一个中缀表达式，这个中缀表达式用变量来表示（不含数字），请你将这个中缀表达式用表达式二叉树的形式输出出来。
+
+**输入**
+
+输入分为三个部分。
+第一部分为一行，即中缀表达式(长度不大于50)。中缀表达式可能含有小写字母代表变量（a-z），也可能含有运算符（+、-、*、/、小括号），不含有数字，也不含有空格。
+第二部分为一个整数n(n < 10)，表示中缀表达式的变量数。
+第三部分有n行，每行格式为C　x，C为变量的字符，x为该变量的值。
+
+**输出**
+
+输出分为三个部分，第一个部分为该表达式的逆波兰式，即该表达式树的后根遍历结果。占一行。
+第二部分为表达式树的显示，如样例输出所示。如果该二叉树是一棵满二叉树，则最底部的叶子结点，分别占据横坐标的第1、3、5、7……个位置（最左边的坐标是1），然后它们的父结点的横坐标，在两个子结点的中间。如果不是满二叉树，则没有结点的地方，用空格填充（但请略去所有的行末空格）。每一行父结点与子结点中隔开一行，用斜杠（/）与反斜杠（\）来表示树的关系。/出现的横坐标位置为父结点的横坐标偏左一格，\出现的横坐标位置为父结点的横坐标偏右一格。也就是说，如果树高为m，则输出就有2m-1行。
+第三部分为一个整数，表示将值代入变量之后，该中缀表达式的值。需要注意的一点是，除法代表整除运算，即舍弃小数点后的部分。同时，测试数据保证不会出现除以0的现象。
+
+样例输入
+
+```
+a+b*c
+3
+a 2
+b 7
+c 5
+```
+
+样例输出
+
+```
+abc*+
+   +
+  / \
+ a   *
+    / \
+    b c
+37
+```
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H5: 树及算法-下”
+
+
+```python
+'''
+表达式树是一种特殊的二叉树。对于你的问题，需要先将中缀表达式转换为后缀表达式
+（逆波兰式），然后根据后缀表达式建立表达式树，最后进行计算。
+
+首先使用stack进行中缀到后缀的转换，然后根据后缀表达式建立表达式二叉树，
+再通过递归和映射获取表达式的值。
+最后，打印出整棵树（取自 23n2300017735，夏天明BrightSummer）
+
+中缀表达式转后缀表达式 https://zq99299.github.io/dsalg-tutorial/dsalg-java-hsp/05/05.html
+'''
+#from collections import deque as q
+import operator as op
+#import os
+
+
+class Node:
+    def __init__(self, x):
+        self.value = x
+        self.left = None
+        self.right = None
+
+
+def priority(x):
+    if x == '*' or x == '/':
+        return 2
+    if x == '+' or x == '-':
+        return 1
+    return 0
+
+
+def infix_trans(infix):
+    postfix = []
+    op_stack = []
+    for char in infix:
+        if char.isalpha():
+            postfix.append(char)
+        else:
+            if char == '(':
+                op_stack.append(char)
+            elif char == ')':
+                while op_stack and op_stack[-1] != '(':
+                    postfix.append(op_stack.pop())
+                op_stack.pop()
+            else:
+                while op_stack and priority(op_stack[-1]) >= priority(char) and op_stack[-1] != '(':
+                    postfix.append(op_stack.pop())
+                op_stack.append(char)
+    while op_stack:
+        postfix.append(op_stack.pop())
+    return postfix
+
+
+def build_tree(postfix):
+    stack = []
+    for item in postfix:
+        if item in '+-*/':
+            node = Node(item)
+            node.right = stack.pop()
+            node.left = stack.pop()
+        else:
+            node = Node(item)
+        stack.append(node)
+    return stack[0]
+
+
+def get_val(expr_tree, var_vals):
+    if expr_tree.value in '+-*/':
+        operator = {'+': op.add, '-': op.sub, '*': op.mul, '/': op.floordiv}
+        return operator[expr_tree.value](get_val(expr_tree.left, var_vals), get_val(expr_tree.right, var_vals))
+    else:
+        return var_vals[expr_tree.value]
+
+# 计算表达式树的深度。它通过递归地计算左右子树的深度，并取两者中的最大值再加1，得到整个表达式树的深度。
+
+
+def getDepth(tree_root):
+    #return max([self.child[i].getDepth() if self.child[i] else 0 for i in range(2)]) + 1
+    left_depth = getDepth(tree_root.left) if tree_root.left else 0
+    right_depth = getDepth(tree_root.right) if tree_root.right else 0
+    return max(left_depth, right_depth) + 1
+
+    '''
+    首先，根据表达式树的值和深度信息构建第一行，然后构建第二行，该行包含斜线和反斜线，
+    用于表示子树的链接关系。接下来，如果当前深度为0，表示已经遍历到叶子节点，直接返回该节点的值。
+    否则，递减深度并分别获取左子树和右子树的打印结果。最后，将左子树和右子树的每一行拼接在一起，
+    形成完整的树形打印图。
+    
+打印表达式树的函数。表达式树是一种抽象数据结构，它通过树的形式来表示数学表达式。在这段程序中，
+函数printExpressionTree接受两个参数：tree_root表示树的根节点，d表示树的总深度。
+首先，函数会创建一个列表graph，列表中的每个元素代表树的一行。第一行包含根节点的值，
+并使用空格填充左右两边以保持树的形状。第二行显示左右子树的链接情况，使用斜杠/表示有左子树，
+反斜杠\表示有右子树，空格表示没有子树。
+
+接下来，函数会判断深度d是否为0，若为0则表示已经达到树的最底层，直接返回根节点的值。否则，
+将深度减1，然后递归调用printExpressionTree函数打印左子树和右子树，
+并将结果分别存储在left和right中。
+
+最后，函数通过循环遍历2倍深度加1次，将左子树和右子树的每一行连接起来，存储在graph中。
+最后返回graph，即可得到打印好的表达式树。
+    '''
+
+
+def printExpressionTree(tree_root, d):  # d means total depth
+
+    graph = [" "*(2**d-1) + tree_root.value + " "*(2**d-1)]
+    graph.append(" "*(2**d-2) + ("/" if tree_root.left else " ")
+                 + " " + ("\\" if tree_root.right else " ") + " "*(2**d-2))
+
+    if d == 0:
+        return tree_root.value
+    d -= 1
+    '''
+    应该是因为深度每增加一层，打印宽度就增加一倍，打印行数增加两行
+    '''
+    #left = printExpressionTree(tree_root.left, d) if tree_root.left else [
+    #    " "*(2**(d+1)-1)]*(2*d+1)
+    if tree_root.left:
+        left = printExpressionTree(tree_root.left, d)
+    else:
+        #print("left_d",d)
+        left = [" "*(2**(d+1)-1)]*(2*d+1)
+        #print("left_left",left)
+
+    right = printExpressionTree(tree_root.right, d) if tree_root.right else [
+        " "*(2**(d+1)-1)]*(2*d+1)
+
+    for i in range(2*d+1):
+        graph.append(left[i] + " " + right[i])
+        #print('graph=',graph)
+    return graph
+
+
+
+infix = input().strip()
+n = int(input())
+vars_vals = {}
+for i in range(n):
+    line = input().split()
+    vars_vals[line[0]] = int(line[1])
+    
+'''
+infix = "a+(b-c*d*e)"
+#infix = "a+b*c"
+n = 5
+vars_vals = {'a': 2, 'b': 7, 'c': 5, 'd':1, 'e':1}
+'''
+
+postfix = infix_trans(infix)
+tree_root = build_tree(postfix)
+print(''.join(str(x) for x in postfix))
+expression_value = get_val(tree_root, vars_vals)
+
+
+for line in printExpressionTree(tree_root, getDepth(tree_root)-1):
+    print(line.rstrip())
+
+
+print(expression_value)
+```
+
+
 
 
 
@@ -1656,11 +3017,80 @@ http://cs101.openjudge.cn/dsapre/06364/
 
 http://cs101.openjudge.cn/dsapre/06646/
 
+给定一棵二叉树，求该二叉树的深度
+
+二叉树深度定义：从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的节点个数为树的深度
+
+**输入**
+
+第一行是一个整数n，表示二叉树的结点个数。二叉树结点编号从1到n，根结点为1，n <= 10
+接下来有n行，依次对应二叉树的n个节点。
+每行有两个整数，分别表示该节点的左儿子和右儿子的节点编号。如果第一个（第二个）数为-1则表示没有左（右）儿子
+
+**输出**
+
+输出一个整型数，表示树的深度
+
+样例输入
+
+```
+3
+2 3
+-1 -1
+-1 -1
+```
+
+样例输出
+
+```
+2
+```
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H5: 树及算法-下”
+```python
+class TreeNode:
+    # 二叉树节点定义
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+def build_tree(node_list):
+    # 根据节点信息构建二叉树
+    nodes = {i: TreeNode(i) for i in range(1, len(node_list) + 1)}
+    for i, (left, right) in enumerate(node_list, 1):
+        if left != -1:
+            nodes[i].left = nodes[left]
+        if right != -1:
+            nodes[i].right = nodes[right]
+    return nodes[1]  # 返回树的根节点
+
+def max_depth(root):
+    # 计算二叉树的最大深度
+    if root is None:
+        return 0
+    else:
+        left_depth = max_depth(root.left)
+        right_depth = max_depth(root.right)
+        return max(left_depth, right_depth) + 1
+
+# 读取输入并解析
+n = int(input())
+node_list = []
+for _ in range(n):
+    left, right = map(int, input().split())
+    node_list.append((left, right))
+
+# 构建二叉树并计算深度
+root = build_tree(node_list)
+depth = max_depth(root)
+
+# 输出结果
+print(depth)
+```
+
+
 
 
 
@@ -1668,11 +3098,87 @@ http://cs101.openjudge.cn/dsapre/06646/
 
 http://cs101.openjudge.cn/dsapre/06648/
 
+给定m个数字序列，每个序列包含n个非负整数。我们从每一个序列中选取一个数字组成一个新的序列，显然一共可以构造出n^m个新序列。接下来我们对每一个新的序列中的数字进行求和，一共会得到n^m个和，请找出最小的n个和
+
+**输入**
+
+输入的第一行是一个整数T，表示测试用例的数量，接下来是T个测试用例的输入
+每个测试用例输入的第一行是两个正整数m（0 < m <= 100）和n(0 < n <= 2000)，然后有m行，每行有n个数，数字之间用空格分开，表示这m个序列
+序列中的数字不会大于10000
+
+**输出**
+
+对每组测试用例，输出一行用空格隔开的数，表示最小的n个和
+
+样例输入
+
+```
+1
+2 3
+1 2 3
+2 2 3
+```
+
+样例输出
+
+```
+3 3 4
+```
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H5: 树及算法-下”
+虑到n^m个和的数量可能非常大，我们不能直接存储它们。因此，我们可以通过逐步合并两个序列来找到最小的n个和，而不是一次性生成所有可能的和。
+
+为了找到最小的n个和，我们可以按照以下步骤操作：
+
+1. 对每个序列进行排序，确保我们可以从最小的元素开始处理。
+2. 使用一个最小堆（优先队列）来维护当前可能的最小和。最初，我们只将每个序列的最小元素（即每个序列的第一个元素）的和放入最小堆中。
+3. 每次从最小堆中取出当前的最小和，然后探索通过替换这个和中的某个元素来得到下一个可能的最小和。
+4. 重复这个过程，直到我们找到了n个最小的和。
+
+以下是一个更为内存效率的Python代码解决方案：
+
+```python
+import heapq
+
+def merge_sequences(seq1, seq2, n):
+    # 对两个序列进行排序
+    seq1.sort()
+    seq2.sort()
+    # 使用最小堆存储可能的最小和以及对应的索引
+    min_heap = [(seq1[i] + seq2[0], i, 0) for i in range(len(seq1))]
+    # 生成最小n个和
+    result = []
+    while n > 0 and min_heap:
+        current_sum, i, j = heapq.heappop(min_heap)
+        result.append(current_sum)
+        if j + 1 < len(seq2):
+            heapq.heappush(min_heap, (seq1[i] + seq2[j + 1], i, j + 1))
+        n -= 1
+    return result
+
+def min_sequence_sums(m, n, sequences):
+    # 对所有序列进行排序
+    for seq in sequences:
+        seq.sort()
+    # 逐步合并序列
+    current_min_sums = sequences[0]
+    for i in range(1, m):
+        current_min_sums = merge_sequences(current_min_sums, sequences[i], n)
+    return current_min_sums
+
+# 读取输入数据
+T = int(input())  # 读取测试用例的数量
+for _ in range(T):
+    m, n = map(int, input().split())  # 对于每个测试用例，读取m和n
+    sequences = [list(map(int, input().split())) for _ in range(m)]
+    results = min_sequence_sums(m, n, sequences)
+    print(' '.join(map(str, results[:n])))
+```
+
+这段代码定义了两个函数：`merge_sequences` 用于合并两个已排序的序列并找到最小的n个和，而`min_sequence_sums` 用于逐步合并所有序列。注意，由于题目要求输出最小的n个和，所以每次合并操作后我们仅保留n个和。这样可以保证内存使用量不会超过题目要求的限制。
+
+
 
 
 
@@ -1806,11 +3312,58 @@ for row in mat:
 
 http://cs101.openjudge.cn/dsapre/07745/
 
+给定10个整数的序列，要求对其重新排序。排序要求:
+
+1.奇数在前，偶数在后；
+
+2.奇数按从大到小排序；
+
+3.偶数按从小到大排序。
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H4: 查找与排序”
+**输入**
+
+输入一行，包含10个整数，彼此以一个空格分开，每个整数的范围是大于等于0，小于等于100。
+
+**输出**
+
+按照要求排序后输出一行，包含排序后的10个整数，数与数之间以一个空格分开。
+
+样例输入
+
+`4 7 3 13 11 12 0 47 34 98`
+
+样例输出
+
+`47 13 11 7 3 0 4 12 34 98`
+
+来源: 1873
+
+
+
+```python
+# 读取输入的整数序列
+numbers = list(map(int, input().split()))
+
+# 将整数序列分为奇数列表和偶数列表
+odd_numbers = [num for num in numbers if num % 2 == 1]
+even_numbers = [num for num in numbers if num % 2 == 0]
+
+# 对奇数列表按照从大到小的顺序排序
+odd_numbers.sort(reverse=True)
+
+# 对偶数列表按照从小到大的顺序排序
+even_numbers.sort()
+
+# 合并排序后的奇数列表和偶数列表
+sorted_numbers = odd_numbers + even_numbers
+
+# 输出结果
+print(' '.join(map(str, sorted_numbers)))
+```
+
+
 
 
 
@@ -1870,11 +3423,142 @@ http://cs101.openjudge.cn/dsapre/08758/
 
 http://cs101.openjudge.cn/dsapre/09201/
 
+Freda报名参加了学校的越野跑。越野跑共有N人参加，在一条笔直的道路上进行。这N个人在起点处站成一列，相邻两个人之间保持一定的间距。比赛开始后，这N个人同时沿着道路向相同的方向跑去。换句话说，这N个人可以看作x轴上的N个点，在比赛开始后，它们同时向x轴正方向移动。
+假设越野跑的距离足够远，这N个人的速度各不相同且保持匀速运动，那么会有多少对参赛者之间发生“赶超”的事件呢？
+
+输入
+
+第一行1个整数N。
+第二行为N 个非负整数，按从前到后的顺序给出每个人的跑步速度。
+对于50%的数据，2<=N<=1000。
+对于100%的数据，2<=N<=100000。
+
+输出
+
+一个整数，表示有多少对参赛者之间发生赶超事件。
+
+样例输入
+
+```
+5
+1 3 10 8 5
+```
+
+样例输出
+
+```
+7
+```
+
+提示
+
+我们把这5个人依次编号为A,B,C,D,E，速度分别为1,3,10,8,5。
+在跑步过程中：
+B,C,D,E均会超过A，因为他们的速度都比A快；
+C,D,E都会超过B，因为他们的速度都比B快；
+C,D,E之间不会发生赶超，因为速度快的起跑时就在前边。
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H4: 查找与排序”
+```python
+import sys
+
+def merge_sort(a, temp, left, right):
+    if right - left <= 1:
+        return 0
+    mid = (left + right) // 2
+    inv_count = merge_sort(a, temp, left, mid) + merge_sort(a, temp, mid, right)
+    i, j, k = left, mid, left
+    while i < mid and j < right:
+        if a[i] < a[j]:
+            temp[k] = a[i]
+            i += 1
+        else:
+            temp[k] = a[j]
+            j += 1
+            inv_count += mid - i
+        k += 1
+    while i < mid:
+        temp[k] = a[i]
+        i += 1
+        k += 1
+    while j < right:
+        temp[k] = a[j]
+        j += 1
+        k += 1
+    for i in range(left, right):
+        a[i] = temp[i]
+    return inv_count
+
+n = int(sys.stdin.readline())
+a = list(map(int, sys.stdin.readline().split()))
+temp = [0] * n
+print(n * (n - 1) // 2 - merge_sort(a, temp, 0, n))
+```
+
+
+
+```python
+#蒋子轩
+from bisect import *
+n=int(input())
+a=list(map(int,input().split()))
+sorted_list=[]
+cnt=0
+for num in a:
+    pos=bisect_left(sorted_list,num)
+    cnt+=pos
+    insort_left(sorted_list,num)
+print(cnt)
+```
+
+
+
+```python
+# 23物院宋昕杰 树状数组
+n = int(input())
+tr = [0] * (n + 1)
+
+
+def lowbit(x):
+    return x & -x
+
+
+def query(x, y):  			#查询[x, y]，索引从1开始
+    x -= 1
+    ans = 0
+    while y > x:
+        ans += tr[y]
+        y -= lowbit(y)
+    while x > y:
+        ans -= tr[x]
+        x -= lowbit(x)
+    return ans
+
+
+def add(i, k):				#原数组第i个数加上k，更新树状数组
+    while i <= n:
+        tr[i] += k
+        i += lowbit(i)
+
+
+ls = list(map(int, input().split()))
+for i in range(1, n + 1):		#O(nlogn)建树
+    add(i, 1)
+keys = sorted(ls)
+dic = {}
+for i in range(n):
+    if keys[i] not in dic:
+        dic[keys[i]] = i
+ans = 0
+for i in range(n - 1, -1, -1):
+    idx = dic[ls[i]]
+    ans += query(1, idx)
+    add(idx + 1, -1)
+print(ans)
+```
+
+
 
 
 
@@ -1882,11 +3566,56 @@ http://cs101.openjudge.cn/dsapre/09201/
 
 http://cs101.openjudge.cn/dsapre/14683/
 
+有n堆果子（n<=10000），多多决定把所有的果子合成一堆。
+
+每一次合并，多多可以把两堆果子合并到一起，消耗的体力等于两堆果子数量之和。可以看出，所有的果子经过n-1次合并之后，就只剩下一堆了。多多在合并果子时总共消耗的体力等于每次合并所耗体力之和。
+
+设计出合并的次序方案，使多多耗费的体力最少，并输出这个最小的体力耗费值。
+
+**输入**
+
+两行，第一行是一个整数n(1<＝n<=10000)，表示果子的种类数。
+第二行包含n个整数，用空格分隔，第i个整数ai(1<＝ai<=20000)是第i堆果子的数目。
+
+**输出**
+
+一行，这一行只包含一个整数，也就是最小的体力耗费值。输入数据保证这个值小于2^31。
+
+样例输入
+
+```
+3 
+1 2 9
+```
+
+样例输出
+
+```
+15
+```
+
+提示：哈夫曼编码
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H5: 树及算法-上”
+```python
+import heapq
+
+n = int(input())
+l = list(map(int, input().split()))
+heapq.heapify(l)
+ans = 0
+
+while len(l) > 1:
+    a = heapq.heappop(l)
+    b = heapq.heappop(l)
+    ans += a + b
+    heapq.heappush(l, a + b)
+
+print(ans)
+```
+
+
 
 
 
@@ -2094,11 +3823,51 @@ http://cs101.openjudge.cn/dsapre/20644/
 
 http://cs101.openjudge.cn/dsapre/20650/
 
+我们称一个字符的数组S为一个序列。对于另外一个字符数组Z,如果满足以下条件，则称Z是S的一个子序列：（1）Z中的每个元素都是S中的元素（2）Z中元素的顺序与在S中的顺序一致。例如：当S = (E,R,C,D,F,A,K)时，（E，C，F）和（E，R）等等都是它的子序列。而（R，E）则不是。 
+
+现在我们给定两个序列，求它们最长的公共子序列的长度。 
+
+**输入**
+
+一共两行，分别输入两个序列。
+
+**输出**
+
+一行，输出最长公共子序列的长度。
+
+样例输入
+
+```
+ABCBDAB
+
+BDCABA
+```
+
+样例输出
+
+```
+4
+```
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H3: 递归与动态规划”
+```python
+def longest_common_subsequence(s1, s2):
+    dp = [[0 for _ in range(len(s2)+1)] for _ in range(len(s1)+1)]
+    for i in range(len(s1)):
+        for j in range(len(s2)):
+            if s1[i] == s2[j]:
+                dp[i+1][j+1] = dp[i][j] + 1
+            else:
+                dp[i+1][j+1] = max(dp[i+1][j], dp[i][j+1])
+    return dp[len(s1)][len(s2)]
+
+s1 = input()
+s2 = input()
+print(longest_common_subsequence(s1, s2))
+```
+
+
 
 
 
@@ -2578,11 +4347,85 @@ print(max_profit)
 
 http://cs101.openjudge.cn/dsapre/22636/
 
+修仙之路长漫漫，逆水行舟，不进则退！你过五关斩六将，终于来到了仙界。仙界是一个r行c列的二维格子空间，每个单元格是一个”境界“，每个境界都有等级。你需要任意选择其中一个境界作为起点，从一个境界可以前往上下左右相邻四个境界之一 ，当且仅当新到达的境界等级增加。你苦苦行走，直到所在的境界等级比相邻四个境界的等级都要高为止，一览众山小。请问包括起始境界在内最长修仙路径需要经过的境界数是多少？
+
+**输入**
+
+第一行为两个正整数，分别为r和c（1<=r,c<=100）。
+接下来有r行，每行有c个0到100000000之间的整数，代表各境界的等级。
+
+**输出**
+
+输出一行，为最长修仙路径需要经过的境界数（包括起始境界）。
+
+样例输入
+
+```
+5 5
+1 2 3 4 5
+16 17 18 19 6
+15 24 25 20 7
+14 23 22 21 8
+13 12 11 10 9
+```
+
+样例输出
+
+```
+25
+```
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 “数算pre每日选做” 中 “H3: 递归与动态规划”
+```python
+# 23n2300011075(才疏学浅)
+def dfs(i,j):
+    if dp[i][j]>0:
+        return dp[i][j]
+    else:
+        for k in range(4):
+            if 0<=i+d[k][0]<r and 0<=j+d[k][1]<c and maze[i][j]>maze[i+d[k][0]][j+d[k][1]]:
+                dp[i][j]=max(dp[i][j],dfs(i+d[k][0],j+d[k][1])+1)
+    return dp[i][j]
+
+r,c=map(int,input().split())
+maze=[]
+for i in range(r):
+    l=list(map(int,input().split()))
+    maze.append(l)
+dp=[[0]*c for _ in range(r)]
+d=[[-1,0],[1,0],[0,1],[0,-1]]
+ans=0
+for i in range(r):
+    for j in range(c):
+        ans=max(ans,dfs(i,j))
+print(ans+1)
+```
+
+
+
+```python
+#23n2300011072(X)
+from functools import lru_cache
+@lru_cache(maxsize=None)
+def dfs(x,y):
+    ans=0
+    for dx,dy in dir:
+        nx,ny=x+dx,y+dy
+        if 0<=nx<m and 0<=ny<n and h[nx][ny]<h[x][y]:
+            ans=max(ans,dfs(nx,ny)+1)
+    return ans
+m,n=map(int,input().split())
+h=[list(map(int,input().split())) for _ in range(m)]
+dir=[(0,1),(1,0),(-1,0),(0,-1)]
+res=0
+for i in range(m):
+    for j in range(n):
+        res=max(res,dfs(i,j))
+print(res+1)
+```
+
+
 
 
 
@@ -2833,6 +4676,8 @@ http://cs101.openjudge.cn/dsapre/23563/
 
 http://cs101.openjudge.cn/dsapre/23568/
 
+请参看 2020fall_cs101.openjudge.cn_problems.md 的 Optional problems部分的相同题目。
+
 
 
 ## 23570:特殊密码锁
@@ -2850,6 +4695,78 @@ http://cs101.openjudge.cn/dsapre/23660/
 ## 24375:小木棍
 
 http://cs101.openjudge.cn/dsapre/24375/
+
+小明将一批等长的木棍随机切成最长为50单位的小段。现在他想要将木棍还原成原来的状态，但是却忘记了原来的木棍数量和长度。请写一个程序帮助他计算如果还原成原来的等长木棍，其长度可能的最小值。所有的长度均大于0。
+
+**输入**
+
+输入包含多个实例。每个实例有两行，第一行是切割后的木棍数量n（最多64个），第二行为n个以空格分开的整数，分别为每根木棍的长度。输入的最后以n为 0 结束。
+
+**输出**
+
+对于每个实例，输出一行其长度的可能的最小值。
+
+样例输入
+
+```
+9
+5 2 1 5 2 1 5 2 1
+4
+1 2 3 4
+0
+```
+
+样例输出
+
+```
+6
+5
+```
+
+来源：来自计算概论B期末考试，本题对数据进行了弱化
+
+
+
+与 Optional problems的 01011: Sticks 一样的题目，算法说明也在 01011。
+
+
+
+```python
+#蒋子轩
+def dfs(rem_sticks,rem_len,target):
+    if rem_sticks==0 and rem_len==0:
+        return True
+    if rem_len==0:
+        rem_len=target
+    for i in range(n):
+        if not used[i] and lens[i]<=rem_len:
+            used[i]=True
+            if dfs(rem_sticks-1,rem_len-lens[i],target):
+                return True
+            else:
+                used[i]=False
+                if lens[i]==rem_len or rem_len==target:
+                    return False
+    return False
+while True:
+    n=int(input())
+    if n==0:
+        break
+    lens=list(map(int,input().split()))
+    lens.sort(reverse=True)
+    total_len=sum(lens)
+    for l in range(lens[0],total_len//2+1):
+        if total_len%l!=0:
+            continue
+        used=[False]*n
+        if dfs(n,l,l):
+            print(l)
+            break
+    else:
+        print(total_len)
+```
+
+
 
 
 
@@ -2924,6 +4841,51 @@ http://cs101.openjudge.cn/dsapre/24750/
 ## 25815:回文字符串
 
 http://cs101.openjudge.cn/dsapre/25815/
+
+给定一个字符串 S ，最少需要几次增删改操作可以把 S 变成一个回文字符串？
+
+一次操作可以在任意位置插入一个字符，或者删除任意一个字符，或者把任意一个字符修改成任意其他字符。
+
+**输入**
+
+字符串 S。S 的长度不超过100, 只包含'A'-'Z'。
+
+**输出**
+
+最少的修改次数。
+
+样例输入
+
+```
+ABAD
+```
+
+样例输出
+
+```
+1
+```
+
+来源: hihoCoder
+
+
+
+```python
+# 2300011335
+S = list(input())
+n = len(S)
+dp = [[0 for _ in range(n)] for _ in range(n)]
+for length in range(1,n):
+    for i in range(n-length):
+        j = i+length
+        if S[i] == S[j]:
+            dp[i][j] = dp[i+1][j-1]
+        else:
+            dp[i][j] = min(dp[i+1][j],dp[i][j-1],dp[i+1][j-1])+1
+print(dp[0][-1])
+```
+
+
 
 
 
@@ -3164,19 +5126,19 @@ http://cs101.openjudge.cn/dsapre/23451/
 
 ## H3: 递归与动态规划
 
-### 04117: 简单的整数划分问题
+04117: 简单的整数划分问题
 
 http://cs101.openjudge.cn/practice/04117/
 
-请参看 Optional Problems 部分的 04117。
 
 
 
-### 02773: 采药
+
+02773: 采药
 
 http://cs101.openjudge.cn/practice/02773/
 
-请参看 Optional Problems 部分的 02773。
+
 
 
 
@@ -3203,532 +5165,77 @@ print(max(dp))
 
 
 
-### 22636: 修仙之路
+22636: 修仙之路
 
 http://cs101.openjudge.cn/dsapre/22636/
 
-修仙之路长漫漫，逆水行舟，不进则退！你过五关斩六将，终于来到了仙界。仙界是一个r行c列的二维格子空间，每个单元格是一个”境界“，每个境界都有等级。你需要任意选择其中一个境界作为起点，从一个境界可以前往上下左右相邻四个境界之一 ，当且仅当新到达的境界等级增加。你苦苦行走，直到所在的境界等级比相邻四个境界的等级都要高为止，一览众山小。请问包括起始境界在内最长修仙路径需要经过的境界数是多少？
-
-**输入**
-
-第一行为两个正整数，分别为r和c（1<=r,c<=100）。
-接下来有r行，每行有c个0到100000000之间的整数，代表各境界的等级。
-
-**输出**
-
-输出一行，为最长修仙路径需要经过的境界数（包括起始境界）。
-
-样例输入
-
-```
-5 5
-1 2 3 4 5
-16 17 18 19 6
-15 24 25 20 7
-14 23 22 21 8
-13 12 11 10 9
-```
-
-样例输出
-
-```
-25
-```
 
 
-
-```python
-# 23n2300011075(才疏学浅)
-def dfs(i,j):
-    if dp[i][j]>0:
-        return dp[i][j]
-    else:
-        for k in range(4):
-            if 0<=i+d[k][0]<r and 0<=j+d[k][1]<c and maze[i][j]>maze[i+d[k][0]][j+d[k][1]]:
-                dp[i][j]=max(dp[i][j],dfs(i+d[k][0],j+d[k][1])+1)
-    return dp[i][j]
-
-r,c=map(int,input().split())
-maze=[]
-for i in range(r):
-    l=list(map(int,input().split()))
-    maze.append(l)
-dp=[[0]*c for _ in range(r)]
-d=[[-1,0],[1,0],[0,1],[0,-1]]
-ans=0
-for i in range(r):
-    for j in range(c):
-        ans=max(ans,dfs(i,j))
-print(ans+1)
-```
-
-
-
-```python
-#23n2300011072(X)
-from functools import lru_cache
-@lru_cache(maxsize=None)
-def dfs(x,y):
-    ans=0
-    for dx,dy in dir:
-        nx,ny=x+dx,y+dy
-        if 0<=nx<m and 0<=ny<n and h[nx][ny]<h[x][y]:
-            ans=max(ans,dfs(nx,ny)+1)
-    return ans
-m,n=map(int,input().split())
-h=[list(map(int,input().split())) for _ in range(m)]
-dir=[(0,1),(1,0),(-1,0),(0,-1)]
-res=0
-for i in range(m):
-    for j in range(n):
-        res=max(res,dfs(i,j))
-print(res+1)
-```
-
-
-
-### 24375: 小木棍
+24375: 小木棍
 
 http://cs101.openjudge.cn/dsapre/24375/
 
-小明将一批等长的木棍随机切成最长为50单位的小段。现在他想要将木棍还原成原来的状态，但是却忘记了原来的木棍数量和长度。请写一个程序帮助他计算如果还原成原来的等长木棍，其长度可能的最小值。所有的长度均大于0。
-
-**输入**
-
-输入包含多个实例。每个实例有两行，第一行是切割后的木棍数量n（最多64个），第二行为n个以空格分开的整数，分别为每根木棍的长度。输入的最后以n为 0 结束。
-
-**输出**
-
-对于每个实例，输出一行其长度的可能的最小值。
-
-样例输入
-
-```
-9
-5 2 1 5 2 1 5 2 1
-4
-1 2 3 4
-0
-```
-
-样例输出
-
-```
-6
-5
-```
-
-来源：来自计算概论B期末考试，本题对数据进行了弱化
 
 
-
-与 Optional problems的 01011: Sticks 一样的题目，算法说明也在 01011。
-
-
-
-```python
-#蒋子轩
-def dfs(rem_sticks,rem_len,target):
-    if rem_sticks==0 and rem_len==0:
-        return True
-    if rem_len==0:
-        rem_len=target
-    for i in range(n):
-        if not used[i] and lens[i]<=rem_len:
-            used[i]=True
-            if dfs(rem_sticks-1,rem_len-lens[i],target):
-                return True
-            else:
-                used[i]=False
-                if lens[i]==rem_len or rem_len==target:
-                    return False
-    return False
-while True:
-    n=int(input())
-    if n==0:
-        break
-    lens=list(map(int,input().split()))
-    lens.sort(reverse=True)
-    total_len=sum(lens)
-    for l in range(lens[0],total_len//2+1):
-        if total_len%l!=0:
-            continue
-        used=[False]*n
-        if dfs(n,l,l):
-            print(l)
-            break
-    else:
-        print(total_len)
-```
-
-
-
-### 25815: 回文字符串
+25815: 回文字符串
 
 http://cs101.openjudge.cn/dsapre/25815/
 
-给定一个字符串 S ，最少需要几次增删改操作可以把 S 变成一个回文字符串？
-
-一次操作可以在任意位置插入一个字符，或者删除任意一个字符，或者把任意一个字符修改成任意其他字符。
-
-**输入**
-
-字符串 S。S 的长度不超过100, 只包含'A'-'Z'。
-
-**输出**
-
-最少的修改次数。
-
-样例输入
-
-```
-ABAD
-```
-
-样例输出
-
-```
-1
-```
-
-来源: hihoCoder
 
 
-
-```python
-# 2300011335
-S = list(input())
-n = len(S)
-dp = [[0 for _ in range(n)] for _ in range(n)]
-for length in range(1,n):
-    for i in range(n-length):
-        j = i+length
-        if S[i] == S[j]:
-            dp[i][j] = dp[i+1][j-1]
-        else:
-            dp[i][j] = min(dp[i+1][j],dp[i][j-1],dp[i+1][j-1])+1
-print(dp[0][-1])
-```
-
-
-
-### 20650: 最长的公共子序列的长度
+20650: 最长的公共子序列的长度
 
 http://cs101.openjudge.cn/dsapre/20650/
-
-我们称一个字符的数组S为一个序列。对于另外一个字符数组Z,如果满足以下条件，则称Z是S的一个子序列：（1）Z中的每个元素都是S中的元素（2）Z中元素的顺序与在S中的顺序一致。例如：当S = (E,R,C,D,F,A,K)时，（E，C，F）和（E，R）等等都是它的子序列。而（R，E）则不是。 
-
-现在我们给定两个序列，求它们最长的公共子序列的长度。 
-
-**输入**
-
-一共两行，分别输入两个序列。
-
-**输出**
-
-一行，输出最长公共子序列的长度。
-
-样例输入
-
-```
-ABCBDAB
-
-BDCABA
-```
-
-样例输出
-
-```
-4
-```
-
-
-
-```python
-def longest_common_subsequence(s1, s2):
-    dp = [[0 for _ in range(len(s2)+1)] for _ in range(len(s1)+1)]
-    for i in range(len(s1)):
-        for j in range(len(s2)):
-            if s1[i] == s2[j]:
-                dp[i+1][j+1] = dp[i][j] + 1
-            else:
-                dp[i+1][j+1] = max(dp[i+1][j], dp[i][j+1])
-    return dp[len(s1)][len(s2)]
-
-s1 = input()
-s2 = input()
-print(longest_common_subsequence(s1, s2))
-```
 
 
 
 ## H4: 查找与排序
 
-### 07745: 整数奇偶排序
+07745: 整数奇偶排序
 
 http://cs101.openjudge.cn/dsapre/07745/
 
-给定10个整数的序列，要求对其重新排序。排序要求:
-
-1.奇数在前，偶数在后；
-
-2.奇数按从大到小排序；
-
-3.偶数按从小到大排序。
 
 
-
-**输入**
-
-输入一行，包含10个整数，彼此以一个空格分开，每个整数的范围是大于等于0，小于等于100。
-
-**输出**
-
-按照要求排序后输出一行，包含排序后的10个整数，数与数之间以一个空格分开。
-
-样例输入
-
-`4 7 3 13 11 12 0 47 34 98`
-
-样例输出
-
-`47 13 11 7 3 0 4 12 34 98`
-
-来源: 1873
-
-
-
-```python
-# 读取输入的整数序列
-numbers = list(map(int, input().split()))
-
-# 将整数序列分为奇数列表和偶数列表
-odd_numbers = [num for num in numbers if num % 2 == 1]
-even_numbers = [num for num in numbers if num % 2 == 0]
-
-# 对奇数列表按照从大到小的顺序排序
-odd_numbers.sort(reverse=True)
-
-# 对偶数列表按照从小到大的顺序排序
-even_numbers.sort()
-
-# 合并排序后的奇数列表和偶数列表
-sorted_numbers = odd_numbers + even_numbers
-
-# 输出结果
-print(' '.join(map(str, sorted_numbers)))
-```
-
-
-
-
-
-### 04143: 和为给定数
+04143: 和为给定数
 
 http://cs101.openjudge.cn/practice/04143/
 
-**输入**
-
-共三行： 第一行是整数n(0 < n <= 100,000)，表示有n个整数。 第二行是n个整数。整数的范围是在0到10^8之间。 第三行是一个整数m（0 <= m <= 2^30)，表示需要得到的和。
-
-**输出**
-
-若存在和为m的数对，输出两个整数，小的在前，大的在后，中间用单个空格隔开。若有多个数对满足条件，选择数对中较小的数更小的。若找不到符合要求的数对，输出一行No。
-
-样例输入
-
-`4 2 5 1 4 6`
-
-样例输出
-
-`1 5`
 
 
-
-```python
-# 23n2300011760(喜看稻菽千重浪)
-n=int(input())-1;m=0
-A=sorted(map(int,input().split()))
-s=int(input())
-while m<n:
-    while m<n and A[m]+A[n]>s:n-=1
-    while m<n and A[m]+A[n]<s:m+=1
-    if m<n and A[m]+A[n]==s:print(A[m],A[n]);break
-else:print("No")
-```
-
-
-
-### 04135: 月度开销
+04135: 月度开销
 
 http://cs101.openjudge.cn/practice/04135/
 
-请参看 Optional Problems 部分的 04135。
 
 
-
-### 09201: Freda的越野跑
+09201: Freda的越野跑
 
 http://cs101.openjudge.cn/dsapre/09201/
 
-Freda报名参加了学校的越野跑。越野跑共有N人参加，在一条笔直的道路上进行。这N个人在起点处站成一列，相邻两个人之间保持一定的间距。比赛开始后，这N个人同时沿着道路向相同的方向跑去。换句话说，这N个人可以看作x轴上的N个点，在比赛开始后，它们同时向x轴正方向移动。
-假设越野跑的距离足够远，这N个人的速度各不相同且保持匀速运动，那么会有多少对参赛者之间发生“赶超”的事件呢？
-
-输入
-
-第一行1个整数N。
-第二行为N 个非负整数，按从前到后的顺序给出每个人的跑步速度。
-对于50%的数据，2<=N<=1000。
-对于100%的数据，2<=N<=100000。
-
-输出
-
-一个整数，表示有多少对参赛者之间发生赶超事件。
-
-样例输入
-
-```
-5
-1 3 10 8 5
-```
-
-样例输出
-
-```
-7
-```
-
-提示
-
-我们把这5个人依次编号为A,B,C,D,E，速度分别为1,3,10,8,5。
-在跑步过程中：
-B,C,D,E均会超过A，因为他们的速度都比A快；
-C,D,E都会超过B，因为他们的速度都比B快；
-C,D,E之间不会发生赶超，因为速度快的起跑时就在前边。
 
 
-
-```python
-import sys
-
-def merge_sort(a, temp, left, right):
-    if right - left <= 1:
-        return 0
-    mid = (left + right) // 2
-    inv_count = merge_sort(a, temp, left, mid) + merge_sort(a, temp, mid, right)
-    i, j, k = left, mid, left
-    while i < mid and j < right:
-        if a[i] < a[j]:
-            temp[k] = a[i]
-            i += 1
-        else:
-            temp[k] = a[j]
-            j += 1
-            inv_count += mid - i
-        k += 1
-    while i < mid:
-        temp[k] = a[i]
-        i += 1
-        k += 1
-    while j < right:
-        temp[k] = a[j]
-        j += 1
-        k += 1
-    for i in range(left, right):
-        a[i] = temp[i]
-    return inv_count
-
-n = int(sys.stdin.readline())
-a = list(map(int, sys.stdin.readline().split()))
-temp = [0] * n
-print(n * (n - 1) // 2 - merge_sort(a, temp, 0, n))
-```
-
-
-
-```python
-#蒋子轩
-from bisect import *
-n=int(input())
-a=list(map(int,input().split()))
-sorted_list=[]
-cnt=0
-for num in a:
-    pos=bisect_left(sorted_list,num)
-    cnt+=pos
-    insort_left(sorted_list,num)
-print(cnt)
-```
-
-
-
-```python
-# 23物院宋昕杰 树状数组
-n = int(input())
-tr = [0] * (n + 1)
-
-
-def lowbit(x):
-    return x & -x
-
-
-def query(x, y):  			#查询[x, y]，索引从1开始
-    x -= 1
-    ans = 0
-    while y > x:
-        ans += tr[y]
-        y -= lowbit(y)
-    while x > y:
-        ans -= tr[x]
-        x -= lowbit(x)
-    return ans
-
-
-def add(i, k):				#原数组第i个数加上k，更新树状数组
-    while i <= n:
-        tr[i] += k
-        i += lowbit(i)
-
-
-ls = list(map(int, input().split()))
-for i in range(1, n + 1):		#O(nlogn)建树
-    add(i, 1)
-keys = sorted(ls)
-dic = {}
-for i in range(n):
-    if keys[i] not in dic:
-        dic[keys[i]] = i
-ans = 0
-for i in range(n - 1, -1, -1):
-    idx = dic[ls[i]]
-    ans += query(1, idx)
-    add(idx + 1, -1)
-print(ans)
-```
-
-
-
-### 20741: 两座孤岛最短距离
+20741: 两座孤岛最短距离
 
 http://cs101.openjudge.cn/practice/20741/
 
-请参看 Optional Problems 部分的 20741。
 
 
 
-### 23568: 幸福的寒假生活
+
+23568: 幸福的寒假生活
 
 http://cs101.openjudge.cn/practice/23568/
 
-请参看 Optional Problems 部分的 04135。
 
 
 
-### 04136: 矩形分割
+
+04136: 矩形分割
 
 http://cs101.openjudge.cn/practice/04136/
 
-请参看 Optional Problems 部分的 04136。
+
 
 
 
@@ -3736,1666 +5243,91 @@ http://cs101.openjudge.cn/practice/04136/
 
 ## H5: 树及算法-上
 
-### 01145:Tree Summing
+01145:Tree Summing
 
 http://cs101.openjudge.cn/practice/01145/
 
-LISP was one of the earliest high-level programming languages and, with FORTRAN, is one of the oldest languages currently being used. Lists, which are the fundamental data structures in LISP, can easily be adapted to represent other important data structures such as trees. 
 
-This problem deals with determining whether binary trees represented as LISP S-expressions possess a certain property. 
-Given a binary tree of integers, you are to write a program that determines whether there exists a root-to-leaf path whose nodes sum to a specified integer. For example, in the tree shown below there are exactly four root-to-leaf paths. The sums of the paths are 27, 22, 26, and 18. 
 
-![img](http://media.openjudge.cn/images/1145/1145_1.gif)
 
-Binary trees are represented in the input file as LISP S-expressions having the following form. 
 
-```
-empty tree ::= ()
-
-tree 	   ::= empty tree (integer tree tree)
-```
-
-The tree diagrammed above is represented by the expression (5 (4 (11 (7 () ()) (2 () ()) ) ()) (8 (13 () ()) (4 () (1 () ()) ) ) ) 
-
-Note that with this formulation all leaves of a tree are of the form (integer () () ) 
-
-Since an empty tree has no root-to-leaf paths, any query as to whether a path exists whose sum is a specified integer in an empty tree must be answered negatively. 
-
-**输入**
-
-The input consists of a sequence of test cases in the form of integer/tree pairs. Each test case consists of an integer followed by one or more spaces followed by a binary tree formatted as an S-expression as described above. All binary tree S-expressions will be valid, but expressions may be spread over several lines and may contain spaces. There will be one or more test cases in an input file, and input is terminated by end-of-file. 
-
-**输出**
-
-There should be one line of output for each test case (integer/tree pair) in the input file. For each pair I,T (I represents the integer, T represents the tree) the output is the string yes if there is a root-to-leaf path in T whose sum is I and no if there is no path in T whose sum is I. 
-
-样例输入
-
-```
-22 (5(4(11(7()())(2()()))()) (8(13()())(4()(1()()))))
-20 (5(4(11(7()())(2()()))()) (8(13()())(4()(1()()))))
-10 (3 
-     (2 (4 () () )
-        (8 () () ) )
-     (1 (6 () () )
-        (4 () () ) ) )
-5 ()
-```
-
-样例输出
-
-```
-yes
-no
-yes
-no
-```
-
-来源
-
-Duke Internet Programming Contest 1992,UVA 112
-
-
-
-实现树：节点链接法。每个节点保存根节点的数据项，以及指向左右子树的链接。
-
-成员 val 保存根节点数据项，成员 left/rightChild 则保存指向左/右子树的引用（同样是TreeNode 对象）
-
-```python
-class TreeNode:
-    def __init__(self, val=0, left=None, right=None):
-        self.val = val
-        self.left = left
-        self.right = right
-
-
-def has_path_sum(root, target_sum):
-    if root is None:
-        return False
-
-    if root.left is None and root.right is None:  # The current node is a leaf node
-        return root.val == target_sum
-
-    left_exists = has_path_sum(root.left, target_sum - root.val)
-    right_exists = has_path_sum(root.right, target_sum - root.val)
-
-    return left_exists or right_exists
-
-
-# Parse the input string and build a binary tree
-def parse_tree(s):
-    stack = []
-    i = 0
-
-    while i < len(s):
-        if s[i].isdigit() or s[i] == '-':
-            j = i
-            while j < len(s) and (s[j].isdigit() or s[j] == '-'):
-                j += 1
-            num = int(s[i:j])
-            node = TreeNode(num)
-            if stack:
-                parent = stack[-1]
-                if parent.left is None:
-                    parent.left = node
-                else:
-                    parent.right = node
-            stack.append(node)
-            i = j
-        elif s[i] == '[':
-            i += 1
-        elif s[i] == ']' and s[i - 1] != '[' and len(stack) > 1:
-            stack.pop()
-            i += 1
-        else:
-            i += 1
-
-    return stack[0] if len(stack) > 0 else None
-
-
-while True:
-    try:
-        s = input()
-    except:
-        break
-
-    s = s.split()
-    target_sum = int(s[0])
-    tree = ("").join(s[1:])
-    tree = tree.replace('(', ',[').replace(')', ']')
-    while True:
-        try:
-            tree = eval(tree[1:])
-            break
-        except SyntaxError:
-            s = input().split()
-            s = ("").join(s)
-            s = s.replace('(', ',[').replace(')', ']')
-            tree += s
-
-    tree = str(tree)
-    tree = tree.replace(',[', '[')
-    if tree == '[]':
-        print("no")
-        continue
-
-    root = parse_tree(tree)
-
-    if has_path_sum(root, target_sum):
-        print("yes")
-    else:
-        print("no")
-```
-
-
-
-实现二叉树：嵌套列表法。用 Python List 来实现二叉树树数据结构；递归的嵌套列表实现二叉树，由具有 3 个
-元素的列表实现：第 1 个元素为根节点的值；第 2 个元素是左子树（用列表表示）；第 3 个元素是右子树。
-
-嵌套列表法的优点子树的结构与树相同，是一种递归结构可以很容易扩展到多叉树，仅需要增加列表元素即可。
-
-定义一系列函数来辅助操作嵌套列表
-BinaryTree 创建仅有根节点的二叉树，insertLeft/insertRight 将新节点插入树中作为 root 直接的左/右子节点，
-原来的左/右子节点变为新节点的左/右子节点。为什么？不为什么，一种实现方式而已。get/setRootVal 则取得或返回根节点，getLeft/RightChild 返回左/右子树。
-
-嵌套列表示例
-
-```python
-def BinaryTree(r, left=[], right=[]):
-    return([r, left, right])
-
-
-def getLeftChild(root):
-    return(root[1])
-
-
-def getRightChild(root):
-    return(root[2])
-
-
-def insertLeft(root, newBranch):
-    root[1] = BinaryTree(newBranch, left=getLeftChild(root))
-    return(root)
-
-
-def insertRight(root, newBranch):
-    root[2] = BinaryTree(newBranch, right=getRightChild(root))
-    return(root)
-
-
-def getRootVal(root):
-    return(root[0])
-
-
-def setRootVal(root, newVal):
-    root[0] = newVal
-
-
-if __name__ == "__main__":
-    r = BinaryTree(3)
-    insertLeft(r, 4)
-    insertLeft(r, 5)
-    insertRight(r, 6)
-    insertRight(r, 7)
-    l = getLeftChild(r)
-    print(l)
-
-    setRootVal(l, 9)
-    print(r)
-    insertLeft(l, 11)
-    print(r)
-    print(getRightChild(getRightChild(r)))
-```
-
-
-
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240122171343441.png" alt="image-20240122171343441" style="zoom: 50%;" />
-
-
-
-01145:Tree Summing用嵌套列表法AC代码。
-
-```python
-def BinaryTree(r,left=[],right=[]):
-    return([r,left,right])
-def getLeftChild(root):
-    return(root[1])
-def getRightChild(root):
-    return(root[2])
-def insertLeft(root,newBranch):
-    root[1]=BinaryTree(newBranch,left=getLeftChild(root))
-    return(root)
-def insertRight(root,newBranch):
-    root[2]=BinaryTree(newBranch,right=getRightChild(root))
-    return(root)
-def getRootVal(root):
-    return(root[0])
-def setRootVal(root,newVal):
-    root[0]=newVal
-
-while True:
-    try:
-        left=right=0
-        astr=input().replace(' ','')
-        for i in range(len(astr)):
-            if astr[i]=='(' or astr==')':
-                bound=i
-                break
-        num=int(astr[:bound])
-        astr=astr[bound:]
-        for i in astr:
-            if i=='(':
-                left+=1
-            elif i==')':
-                right+=1
-        while left!=right:
-            bstr=input().replace(' ','')
-            for i in bstr:
-                if i=='(':
-                    left+=1
-                elif i==')':
-                    right+=1
-            astr+=bstr
-        if astr=='()':
-            print('no')
-            continue
-        atree=BinaryTree('')
-        cur=atree
-        aStack=[]
-        astr=astr[1:len(astr)-1]
-        j=0
-        while j<len(astr):
-            if astr[j]=='(':
-                aStack.append(cur)
-                if getLeftChild(cur)==[]:
-                    insertLeft(cur,None)
-                    cur=getLeftChild(cur)
-                else:
-                    insertRight(cur,None)
-                    cur=getRightChild(cur)
-                j+=1
-            elif astr[j]==')':
-                cur=aStack.pop()
-                j+=1
-            else:
-                anum=''
-                while astr[j]!='(' and astr[j]!=')':
-                    anum+=astr[j]
-                    j+=1
-                setRootVal(cur,int(anum))
-        #print(num,atree)
-        def compare(btree,bnum):
-            if getRootVal(btree)==None:
-                return(False)
-            elif getRootVal(btree)==bnum and (getRootVal(getLeftChild(btree))==None and getRootVal(getRightChild(btree))==None):
-                return(True)
-            else:
-                if compare(getLeftChild(btree),bnum-getRootVal(btree)) or compare(getRightChild(btree),bnum-getRootVal(btree)):
-                    return(True)
-            return(False)
-        if compare(atree,num):
-            print('yes')
-        else:
-            print('no')
-    except EOFError:
-        break
-```
-
-
-
-
-
-### 02255:重建二叉树
+02255:重建二叉树
 
 http://cs101.openjudge.cn/practice/02255/
 
-**输入**
-
-输入可能有多组，以EOF结束。 每组输入包含两个字符串，分别为树的前序遍历和中序遍历。每个字符串中只包含大写字母且互不重复。
-
-**输出**
-
-对于每组输入，用一行来输出它后序遍历结果。
-
-样例输入
-
-`DBACEGF ABCDEFG BCAD CBAD `
-
-样例输出
-
-`ACBFGED CDAB `
-
-提示
-
-以英文题面为准
 
 
-
-```python
-ls = []
-rs = []
-root = 0
-cnt = 0
-cot = 0
-
-def Solve(l,r):
-    global cnt
-    if cnt >= len(Line1):
-        return -1
-    Pl = Line2.find(Line1[cnt])
-    if Pl < l or Pl > r:
-        return -1
-
-    x = ord(Line1[cnt]) - 65
-    cnt = cnt + 1
-    ls[x] = Solve(l,Pl-1)
-    rs[x] = Solve(Pl+1,r)
-    return x
-
-def Pout(x):
-    if ls[x] != -1:
-        Pout(ls[x])
-    if rs[x] != -1:
-        Pout(rs[x])
-    print(chr(x+65),end = '')
-
-while True:
-    try:
-        Line1,Line2 = input().split()
-        ls = [-1]*len(Line1)
-        rs = [-1]*len(Line1)
-        cnt = 0
-        
-        root = Solve(0,len(Line1) - 1)
-
-        Pout(root)
-        print()
-
-    except:
-        break
-```
-
-
-
-### 02694: 波兰表达式
+02694: 波兰表达式
 
 http://cs101.openjudge.cn/practice/02694/
 
-请参看 Basic Exercises 的 02694。
 
 
-
-### 02788: 二叉树
+02788: 二叉树
 
 http://cs101.openjudge.cn/dsapre/02788/
 
 
 
-![img](http://media.openjudge.cn/images/2756_1.jpg)
-
-如上图所示，由正整数1，2，3……组成了一颗二叉树。我们已知这个二叉树的最后一个结点是n。现在的问题是，结点m所在的子树中一共包括多少个结点。
-
-比如，n = 12，m = 3那么上图中的结点13，14，15以及后面的结点都是不存在的，结点m所在子树中包括的结点有3，6，7，12，因此结点m的所在子树中共有4个结点。
-
-**输入**
-
-输入数据包括多行，每行给出一组测试数据，包括两个整数m，n (1 <= m <= n <= 1000000000)。最后一组测试数据中包括两个0，表示输入的结束，这组数据不用处理。
-
-**输出**
-
-对于每一组测试数据，输出一行，该行包含一个整数，给出结点m所在子树中包括的结点的数目。
-
-样例输入
-
-```
-3 12
-0 0
-```
-
-样例输出
-
-```
-4
-```
-
-
-
-完全二叉树
-
-​           每个结点
-
-左孩子 2\*i          右孩子 2\*i+1
-
- 
-
-设置left right 按照完全二叉树每一行去遍历算就行，算最左结点、最右结点.
-
-```python
-while True:
-    m, n = map(int, input().split())
-    if m == 0 and n == 0:
-        break
-
-    ans = 1
-    num = 1  # Number of nodes in the first level of the complete binary tree
-    left = 2 * m
-    right = 2 * m + 1
-    while right <= n:
-        num = num * 2
-        ans += num
-        left = left * 2
-        right = right * 2 + 1
-
-    if left <= n:
-        ans += n - left + 1
-
-    print(ans)
-```
-
-
-
-
-
-```python
-#23n2300010763
-def compute(m,n):
-    cnt = 1
-    while m*cnt<=n:
-        cnt *= 2
-    return min(n-(m-1)*(cnt//2),cnt-1)
-
-
-while True:
-    m,n = map(int,input().split())
-    if not m and not n:
-        break
-    print(compute(m,n))
-```
-
-
-
-```c++
-#include<iostream>
-using namespace std;
-
-int main()
-{
-    int m,n,sum;
-    while(scanf("%d%d",&m,&n)==2 && (m||n)) {
-        sum=0;
-        int d=1;
-        while(1) {
-            if(m<=n) {
-                sum+=d;
-                m=2*m+1;
-                d=d*2;  
-            }
-            else{ 
-                if(m-n<d)
-                    sum = sum+d-(m-n);
-                break;
-            }
-        }
-
-        printf("%d\n",sum);
-    }
-}
-```
-
-
-
-### 04081: 树的转换
+04081: 树的转换
 
 http://cs101.openjudge.cn/practice/04081/
 
-我们都知道用“左儿子右兄弟”的方法可以将一棵一般的树转换为二叉树，如：
-
-```
-    0                             0
-  / | \                          /
- 1  2  3       ===>             1
-   / \                           \
-  4   5                           2
-                                 / \
-                                4   3
-                                 \
-                                  5
-```
-
-现在请你将一些一般的树用这种方法转换为二叉树，并输出转换前和转换后树的高度。
-
-**输入**
-
-输入是一个由“u”和“d”组成的字符串，表示一棵树的深度优先搜索信息。比如，dudduduudu可以用来表示上文中的左树，因为搜索过程为：0 Down to 1 Up to 0 Down to 2 Down to 4 Up to 2 Down to 5 Up to 2 Up to 0 Down to 3 Up to 0。
-你可以认为每棵树的结点数至少为2，并且不超过10000。
-
-**输出**
-
-按如下格式输出转换前和转换后树的高度：
-h1 => h2
-其中，h1是转换前树的高度，h2是转换后树的高度。
-
-样例输入
-
-```
-dudduduudu
-```
-
-样例输出
-
-```
-2 => 4
-```
 
 
-
-```python
-"""
-calculates the height of a general tree and its corresponding binary tree using the 
-"left child right sibling" method. The input is a string composed of "u" and "d", 
-representing the depth-first search information of a tree. 
-
-uses a stack to keep track of the heights of the nodes in the binary tree. 
-When it encounters a "d", it increases the heights and updates the maximum heights if necessary. 
-When it encounters a "u", it decreases the old height and sets the new height to the top of the stack. 
-Finally, it returns the maximum heights of the tree and the binary tree in the required format.
-"""
-def tree_heights(s):
-    old_height = 0
-    max_old = 0
-    new_height = 0
-    max_new = 0
-    stack = []
-    for c in s:
-        if c == 'd':
-            old_height += 1
-            max_old = max(max_old, old_height)
-
-            new_height += 1
-            stack.append(new_height)
-            max_new = max(max_new, new_height)
-        else:
-            old_height -= 1
-
-            new_height = stack[-1]
-            stack.pop()
-    return f"{max_old} => {max_new}"
-
-s = input().strip()
-print(tree_heights(s))
-```
-
-
-
-```c++
-#include <iostream>
-#include <stack>
-#include <string>
-using namespace std;
-
-int main()
-{
-    string str;
-    cin >> str;
-
-    int oldheight = 0;
-    int maxold = 0;
-    int newheight = 0;
-    int maxnew = 0;
-    stack<int> s;
-    for (int i=0; i<str.size(); i++) {
-        if (str[i] == 'd') {
-            oldheight++;
-            if (oldheight > maxold)
-                maxold = oldheight;
-
-            newheight++;
-            s.push(newheight);
-            if (newheight > maxnew)
-                maxnew = newheight;
-        }
-        else {
-            oldheight--;
-
-            newheight = s.top();
-            s.pop();
-        }
-    }
-
-    cout << maxold << " => " << maxnew << endl;
-}
-```
-
-
-
-
-
-### 04082: 树的镜面映射
+04082: 树的镜面映射
 
 http://cs101.openjudge.cn/practice/04082/
 
-一棵树的镜面映射指的是对于树中的每个结点，都将其子结点反序。例如，对左边的树，镜面映射后变成右边这棵树。 
-
-```
-    a                             a
-  / | \                         / | \
- b  c  f       ===>            f  c  b
-   / \                           / \
-  d   e                         e   d
-```
-
-我们在输入输出一棵树的时候，常常会把树转换成对应的二叉树，而且对该二叉树中只有单个子结点的分支结点补充一个虚子结点“$”，形成“伪满二叉树”。
-
-例如，对下图左边的树，得到下图右边的伪满二叉树 
-
-```
-    a                             a
-  / | \                          / \
- b  c  f       ===>             b   $
-   / \                         / \
-  d   e                       $   c                          
-                                 / \
-                                d   f
-                               / \
-                              $   e
-```
-
-然后对这棵二叉树进行前序遍历，如果是内部结点则标记为0，如果是叶结点则标记为1，而且虚结点也输出。
-
-现在我们将一棵树以“伪满二叉树”的形式输入，要求输出这棵树的镜面映射的宽度优先遍历序列。
-
-**输入**
-
-输入包含一棵树所形成的“伪满二叉树”的前序遍历。
-第一行包含一个整数，表示结点的数目。
-第二行包含所有结点。每个结点用两个字符表示，第一个字符表示结点的编号，第二个字符表示该结点为内部结点还是外部结点，内部结点为0，外部结点为1。结点之间用一个空格隔开。
-数据保证所有结点的编号都为一个小写字母。
-
-**输出**
-
-输出包含这棵树的镜面映射的宽度优先遍历序列，只需要输出每个结点的编号，编号之间用一个空格隔开。
-
-样例输入
-
-```
-9
-a0 b0 $1 c0 d0 $1 e1 f1 $1
-```
-
-样例输出
-
-```
-a f c b e d
-```
-
-提示
-
-样例输入输出对应着题目描述中的那棵树。
 
 
-
-前序遍历（Preorder Traversal）是二叉树遍历的一种方式，它的遍历顺序是先访问根节点，然后按照左子树和右子树的顺序递归地遍历子树。
-
-```python
-from collections import deque
-
-class TreeNode:
-    def __init__(self, x):
-        self.x = x
-        self.children = []
-
-def create_node():
-    return TreeNode('')
-
-def build_tree(tempList, index):
-    node = create_node()
-    node.x = tempList[index][0]
-    if tempList[index][1] == '0' and node.x != '$':
-        index += 1
-        child, index = build_tree(tempList, index)
-        node.children.append(child)
-        index += 1
-        child, index = build_tree(tempList, index)
-        node.children.append(child)
-    return node, index
-
-def print_tree(p):
-    Q = deque()
-    s = deque()
-
-    # 遍历右子节点并将非虚节点加入栈s
-    while p is not None:
-        if p.x != '$':
-            s.append(p)
-        p = p.children[1] if len(p.children) > 1 else None
-
-    # 将栈s中的节点逆序放入队列Q
-    while s:
-        Q.append(s.pop())
-
-    # 宽度优先遍历队列Q并打印节点值
-    while Q:
-        p = Q.popleft()
-        print(p.x, end=' ')
-
-        # 如果节点有左子节点，将左子节点及其右子节点加入栈s
-        if p.children:
-            p = p.children[0]
-            while p is not None:
-                if p.x != '$':
-                    s.append(p)
-                p = p.children[1] if len(p.children) > 1 else None
-
-            # 将栈s中的节点逆序放入队列Q
-            while s:
-                Q.append(s.pop())
-
-# 读取输入
-n = int(input())
-tempList = input().split(' ')
-
-# 构建多叉树
-root, _ = build_tree(tempList, 0)
-
-# 执行宽度优先遍历并打印镜像映射序列
-print_tree(root)
-```
-
-
-
-```c++
-#include <iostream>
-#include <vector>
-using namespace std;
-
-struct node {
-	char ele;
-	node * l;
-	node * r;
-	node (char e) :ele(e), l(NULL), r(NULL) {}
-};
-
-node * generate() {
-	char ele;
-	int mark;
-	cin>>ele>>mark;
-	node * n = NULL;
-	if (mark == 0) {
-		n = new node(ele);
-		n->l = generate();
-		n->r = generate();
-	} else
-		if (ele != '$')
-			n = new node(ele);
-	return n;
-}
-
-void out(node * root) {
-	bool isEnd = false;
-	vector<node*> now;
-	vector<node*> next;
-	node * n = root;
-	while (n) {
-		now.push_back(n);
-		n = n->r;
-	}
-	while (!isEnd) {
-		isEnd = true;
-		for (int i=now.size()-1; i>=0; --i)
-			cout<<now[i]->ele<<" ";
-		for (int i=0; i<now.size(); ++i)
-			if (now[i]->l) {
-				n = now[i]->l;
-				while (n) {
-					next.push_back(n);
-					n = n->r;
-				}
-				isEnd = false;
-			}
-		now = next;
-		next.clear();
-	}
-
-}
-
-int main() {
-	int num;
-	cin>>num;
-
-	node * root = generate();
-	out(root);
-	cout<<endl;
-
-	return 0;
-}
-```
-
-
-
-### 14683: 合并果子
+14683: 合并果子
 
 http://cs101.openjudge.cn/dsapre/14683/
-
-有n堆果子（n<=10000），多多决定把所有的果子合成一堆。
-
-每一次合并，多多可以把两堆果子合并到一起，消耗的体力等于两堆果子数量之和。可以看出，所有的果子经过n-1次合并之后，就只剩下一堆了。多多在合并果子时总共消耗的体力等于每次合并所耗体力之和。
-
-设计出合并的次序方案，使多多耗费的体力最少，并输出这个最小的体力耗费值。
-
-**输入**
-
-两行，第一行是一个整数n(1<＝n<=10000)，表示果子的种类数。
-第二行包含n个整数，用空格分隔，第i个整数ai(1<＝ai<=20000)是第i堆果子的数目。
-
-**输出**
-
-一行，这一行只包含一个整数，也就是最小的体力耗费值。输入数据保证这个值小于2^31。
-
-样例输入
-
-```
-3 
-1 2 9
-```
-
-样例输出
-
-```
-15
-```
-
-提示：哈夫曼编码
-
-
-
-```python
-import heapq
-
-n = int(input())
-l = list(map(int, input().split()))
-heapq.heapify(l)
-ans = 0
-
-while len(l) > 1:
-    a = heapq.heappop(l)
-    b = heapq.heappop(l)
-    ans += a + b
-    heapq.heappush(l, a + b)
-
-print(ans)
-```
 
 
 
 ## H6: 树及算法-下
 
-### 02756: 二叉树
+02756: 二叉树
 
 http://cs101.openjudge.cn/practice/02756/
 
-描述
-
-![img](http://media.openjudge.cn/images/2756_1.jpg)
-如上图所示，由正整数1, 2, 3, ...组成了一棵无限大的二叉树。从某一个结点到根结点（编号是1的结点）都有一条唯一的路径，比如从10到根结点的路径是(10, 5, 2, 1)，从4到根结点的路径是(4, 2, 1)，从根结点1到根结点的路径上只包含一个结点1，因此路径就是(1)。对于两个结点x和y，假设他们到根结点的路径分别是(x1, x2, ... ,1)和(y1, y2, ... ,1)（这里显然有x = x1，y = y1），那么必然存在两个正整数i和j，使得从xi和 yj开始，有$x_i = y_j , x_{i + 1} = y_{j + 1}, x_{i + 2} = y_{j + 2},...$ 现在的问题就是，给定x和y，要求xi（也就是yj)。
-
-**输入**
-
-输入只有一行，包括两个正整数x和y，这两个正整数都不大于1000。
-
-**输出**
-
-输出只有一个正整数xi。
-
-样例输入
-
-```
-10 4
-```
-
-样例输出
-
-```
-2
-```
 
 
-
-这个问题涉及到二叉树中两个节点的最近公共祖先问题。这里的二叉树是一个特殊的完全二叉树，其中节点编号的方式是根节点编号为1，对于任意节点`N`，其左子节点的编号为`2 * N`，右子节点的编号为`2 * N + 1`。
-
-要找到两个节点`x`和`y`的公共祖先，我们可以回溯其到根节点的路径，并找到路径上的最后一个公共节点。在这个完全二叉树中，我们可以简单地通过整除2来获得父节点的编号，即节点`N`的父节点是`N // 2`。
-
-下面是Python代码示例，用于找到任意两个节点的最近公共祖先：
-
-```python
-def find_common_ancestor(x, y):
-    # 创建两个集合用于存储x和y的所有祖先节点
-    ancestors_x = set()
-    ancestors_y = set()
-  
-    # 回溯x到根节点的路径并保存
-    while x > 0:
-        ancestors_x.add(x)
-        x //= 2
-
-    # 回溯y到根节点的路径
-    # 并在每一步检查当前节点是否也是x的祖先节点
-    while y > 0:
-        if y in ancestors_x:
-            return y  # 找到了公共祖先
-        y //= 2
-
-    return 1  # 如果没有找到公共祖先，默认返回根节点1
-
-# 读取输入
-x, y = map(int, input().split())
-
-# 查找并输出x和y的最近公共祖先
-print(find_common_ancestor(x, y))
-
-```
-
-
-
-```python
-def common(x, y):
-    if x == y:
-        return x
-    if x < y:
-        return common(x, y//2)
-    else:
-        return common(x//2, y)
-
-
-m, n = map(int, input().split())
-
-print(common(m, n))
-```
-
-
-
-### 06646: 二叉树的深度
+06646: 二叉树的深度
 
 http://cs101.openjudge.cn/dsapre/06646/
 
-给定一棵二叉树，求该二叉树的深度
-
-二叉树深度定义：从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的节点个数为树的深度
-
-**输入**
-
-第一行是一个整数n，表示二叉树的结点个数。二叉树结点编号从1到n，根结点为1，n <= 10
-接下来有n行，依次对应二叉树的n个节点。
-每行有两个整数，分别表示该节点的左儿子和右儿子的节点编号。如果第一个（第二个）数为-1则表示没有左（右）儿子
-
-**输出**
-
-输出一个整型数，表示树的深度
-
-样例输入
-
-```
-3
-2 3
--1 -1
--1 -1
-```
-
-样例输出
-
-```
-2
-```
 
 
-
-```python
-class TreeNode:
-    # 二叉树节点定义
-    def __init__(self, x):
-        self.val = x
-        self.left = None
-        self.right = None
-
-def build_tree(node_list):
-    # 根据节点信息构建二叉树
-    nodes = {i: TreeNode(i) for i in range(1, len(node_list) + 1)}
-    for i, (left, right) in enumerate(node_list, 1):
-        if left != -1:
-            nodes[i].left = nodes[left]
-        if right != -1:
-            nodes[i].right = nodes[right]
-    return nodes[1]  # 返回树的根节点
-
-def max_depth(root):
-    # 计算二叉树的最大深度
-    if root is None:
-        return 0
-    else:
-        left_depth = max_depth(root.left)
-        right_depth = max_depth(root.right)
-        return max(left_depth, right_depth) + 1
-
-# 读取输入并解析
-n = int(input())
-node_list = []
-for _ in range(n):
-    left, right = map(int, input().split())
-    node_list.append((left, right))
-
-# 构建二叉树并计算深度
-root = build_tree(node_list)
-depth = max_depth(root)
-
-# 输出结果
-print(depth)
-```
-
-
-
-### 06648: Sequence
+06648: Sequence
 
 http://cs101.openjudge.cn/practice/06648/
 
-给定m个数字序列，每个序列包含n个非负整数。我们从每一个序列中选取一个数字组成一个新的序列，显然一共可以构造出n^m个新序列。接下来我们对每一个新的序列中的数字进行求和，一共会得到n^m个和，请找出最小的n个和
-
-**输入**
-
-输入的第一行是一个整数T，表示测试用例的数量，接下来是T个测试用例的输入
-每个测试用例输入的第一行是两个正整数m（0 < m <= 100）和n(0 < n <= 2000)，然后有m行，每行有n个数，数字之间用空格分开，表示这m个序列
-序列中的数字不会大于10000
-
-**输出**
-
-对每组测试用例，输出一行用空格隔开的数，表示最小的n个和
-
-样例输入
-
-```
-1
-2 3
-1 2 3
-2 2 3
-```
-
-样例输出
-
-```
-3 3 4
-```
 
 
-
-虑到n^m个和的数量可能非常大，我们不能直接存储它们。因此，我们可以通过逐步合并两个序列来找到最小的n个和，而不是一次性生成所有可能的和。
-
-为了找到最小的n个和，我们可以按照以下步骤操作：
-
-1. 对每个序列进行排序，确保我们可以从最小的元素开始处理。
-2. 使用一个最小堆（优先队列）来维护当前可能的最小和。最初，我们只将每个序列的最小元素（即每个序列的第一个元素）的和放入最小堆中。
-3. 每次从最小堆中取出当前的最小和，然后探索通过替换这个和中的某个元素来得到下一个可能的最小和。
-4. 重复这个过程，直到我们找到了n个最小的和。
-
-以下是一个更为内存效率的Python代码解决方案：
-
-```python
-import heapq
-
-def merge_sequences(seq1, seq2, n):
-    # 对两个序列进行排序
-    seq1.sort()
-    seq2.sort()
-    # 使用最小堆存储可能的最小和以及对应的索引
-    min_heap = [(seq1[i] + seq2[0], i, 0) for i in range(len(seq1))]
-    # 生成最小n个和
-    result = []
-    while n > 0 and min_heap:
-        current_sum, i, j = heapq.heappop(min_heap)
-        result.append(current_sum)
-        if j + 1 < len(seq2):
-            heapq.heappush(min_heap, (seq1[i] + seq2[j + 1], i, j + 1))
-        n -= 1
-    return result
-
-def min_sequence_sums(m, n, sequences):
-    # 对所有序列进行排序
-    for seq in sequences:
-        seq.sort()
-    # 逐步合并序列
-    current_min_sums = sequences[0]
-    for i in range(1, m):
-        current_min_sums = merge_sequences(current_min_sums, sequences[i], n)
-    return current_min_sums
-
-# 读取输入数据
-T = int(input())  # 读取测试用例的数量
-for _ in range(T):
-    m, n = map(int, input().split())  # 对于每个测试用例，读取m和n
-    sequences = [list(map(int, input().split())) for _ in range(m)]
-    results = min_sequence_sums(m, n, sequences)
-    print(' '.join(map(str, results[:n])))
-```
-
-这段代码定义了两个函数：`merge_sequences` 用于合并两个已排序的序列并找到最小的n个和，而`min_sequence_sums` 用于逐步合并所有序列。注意，由于题目要求输出最小的n个和，所以每次合并操作后我们仅保留n个和。这样可以保证内存使用量不会超过题目要求的限制。
-
-
-
-### 01760: Disk Tree
+01760: Disk Tree
 
 http://cs101.openjudge.cn/practice/01760
 
-Hacker Bill has accidentally lost all the information from his workstation's hard drive and he has no backup copies of its contents. He does not regret for the loss of the files themselves, but for the very nice and convenient directory structure that he had created and cherished during years of work. Fortunately, Bill has several copies of directory listings from his hard drive. Using those listings he was able to recover full paths (like "WINNT\SYSTEM32\CERTSRV\CERTCO~1\X86") for some directories. He put all of them in a file by writing each path he has found on a separate line. Your task is to write a program that will help Bill to restore his state of the art directory structure by providing nicely formatted directory tree.
-
-**输入**
-
-The first line of the input file contains single integer number N (1 <= N <= 500) that denotes a total number of distinct directory paths. Then N lines with directory paths follow. Each directory path occupies a single line and does not contain any spaces, including leading or trailing ones. No path exceeds 80 characters. Each path is listed once and consists of a number of directory names separated by a back slash ("\"). 
-
-Each directory name consists of 1 to 8 uppercase letters, numbers, or the special characters from the following list: exclamation mark, number sign, dollar sign, percent sign, ampersand, apostrophe, opening and closing parenthesis, hyphen sign, commercial at, circumflex accent, underscore, grave accent, opening and closing curly bracket, and tilde ("!#$%&'()-@^_`{}~").
-
-**输出**
-
-Write to the output file the formatted directory tree. Each directory name shall be listed on its own line preceded by a number of spaces that indicate its depth in the directory hierarchy. The subdirectories shall be listed in lexicographic order immediately after their parent directories preceded by one more space than their parent directory. Top level directories shall have no spaces printed before their names and shall be listed in lexicographic order. See sample below for clarification of the output format.
-
-样例输入
-
-```
-7
-WINNT\SYSTEM32\CONFIG
-GAMES
-WINNT\DRIVERS
-HOME
-WIN\SOFT
-GAMES\DRIVERS
-WINNT\SYSTEM32\CERTSRV\CERTCO~1\X86
-```
-
-样例输出
-
-```
-GAMES
- DRIVERS
-HOME
-WIN
- SOFT
-WINNT
- DRIVERS
- SYSTEM32
-  CERTSRV
-   CERTCO~1
-    X86
-  CONFIG
-```
-
-来源
-
-Northeastern Europe 2000
 
 
-
-```python
-# 23n2300011031
-class Node:
-    def __init__(self):
-        self.children={}
-class Trie:
-    def __init__(self):
-        self.root=Node()
-    def insert(self,w):
-        cur=self.root
-        for u in w.split('\\'):
-            if u not in cur.children:
-               cur.children[u]=Node()
-            cur=cur.children[u]
-    def dfs(self,a,layer):
-        for c in sorted(a.children):
-            print(' '*layer+c)
-            self.dfs(a.children[c], layer+1)
-s=Trie()
-for _ in range(int(input())):
-    x=input()
-    s.insert(x)
-s.dfs(s.root, 0)
-```
-
-
-
-```python
-# 23n2300011072(X)
-class Node:
-    def __init__(self,name):
-        self.name=name
-        self.children={}
-    def insert(self,path):
-        if len(path)==0:
-            return
-        head,*tail=path
-        if head not in self.children:
-            self.children[head]=Node(head)
-        self.children[head].insert(tail)
-    def print_tree(self,depth=0):
-        for name in sorted(self.children.keys()):
-            print(' '*depth+name)
-            self.children[name].print_tree(depth+1)
-def build_tree(paths):
-    root=Node('')
-    for path in paths:
-        path=path.split('\\')
-        root.insert(path)
-    return root
-paths=[input() for _ in range(int(input()))]
-tree=build_tree(paths)
-tree.print_tree()
-```
-
-
-
-```python
-#23n2300017735(夏天明BrightSummer)
-def printDir(d, h):
-    if not d:
-        return
-    else:
-        for sub in sorted(d.keys()):
-            print(' '*h + sub)
-            printDir(d[sub], h+1)
-
-n = int(input())
-computer = {}
-for o in range(n):
-    path = input().split('\\')
-    curr = computer
-    for p in path:
-        if p not in curr:
-            curr[p] = {}
-        curr = curr[p]
-printDir(computer, 0)
-```
-
-
-
-### 04079: 二叉搜索树
+04079: 二叉搜索树
 
 http://cs101.openjudge.cn/practice/04079/
 
- 二叉搜索树在动态查表中有特别的用处，一个无序序列可以通过构造一棵二叉搜索树变成一个有序序列，构造树的过程即为对无序序列进行排序的过程。每次插入的新的结点都是二叉搜索树上新的叶子结点，在进行插入操作时，不必移动其它结点，只需改动某个结点的指针，由空变为非空即可。
+ 
 
-  这里，我们想探究二叉树的建立和序列输出。
-
-**输入**
-
-只有一行，包含若干个数字，中间用空格隔开。（数字可能会有重复）
-
-**输出**
-
-输出一行，对输入数字建立二叉搜索树后进行前序周游的结果。
-
-样例输入
-
-```
-41 467 334 500 169 724 478 358 962 464 705 145 281 827 961 491 995 942 827 436 
-```
-
-样例输出
-
-```
-41 467 334 169 145 281 358 464 436 500 478 491 724 705 962 827 961 942 995 
-```
-
-
-
-要解决这个问题，首先需要了解二叉搜索树（Binary Search Tree，BST）的基本属性和操作。二叉搜索树是一种特殊的二叉树，满足以下性质：
-
-- 每个节点的键值大于其左子树上任意节点的键值。
-- 每个节点的键值小于其右子树上任意节点的键值。
-- 左右子树也分别为二叉搜索树。
-
-
-
-在BST上进行前序遍历（Preorder Traversal）可以按照以下步骤进行：
-
-1. 访问根节点。
-2. 递归地对左子树进行前序遍历。
-3. 递归地对右子树进行前序遍历。
-
-如果使用迭代而不是递归，您可以使用栈（Stack）数据结构来实现前序遍历。
-
-
-
-```python
-class TreeNode:
-    def __init__(self, val=0, left=None, right=None):
-        self.val = val
-        self.left = left
-        self.right = right
-
-def insert_into_bst(root, val):
-    if root is None:
-        return TreeNode(val)
-    if val < root.val:
-        root.left = insert_into_bst(root.left, val)
-    elif val > root.val:
-        root.right = insert_into_bst(root.right, val)
-    return root
-
-def preorder_traversal(root):
-    return [root.val] + preorder_traversal(root.left) + preorder_traversal(root.right) if root else []
-
-def preorderTraversal(root):
-    if root is None:
-        return []
-
-    stack = []
-    result = []
-    stack.append(root)
-
-    while stack:
-        node = stack.pop()
-        result.append(node.val)
-
-        # 先将右子节点入栈，再将左子节点入栈
-        if node.right:
-            stack.append(node.right)
-        if node.left:
-            stack.append(node.left)
-
-    return result
-
-# 读取输入并转换成整数列表
-numbers = list(map(int, input().split()))
-
-# 构造二叉搜索树
-bst_root = None
-for num in numbers:
-    bst_root = insert_into_bst(bst_root, num)
-
-# 前序遍历二叉搜索树并输出
-#print(' '.join(map(str, preorder_traversal(bst_root))))
-print(' '.join(map(str, preorderTraversal(bst_root))))
-```
-
-
-
-```c++
-#include <iostream>
-
-using namespace std;
-
-struct Node {
-	int num;
-	Node *left, *right;
-	
-	Node(int n) : num(n), left(NULL), right(NULL) {}
-};
-
-void insert(Node *&root, int num) {
-	if (root == NULL) {
-		root = new Node(num);
-		return;
-	}
-	
-	if (num == root->num) {
-		return;
-	}
-	
-	if (num < root->num) {
-		insert(root->left, num);
-	} else {
-		insert(root->right, num);
-	}
-}
-
-void preorder(Node *root) {
-	if (!root)
-		return;
-	cout << root->num << " ";
-	preorder(root->left);
-	preorder(root->right);
-}
-
-void deleteTree(Node *root) {
-	if (!root)
-		return;
-	deleteTree(root->left);
-	deleteTree(root->right);
-	delete root;
-}
-
-int main() {
-	Node *root = NULL;
-	int num;
-	while (cin >> num) {
-		insert(root, num);
-	}
-	
-	preorder(root);
-	cout << endl;
-	
-	deleteTree(root);
-	return 0;
-}
-```
-
-
-
-### 04089: 电话号码
+04089: 电话号码
 
 http://cs101.openjudge.cn/practice/04089/
 
-请参看 Optional Problems 部分的 04089。
 
 
-
-### 05430: 表达式·表达式树·表达式求值
+05430: 表达式·表达式树·表达式求值
 
 http://cs101.openjudge.cn/practice/05430/
-
-众所周知，任何一个表达式，都可以用一棵表达式树来表示。例如，表达式a+b*c，可以表示为如下的表达式树：
-
-  +
- / \
-a  *
-  / \
-  b c
-
-现在，给你一个中缀表达式，这个中缀表达式用变量来表示（不含数字），请你将这个中缀表达式用表达式二叉树的形式输出出来。
-
-**输入**
-
-输入分为三个部分。
-第一部分为一行，即中缀表达式(长度不大于50)。中缀表达式可能含有小写字母代表变量（a-z），也可能含有运算符（+、-、*、/、小括号），不含有数字，也不含有空格。
-第二部分为一个整数n(n < 10)，表示中缀表达式的变量数。
-第三部分有n行，每行格式为C　x，C为变量的字符，x为该变量的值。
-
-**输出**
-
-输出分为三个部分，第一个部分为该表达式的逆波兰式，即该表达式树的后根遍历结果。占一行。
-第二部分为表达式树的显示，如样例输出所示。如果该二叉树是一棵满二叉树，则最底部的叶子结点，分别占据横坐标的第1、3、5、7……个位置（最左边的坐标是1），然后它们的父结点的横坐标，在两个子结点的中间。如果不是满二叉树，则没有结点的地方，用空格填充（但请略去所有的行末空格）。每一行父结点与子结点中隔开一行，用斜杠（/）与反斜杠（\）来表示树的关系。/出现的横坐标位置为父结点的横坐标偏左一格，\出现的横坐标位置为父结点的横坐标偏右一格。也就是说，如果树高为m，则输出就有2m-1行。
-第三部分为一个整数，表示将值代入变量之后，该中缀表达式的值。需要注意的一点是，除法代表整除运算，即舍弃小数点后的部分。同时，测试数据保证不会出现除以0的现象。
-
-样例输入
-
-```
-a+b*c
-3
-a 2
-b 7
-c 5
-```
-
-样例输出
-
-```
-abc*+
-   +
-  / \
- a   *
-    / \
-    b c
-37
-```
-
-
-
-
-
-```python
-'''
-表达式树是一种特殊的二叉树。对于你的问题，需要先将中缀表达式转换为后缀表达式
-（逆波兰式），然后根据后缀表达式建立表达式树，最后进行计算。
-
-首先使用stack进行中缀到后缀的转换，然后根据后缀表达式建立表达式二叉树，
-再通过递归和映射获取表达式的值。
-最后，打印出整棵树（取自 23n2300017735，夏天明BrightSummer）
-
-中缀表达式转后缀表达式 https://zq99299.github.io/dsalg-tutorial/dsalg-java-hsp/05/05.html
-'''
-#from collections import deque as q
-import operator as op
-#import os
-
-
-class Node:
-    def __init__(self, x):
-        self.value = x
-        self.left = None
-        self.right = None
-
-
-def priority(x):
-    if x == '*' or x == '/':
-        return 2
-    if x == '+' or x == '-':
-        return 1
-    return 0
-
-
-def infix_trans(infix):
-    postfix = []
-    op_stack = []
-    for char in infix:
-        if char.isalpha():
-            postfix.append(char)
-        else:
-            if char == '(':
-                op_stack.append(char)
-            elif char == ')':
-                while op_stack and op_stack[-1] != '(':
-                    postfix.append(op_stack.pop())
-                op_stack.pop()
-            else:
-                while op_stack and priority(op_stack[-1]) >= priority(char) and op_stack[-1] != '(':
-                    postfix.append(op_stack.pop())
-                op_stack.append(char)
-    while op_stack:
-        postfix.append(op_stack.pop())
-    return postfix
-
-
-def build_tree(postfix):
-    stack = []
-    for item in postfix:
-        if item in '+-*/':
-            node = Node(item)
-            node.right = stack.pop()
-            node.left = stack.pop()
-        else:
-            node = Node(item)
-        stack.append(node)
-    return stack[0]
-
-
-def get_val(expr_tree, var_vals):
-    if expr_tree.value in '+-*/':
-        operator = {'+': op.add, '-': op.sub, '*': op.mul, '/': op.floordiv}
-        return operator[expr_tree.value](get_val(expr_tree.left, var_vals), get_val(expr_tree.right, var_vals))
-    else:
-        return var_vals[expr_tree.value]
-
-# 计算表达式树的深度。它通过递归地计算左右子树的深度，并取两者中的最大值再加1，得到整个表达式树的深度。
-
-
-def getDepth(tree_root):
-    #return max([self.child[i].getDepth() if self.child[i] else 0 for i in range(2)]) + 1
-    left_depth = getDepth(tree_root.left) if tree_root.left else 0
-    right_depth = getDepth(tree_root.right) if tree_root.right else 0
-    return max(left_depth, right_depth) + 1
-
-    '''
-    首先，根据表达式树的值和深度信息构建第一行，然后构建第二行，该行包含斜线和反斜线，
-    用于表示子树的链接关系。接下来，如果当前深度为0，表示已经遍历到叶子节点，直接返回该节点的值。
-    否则，递减深度并分别获取左子树和右子树的打印结果。最后，将左子树和右子树的每一行拼接在一起，
-    形成完整的树形打印图。
-    
-打印表达式树的函数。表达式树是一种抽象数据结构，它通过树的形式来表示数学表达式。在这段程序中，
-函数printExpressionTree接受两个参数：tree_root表示树的根节点，d表示树的总深度。
-首先，函数会创建一个列表graph，列表中的每个元素代表树的一行。第一行包含根节点的值，
-并使用空格填充左右两边以保持树的形状。第二行显示左右子树的链接情况，使用斜杠/表示有左子树，
-反斜杠\表示有右子树，空格表示没有子树。
-
-接下来，函数会判断深度d是否为0，若为0则表示已经达到树的最底层，直接返回根节点的值。否则，
-将深度减1，然后递归调用printExpressionTree函数打印左子树和右子树，
-并将结果分别存储在left和right中。
-
-最后，函数通过循环遍历2倍深度加1次，将左子树和右子树的每一行连接起来，存储在graph中。
-最后返回graph，即可得到打印好的表达式树。
-    '''
-
-
-def printExpressionTree(tree_root, d):  # d means total depth
-
-    graph = [" "*(2**d-1) + tree_root.value + " "*(2**d-1)]
-    graph.append(" "*(2**d-2) + ("/" if tree_root.left else " ")
-                 + " " + ("\\" if tree_root.right else " ") + " "*(2**d-2))
-
-    if d == 0:
-        return tree_root.value
-    d -= 1
-    '''
-    应该是因为深度每增加一层，打印宽度就增加一倍，打印行数增加两行
-    '''
-    #left = printExpressionTree(tree_root.left, d) if tree_root.left else [
-    #    " "*(2**(d+1)-1)]*(2*d+1)
-    if tree_root.left:
-        left = printExpressionTree(tree_root.left, d)
-    else:
-        #print("left_d",d)
-        left = [" "*(2**(d+1)-1)]*(2*d+1)
-        #print("left_left",left)
-
-    right = printExpressionTree(tree_root.right, d) if tree_root.right else [
-        " "*(2**(d+1)-1)]*(2*d+1)
-
-    for i in range(2*d+1):
-        graph.append(left[i] + " " + right[i])
-        #print('graph=',graph)
-    return graph
-
-
-
-infix = input().strip()
-n = int(input())
-vars_vals = {}
-for i in range(n):
-    line = input().split()
-    vars_vals[line[0]] = int(line[1])
-    
-'''
-infix = "a+(b-c*d*e)"
-#infix = "a+b*c"
-n = 5
-vars_vals = {'a': 2, 'b': 7, 'c': 5, 'd':1, 'e':1}
-'''
-
-postfix = infix_trans(infix)
-tree_root = build_tree(postfix)
-print(''.join(str(x) for x in postfix))
-expression_value = get_val(tree_root, vars_vals)
-
-
-for line in printExpressionTree(tree_root, getDepth(tree_root)-1):
-    print(line.rstrip())
-
-
-print(expression_value)
-```
 
 
 
