@@ -329,6 +329,8 @@ if __name__ == "__main__":
 
 http://cs101.openjudge.cn/dsapre/01760/
 
+
+
 题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
 的 “数算pre每日选做” 中 “H5: 树及算法-下”
@@ -1043,38 +1045,9 @@ http://cs101.openjudge.cn/dsapre/02774/
 
 
 
-```python
-n, k = map(int, input().split())
-expenditure = []
-for _ in range(n):
-    expenditure.append(int(input()))
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-
-def check(x):
-    num = 0
-    for i in range(n):
-        num += expenditure[i] // x
-
-    return num >= k
-
-lo = 1
-hi = max(expenditure) + 1
-
-if sum(expenditure) < k:
-    print(0)
-    exit()
-
-ans = 1
-while lo < hi:
-    mid = (lo + hi) // 2
-    if check(mid):
-        ans = mid
-        lo = mid + 1
-    else:
-        hi = mid
-
-print(ans)
-```
+的 “数算pre每日选做” 中 “2023期末上机考试（数算B）7题”
 
 
 
@@ -1296,89 +1269,157 @@ http://cs101.openjudge.cn/dsapre/05344/
 
 # 41-50
 
+## 05345: 位查询
+
+http://cs101.openjudge.cn/dsapre/05345/
+
+
+
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+
+的 “数算pre每日选做” 中 “H2: 线性表”
+
+
+
+## 05430: 表达式·表达式树·表达式求值
+
+http://cs101.openjudge.cn/dsapre/05430/
+
+
+
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+
+的 “数算pre每日选做” 中 “H5: 树及算法-下”
+
+
+
+## 05442: 兔子与星空
+
+http://cs101.openjudge.cn/dsapre/05442/
+
+
+
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+
+的 “数算pre每日选做” 中 “H7: 图应用”
+
+
+
+## 05443: 兔子与樱花
+
+http://cs101.openjudge.cn/dsapre/05443/
+
+
+
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+
+的 “数算pre每日选做” 中 “H7: 图应用”
+
+
+
+## 05467: 多项式加法
+
+http://cs101.openjudge.cn/dsapre/05467/
+
+
+
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+
+的 “数算pre每日选做” 中 “H2: 线性表”
+
+
+
+
+
+## 05907: 二叉树的操作
+
+http://cs101.openjudge.cn/dsapre/05907/
+
+
+
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+
+的 “数算pre每日选做” 中 “2023期末上机考试（数算B）7题”
+
+
+
+## 06250: 字符串最大跨距
+
+http://cs101.openjudge.cn/dsapre/06250/
+
 
 
 ```python
+# 23n2300017735(夏天明BrightSummer)
+def find(s, pat):
+    nex = [0]
+    for i, p in enumerate(pat[1:], 1):
+        tmp = nex[i-1]
+        while True:
+            if p == pat[tmp]:
+                nex.append(tmp+1)
+                break
+            elif tmp:
+                tmp = nex[tmp-1]
+            else:
+                nex.append(0)
+                break
+    j = 0
+    for i, char in enumerate(s):
+        while True:
+            if char == pat[j]:
+                j += 1
+                if j == len(pat):
+                    return i
+                break
+            elif j:
+                j -= nex[j]
+            else:
+                break
 
+s, p1, p2 = input().split(',')
+try:
+    assert((ans := len(s)-find(s, p1)-find(s[::-1], p2[::-1])-2) >= 0)
+    print(ans)
+except (TypeError, AssertionError):
+    print(-1)
 ```
 
 
 
+## 06364: 牛的选举
 
-
-```python
-
-```
-
+http://cs101.openjudge.cn/dsapre/06364/
 
 
 
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-```python
-
-```
-
+的 “数算pre每日选做” 中 “2023期末上机考试（数算B）7题”
 
 
 
+## 06646: 二叉树的深度
 
-```python
-
-```
-
+http://cs101.openjudge.cn/dsapre/06646/
 
 
 
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-```python
-
-```
-
+的 “数算pre每日选做” 中 “H5: 树及算法-下”
 
 
 
+## 06648: Sequence
 
-```python
-
-```
-
+http://cs101.openjudge.cn/dsapre/06648/
 
 
 
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
+的 “数算pre每日选做” 中 “H5: 树及算法-下”
 
 
 
@@ -1386,10 +1427,48 @@ http://cs101.openjudge.cn/dsapre/05344/
 
 # 51-60
 
+## 07161: 森林的带度数层次序列存储
+
+http://cs101.openjudge.cn/dsapre/07161/
+
 
 
 ```python
+# 23n2300011075(才疏学浅)
+from collections import deque
+class Node:
+    def __init__(self):
+        self.value=None
+        self.degree=0
+        self.childs=[]
 
+def build():
+    node=Node()
+    node.value=l.pop(0)
+    node.degree=int(l.pop(0))
+    return node
+
+def Tree():
+    root=build()
+    q=deque([root])
+    while q:
+        node=q.popleft()
+        for i in range(node.degree):
+            child=build()
+            node.childs.append(child)
+            q.append(child)
+    return root
+
+def lastorder(tree):
+    for child in tree.childs:
+        lastorder(child)
+    print(tree.value,end=" ")
+
+n=int(input())
+for _ in range(n):
+    l=list(input().split())
+    tree=Tree()
+    lastorder(tree)
 ```
 
 
