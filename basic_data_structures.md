@@ -2,7 +2,7 @@
 
 
 
-Updated 2006 GMT+8 March 6, 2024
+Updated 1909 GMT+8 March 7, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2494,9 +2494,9 @@ A： XYZ 	B： YZX 	**C： ZXY** 	D： ZYX
 
 
 
-**Q:** 设栈 S 和队列 Q 的初始状态为空，元素 a， b， c， d， e 依次通过栈 S，一个元素出栈后即进队列 Q，若 5 个元素出队的序列是 c， e， d， b， a 则栈 S 的容量至少应该是? (B)
+**Q:** 设栈 S 和队列 Q 的初始状态为空，元素 a， b， c， d， e 依次通过栈 S，一个元素出栈后即进队列 Q，若 5 个元素出队的序列是 c， e， d， b， a 则栈 S 的容量至少应该是? (C)
 
-A: 2	**B: 3**	C: 4	D:5
+A: 2	B: 3	**C: 4**	D:5
 
 
 
