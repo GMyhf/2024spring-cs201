@@ -1,8 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 2321 GMT+8 March 6, 2024
-
-
+Updated 2309 GMT+8 March 8, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -16,18 +14,36 @@ Updated 2321 GMT+8 March 6, 2024
 
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240305220241219.png" alt="image-20240305220241219" style="zoom: 50%;" />
 
+My github, https://github.com/GMyhf
+
+
+
+```mermaid
+graph TD
+    A[(GMyhf)]; 
+    B[(2020fall-cs101)]; C[(2024spring-cs201)]; 
+    E(2020fall_cs101.openjudge.cn_problems); F(2020fall_Codeforces_problems); G(2024_dsapre); 
+
+    A --- B; A --- C;
+    B --- E; B --- F; C --- G; 
+    
+```
+
+
+
 
 
 在看了一些树的例子之后，现在来正式地定义树及其构成。
+
 **节点 Node**：节点是树的基础部分。
 每个节点具有名称，或“键值”。节点还可以保存额外数据项，数据项根据不同的应用而变。
 
 **边 Edge**：边是组成树的另一个基础部分。
 每条边恰好连接两个节点，表示节点之间具有关联，边具有出入方向；
 每个节点（除根节点）恰有一条来自另一节点的入边；
-每个节点可以有零条/一条/多条连到其它节点的出边。如果加限制不能有 “多条边”，这里树结构就特殊化为线性表
+每个节点可以有零条/一条/多条连到其它节点的出边。<u>如果加限制不能有 “多条边”，这里树结构就特殊化为线性表</u>
 
-**根节 Roo**t: 树中唯一没有入边的节点。
+**根节 Root**: 树中唯一没有入边的节点。
 
 **路径 Path**：由边依次连接在一起的有序节点列表。比如，哺乳纲→食肉目→猫科→猫属→家猫就是一条路径。
 
@@ -45,15 +61,82 @@ Updated 2321 GMT+8 March 6, 2024
 从根节点开始到达一个节点的路径，所包含的边的数量，称为这个节点的层级。
 如图 D 的层级为 2，根节点的层级为 0。
 
+
+
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240204125813782.png" alt="image-20240204125813782" style="zoom:50%;" />
 
-## 1.1 高度 Height：
+图1 
 
-树中所有节点的最大层级称为树的高度，如上图树的高度为 2。
 
-### 27638:求二叉树的高度和叶子数目
+
+有时候，题目中会给出概念定义，如：
+
+**高度 Height**：树中所有节点的最大层级称为树的高度，如图1所示树的高度为 2。
+
+**二叉树深度**：从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的节点个数为树的深度
+
+
+
+**树 Tree**:
+
+定义基本术语后，就可以进一步给出树的正式定义。实际上，本书将提供两种定义，其中一种涉及节点和边，另一种涉及递归。<u>在后面会看到，递归定义很有用。</u>
+**定义一：树**由节点及连接节点的边构成。树有以下属性：
+❏ 有一个根节点；
+❏ 除根节点外，其他每个节点都与其唯一的父节点相连；
+❏ 从根节点到其他每个节点都有且仅有一条路径；
+❏ 如果每个节点最多有两个子节点，我们就称这样的树为二叉树。
+图2展示了一棵符合定义一的树。边的箭头表示连接方向。
+
+
+
+![image](https://raw.githubusercontent.com/GMyhf/img/main/img/treedef1.png)
+
+图2 由节点和边构成的树
+
+
+
+**定义二：**一棵树要么为空，要么由一个根节点和零棵或多棵子树构成，子树本身也是一棵树。每棵子树的根节点通过一条边连到父树的根节点。图3展示了树的递归定义。从树的递归定义可知，图中的树至少有4个节点，因为三角形代表的子树必定有一个根节点。这棵树或许有更多的节点，但必须更深入地查看子树后才能确定。
+
+
+
+![image](https://raw.githubusercontent.com/GMyhf/img/main/img/TreeDefRecursive.png)
+
+图3 树的递归定义
+
+
+
+
+
+### 27638: 求二叉树的高度和叶子数目
 
 http://cs101.openjudge.cn/practice/27638/
+
+给定一棵二叉树，求该二叉树的高度和叶子数目二叉树**高度**定义：从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的结点数减1为树的高度。只有一个结点的二叉树，高度是0。
+
+**输入**
+
+第一行是一个整数n，表示二叉树的结点个数。二叉树结点编号从0到n-1，根结点n <= 100 接下来有n行，依次对应二叉树的编号为0,1,2....n-1的节点。 每行有两个整数，分别表示该节点的左儿子和右儿子的编号。如果第一个（第二个）数为-1则表示没有左（右）儿子
+
+**输出**
+
+在一行中输出2个整数，分别表示二叉树的高度和叶子结点个数
+
+样例输入
+
+```
+3
+-1 -1
+0 2
+-1 -1
+```
+
+样例输出
+
+```
+1 2
+```
+
+
 
 ```python
 class TreeNode:
@@ -100,11 +183,40 @@ print(f"{height} {leaves}")
 
 
 
-### 06646:二叉树的深度
+### 06646: 二叉树的深度
 
 http://cs101.openjudge.cn/dsapre/06646/
 
-二叉树深度定义：从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的节点个数为树的深度
+给定一棵二叉树，求该二叉树的深度
+
+二叉树**深度**定义：从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的节点个数为树的深度
+
+**输入**
+
+第一行是一个整数n，表示二叉树的结点个数。二叉树结点编号从1到n，根结点为1，n <= 10
+接下来有n行，依次对应二叉树的n个节点。
+每行有两个整数，分别表示该节点的左儿子和右儿子的节点编号。如果第一个（第二个）数为-1则表示没有左（右）儿子
+
+**输出**
+
+输出一个整型数，表示树的深度
+
+样例输入
+
+```
+3
+2 3
+-1 -1
+-1 -1
+```
+
+样例输出
+
+```
+2
+```
+
+
 
 ```python
 class TreeNode:
@@ -133,32 +245,6 @@ root = nodes[0]
 depth = tree_depth(root)
 print(depth)
 ```
-
-
-
-
-
-定义基本术语后，就可以进一步给出树的正式定义。实际上，本书将提供两种定义，其中一种涉及节点和边，另一种涉及递归。你在后面会看到，递归定义很有用。
-定义一：树由节点及连接节点的边构成。树有以下属性：
-❏ 有一个根节点；
-❏ 除根节点外，其他每个节点都与其唯一的父节点相连；
-❏ 从根节点到其他每个节点都有且仅有一条路径；
-❏ 如果每个节点最多有两个子节点，我们就称这样的树为二叉树。
-图6-4展示了一棵符合定义一的树。边的箭头表示连接方向。
-
-
-
-![image](https://raw.githubusercontent.com/GMyhf/img/main/img/treedef1.png)
-
-图6-4 由节点和边构成的树
-
-定义二：一棵树要么为空，要么由一个根节点和零棵或多棵子树构成，子树本身也是一棵树。每棵子树的根节点通过一条边连到父树的根节点。图6-5展示了树的递归定义。从树的递归定义可知，图中的树至少有4个节点，因为三角形代表的子树必定有一个根节点。这棵树或许有更多的节点，但必须更深入地查看子树后才能确定。
-
-
-
-![image](https://raw.githubusercontent.com/GMyhf/img/main/img/TreeDefRecursive.png)
-
-图6-5 树的递归定义
 
 
 
@@ -223,7 +309,7 @@ http://dsbpython.openjudge.cn/dspythonbook/P0740/
 可以用括号嵌套的方式来表示一棵树。表示方法如下：
 
 1) 如果一棵树只有一个结点，则该树就用一个大写字母表示，代表其根结点。
-2) 如果一棵树有子树，则用“树根(子树1,子树2,...,子树n)”的形式表示。树根是一个大写字母,子树之间用逗号隔开，没有空格。子树都是用括号嵌套法表示的树。
+2) 如果一棵树有子树，则用“树根(子树1,子树2,...,子树n)”的形式表示。树根是一个大写字母，子树之间用逗号隔开，没有空格。子树都是用括号嵌套法表示的树。
 
 给出一棵不超过26个结点的树的括号嵌套表示形式，请输出其前序遍历序列和后序遍历序列。
 
@@ -238,6 +324,8 @@ http://dsbpython.openjudge.cn/dspythonbook/P0740/
 **输出**
 
 两行。第一行是树的前序遍历序列，第二行是树的后序遍历序列
+
+
 
 样例输入
 
@@ -256,72 +344,22 @@ EBFGCIHDA
 
 
 
-样例能过，但是Wrong Answer
 
-```python
-# Wrong Answer
-def parse_tree(s):
-    stack = []
-    node = None
-    for char in s:
-        if char.isalpha():  # 如果是字母，创建新节点
-            node = {'value': char, 'children': []}
-            if stack:  # 如果栈不为空，把节点作为子节点加入到栈顶节点的子节点列表中
-                stack[-1]['children'].append(node)
-        elif char == '(':  # 开始新节点的子节点列表
-            stack.append(node)
-        elif char == ')':  # 结束当前节点的子节点列表
-            if len(stack) > 1:
-                stack.pop()  # 弹出当前节点
-            else:
-                return stack.pop()  # 弹出根节点，结束解析
-    return None  # 如果输入不正确返回None
 
-def preorder(node):
-    output = [node['value']]
-    for child in node['children']:
-        output.extend(preorder(child))
-    return ''.join(output)
+题面提到了遍历，但是没有给出定义。定义如下：
 
-def postorder(node):
-    output = []
-    for child in node['children']:
-        output.extend(postorder(child))
-    output.append(node['value'])
-    return ''.join(output)
+**前序遍历**
+在前序遍历中，先访问根节点，然后递归地前序遍历左子树，最后递归地前序遍历右子树。
 
-# 主程序
-def main():
-    s = input().strip()
-    s = ''.join(s.split())  # 去掉所有空白字符
-    root = parse_tree(s)  # 解析整棵树
-    if root:
-        print(preorder(root))  # 输出前序遍历序列
-        print(postorder(root))  # 输出后序遍历序列
-    else:
-        print("input tree string error!")
+**中序遍历**
+在中序遍历中，先递归地中序遍历左子树，然后访问根节点，最后递归地中序遍历右子树。
 
-if __name__ == "__main__":
-    main()
-```
+**后序遍历**
+在后序遍历中，先递归地后序遍历右子树，然后递归地后序遍历左子树，最后访问根节点。
 
 
 
-看不到测试数据，猜测有不规范的输入，如：A(B(,D),E(F,G))
-
-如果得到了一个错误输出（WA，即Wrong Answer），很可能是因为解析树的逻辑在处理某些特定情况时出了问题。
-
-在`parse_tree`函数中，试图在遇到左括号`(`时将当前节点推入栈中，而在遇到右括号`)`时将其弹出。但是，代码中存在一个逻辑错误：当解析器遇到左括号`(`时，它应该期待一个新的节点开始，而不是立即将当前节点推入栈中。您应该在遇到一个字母后，随后如果是左括号，则应该推入栈中。
-
-此外，解析逻辑应该在遇到右括号时做检查，只有当栈中有多于一个节点时（即不是根节点），才能弹出，这是因为右括号表明一个节点的子节点列表已结束。
-
-
-
-下面两个AC的代码，是修改了`parse_tree`函数。
-
-
-
-## 2.2 用类表示node
+下面两个代码。先给出用类表示node
 
 ```python
 class TreeNode:
@@ -432,49 +470,57 @@ if __name__ == "__main__":
 
 ## 3.1 解析树
 
-现在来看看如何用树解决一些实际问题。本节介绍解析树，可以用它来表示现实世界中像句子（如图6-9所示）或数学表达式这样的构造。
+现在来看看如何用树解决一些实际问题。本节介绍解析树，可以用它来表示现实世界中像句子（如图4所示）或数学表达式这样的构造。
 
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202401311914368.png" alt="image-20240131191318107" style="zoom: 25%;" />
 
-图6-9 一个简单句子的解析树
+图4 一个简单句子的解析树
 
 
 
-图6-9展示了一个简单句子的层次结构。用树状结构表示句子让我们可以使用子树处理句子的独立部分。
+图4展示了一个简单句子的层次结构。用树状结构表示句子让我们可以使用子树处理句子的独立部分。
 
-我们也可以将((7 + 3) ∗ (5-2))这样的数学表达式表示成解析树，如图6-10所示。这是完全括号表达式，乘法的优先级高于加法和减法，但因为有括号，所以在做乘法前必须先做括号内的加法和减法。树的层次性有助于理解整个表达式的计算次序。在计算顶层的乘法前，必须先计算子树中的加法和减法。加法（左子树）的结果是10，减法（右子树）的结果是3。利用树的层次结构，在计算完子树的表达式后，只需用一个节点代替整棵子树即可。应用这个替换过程后，便得到如图6-11所示的简化树。
+我们也可以将` ( ( 7 + 3) * ( 5 - 2 ) )` 这样的数学表达式表示成解析树，如图5所示。这是完全括号表达式，乘法的优先级高于加法和减法，但因为有括号，所以在做乘法前必须先做括号内的加法和减法。树的层次性有助于理解整个表达式的计算次序。在计算顶层的乘法前，必须先计算子树中的加法和减法。加法（左子树）的结果是`10`，减法（右子树）的结果是`3`。利用树的层次结构，在计算完子树的表达式后，只需用一个节点代替整棵子树即可。应用这个替换过程后，便得到如图5所示的简化树。
 
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202401311918463.png" alt="image-20240131191832905" style="zoom:25%;" />
 
-图6-10 ((7 + 3) ∗ (5-2))的解析树
+图5 `( ( 7 + 3) * ( 5 - 2 ) )`的解析树
 
 
 
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202401311919250.png" alt="image-20240131191907102" style="zoom: 50%;" />
 
-图6-11 ((7 + 3) ∗ (5-2))的简化解析树
+图6 `( ( 7 + 3 ) * ( 5 - 2 ) )`的简化解析树
 
 本节的剩余部分将仔细考察解析树，重点如下：
 	❏ 如何根据完全括号表达式构建解析树；
 	❏ 如何计算解析树中的表达式；
 	❏ 如何将解析树还原成最初的数学表达式。
 
+> 将表达式表示为解析树是一种常见的操作，这个过程也称为表达式解析或者表达式解析树的构建。虽然没有一个特定的算法被称为“解析树算法”，但是构建解析树的过程通常涉及到递归下降解析、逆波兰表达式、算符优先法等技术。
+>
+> 1. **递归下降解析**：这是一种常见的自顶向下的解析方法，通过递归地从顶层开始处理表达式的各个部分，构建解析树。
+> 2. **逆波兰表达式**：逆波兰表达式是一种将运算符置于操作数之后的表示方法，通过对逆波兰表达式的解析，可以直接构建解析树。
+> 3. **算符优先法**：算符优先法是一种通过比较运算符优先级来构建表达式解析树的方法，它使用了一个运算符优先级表来决定操作的顺序。
+>
+> 这些方法在不同的场景下有不同的应用，但都可以用来构建表达式的解析树。
+
 构建解析树的第一步是将表达式字符串拆分成标记列表。需要考虑4种标记：左括号、右括号、运算符和操作数。我们知道，左括号代表新表达式的起点，所以应该创建一棵对应该表达式的新树。反之，遇到右括号则意味着到达该表达式的终点。我们也知道，操作数既是叶子节点，也是其运算符的子节点。此外，每个运算符都有左右子节点。
 
 有了上述信息，便可以定义以下4条规则：
 
 (1) 如果当前标记是(，就为当前节点添加一个左子节点，并下沉至该子节点；
-(2) 如果当前标记在列表['+', '-', '/', '＊']中，就将当前节点的值设为当前标记对应的运算符；为当前节点添加一个右子节点，并下沉至该子节点；
+(2) 如果当前标记在列表`['+', '-', '/', '＊']`中，就将当前节点的值设为当前标记对应的运算符；为当前节点添加一个右子节点，并下沉至该子节点；
 (3) 如果当前标记是数字，就将当前节点的值设为这个数并返回至父节点；
 (4) 如果当前标记是)，就跳到当前节点的父节点。
 
-编写Python代码前，我们先通过一个例子来理解上述规则。将表达式(3 + (4 ∗ 5))拆分成标记列表['(', '3', '+', '(', '4', '＊', '5', ')', ')']。起初，解析树只有一个空的根节点，随着对每个标记的处理，解析树的结构和内容逐渐充实，如图6-12所示。
+编写Python代码前，我们先通过一个例子来理解上述规则。将表达式`(3 + (4 ∗ 5))`拆分成标记列表`['(', '3', '+', '(', '4', '＊', '5', ')', ')']`。起初，解析树只有一个空的根节点，随着对每个标记的处理，解析树的结构和内容逐渐充实，如图6所示。
 
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202401311922845.png" alt="image-20240131192244859" style="zoom: 50%;" />
 
-图6-12 一步步地构建解析树
+图7 一步步地构建解析树
 
-以图6-12为例，我们来一步步地构建解析树。
+以图7为例，我们来一步步地构建解析树。
 
 (a) 创建一棵空树。
 (b) 读入第一个标记(。根据规则1，为根节点添加一个左子节点。
@@ -487,10 +533,11 @@ if __name__ == "__main__":
 (i) 读入下一个标记)。根据规则4，将＊的父节点作为当前节点。
 (j) 读入下一个标记)。根据规则4，将+的父节点作为当前节点。因为+没有父节点，所以工作完成。
 
-本例表明，在构建解析树的过程中，需要追踪当前节点及其父节点。可以通过getLeftChild与getRightChild获取子节点，但如何追踪父节点呢？一个简单的办法就是在遍历这棵树时使用栈记录父节点。每当要下沉至当前节点的子节点时，先将当前节点压到栈中。当要返回到当前节点的父节点时，就将父节点从栈中弹出来。
+本例表明，在构建解析树的过程中，需要追踪当前节点及其父节点。可以通过`getLeftChild`与`getRightChild`获取子节点，但如何追踪父节点呢？一个简单的办法就是在遍历这棵树时使用栈记录父节点。每当要下沉至当前节点的子节点时，先将当前节点压到栈中。当要返回到当前节点的父节点时，就将父节点从栈中弹出来。
 
-利用前面描述的规则以及Stack和BinaryTree，就可以编写创建解析树的Python函数。代码清单6-9给出了解析树构建器的代码。
-代码清单6-9 解析树构建器
+利用前面描述的规则以及`Stack`和`BinaryTree`，就可以编写创建解析树的Python函数。
+
+### 实现：解析树构建器
 
 
 
@@ -527,7 +574,7 @@ class BinaryTree:
     def insertLeft(self, newNode):
         if self.leftChild == None:
             self.leftChild = BinaryTree(newNode)
-        else:
+        else:  # 已经存在左子节点。此时，插入一个节点，并将已有的左子节点降一层。
             t = BinaryTree(newNode)
             t.leftChild = self.leftChild
             self.leftChild = t
@@ -554,15 +601,15 @@ class BinaryTree:
 
     def traversal(self, method="preorder"):
         if method == "preorder":
-            print(self.key)
+            print(self.key, end=" ")
         if self.leftChild != None:
             self.leftChild.traversal(method)
         if method == "inorder":
-            print(self.key)
+            print(self.key, end=" ")
         if self.rightChild != None:
             self.rightChild.traversal(method)
         if method == "postorder":
-            print(self.key)
+            print(self.key, end=" ")
 
 
 def buildParseTree(fpexp):
@@ -593,25 +640,19 @@ def buildParseTree(fpexp):
     return eTree
 
 
-```
+exp = "( ( 7 + 3 ) * ( 5 - 2 ) )"
+pt = buildParseTree(exp)
+for mode in ["preorder", "postorder", "inorder"]:
+    pt.traversal(mode)
+    print()
 
+"""
+* + 7 3 - 5 2 
+7 3 + 5 2 - * 
+7 + 3 * 5 - 2 
+"""
 
-
-在代码清单6-9中，第79、83、87和92行的if语句体现了构建解析树的4条规则，其中每条语句都通过调用BinaryTree和Stack的方法实现了前面描述的规则。这个函数中唯一的错误检查在else从句中，如果遇到一个不能识别的标记，就抛出一个ValueError异常。
-
-有了一棵解析树之后，我们能对它做些什么呢？作为第一个例子，我们可以写一个函数计算解析树，并返回计算结果。要写这个函数，我们将利用树的层次性。针对图6-10中的解析树，可以用图6-11中的简化解析树替换。由此可见，可以写一个算法，通过递归计算每棵子树得到整棵解析树的结果。
-
-和之前编写递归函数一样，设计递归计算函数要从确定基本情况开始。就针对树进行操作的递归算法而言，一个很自然的基本情况就是检查叶子节点。解析树的叶子节点必定是操作数。由于像整数和浮点数这样的数值对象不需要进一步翻译，因此evaluate函数可以直接返回叶子节点的值。为了向基本情况靠近，算法将执行递归步骤，即对当前节点的左右子节点调用evaluate函数。递归调用可以有效地沿着各条边往叶子节点靠近。
-
-若要结合两个递归调用的结果，只需将父节点中存储的运算符应用于子节点的计算结果即可。从图6-11中可知，根节点的两个子节点的计算结果就是它们自身，即10和3。应用乘号，得到最后的结果30。
-
-递归函数evaluate的实现如代码清单6-10所示。首先，获取指向当前节点的左右子节点的引用。如果左右子节点的值都是None，就说明当前节点确实是叶子节点。第7行执行这项检查。如果当前节点不是叶子节点，则查看当前节点中存储的运算符，并将其应用于左右子节点的递归计算结果。
-
-代码清单6-10 计算二叉解析树的递归函数
-
-
-
-```python
+# 代码清单6-10
 import operator
 
 def evaluate(parseTree):
@@ -625,19 +666,97 @@ def evaluate(parseTree):
         return fn(evaluate(leftC),evaluate(rightC))
     else:
         return parseTree.getRootVal()
+
+print(evaluate(pt))
+# 30
+
+#代码清单6-14 后序求值
+def postordereval(tree):
+    opers = {'+':operator.add, '-':operator.sub,
+             '*':operator.mul, '/':operator.truediv}
+    res1 = None
+    res2 = None
+    if tree:
+        res1 = postordereval(tree.getLeftChild())
+        res2 = postordereval(tree.getRightChild())
+        if res1 and res2:
+            return opers[tree.getRootVal()](res1,res2)
+        else:
+            return tree.getRootVal()
+
+print(postordereval(pt))
+# 30
+
+#代码清单6-16 中序还原完全括号表达式
+def printexp(tree):
+    sVal = ""
+    if tree:
+        sVal = '(' + printexp(tree.getLeftChild())
+        sVal = sVal + str(tree.getRootVal())
+        sVal = sVal + printexp(tree.getRightChild()) + ')'
+    return sVal
+
+print(printexp(pt))
+# (((7)+3)*((5)-2))
 ```
 
 
 
-我们使用具有键+、-、＊和/的字典实现。字典中存储的值是operator模块的函数。该模块给我们提供了常用运算符的函数版本。在字典中查询运算符时，对应的函数对象被取出。既然取出的对象是函数，就可以用普通的方式function(param1, param2)调用。因此，opers\['+'](2, 2)等价于operator.add(2, 2)。
+在代码清单中，第79、83、87和92行的`if`语句体现了构建解析树的4条规则，其中每条语句都通过调用`BinaryTree`和`Stack`的方法实现了前面描述的规则。这个函数中唯一的错误检查在`else`从句中，如果遇到一个不能识别的标记，就抛出一个`ValueError`异常。
+
+有了一棵解析树之后，我们能对它做些什么呢？作为第一个例子，我们可以写一个函数计算解析树，并返回计算结果。要写这个函数，我们将利用树的层次性。<u>针对图5中的解析树，可以用图6中的简化解析树替换。由此可见，可以写一个算法，通过递归计算每棵子树得到整棵解析树的结果。</u>
+
+> 因为两个图距离目前文字太远，复制粘贴
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202401311918463.png" alt="image-20240131191832905" style="zoom:25%;" />
+
+图5 `( ( 7 + 3 ) * ( 5 - 2 ) )`的解析树
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202401311919250.png" alt="image-20240131191907102" style="zoom: 50%;" />
+
+图6 `( ( 7 + 3 ) * ( 5 - 2 ) )`的简化解析树
+
+和之前编写递归函数一样，设计递归计算函数要从确定基本情况开始。就针对树进行操作的递归算法而言，一个很自然的基本情况就是检查叶子节点。解析树的叶子节点必定是操作数。由于像整数和浮点数这样的数值对象不需要进一步翻译，因此evaluate函数可以直接返回叶子节点的值。为了向**基本情况**靠近，算法将执行递归步骤，即对当前节点的左右子节点调用evaluate函数。递归调用可以有效地沿着各条边往叶子节点靠近。
+
+若要结合两个递归调用的结果，只需将父节点中存储的运算符应用于子节点的计算结果即可。从图6中可知，根节点的两个子节点的计算结果就是它们自身，即`10`和`3`。应用乘号，得到最后的结果30。
+
+递归函数evaluate的实现如代码清单所示。首先，获取指向当前节点的左右子节点的引用。如果左右子节点的值都是None，就说明当前节点确实是叶子节点。第7行执行这项检查。如果当前节点不是叶子节点，则查看当前节点中存储的运算符，并将其应用于左右子节点的递归计算结果。
+
+
+
+### 实现：计算二叉解析树的递归函数
+
+代码清单6-10。
+
+```python
+import operator
+
+def evaluate(parseTree):
+    opers = {'+':operator.add, '-':operator.sub, '*':operator.mul, '/':operator.truediv}
+
+    leftC = parseTree.getLeftChild()
+    rightC = parseTree.getRightChild()
+
+    if leftC and rightC:
+        fn = opers[parseTree.getRootVal()]
+        return fn(evaluate(leftC),evaluate(rightC)) #先计算左子树，再计算右子树，最后通过根节点运算符的函数调用将两个结果结合起来。
+    else:
+        return parseTree.getRootVal()
+```
+
+
+
+我们使用具有键+、-、＊和/的字典实现。字典中存储的值是`operator`模块的函数。该模块给我们提供了常用运算符的函数版本。在字典中查询运算符时，对应的函数对象被取出。既然取出的对象是函数，就可以用普通的方式`function(param1, param2)`调用。因此，`opers\['+'](2, 2)`等价于`operator.add(2, 2)`。
 
 最后，让我们通过图6-12中的解析树构建过程来理解evaluate函数。第一次调用evaluate函数时，将整棵树的根节点作为参数parseTree传入。然后，获取指向左右子节点的引用，检查它们是否存在。第11行进行递归调用。从查询根节点的运算符开始，该运算符是+，对应operator.add函数，要传入两个参数。和普通的Python函数调用一样，Python做的第一件事是计算入参的值。本例中，两个入参都是对evaluate函数的递归调用。由于入参的计算顺序是从左到右，因此第一次递归调用是在左边。对左子树递归调用evaluate函数，发现节点没有左右子节点，所以这是一个叶子节点。处于叶子节点时，只需返回叶子节点的值作为计算结果即可。本例中，返回整数3。
 
-至此，我们已经为顶层的operator.add调用计算出一个参数的值了，但还没完。继续从左到右的参数计算过程，现在进行一个递归调用，计算根节点的右子节点。我们发现，该节点不仅有左子节点，还有右子节点，所以检查节点存储的运算符——是＊，将左右子节点作为参数调用函数。这时可以看到，两个调用都已到达叶子节点，计算结果分别是4和5。算出参数之后，返回operator.mul(4, 5)的结果。至此，我们已经算出了顶层运算符（+）的操作数，剩下的工作就是完成对operator.add(3, 20)的调用。因此，表达式(3 + (4 ∗ 5))的计算结果就是23。
+至此，我们已经为顶层的`operator.add`调用计算出一个参数的值了，但还没完。继续从左到右的参数计算过程，现在进行一个递归调用，计算根节点的右子节点。我们发现，该节点不仅有左子节点，还有右子节点，所以检查节点存储的运算符——是＊，将左右子节点作为参数调用函数。这时可以看到，两个调用都已到达叶子节点，计算结果分别是4和5。算出参数之后，返回operator.mul(4, 5)的结果。至此，我们已经算出了顶层运算符（+）的操作数，剩下的工作就是完成对operator.add(3, 20)的调用。因此，表达式(3 + (4 ∗ 5))的计算结果就是23。
 
 
 
-### P0580:根据后序表达式建立表达式树
+### P0580:根据后序表达式建立队列表达式
 
 http://dsbpython.openjudge.cn/dspythonbook/P0580/
 
@@ -645,13 +764,13 @@ http://dsbpython.openjudge.cn/dspythonbook/P0580/
 
 有一种算术表达式不妨叫做“队列表达式”，它的求值过程和后序表达式很像，只是将栈换成了队列：从左到右扫描表达式，碰到操作数就入队列，碰到运算符，就取出队头2个操作数做运算（先出队的是第2个操作数，后出队的是第1个），并将运算结果加入队列。最后队列里只剩下一个元素，就是表达式的值。
 
-给定一个后序表达式，请转换成等价的队列表达式。例如，"3 4 + 6 5 * -"的等价队列表达式就是"5 6 4 3 * + -" 。
+给定一个后序表达式，请转换成等价的队列表达式。例如，`3 4 + 6 5 * -`的等价队列表达式就是`5 6 4 3 * + -` 。
 
-输入
+**输入**
 
 第一行是正整数n(n<100)。接下来是n行，每行一个由字母构成的字符串，长度不超过100,表示一个后序表达式，其中小写字母是操作数，大写字母是运算符。运算符都是需要2个操作数的。
 
-输出
+**输出**
 
 对每个后序表达式，输出其等价的队列表达式。
 
@@ -688,7 +807,7 @@ Here is a step-by-step plan:
 	If the character is an operand, create a new node and push it onto the stack.
 	If the character is an operator, pop two nodes from the stack, make them the children of a new node, and push the new node onto the stack.
 3.Create a function level_order_traversal that takes the root of the tree as input and returns the level order traversal of the tree.
-	Use a queue to store the nodes to be visited.
+	Use a queue `traversal` to store the nodes to be visited.
 	While the queue is not empty, dequeue a node, visit it, and enqueue its children.
 4.For each postfix expression, construct the tree, perform the level order traversal, reverse the result, and output it.
 
@@ -735,24 +854,24 @@ for _ in range(n):
 
 我们已经了解了树的基本功能，现在是时候看看一些附加的使用模式了。这些使用模式可以按节点的访问方式分为3种。我们将对所有节点的访问称为“遍历”，共有3种遍历方式，分别为前序遍历、中序遍历和后序遍历。接下来，我们先仔细地定义这3种遍历方式，然后通过一些例子看看它们的用法。
 
-前序遍历
+**前序遍历**
 在前序遍历中，先访问根节点，然后递归地前序遍历左子树，最后递归地前序遍历右子树。
 
-中序遍历
+**中序遍历**
 在中序遍历中，先递归地中序遍历左子树，然后访问根节点，最后递归地中序遍历右子树。
 
-后序遍历
+**后序遍历**
 在后序遍历中，先递归地后序遍历右子树，然后递归地后序遍历左子树，最后访问根节点。
 
-让我们通过几个例子来理解这3种遍历方式。首先看看前序遍历。我们将一本书的内容结构表示为一棵树，整本书是根节点，每一章是根节点的子节点，每一章中的每一节是这章的子节点，每小节又是这节的子节点，依此类推。图6-13展示了一本书的树状结构，它包含两章。注意，遍历算法对每个节点的子节点数没有要求，但本例只针对二叉树。
+让我们通过几个例子来理解这3种遍历方式。首先看看前序遍历。我们将一本书的内容结构表示为一棵树，整本书是根节点，每一章是根节点的子节点，每一章中的每一节是这章的子节点，每小节又是这节的子节点，依此类推。图8 展示了一本书的树状结构，它包含两章。注意，遍历算法对每个节点的子节点数没有要求，但本例只针对二叉树。
 
 ![image](https://raw.githubusercontent.com/GMyhf/img/main/img/booktree.png)
 
-图6-13 一本书的树状结构
+图8 一本书的树状结构
 
 假设我们从前往后阅读这本书，那么阅读顺序就符合前序遍历的次序。从根节点“书”开始，遵循前序遍历指令，对左子节点“第1章”递归调用preorder函数。然后，对“第1章”的左子节点递归调用preorder函数，得到节点“1.1节”。由于该节点没有子节点，因此不必再进行递归调用。沿着树回到节点“第1章”，接下来访问它的右子节点，即“1.2节”。和前面一样，先访问左子节点“1.2.1节”，然后访问右子节点“1.2.2节”。访问完“1.2节”之后，回到“第1章”。接下来，回到根节点，以同样的方式访问节点“第2章”。
 
-遍历树的代码格外简洁，这主要是因为遍历是递归的。
+<u>遍历树的代码格外简洁，这主要是因为遍历是递归的。</u>
 
 你可能会想，前序遍历算法的最佳实现方式是什么呢？是一个将树用作数据结构的函数，还是树本身的一个方法？代码清单6-11给出了前序遍历算法的外部函数版本，该函数将二叉树作为参数，其代码尤为简洁，这是因为算法的基本情况仅仅是检查树是否存在。如果参数tree是None，函数直接返回。
 
@@ -797,8 +916,9 @@ def postorder(tree):
 
 
 
-我们已经见识过后序遍历的一个常见用途，那就是计算解析树。回顾代码清单6-10，我们所做的就是先计算左子树，再计算右子树，最后通过根节点运算符的函数调用将两个结果结合起来。假设二叉树只存储一个表达式的数据。让我们来重写计算函数，使之更接近于代码清单6-13中的后序遍历函数。
-代码清单6-14 后序求值函数
+我们已经见识过后序遍历的一个常见用途，那就是计算解析树。<u>回顾代码清单6-10，我们所做的就是先计算左子树，再计算右子树，最后通过根节点运算符的函数调用将两个结果结合起来。</u>假设二叉树只存储一个表达式的数据。让我们来重写计算函数，使之更接近于代码清单6-13中的后序遍历函数。
+
+### 代码清单6-14 后序求值
 
 ```python
 def postordereval(tree):
@@ -829,8 +949,9 @@ def inorder(tree):
         inorder(tree.getRightChild())
 ```
 
-通过中序遍历解析树，可以还原不带括号的表达式。接下来修改中序遍历算法，以得到完全括号表达式。唯一要做的修改是：在递归调用左子树前打印一个左括号，在递归调用右子树后打印一个右括号。代码清单6-16是修改后的函数。
-代码清单6-16 修改后的中序遍历函数，它能还原完全括号表达式
+<u>通过中序遍历解析树，可以还原不带括号的表达式。</u>接下来修改中序遍历算法，以得到完全括号表达式。唯一要做的修改是：在递归调用左子树前打印一个左括号，在递归调用右子树后打印一个右括号。代码清单6-16是修改后的函数。
+
+### 代码清单6-16 中序还原完全括号表达式
 
 ```python
 def printexp(tree):
@@ -840,175 +961,22 @@ def printexp(tree):
         sVal = sVal + str(tree.getRootVal())
         sVal = sVal + printexp(tree.getRightChild()) + ')'
     return sVal
+
+print(printexp(pt))
+# (((7)+3)*((5)-2))
 ```
 
 
 
-以下Python会话展示了printexp和postordereval的用法。
-
->
-> \>>> from pythonds.trees import BinaryTree
->
-> \>>> x = BinaryTree('＊')
->
-> \>>> x.insertLeft('+')
->
-> \>>>  l = x.getLeftChild()
->
-> \>>>  l.insertLeft(4)
->
-> \>>>  l.insertRight(5)
->
-> \>>>  x.insertRight(7)
->
-> \>>> print(printexp(x))
->
-> \>>>  (((4) + (5)) ＊ (7))
->
-> \>>> print(postordereval(x))
->
-> \>>>  63
->
-> \>>> 
-
-注意，printexp函数给每个数字都加上了括号。尽管不能算错误，但这些括号显然是多余的。在章末的练习中，请修改printexp函数，移除这些括号。
+注意，printexp函数给每个数字都加上了括号。尽管不能算错误，但这些括号显然是多余的。请修改printexp函数，移除这些括号。
 
 
 
-### 24591: 中序表达式转后序表达式
-
-http://cs101.openjudge.cn/practice/24591/
-
-中序表达式是运算符放在两个数中间的表达式。乘、除运算优先级高于加减。可以用"()"来提升优先级 --- 就是小学生写的四则算术运算表达式。中序表达式可用如下方式递归定义：
-
-1）一个数是一个中序表达式。该表达式的值就是数的值。
-
-2) 若a是中序表达式，则"(a)"也是中序表达式(引号不算)，值为a的值。
-3) 若a,b是中序表达式，c是运算符，则"acb"是中序表达式。"acb"的值是对a和b做c运算的结果，且a是左操作数，b是右操作数。
-
-输入一个中序表达式，要求转换成一个后序表达式输出。
-
-**输入**
-
-第一行是整数n(n<100)。接下来n行，每行一个中序表达式，数和运算符之间没有空格，长度不超过700。
-
-**输出**
-
-对每个中序表达式，输出转成后序表达式后的结果。后序表达式的数之间、数和运算符之间用一个空格分开。
-
-样例输入
-
-```
-3
-7+8.3 
-3+4.5*(7+2)
-(3)*((3+4)*(2+3.5)/(4+5)) 
-```
-
-样例输出
-
-```
-7 8.3 +
-3 4.5 7 2 + * +
-3 3 4 + 2 3.5 + * 4 5 + / *
-```
-
-来源：Guo wei
-
-
-
-Shunting Yard algorithm: 
-
-Shunting Yard 算法是一种用于将中缀表达式转换为后缀表达式的算法。它的名字来自于它的操作过程类似于把火车车厢从一个轨道转移到另一个轨道的操作。
-
-它由荷兰计算机科学家 Edsger Dijkstra 在1960年代提出，用于解析和计算数学表达式。
-Shunting Yard 算法的主要思想是使用两个栈(运算符栈和输出栈)来处理表达式的符号。算法按照运算符的优先级和结合性，将符号逐个处理并放置到正确的位置。最终，输出栈中的元素就是转换后的后缀表达式。
-
-以下是 Shunting Yard 算法的基本步骤:
-
-1.初始化运算符栈和输出栈为空。
-
-2.从左到右遍历中缀表达式的每个符号。
-
-- 如果是操作数（数字），则将其添加到输出栈。
-
-- 如果是左括号，则将其推入运算符栈。
-
-- 如果是运算符:
-  - 如果运算符的优先级大于运算符栈顶的运算符，或者运算符栈顶是左括号，则将当前运算符推入运算符栈。
-  - 否则，将运算符栈顶的运算符弹出并添加到输出栈中，直到满足上述条件（或者运算符栈为空）。
-  - 将当前运算符推入运算符栈。
-
-- 如果是右括号，则将运算符栈顶的运算符弹出并添加到输出栈中，直到遇到左括号将左括号弹出但不添加到输出栈中。
-
-
-
-3.如果还有剩余的运算符在运算符栈中，将它们依次弹出并添加到输出栈中4.输出栈中的元素就是转换后的后缀表达式。
-
-
-
-```python
-def infix_to_postfix(expression):
-    def get_precedence(op):
-        precedences = {'+': 1, '-': 1, '*': 2, '/': 2}
-        return precedences[op] if op in precedences else 0
-
-    def is_operator(c):
-        return c in "+-*/"
-
-    def is_number(c):
-        return c.isdigit() or c == '.'
-
-    output = []
-    stack = []
-    
-    number_buffer = []
-    
-    def flush_number_buffer():
-        if number_buffer:
-            output.append(''.join(number_buffer))
-            number_buffer.clear()
-
-    for c in expression:
-        if is_number(c):
-            number_buffer.append(c)
-        elif c == '(':
-            flush_number_buffer()
-            stack.append(c)
-        elif c == ')':
-            flush_number_buffer()
-            while stack and stack[-1] != '(':
-                output.append(stack.pop())
-            stack.pop()  # popping '('
-        elif is_operator(c):
-            flush_number_buffer()
-            while stack and get_precedence(c) <= get_precedence(stack[-1]):
-                output.append(stack.pop())
-            stack.append(c)
-
-    flush_number_buffer()
-    while stack:
-        output.append(stack.pop())
-
-    return ' '.join(output)
-
-# Read number of expressions
-n = int(input())
-
-# Read each expression and convert it
-for _ in range(n):
-    infix_expr = input()
-    postfix_expr = infix_to_postfix(infix_expr)
-    print(postfix_expr)
-```
-
-
-
-### 20576: printExp
+### 20576: printExp（逆波兰表达式建树）
 
 http://cs101.openjudge.cn/dsapre/20576/
 
-输出中缀表达式(去除不必要的括号)
+输出中缀表达式（去除不必要的括号）
 
 **输入**
 
@@ -1032,6 +1000,8 @@ not ( True or False ) and ( False or True and True )
 
 
 
+这三个操作符：`not`：优先级最高，`and`：其次，`or`：优先级最低。
+
 ```python
 class BinaryTree:
     def __init__(self, root, left=None, right=None):
@@ -1048,7 +1018,7 @@ class BinaryTree:
     def getroot(self):
         return self.root
 
-def postorder(string):    #中缀改后缀
+def postorder(string):    #中缀改后缀 Shunting yard algorightm
     opStack = []
     postList = []
     inList = string.split()
@@ -1114,29 +1084,101 @@ main()
 
 
 
-### 22275: 二叉搜索树的遍历
+`printTree`函数是一个递归函数，接收一个`BinaryTree`对象作为参数，然后根据树的结构和节点的值生成一个字符串列表。
 
-http://cs101.openjudge.cn/practice/22275/
+函数的工作方式如下：
 
-```python
-def post_order(pre_order):
-    if not pre_order:
-        return []
-    root = pre_order[0]
-    left_subtree = [x for x in pre_order if x < root]
-    right_subtree = [x for x in pre_order if x > root]
-    return post_order(left_subtree) + post_order(right_subtree) + [root]
+1. 首先，检查树的根节点的值。根据值的不同，函数会执行不同的操作。
 
-n = int(input())
-pre_order = list(map(int, input().split()))
-print(' '.join(map(str, post_order(pre_order))))
-```
+2. 如果根节点的值为"or"，函数会递归地调用自身来处理左子树和右子树，然后将结果合并，并在两个结果之间插入"or"。
+
+3. 如果根节点的值为"not"，函数会递归地调用自身来处理左子树。如果左子树的根节点的值不是"True"或"False"，则会在左子树的结果周围添加括号。
+
+4. 如果根节点的值为"and"，函数会递归地调用自身来处理左子树和右子树。如果左子树或右子树的根节点的值为"or"，则会在相应子树的结果周围添加括号。
+
+5. 如果根节点的值为"True"或"False"，函数会直接返回一个包含该值的列表。
+
+6. 最后，函数会将生成的字符串列表合并为一个字符串，并返回。
+
+
 
 
 
 ### 24750: 根据二叉树中后序序列建树
 
 http://cs101.openjudge.cn/practice/24750/
+
+假设二叉树的节点里包含一个大写字母，每个节点的字母都不同。
+
+给定二叉树的中序遍历序列和后序遍历序列(长度均不超过26)，请输出该二叉树的前序遍历序列。
+
+**输入**
+
+2行，均为大写字母组成的字符串，表示一棵二叉树的中序遍历序列与后序遍历排列。
+
+**输出**
+
+表示二叉树的前序遍历序列。
+
+样例输入
+
+```
+BADC
+BDCA
+```
+
+样例输出
+
+```
+ABCD
+```
+
+来源
+
+Lou Yuke
+
+
+
+```python
+"""
+后序遍历的最后一个元素是树的根节点。然后，在中序遍历序列中，根节点将左右子树分开。
+可以通过这种方法找到左右子树的中序遍历序列。然后，使用递归地处理左右子树来构建整个树。
+"""
+
+
+def build_tree(inorder, postorder):
+    if not inorder or not postorder:
+        return []
+
+    root_val = postorder[-1]
+    root_index = inorder.index(root_val)
+
+    left_inorder = inorder[:root_index]
+    right_inorder = inorder[root_index + 1:]
+
+    left_postorder = postorder[:len(left_inorder)]
+    right_postorder = postorder[len(left_inorder):-1]
+
+    root = [root_val]
+    root.extend(build_tree(left_inorder, left_postorder))
+    root.extend(build_tree(right_inorder, right_postorder))
+
+    return root
+
+
+def main():
+    inorder = input().strip()
+    postorder = input().strip()
+    preorder = build_tree(inorder, postorder)
+    print(''.join(preorder))
+
+
+if __name__ == "__main__":
+    main()
+
+```
+
+
 
 ```python
 """
@@ -1198,12 +1240,12 @@ http://dsbpython.openjudge.cn/dspythonbook/P0570/
 
 给定二叉树的前序遍历序列和中序遍历序列(长度均不超过26)，请输出该二叉树的后序遍历序列
 
-输入
+**输入**
 
 多组数据
 每组数据2行，第一行是前序遍历序列，第二行是中序遍历序列
 
-输出
+**输出**
 
 对每组序列建树，输出该树的后序遍历序列
 
@@ -1274,7 +1316,7 @@ while True:
 
 
 
-### P0650:猜二叉树
+### P0650: 猜二叉树
 
 http://dsbpython.openjudge.cn/dspythonbook/P0650/
 
@@ -1433,7 +1475,61 @@ for _ in range(n):
 
 
 
-## P1320:二叉搜索树的层次遍历
+### 22275: 二叉搜索树的遍历
+
+http://cs101.openjudge.cn/practice/22275/
+
+给出一棵二叉搜索树的前序遍历，求它的后序遍历
+
+**输入**
+
+第一行一个正整数n（n<=2000）表示这棵二叉搜索树的结点个数
+第二行n个正整数，表示这棵二叉搜索树的前序遍历
+保证第二行的n个正整数中，1~n的每个值刚好出现一次
+
+**输出**
+
+一行n个正整数，表示这棵二叉搜索树的后序遍历
+
+样例输入
+
+```
+5
+4 2 1 3 5
+```
+
+样例输出
+
+```
+1 3 2 5 4
+```
+
+提示
+
+树的形状为
+   4  
+  / \ 
+  2  5 
+ / \  
+ 1  3  
+
+```python
+def post_order(pre_order):
+    if not pre_order:
+        return []
+    root = pre_order[0]
+    left_subtree = [x for x in pre_order if x < root]
+    right_subtree = [x for x in pre_order if x > root]
+    return post_order(left_subtree) + post_order(right_subtree) + [root]
+
+n = int(input())
+pre_order = list(map(int, input().split()))
+print(' '.join(map(str, post_order(pre_order))))
+```
+
+
+
+### P1320: 二叉搜索树的层次遍历
 
 http://dsbpython.openjudge.cn/dspythonbook/P1320/
 
@@ -2087,8 +2183,10 @@ def rebalance(self, node):
             self.rotateRight(node)
 ```
 
-通过维持树的平衡，可以保证get方法的时间复杂度为$O(log_2(n))$。但这会给put操作的性能带来多大影响呢？我们来看看put操作。因为新节点作为叶子节点插入，所以更新所有父节点的平衡因子最多需要$log_2(n)$次操作——每一层一次。如果树失衡了，恢复平衡最多需要旋转两次。每次旋转的时间复杂度是O(1)，所以put操作的时间复杂度仍然是$O(log_2(n))$。
+通过维持树的平衡，可以保证get方法的时间复杂度为$O(log_2(n))$。但这会给put操作的性能带来多大影响呢？我们来看看put操作。因为新节点作为叶子节点插入，所以更新所有父节点的平衡因子最多需要$log_2(n)$次操作——每一层一次。如果树失衡了，恢复平衡最多需要旋转两次。每次旋转的时间复杂度是O(1)，所以put操作的时间复杂度仍然是$O(log_2(n))$​。
 至此，我们已经实现了一棵可用的AVL树，不过还没有实现删除节点的功能。我们将删除节点及后续的更新和再平衡的实现留作练习。
+
+
 
 ## 5.3 映射实现总结
 
