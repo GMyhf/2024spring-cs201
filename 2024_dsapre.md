@@ -1,4 +1,4 @@
-# 数据结构与算法pre每日选做
+# 数算（数据结构与算法）pre每日选做
 
 Updated 0833 GMT+8 March 8, 2024
 
@@ -8,11 +8,15 @@ Updated 0833 GMT+8 March 8, 2024
 
 **说明：**
 
-1）数算课程在春季学期开，前一年计算概论课程结束，正值寒假，同学建议每日推出少许题目练习，因此成为“数算pre每日选做”。
+1）数算课程在春季学期开，前一年计算概论课程结束，正值寒假，同学建议每日推出少许题目练习，因此成为“**数算pre每日选做**”。
 
-2）“数算pre每日选做”题集会逐渐建成，为避免重复，如果题目出现在  https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md，会给出指引。
+2）为避免重复，如果题目出现在  https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md，会给出指引。
 
-3）有同学完成了这些题目，放在自己的 gitbub上面，也可以参考 https://github.com/csxq0605/CS101-spring
+3）有同学假期时候完成了这些题目，放在 gitbub上面，可以参考
+
+Wangjie Su's GitHub,  https://github.com/csxq0605/CS101-spring
+
+Zixuan Jiang's summary, https://github.com/GMyhf/2024spring-cs201/blob/main/cheatsheet/DataStructuresAndAlgorithms-WinterBreak-20240214-JIANGZixuan.md
 
 
 
@@ -1860,7 +1864,7 @@ print(ans)
 
 
 
-## 02253:Frogger
+## 02253: Frogger
 
 http://cs101.openjudge.cn/dsapre/02253/
 
@@ -6664,7 +6668,7 @@ while True:
 
 
 
-## 22068:合法出栈序列
+## 22068: 合法出栈序列
 
 http://cs101.openjudge.cn/dsapre/22068/
 
@@ -6833,7 +6837,7 @@ print(' '.join(map(str, post_order(pre_order))))
 
 
 
-## 22359:Goldbach Conjecture
+## 22359: Goldbach Conjecture
 
 http://cs101.openjudge.cn/dsapre/22359/
 
@@ -6905,7 +6909,7 @@ for i in ls:
 
 
 
-## 22509:解方程
+## 22509: 解方程
 
 http://cs101.openjudge.cn/dsapre/22509/
 
@@ -6917,7 +6921,7 @@ http://cs101.openjudge.cn/dsapre/22509/
 
 
 
-## 22548:机智的股民老张
+## 22548: 机智的股民老张
 
 http://cs101.openjudge.cn/dsapre/22548/
 
@@ -6969,7 +6973,7 @@ print(max_profit)
 
 
 
-## 22636:修仙之路
+## 22636: 修仙之路
 
 http://cs101.openjudge.cn/dsapre/22636/
 
@@ -7055,7 +7059,7 @@ print(res+1)
 
 
 
-## 23451:交互四则运算计算器_带错误表达式版
+## 23451: 交互四则运算计算器_带错误表达式版
 
 http://cs101.openjudge.cn/dsapre/23451/
 
@@ -7288,7 +7292,7 @@ while True:
 
 # 81-90
 
-## 23563:多项式时间复杂度
+## 23563: 多项式时间复杂度
 
 http://cs101.openjudge.cn/dsapre/23563/
 
@@ -7296,7 +7300,7 @@ http://cs101.openjudge.cn/dsapre/23563/
 
 
 
-## 23568:幸福的寒假生活
+## 23568: 幸福的寒假生活
 
 http://cs101.openjudge.cn/dsapre/23568/
 
@@ -7304,7 +7308,7 @@ http://cs101.openjudge.cn/dsapre/23568/
 
 
 
-## 23570:特殊密码锁
+## 23570: 特殊密码锁
 
 http://cs101.openjudge.cn/dsapre/23570/
 
@@ -7382,7 +7386,7 @@ if __name__ == "__main__":
 
 
 
-## 23660:7的倍数取法有多少种
+## 23660: 7的倍数取法有多少种
 
 http://cs101.openjudge.cn/dsapre/23660/
 
@@ -7451,7 +7455,7 @@ for _ in range(t):
 
 
 
-## 24375:小木棍
+## 24375: 小木棍
 
 http://cs101.openjudge.cn/dsapre/24375/
 
@@ -7529,7 +7533,7 @@ while True:
 
 
 
-## 24588:后序表达式求值
+## 24588: 后序表达式求值
 
 http://cs101.openjudge.cn/dsapre/24588/
 
@@ -7612,7 +7616,7 @@ for _ in range(n):
 
 
 
-## 24591:中序表达式转后序表达式
+## 24591: 中序表达式转后序表达式
 
 http://cs101.openjudge.cn/dsapre/24591/
 
@@ -7699,7 +7703,7 @@ for _ in range(n):
 
 
 
-## 24676:共同富裕
+## 24676: 共同富裕
 
 http://cs101.openjudge.cn/dsapre/24676/
 
@@ -7806,7 +7810,7 @@ for result in results:
 
 
 
-## 24677:安全位置
+## 24677: 安全位置
 
 http://cs101.openjudge.cn/dsapre/24677/
 
@@ -7866,7 +7870,7 @@ print(safe_locations(s, []))
 
 
 
-## 24678:任性买房
+## 24678: 任性买房
 
 http://cs101.openjudge.cn/dsapre/24678/
 
@@ -7937,7 +7941,7 @@ print(min_houses_to_buy(W, n, prices))
 
 # 91-102
 
-## 24684:直播计票
+## 24684: 直播计票
 
 http://cs101.openjudge.cn/dsapre/24684/
 
@@ -7993,7 +7997,7 @@ print(' '.join(str(winner[0]) for winner in winners))
 
 
 
-## 24686:树的重量
+## 24686: 树的重量
 
 http://cs101.openjudge.cn/dsapre/24686/
 
@@ -8108,7 +8112,7 @@ for _ in range(n):
 
 
 
-## 24687:封锁管控
+## 24687: 封锁管控
 
 http://cs101.openjudge.cn/dsapre/24687/
 
@@ -8199,7 +8203,7 @@ print(min_population_flow(n, m, populations))
 
 
 
-## 24750:根据二叉树中后序序列建树
+## 24750: 根据二叉树中后序序列建树
 
 http://cs101.openjudge.cn/dsapre/24750/
 
@@ -8288,7 +8292,7 @@ print(''.join(preorderTraversal(root)))
 
 
 
-## 25815:回文字符串
+## 25815: 回文字符串
 
 http://cs101.openjudge.cn/dsapre/25815/
 
@@ -8337,7 +8341,7 @@ print(dp[0][-1])
 
 
 
-## 26572:多余的括号
+## 26572: 多余的括号
 
 http://cs101.openjudge.cn/dsapre/26572/
 
@@ -8481,7 +8485,7 @@ while True:
 
 
 
-## 26573:康托集的图像表示
+## 26573: 康托集的图像表示
 
 http://cs101.openjudge.cn/dsapre/26573/
 
@@ -8559,7 +8563,7 @@ print(print_cantor_set(n))
 
 
 
-## 27625:AVL树至少有几个结点
+## 27625: AVL树至少有几个结点
 
 http://cs101.openjudge.cn/dsapre/27625/
 
@@ -8612,7 +8616,7 @@ print(min_nodes)
 
 
 
-## 27626:AVL树最多有几层
+## 27626: AVL树最多有几层
 
 http://cs101.openjudge.cn/dsapre/27626/
 
@@ -8667,7 +8671,7 @@ print(max_height(n))
 
 
 
-## 27635:判断无向图是否连通有无回路(同23163)
+## 27635: 判断无向图是否连通有无回路(同23163)
 
 http://cs101.openjudge.cn/dsapre/27635/
 
@@ -8859,7 +8863,7 @@ for _ in range(n):
 
 
 
-## 27638:求二叉树的高度和叶子数目
+## 27638: 求二叉树的高度和叶子数目
 
 http://cs101.openjudge.cn/dsapre/27638/
 
