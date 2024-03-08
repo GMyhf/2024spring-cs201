@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 2309 GMT+8 March 8, 2024
+Updated 0044 GMT+8 March 9, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9,6 +9,8 @@ Updated 2309 GMT+8 March 8, 2024
 说明：树相关内容准备在 Week4 ~6 讲。中间考虑穿插递归、dfs等内容。
 
 
+
+# 一、基本数据结构及其编程题目
 
 # 1 术语及定义
 
@@ -1315,7 +1317,7 @@ while True:
 
 
 
-### P0650: 猜二叉树
+### P0650: 猜二叉树（按层次遍历）
 
 http://dsbpython.openjudge.cn/dspythonbook/P0650/
 
@@ -2256,7 +2258,157 @@ def rebalance(self, node):
 
 
 
-# 7 其他
+# 二、笔试题目
+
+2022年5个大题：图Dijkstra，二叉树，排序，单链表，二叉树。
+
+2021年6个大题：森林dfs、bfs，哈夫曼树，二叉树建堆，图prim，二叉树遍历，图走迷宫。
+
+
+
+## 选择（30分，每题2分）
+
+**Q:** 
+
+
+
+
+
+## 判断（10分，每题1分）
+
+对填写"Y"，错填写"N"
+
+**Q:** （Y）
+
+
+
+## 填空（20分，每题2分）
+
+**Q:** 
+
+
+
+## 简答（24分，每题6分）
+
+**Q:** 
+
+
+
+
+
+## 算法（16～20分，每题8～10分）
+
+1.填空完成下列程序：输入一棵二叉树的扩充二叉树的先根周游（前序遍历）序列，构建该二叉树，并输出它的中根周游（中序遍历）序列。这里定义一棵扩充二叉树是指将原二叉树中的所有空引用增加一个表示为@的虚拟叶结点。譬如下图所示的一棵二叉树，
+输入样例：
+ABD@G@@@CE@@F@@
+输出样例：
+DGBAECF
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403090101091.png" alt="image-20240309010107665" style="zoom: 50%;" />
+
+
+
+```python
+s = input()
+ptr = 0
+
+class BinaryTree:
+    def __init__(self, data, left=None, right=None):
+        self.data, self.left, self.right = data, left, right
+
+    def addLeft(self, tree):
+        self.left = tree
+
+    def addRight(self, tree):
+        self.right = tree
+
+    def inorderTraversal(self):
+        if self.left:
+            self.left.inorderTraversal()    # (1分) 
+        print(self.data, end="")
+        if self.right:
+            self.right.inorderTraversal()   # (1分) 
+
+def buildTree():
+    global ptr
+    if s[ptr] == "@":
+        ptr += 1
+        return None             # (2分) 
+    tree = BinaryTree(s[ptr])   # (1分) 
+    ptr += 1
+    tree.addLeft(buildTree())   # (2分) 
+    tree.addRight(buildTree())  # (2分) 
+
+    return tree
+
+tree = buildTree()
+tree.inorderTraversal()
+
+"""
+sample input:
+ABD@G@@@CE@@F@@
+
+sample output:
+DGBAECF
+"""
+```
+
+
+
+还一种写法
+
+```python
+class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def buildTree(preorder):
+    if not preorder:
+        return None
+
+    data = preorder.pop(0)
+    if data == "@":
+        return None
+
+    node = TreeNode(data)
+    node.left = buildTree(preorder)
+    node.right = buildTree(preorder)
+
+    return node
+
+def inorderTraversal(node):
+    if node is None:
+        return []
+
+    result = []
+    result.extend(inorderTraversal(node.left))
+    result.append(node.data)
+    result.extend(inorderTraversal(node.right))
+
+    return result
+
+preorder = input()
+tree = buildTree(list(preorder))
+
+inorder = inorderTraversal(tree)
+print(''.join(inorder))
+
+"""
+sample input:
+ABD@G@@@CE@@F@@
+
+sample output:
+DGBAECF
+"""
+```
+
+
+
+# 附录
 
 ## Ch6 树这章程序对应类图
 
