@@ -1,6 +1,6 @@
 # 数据结构与算法pre每日选做
 
-Updated 2331 GMT+8 March 7, 2024
+Updated 0833 GMT+8 March 8, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -21,6 +21,52 @@ Updated 2331 GMT+8 March 7, 2024
 ## 01094: Sorting It All Out
 
 http://cs101.openjudge.cn/dsapre/01094/
+
+An ascending sorted sequence of distinct values is one in which some form of a less-than operator is used to order the elements from smallest to largest. For example, the sorted sequence A, B, C, D implies that A < B, B < C and C < D. in this problem, we will give you a set of relations of the form A < B and ask you to determine whether a sorted order has been specified or not. 
+
+**输入**
+
+Input consists of multiple problem instances. Each instance starts with a line containing two positive integers n and m. the first value indicated the number of objects to sort, where 2 <= n <= 26. The objects to be sorted will be the first n characters of the uppercase alphabet. The second value m indicates the number of relations of the form A < B which will be given in this problem instance. Next will be m lines, each containing one such relation consisting of three characters: an uppercase letter, the character "<" and a second uppercase letter. No letter will be outside the range of the first n letters of the alphabet. Values of n = m = 0 indicate end of input.
+
+**输出**
+
+For each problem instance, output consists of one line. This line should be one of the following three:
+
+Sorted sequence determined after xxx relations: yyy...y.
+Sorted sequence cannot be determined.
+Inconsistency found after xxx relations.
+
+where xxx is the number of relations processed at the time either a sorted sequence is determined or an inconsistency is found, whichever comes first, and yyy...y is the sorted, ascending sequence.
+
+样例输入
+
+```
+4 6
+A<B
+A<C
+B<C
+C<D
+B<D
+A<B
+3 2
+A<B
+B<A
+26 1
+A<Z
+0 0
+```
+
+样例输出
+
+```
+Sorted sequence determined after 4 relations: ABCD.
+Inconsistency found after 2 relations.
+Sorted sequence cannot be determined.
+```
+
+来源
+
+East Central North America 2001
 
 
 
@@ -68,8 +114,6 @@ while True:
     if ans > 0:
         print("Sorted sequence cannot be determined.")
 ```
-
-
 
 
 
@@ -492,7 +536,38 @@ print(minmove)
 
 http://cs101.openjudge.cn/dsapre/01258/
 
+Farmer John has been elected mayor of his town! One of his campaign promises was to bring internet connectivity to all farms in the area. He needs your help, of course. 
+Farmer John ordered a high speed connection for his farm and is going to share his connectivity with the other farmers. To minimize cost, he wants to lay the minimum amount of optical fiber to connect his farm to all the other farms. 
+Given a list of how much fiber it takes to connect each pair of farms, you must find the minimum amount of fiber needed to connect them all together. Each farm must connect to some other farm such that a packet can flow from any one farm to any other farm. 
+The distance between any two farms will not exceed 100,000. 
 
+**输入**
+
+The input includes several cases. For each case, the first line contains the number of farms, N (3 <= N <= 100). The following lines contain the N x N conectivity matrix, where each element shows the distance from on farm to another. Logically, they are N lines of N space-separated integers. Physically, they are limited in length to 80 characters, so some lines continue onto others. Of course, the diagonal will be 0, since the distance from farm i to itself is not interesting for this problem.
+
+**输出**
+
+For each case, output a single integer length that is the sum of the minimum length of fiber required to connect the entire set of farms.
+
+样例输入
+
+```
+4
+0 4 9 21
+4 0 8 17
+9 8 0 16
+21 17 16 0
+```
+
+样例输出
+
+```
+28
+```
+
+来源
+
+USACO 102
 
 
 
@@ -561,15 +636,47 @@ if __name__ == "__main__":
 
 
 
-
-
-
-
 ## 01321: 棋盘问题
 
 http://cs101.openjudge.cn/dsapre/01321/
 
+在一个给定形状的棋盘（形状可能是不规则的）上面摆放棋子，棋子没有区别。要求摆放时任意的两个棋子不能放在棋盘中的同一行或者同一列，请编程求解对于给定形状和大小的棋盘，摆放k个棋子的所有可行的摆放方案C。
 
+**输入**
+
+输入含有多组测试数据。
+每组数据的第一行是两个正整数，n k，用一个空格隔开，表示了将在一个n*n的矩阵内描述棋盘，以及摆放棋子的数目。 n <= 8 , k <= n
+当为-1 -1时表示输入结束。
+随后的n行描述了棋盘的形状：每行有n个字符，其中 # 表示棋盘区域， . 表示空白区域（数据保证不出现多余的空白行或者空白列）。
+
+**输出**
+
+对于每一组数据，给出一行输出，输出摆放的方案数目C （数据保证C<2^31）。
+
+样例输入
+
+```
+2 1
+#.
+.#
+4 4
+...#
+..#.
+.#..
+#...
+-1 -1
+```
+
+样例输出
+
+```
+2
+1
+```
+
+来源
+
+蔡错@pku
 
 
 
@@ -616,10 +723,6 @@ while True:
     dfs(0, 0)
     print(ans)
 ```
-
-
-
-
 
 
 
@@ -727,11 +830,40 @@ while True:
 
 
 
-
-
 ## 01426: Find The Multiple
 
 http://cs101.openjudge.cn/dsapre/01426/
+
+Given a positive integer n, write a program to find out a nonzero multiple m of n whose decimal representation contains only the digits 0 and 1. You may assume that n is not greater than 200 and there is a corresponding m containing no more than 100 decimal digits.
+
+**输入**
+
+The input file may contain multiple test cases. Each line contains a value of n (1 <= n <= 200). A line containing a zero terminates the input.
+
+**输出**
+
+For each value of n in the input print a line containing the corresponding value of m. The decimal representation of m must not contain more than 100 digits. If there are multiple solutions for a given value of n, any one of them is acceptable.
+
+样例输入
+
+```
+2
+6
+19
+0
+```
+
+样例输出
+
+```
+10
+100100100100100100
+111111111111111111
+```
+
+来源
+
+Dhaka 2002
 
 
 
@@ -761,6 +893,47 @@ while 1:
 ## 01611: The Suspects
 
 http://cs101.openjudge.cn/dsapre/01611/
+
+Severe acute respiratory syndrome (SARS), an atypical pneumonia of unknown aetiology, was recognized as a global threat in mid-March 2003. To minimize transmission to others, the best strategy is to separate the suspects from others.
+In the Not-Spreading-Your-Sickness University (NSYSU), there are many student groups. Students in the same group intercommunicate with each other frequently, and a student may join several groups. To prevent the possible transmissions of SARS, the NSYSU collects the member lists of all student groups, and makes the following rule in their standard operation procedure (SOP).
+Once a member in a group is a suspect, all members in the group are suspects.
+However, they find that it is not easy to identify all the suspects when a student is recognized as a suspect. Your job is to write a program which finds all the suspects.
+
+**输入**
+
+The input file contains several cases. Each test case begins with two integers n and m in a line, where n is the number of students, and m is the number of groups. You may assume that 0 < n <= 30000 and 0 <= m <= 500. Every student is numbered by a unique integer between 0 and n−1, and initially student 0 is recognized as a suspect in all the cases. This line is followed by m member lists of the groups, one line per group. Each line begins with an integer k by itself representing the number of members in the group. Following the number of members, there are k integers representing the students in this group. All the integers in a line are separated by at least one space.
+A case with n = 0 and m = 0 indicates the end of the input, and need not be processed.
+
+**输出**
+
+For each case, output the number of suspects in one line.
+
+样例输入
+
+```
+100 4
+2 1 2
+5 10 13 11 12 14
+2 0 1
+2 99 2
+200 2
+1 5
+5 1 2 3 4 5
+1 0
+0 0
+```
+
+样例输出
+
+```
+4
+1
+1
+```
+
+来源
+
+Asia Kaohsiung 2003
 
 
 
@@ -818,8 +991,6 @@ def main():
 if __name__ == "__main__":
     main()
 ```
-
-
 
 
 
@@ -964,7 +1135,41 @@ printDir(computer, 0)
 
 http://cs101.openjudge.cn/dsapre/01789/
 
+Advanced Cargo Movement, Ltd. uses trucks of different types. Some trucks are used for vegetable delivery, other for furniture, or for bricks. The company has its own code describing each type of a truck. The code is simply a string of exactly seven lowercase letters (each letter on each position has a very special meaning but that is unimportant for this task). At the beginning of company's history, just a single truck type was used but later other types were derived from it, then from the new types another types were derived, and so on. 
 
+Today, ACM is rich enough to pay historians to study its history. One thing historians tried to find out is so called derivation plan -- i.e. how the truck types were derived. They defined the distance of truck types as the number of positions with different letters in truck type codes. They also assumed that each truck type was derived from exactly one other truck type (except for the first truck type which was not derived from any other type). The quality of a derivation plan was then defined as 
+**1/Σ(to,td)d(to,td)**
+where the sum goes over all pairs of types in the derivation plan such that to is the original type and td the type derived from it and d(to,td) is the distance of the types. 
+Since historians failed, you are to write a program to help them. Given the codes of truck types, your program should find the highest possible quality of a derivation plan. 
+
+**输入**
+
+The input consists of several test cases. Each test case begins with a line containing the number of truck types, N, 2 <= N <= 2 000. Each of the following N lines of input contains one truck type code (a string of seven lowercase letters). You may assume that the codes uniquely describe the trucks, i.e., no two of these N lines are the same. The input is terminated with zero at the place of number of truck types. 
+
+**输出**
+
+For each test case, your program should output the text "The highest possible quality is 1/Q.", where 1/Q is the quality of the best derivation plan. 
+
+样例输入
+
+```
+4
+aaaaaaa
+baaaaaa
+abaaaaa
+aabaaaa
+0
+```
+
+样例输出
+
+```
+The highest possible quality is 1/3.
+```
+
+来源
+
+CTU Open 2003
 
 
 
@@ -1059,6 +1264,39 @@ if __name__ == "__main__":
 
 http://cs101.openjudge.cn/dsapre/01860/
 
+Several currency exchange points are working in our city. Let us suppose that each point specializes in two particular currencies and performs exchange operations only with these currencies. There can be several points specializing in the same pair of currencies. Each point has its own exchange rates, exchange rate of A to B is the quantity of B you get for 1A. Also each exchange point has some commission, the sum you have to pay for your exchange operation. Commission is always collected in source currency.
+For example, if you want to exchange 100 US Dollars into Russian Rubles at the exchange point, where the exchange rate is 29.75, and the commission is 0.39 you will get (100 - 0.39) * 29.75 = 2963.3975RUR. 
+You surely know that there are N different currencies you can deal with in our city. Let us assign unique integer number from 1 to N to each currency. Then each exchange point can be described with 6 numbers: integer A and B - numbers of currencies it exchanges, and real RAB, CAB, RBA and CBA - exchange rates and commissions when exchanging A to B and B to A respectively.
+Nick has some money in currency S and wonders if he can somehow, after some exchange operations, increase his capital. Of course, he wants to have his money in currency S in the end. Help him to answer this difficult question. Nick must always have non-negative sum of money while making his operations.
+
+**输入**
+
+The first line of the input contains four numbers: N - the number of currencies, M - the number of exchange points, S - the number of currency Nick has and V - the quantity of currency units he has. The following M lines contain 6 numbers each - the description of the corresponding exchange point - in specified above order. Numbers are separated by one or more spaces. 1<=S<=N<=100, 1<=M<=100, V is real number, 0<=V<=103.
+For each point exchange rates and commissions are real, given with at most two digits after the decimal point, 10-2<=rate<=102, 0<=commission<=102.
+Let us call some sequence of the exchange operations simple if no exchange point is used more than once in this sequence. You may assume that ratio of the numeric values of the sums at the end and at the beginning of any simple sequence of the exchange operations will be less than 104.
+
+**输出**
+
+If Nick can increase his wealth, output YES, in other case output NO to the output file.
+
+样例输入
+
+```
+3 2 1 20.0
+1 2 1.00 1.00 1.00 1.00
+2 3 1.10 1.00 1.10 1.00
+```
+
+样例输出
+
+```
+YES
+```
+
+来源
+
+Northeastern Europe 2001, Northern Subregion
+
 
 
 ```python
@@ -1127,6 +1365,45 @@ if __name__ == "__main__":
 
 http://cs101.openjudge.cn/dsapre/01944/
 
+Farmer John wants to connect his N (1 <= N <= 1,000) barns (numbered 1..N) with a new fiber-optic network. However, the barns are located in a circle around the edge of a large pond, so he can only connect pairs of adjacent barns. The circular configuration means that barn N is adjacent to barn 1.
+
+FJ doesn't need to connect all the barns, though, since only certain pairs of cows wish to communicate with each other. He wants to construct as few 
+connections as possible while still enabling all of these pairs to communicate through the network. Given the list of barns that wish to communicate with each other, determine the minimum number of lines that must be laid. To communicate from barn 1 to barn 3, lines must be laid from barn 1 to barn 2 and also from barn 2 to barn 3(or just from barn 3 to 1,if n=3).
+
+**输入**
+
+\* Line 1: Two integers, N and P (the number of communication pairs, 1 <= P <= 10,000)
+
+\* Lines 2..P+1: two integers describing a pair of barns between which communication is desired. No pair is duplicated in the list.
+
+**输出**
+
+One line with a single integer which is the minimum number of direct connections FJ needs to make.
+
+样例输入
+
+```
+5 2
+1 3
+4 5
+```
+
+样例输出
+
+```
+3
+```
+
+提示
+
+[Which connect barn pairs 1-2, 2-3, and 4-5.]
+
+来源
+
+USACO 2002 February
+
+
+
 ```python
 # https://www.cnblogs.com/lightspeedsmallson/p/4785834.html
 N, P = map(int, input().split())
@@ -1170,8 +1447,6 @@ for i in range(1, N + 1):
 
 print(ans)
 ```
-
-
 
 
 
@@ -1417,6 +1692,49 @@ while True:
 
 http://cs101.openjudge.cn/dsapre/02092/
 
+The whole family was excited by the news. Everyone knew grandpa had been an extremely good bridge player for decades, but when it was announced he would be in the Guinness Book of World Records as the most successful bridge player ever, whow, that was astonishing!
+The International Bridge Association (IBA) has maintained, for several years, a weekly ranking of the best players in the world. Considering that each appearance in a weekly ranking constitutes a point for the player, grandpa was nominated the best player ever because he got the highest number of points.
+Having many friends who were also competing against him, grandpa is extremely curious to know which player(s) took the second place. Since the IBA rankings are now available in the internet he turned to you for help. He needs a program which, when given a list of weekly rankings, finds out which player(s) got the second place according to the number of points.
+
+**输入**
+
+The input contains several test cases. Players are identified by integers from 1 to 10000. The first line of a test case contains two integers N and M indicating respectively the number of rankings available (2 <= N <= 500) and the number of players in each ranking (2 <= M <= 500). Each of the next N lines contains the description of one weekly ranking. Each description is composed by a sequence of M integers, separated by a blank space, identifying the players who figured in that weekly ranking. You can assume that:
+
+- in each test case there is exactly one best player and at least one second best player,
+- each weekly ranking consists of M distinct player identifiers.
+
+The end of input is indicated by N = M = 0.
+
+**输出**
+
+For each test case in the input your program must produce one line of output, containing the identification number of the player who is second best in number of appearances in the rankings. If there is a tie for second best, print the identification numbers of all second best players in increasing order. Each identification number produced must be followed by a blank space.
+
+样例输入
+
+```
+4 5
+20 33 25 32 99
+32 86 99 25 10
+20 99 10 33 86
+19 33 74 99 32
+3 6
+2 34 67 36 79 93
+100 38 21 76 91 85
+32 23 85 31 88 1
+0 0
+```
+
+样例输出
+
+```
+32 33
+1 2 21 23 31 32 34 36 38 67 76 79 88 91 93 100
+```
+
+来源
+
+South America 2004
+
 
 
 ```python
@@ -1444,6 +1762,55 @@ while True:
 ## 02226: Muddy Fields
 
 http://cs101.openjudge.cn/dsapre/02226/
+
+Rain has pummeled the cows' field, a rectangular grid of R rows and C columns (1 <= R <= 50, 1 <= C <= 50). While good for the grass, the rain makes some patches of bare earth quite muddy. The cows, being meticulous grazers, don't want to get their hooves dirty while they eat.
+
+To prevent those muddy hooves, Farmer John will place a number of wooden boards over the muddy parts of the cows' field. Each of the boards is 1 unit wide, and can be any length long. Each board must be aligned parallel to one of the sides of the field.
+
+Farmer John wishes to minimize the number of boards needed to cover the muddy spots, some of which might require more than one board to cover. The boards may not cover any grass and deprive the cows of grazing area but they can overlap each other.
+
+Compute the minimum number of boards FJ requires to cover all the mud in the field.
+
+**输入**
+
+\* Line 1: Two space-separated integers: R and C
+
+\* Lines 2..R+1: Each line contains a string of C characters, with '*' representing a muddy patch, and '.' representing a grassy patch. No spaces are present.
+
+**输出**
+
+\* Line 1: A single integer representing the number of boards FJ needs.
+
+样例输入
+
+```
+4 4
+*.*.
+.***
+***.
+..*.
+```
+
+样例输出
+
+```
+4
+```
+
+提示
+
+OUTPUT DETAILS:
+
+Boards 1, 2, 3 and 4 are placed as follows:
+1.2.
+.333
+444.
+..2.
+Board 2 overlaps boards 3 and 4.
+
+来源
+
+USACO 2005 January Gold
 
 
 
@@ -1496,6 +1863,50 @@ print(ans)
 ## 02253:Frogger
 
 http://cs101.openjudge.cn/dsapre/02253/
+
+Freddy Frog is sitting on a stone in the middle of a lake. Suddenly he notices Fiona Frog who is sitting on another stone. He plans to visit her, but since the water is dirty and full of tourists' sunscreen, he wants to avoid swimming and instead reach her by jumping. 
+Unfortunately Fiona's stone is out of his jump range. Therefore Freddy considers to use other stones as intermediate stops and reach her by a sequence of several small jumps. 
+To execute a given sequence of jumps, a frog's jump range obviously must be at least as long as the longest jump occuring in the sequence. 
+The frog distance (humans also call it minimax distance) between two stones therefore is defined as the minimum necessary jump range over all possible paths between the two stones. 
+
+You are given the coordinates of Freddy's stone, Fiona's stone and all other stones in the lake. Your job is to compute the frog distance between Freddy's and Fiona's stone.
+
+**输入**
+
+The input will contain one or more test cases. The first line of each test case will contain the number of stones n (2<=n<=200). The next n lines each contain two integers xi,yi (0 <= xi,yi <= 1000) representing the coordinates of stone #i. Stone #1 is Freddy's stone, stone #2 is Fiona's stone, the other n-2 stones are unoccupied. There's a blank line following each test case. Input is terminated by a value of zero (0) for n. 
+
+**输出**
+
+For each test case, print a line saying "Scenario #x" and a line saying "Frog Distance = y" where x is replaced by the test case number (they are numbered from 1) and y is replaced by the appropriate real number, printed to three decimals. Put a blank line after each test case, even after the last one. 
+
+样例输入
+
+```
+2
+0 0
+3 4
+
+3
+17 4
+19 4
+18 5
+
+0
+```
+
+样例输出
+
+```
+Scenario #1
+Frog Distance = 5.000
+
+Scenario #2
+Frog Distance = 1.414
+```
+
+来源
+
+Ulm Local 1997
 
 
 
@@ -1554,8 +1965,6 @@ while True:
 
     test_case += 1
 ```
-
-
 
 
 
@@ -1637,6 +2046,47 @@ while True:
 
 http://cs101.openjudge.cn/dsapre/02299/
 
+In this problem, you have to analyze a particular sorting algorithm. The algorithm processes a sequence of n distinct integers by swapping two adjacent sequence elements until the sequence is sorted in ascending order. For the input sequence 
+9 1 0 5 4 , 
+Ultra-QuickSort produces the output 
+0 1 4 5 9 . 
+Your task is to determine how many swap operations Ultra-QuickSort needs to perform in order to sort a given input sequence. 
+
+**输入**
+
+The input contains several test cases. Every test case begins with a line that contains a single integer n < 500,000 -- the length of the input sequence. Each of the the following n lines contains a single integer 0 ≤ a[i] ≤ 999,999,999, the i-th input sequence element. Input is terminated by a sequence of length n = 0. This sequence must not be processed.
+
+**输出**
+
+For every input sequence, your program prints a single line containing an integer number op, the minimum number of swap operations necessary to sort the given input sequence.
+
+样例输入
+
+```
+5
+9
+1
+0
+5
+4
+3
+1
+2
+3
+0
+```
+
+样例输出
+
+```
+6
+0
+```
+
+来源
+
+Waterloo local 2005.02.05
+
 
 
 ```python
@@ -1701,6 +2151,58 @@ while True:
 ## 02337: Catenyms
 
 http://cs101.openjudge.cn/dsapre/02337/
+
+A catenym is a pair of words separated by a period such that the last letter of the first word is the same as the last letter of the second. For example, the following are catenyms: 
+
+```
+dog.gopher
+gopher.rat
+rat.tiger
+aloha.aloha
+arachnid.dog
+```
+
+A compound catenym is a sequence of three or more words separated by periods such that each adjacent pair of words forms a catenym. For example, 
+
+aloha.aloha.arachnid.dog.gopher.rat.tiger
+
+Given a dictionary of lower case words, you are to find a compound catenym that contains each of the words exactly once.
+
+**输入**
+
+The first line of standard input contains t, the number of test cases. Each test case begins with 3 <= n <= 1000 - the number of words in the dictionary. n distinct dictionary words follow; each word is a string of between 1 and 20 lowercase letters on a line by itself.
+
+**输出**
+
+For each test case, output a line giving the lexicographically least compound catenym that contains each dictionary word exactly once. Output "***" if there is no solution. 
+
+样例输入
+
+```
+2
+6
+aloha
+arachnid
+dog
+gopher
+rat
+tiger
+3
+oak
+maple
+elm
+```
+
+样例输出
+
+```
+aloha.arachnid.dog.gopher.rat.tiger
+***
+```
+
+来源
+
+Waterloo local 2003.01.25
 
 
 
@@ -1802,6 +2304,48 @@ if __name__ == "__main__":
 
 http://cs101.openjudge.cn/dsapre/02488/
 
+**Background**
+The knight is getting bored of seeing the same black and white squares again and again and has decided to make a journey
+around the world. Whenever a knight moves, it is two squares in one direction and one square perpendicular to this. The world of a knight is the chessboard he is living on. Our knight lives on a chessboard that has a smaller area than a regular 8 * 8 board, but it is still rectangular. Can you help this adventurous knight to make travel plans?
+
+**Problem**
+Find a path such that the knight visits every square once. The knight can start and end on any square of the board.
+
+**输入**
+
+The input begins with a positive integer n in the first line. The following lines contain n test cases. Each test case consists of a single line with two positive integers p and q, such that 1 <= p * q <= 26. This represents a p * q chessboard, where p describes how many different square numbers 1, . . . , p exist, q describes how many different square letters exist. These are the first q letters of the Latin alphabet: A, . . .
+
+**输出**
+
+The output for every scenario begins with a line containing "Scenario #i:", where i is the number of the scenario starting at 1. Then print a single line containing the lexicographically first path that visits all squares of the chessboard with knight moves followed by an empty line. The path should be given on a single line by concatenating the names of the visited squares. Each square name consists of a capital letter followed by a number.
+If no such path exist, you should output impossible on a single line.
+
+样例输入
+
+```
+3
+1 1
+2 3
+4 3
+```
+
+样例输出
+
+```
+Scenario #1:
+A1
+
+Scenario #2:
+impossible
+
+Scenario #3:
+A1B3C1A2B4C2A3B1C3A4B2C4
+```
+
+来源
+
+TUD Programming Contest 2005, Darmstadt, Germany
+
 
 
 ```python
@@ -1845,6 +2389,49 @@ for m in range(1, n + 1):
 ## 02524: 宗教信仰
 
 http://cs101.openjudge.cn/dsapre/02524/
+
+世界上有许多宗教，你感兴趣的是你学校里的同学信仰多少种宗教。
+
+你的学校有n名学生（0 < n <= 50000），你不太可能询问每个人的宗教信仰，因为他们不太愿意透露。但是当你同时找到2名学生，他们却愿意告诉你他们是否信仰同一宗教，你可以通过很多这样的询问估算学校里的宗教数目的上限。你可以认为每名学生只会信仰最多一种宗教。
+
+
+
+**输入**
+
+输入包括多组数据。
+每组数据的第一行包括n和m，0 <= m <= n(n-1)/2，其后m行每行包括两个数字i和j，表示学生i和学生j信仰同一宗教，学生被标号为1至n。输入以一行 n = m = 0 作为结束。
+
+**输出**
+
+对于每组数据，先输出它的编号（从1开始），接着输出学生信仰的不同宗教的数目上限。
+
+样例输入
+
+```
+10 9
+1 2
+1 3
+1 4
+1 5
+1 6
+1 7
+1 8
+1 9
+1 10
+10 4
+2 3
+4 5
+4 8
+5 8
+0 0
+```
+
+样例输出
+
+```
+Case 1: 1
+Case 2: 7
+```
 
 
 
@@ -2382,8 +2969,6 @@ for root in build_tree():
 
 
 
-
-
 # 31-40
 
 ## 04079: 二叉搜索树
@@ -2550,8 +3135,6 @@ int main() {
 
 
 
-
-
 ## 04081: 树的转换
 
 http://cs101.openjudge.cn/dsapre/04081/
@@ -2675,8 +3258,6 @@ int main()
     cout << maxold << " => " << maxnew << endl;
 }
 ```
-
-
 
 
 
@@ -2882,11 +3463,40 @@ int main() {
 
 
 
-
-
 ## 04084: 拓扑排序
 
 http://cs101.openjudge.cn/dsapre/04084/
+
+给出一个图的结构，输出其拓扑排序序列，要求在同等条件下，编号小的顶点在前。
+
+**输入**
+
+若干行整数，第一行有2个数，分别为顶点数v和弧数a，接下来有a行，每一行有2个数，分别是该条弧所关联的两个顶点编号。
+v<=100, a<=500
+
+**输出**
+
+若干个空格隔开的顶点构成的序列(用小写字母)。
+
+样例输入
+
+```
+6 8
+1 2
+1 3
+1 4
+3 2
+3 5
+4 5
+6 4
+6 5
+```
+
+样例输出
+
+```
+v1 v3 v2 v6 v4 v5
+```
 
 
 
@@ -3034,8 +3644,6 @@ else:print("No")
 
 
 
-
-
 ## 05344: 最后的最后
 
 http://cs101.openjudge.cn/dsapre/05344/
@@ -3088,8 +3696,6 @@ while len(queue)>=2:
 res_new=[str(i) for i in res]
 print(" ".join(res_new))
 ```
-
-
 
 
 
@@ -3176,8 +3782,6 @@ for _ in range(M):
         d = int(value)
         modify_nums(nums, d)
 ```
-
-
 
 
 
@@ -3397,8 +4001,6 @@ print(expression_value)
 
 
 
-
-
 ## 05442: 兔子与星空
 
 http://cs101.openjudge.cn/dsapre/05442/
@@ -3487,8 +4089,6 @@ def solve():
 
 solve()
 ```
-
-
 
 
 
@@ -3607,8 +4207,6 @@ for start, end in requests:
 
 
 
-
-
 ## 05467: 多项式加法
 
 http://cs101.openjudge.cn/dsapre/05467/
@@ -3683,10 +4281,6 @@ for _ in range(int(input())):
             print(f'[ {res[i]} {i} ] ',end='')
     print()
 ```
-
-
-
-
 
 
 
@@ -3800,11 +4394,33 @@ for _ in range(int(input())):
 
 
 
-
-
 ## 06250: 字符串最大跨距
 
 http://cs101.openjudge.cn/dsapre/06250/
+
+有三个字符串S,S1,S2，其中，S长度不超过300，S1和S2的长度不超过10。想检测S1和S2是否同时在S中出现，且S1位于S2的左边，并在S中互不交叉（即，S1的右边界点在S2的左边界点的左侧）。计算满足上述条件的最大跨距（即，最大间隔距离：最右边的S2的起始点与最左边的S1的终止点之间的字符数目）。如果没有满足条件的S1，S2存在，则输出-1。 
+
+例如，S = "abcd123ab888efghij45ef67kl", S1="ab", S2="ef"，其中，S1在S中出现了2次，S2也在S中出现了2次，最大跨距为：18。
+
+**输入**
+
+三个串：S, S1, S2，其间以逗号间隔（注意，S, S1, S2中均不含逗号和空格）；
+
+**输出**
+
+S1和S2在S最大跨距；若在S中没有满足条件的S1和S2，则输出-1。
+
+样例输入
+
+```
+abcd123ab888efghij45ef67kl,ab,ef
+```
+
+样例输出
+
+```
+18
+```
 
 
 
@@ -3900,8 +4516,6 @@ print(second_round_cows[0][2])
 
 
 
-
-
 ## 06646: 二叉树的深度
 
 http://cs101.openjudge.cn/dsapre/06646/
@@ -3978,8 +4592,6 @@ depth = max_depth(root)
 # 输出结果
 print(depth)
 ```
-
-
 
 
 
@@ -4071,13 +4683,53 @@ for _ in range(T):
 
 
 
-
-
 # 51-60
 
 ## 07161: 森林的带度数层次序列存储
 
 http://cs101.openjudge.cn/dsapre/07161/
+
+对于树和森林等非线性结构，我们往往需要将其序列化以便存储。有一种树的存储方式称为带度数的层次序列。我们可以通过层次遍历的方式将森林序列转化为多个带度数的层次序列。
+
+例如对于以下森林：
+
+![img](http://media.openjudge.cn/images/upload/1401904592.png)
+
+两棵树的层次遍历序列分别为：C E F G K H J / D X I
+
+每个结点对应的度数为：3 3 0 0 0 0 0 / 2 0 0
+
+我们将以上序列存储起来，就可以在以后的应用中恢复这个森林。在存储中，我们可以将第一棵树表示为C 3 E 3 F 0 G 0 K 0 H 0 J 0，第二棵树表示为D 2 X 0 I 0。
+
+
+
+现在有一些通过带度数的层次遍历序列存储的森林数据，为了能够对这些数据进行进一步处理，首先需要恢复他们。
+
+
+
+**输入**
+
+输入数据的第一行包括一个正整数n，表示森林中非空的树的数目。
+随后的 n 行，每行给出一棵树的带度数的层次序列。
+树的节点名称为A-Z的单个大写字母。
+
+**输出**
+
+输出包括一行，输出对应森林的后根遍历序列。
+
+样例输入
+
+```
+2
+C 3 E 3 F 0 G 0 K 0 H 0 J 0
+D 2 X 0 I 0
+```
+
+样例输出
+
+```
+K H J E F G C X I D
+```
 
 
 
@@ -4254,11 +4906,35 @@ print(' '.join(map(str, sorted_numbers)))
 
 
 
-
-
 ## 08581: 扩展二叉树
 
 http://cs101.openjudge.cn/dsapre/08581/
+
+由于先序、中序和后序序列中的任一个都不能唯一确定一棵二叉树，所以对二叉树做如下处理，将二叉树的空结点用·补齐，如图所示。我们把这样处理后的二叉树称为原二叉树的扩展二叉树，扩展二叉树的先序和后序序列能唯一确定其二叉树。 现给出扩展二叉树的先序序列，要求输出其中序和后序序列。
+
+![img](http://media.openjudge.cn/images/upload/1440300244.png)
+
+**输入**
+
+扩展二叉树的先序序列（全部都由大写字母或者.组成）
+
+**输出**
+
+第一行：中序序列
+第二行：后序序列
+
+样例输入
+
+```
+ABD..EF..G..C..
+```
+
+样例输出
+
+```
+DBFEGAC
+DFGEBCA
+```
 
 
 
@@ -4449,8 +5125,6 @@ print(ans)
 
 
 
-
-
 ## 14683: 合并果子
 
 http://cs101.openjudge.cn/dsapre/14683/
@@ -4503,8 +5177,6 @@ while len(l) > 1:
 
 print(ans)
 ```
-
-
 
 
 
@@ -4567,8 +5239,6 @@ print(binary_divisible_by_five(binary_string))
 
 
 
-
-
 ## 20453: 和为k的子数组个数
 
 http://cs101.openjudge.cn/dsapre/20453/
@@ -4623,8 +5293,6 @@ nums = list(map(int, input().split()))
 k = int(input().strip())
 print(subarray_sum(nums, k))
 ```
-
-
 
 
 
@@ -4709,8 +5377,6 @@ for _ in range(10):
 print(closedIsland(grid))
 
 ```
-
-
 
 
 
@@ -4830,8 +5496,6 @@ print(1 if is_robot_making_loop(commands) else 0)
 
 
 
-
-
 ## 20576: printExp
 
 http://cs101.openjudge.cn/dsapre/20576/
@@ -4942,8 +5606,6 @@ main()
 
 
 
-
-
 ## 20625: 1跟0数量相等的子字串
 
 http://cs101.openjudge.cn/dsapre/20625/
@@ -5019,8 +5681,6 @@ def count_balanced_substrings(s):
 #print(count_balanced_substrings("00110011"))  # 输出应该是6
 print(count_balanced_substrings(input()))
 ```
-
-
 
 
 
@@ -5118,8 +5778,6 @@ sys.stdout.write('\n'.join(results) + '\n')
 
 
 
-
-
 ## 20644: 统计全为 1 的正方形子矩阵
 
 http://cs101.openjudge.cn/dsapre/20644/
@@ -5163,6 +5821,8 @@ m行，每行有n个数
 
 
 
+Dp
+
 ```python
 #23n2300017735(夏天明BrightSummer)
 m, n = map(int, input().split())
@@ -5176,6 +5836,8 @@ print(sum(dp[i][j] for j in range(n+1) for i in range(m+1)))
 ```
 
 
+
+Brute force
 
 ```python
 m,n = map(int, input().split())
@@ -5202,8 +5864,6 @@ while step <= min(m, n):
 
 print(cnt)
 ```
-
-
 
 
 
@@ -5254,8 +5914,6 @@ s1 = input()
 s2 = input()
 print(longest_common_subsequence(s1, s2))
 ```
-
-
 
 
 
@@ -5438,8 +6096,6 @@ print(main())
 
 
 
-
-
 ## 20742: 泰波拿契數
 
 http://cs101.openjudge.cn/dsapre/20742/
@@ -5496,8 +6152,6 @@ def tribonacci(n):
 n = int(input())
 print(tribonacci(n))
 ```
-
-
 
 
 
@@ -5568,8 +6222,6 @@ def reverse_parentheses(s):
 s = input().strip()
 print(reverse_parentheses(s))
 ```
-
-
 
 
 
@@ -6012,8 +6664,6 @@ while True:
 
 
 
-
-
 ## 22068:合法出栈序列
 
 http://cs101.openjudge.cn/dsapre/22068/
@@ -6124,8 +6774,6 @@ while True:
     except EOFError:
         break
 ```
-
-
 
 
 
@@ -6318,8 +6966,6 @@ for price in a:
 
 print(max_profit)
 ```
-
-
 
 
 
@@ -6640,8 +7286,6 @@ while True:
 
 
 
-
-
 # 81-90
 
 ## 23563:多项式时间复杂度
@@ -6663,6 +7307,33 @@ http://cs101.openjudge.cn/dsapre/23568/
 ## 23570:特殊密码锁
 
 http://cs101.openjudge.cn/dsapre/23570/
+
+有一种特殊的二进制密码锁，由n个相连的按钮组成（1<=n<30），按钮有凹/凸两种状态，用手按按钮会改变其状态。
+
+然而让人头疼的是，当你按一个按钮时，跟它相邻的两个按钮状态也会反转。当然，如果你按的是最左或者最右边的按钮，该按钮只会影响到跟它相邻的一个按钮。
+
+当前密码锁状态已知，需要解决的问题是，你至少需要按多少次按钮，才能将密码锁转变为所期望的目标状态。
+
+**输入**
+
+两行，给出两个由0、1组成的等长字符串，表示当前/目标密码锁状态，其中0代表凹，1代表凸。
+
+**输出**
+
+至少需要进行的按按钮操作次数，如果无法实现转变，则输出impossible。
+
+样例输入
+
+```
+011
+000
+```
+
+样例输出
+
+```
+1
+```
 
 
 
@@ -6714,6 +7385,37 @@ if __name__ == "__main__":
 ## 23660:7的倍数取法有多少种
 
 http://cs101.openjudge.cn/dsapre/23660/
+
+在n个不同的正整数里，任意取若干个，不能重复取,要求它们的和是7的倍数，问有几种取法。
+
+**输入**
+
+第一行是整数t，表示有t组数据(t<10)。接下来有t行，每行是一组数据，每组数据第一个数是n（1 <= n <= 16），表示要从n个整数里取数,接下来就是n个整数。
+
+**输出**
+
+对每组数据，输出一行，表示取法的数目（一个都不取也算一种取法）。 
+
+样例输入
+
+```
+3
+3 1 2 4
+5 1 2 3 4 5
+12 1 2 3 4 5 6 7 8 9 10 11 12
+```
+
+样例输出
+
+```
+2
+5
+586
+```
+
+来源
+
+郭炜
 
 
 
@@ -6831,6 +7533,48 @@ while True:
 
 http://cs101.openjudge.cn/dsapre/24588/
 
+后序表达式由操作数和运算符构成。操作数是整数或小数，运算符有 + - * / 四种，其中 * / 优先级高于 + -。后序表达式可用如下方式递归定义：
+
+1) 一个操作数是一个后序表达式。该表达式的值就是操作数的值。
+2) 若a,b是后序表达式，c是运算符，则"a b c"是后序表达式。“a b c”的值是 (a) c (b),即对a和b做c运算，且a是第一个操作数，b是第二个操作数。下面是一些后序表达式及其值的例子(操作数、运算符之间用空格分隔)：
+
+3.4       值为：3.4
+5        值为：5
+5 3.4 +     值为：5 + 3.4
+5 3.4 + 6 /   值为：(5+3.4)/6
+5 3.4 + 6 * 3 + 值为：(5+3.4)*6+3
+
+
+
+**输入**
+
+第一行是整数n(n<100)，接下来有n行，每行是一个后序表达式，长度不超过1000个字符
+
+**输出**
+
+对每个后序表达式，输出其值，保留小数点后面2位
+
+样例输入
+
+```
+3
+5 3.4 +
+5 3.4 + 6 /
+5 3.4 + 6 * 3 +
+```
+
+样例输出
+
+```
+8.40
+1.40
+53.40
+```
+
+来源
+
+Guo wei
+
 
 
 ```python
@@ -6871,6 +7615,44 @@ for _ in range(n):
 ## 24591:中序表达式转后序表达式
 
 http://cs101.openjudge.cn/dsapre/24591/
+
+中序表达式是运算符放在两个数中间的表达式。乘、除运算优先级高于加减。可以用"()"来提升优先级 --- 就是小学生写的四则算术运算表达式。中序表达式可用如下方式递归定义：
+
+1）一个数是一个中序表达式。该表达式的值就是数的值。
+
+2) 若a是中序表达式，则"(a)"也是中序表达式(引号不算)，值为a的值。
+3) 若a,b是中序表达式，c是运算符，则"acb"是中序表达式。"acb"的值是对a和b做c运算的结果，且a是左操作数，b是右操作数。
+
+输入一个中序表达式，要求转换成一个后序表达式输出。
+
+**输入**
+
+第一行是整数n(n<100)。接下来n行，每行一个中序表达式，数和运算符之间没有空格，长度不超过700。
+
+**输出**
+
+对每个中序表达式，输出转成后序表达式后的结果。后序表达式的数之间、数和运算符之间用一个空格分开。
+
+样例输入
+
+```
+3
+7+8.3 
+3+4.5*(7+2)
+(3)*((3+4)*(2+3.5)/(4+5)) 
+```
+
+样例输出
+
+```
+7 8.3 +
+3 4.5 7 2 + * +
+3 3 4 + 2 3.5 + * 4 5 + / *
+```
+
+来源
+
+Guo wei
 
 
 
@@ -6914,8 +7696,6 @@ for _ in range(n):
     expression = input()
     print(infix_to_postfix(expression))
 ```
-
-
 
 
 
@@ -7423,6 +8203,35 @@ print(min_population_flow(n, m, populations))
 
 http://cs101.openjudge.cn/dsapre/24750/
 
+假设二叉树的节点里包含一个大写字母，每个节点的字母都不同。
+
+给定二叉树的中序遍历序列和后序遍历序列(长度均不超过26)，请输出该二叉树的前序遍历序列。
+
+**输入**
+
+2行，均为大写字母组成的字符串，表示一棵二叉树的中序遍历序列与后序遍历排列。
+
+**输出**
+
+表示二叉树的前序遍历序列。
+
+样例输入
+
+```
+BADC
+BDCA
+```
+
+样例输出
+
+```
+ABCD
+```
+
+来源
+
+Lou Yuke
+
 
 
 ```python
@@ -7528,8 +8337,6 @@ print(dp[0][-1])
 
 
 
-
-
 ## 26572:多余的括号
 
 http://cs101.openjudge.cn/dsapre/26572/
@@ -7540,12 +8347,12 @@ http://cs101.openjudge.cn/dsapre/26572/
 
 输入是若干行只含有非负整数、加号、乘号和括号的四则运算表达式。对于每一行输入，你的程序需要输出一行结果，即删去表达式中所有冗余括号后得到的简化表达式。
 
-输入
+**输入**
 
 (1+11)
 ((1+2))+3*(4+5)
 
-输出
+**输出**
 
 1+11
 1+2+3*(4+5)
@@ -7674,8 +8481,6 @@ while True:
 
 
 
-
-
 ## 26573:康托集的图像表示
 
 http://cs101.openjudge.cn/dsapre/26573/
@@ -7758,6 +8563,32 @@ print(print_cantor_set(n))
 
 http://cs101.openjudge.cn/dsapre/27625/
 
+输入n(0<n<50),输出一个n层的AVL树至少有多少个结点。
+
+**输入**
+
+n
+
+**输出**
+
+答案
+
+样例输入
+
+```
+4
+```
+
+样例输出
+
+```
+7
+```
+
+来源
+
+http://dsbpython.openjudge.cn/dspythonbook/P1350/
+
 
 
 ```python
@@ -7784,6 +8615,32 @@ print(min_nodes)
 ## 27626:AVL树最多有几层
 
 http://cs101.openjudge.cn/dsapre/27626/
+
+n个结点的AVL树最多有多少层？
+
+**输入**
+
+整数n 。 0< n < 50,000,000
+
+**输出**
+
+AVL树最多有多少层
+
+样例输入
+
+```
+20
+```
+
+样例输出
+
+```
+6
+```
+
+来源
+
+http://dsbpython.openjudge.cn/dspythonbook/P1360/
 
 
 
@@ -7813,6 +8670,37 @@ print(max_height(n))
 ## 27635:判断无向图是否连通有无回路(同23163)
 
 http://cs101.openjudge.cn/dsapre/27635/
+
+例题：给定一个无向图，判断是否连通，是否有回路。
+
+**输入**
+
+第一行两个整数n,m，分别表示顶点数和边数。顶点编号从0到n-1。 (1<=n<=110, 1<=m <= 10000)
+接下来m行，每行两个整数u和v，表示顶点u和v之间有边。
+
+**输出**
+
+如果图是连通的，则在第一行输出“connected:yes",否则第一行输出“connected:no"。
+如果图中有回路，则在第二行输出“loop:yes ",否则第二行输出“loop:no"。
+
+样例输入
+
+```
+3 2
+0 1
+0 2
+```
+
+样例输出
+
+```
+connected:yes
+loop:no
+```
+
+来源
+
+http://dsbpython.openjudge.cn/dspythonbook/P1040/
 
 
 
@@ -7863,8 +8751,6 @@ has_loop = has_cycle(graph, n)
 print("connected:yes" if connected else "connected:no")
 print("loop:yes" if has_loop else "loop:no")
 ```
-
-
 
 
 
@@ -7977,6 +8863,35 @@ for _ in range(n):
 
 http://cs101.openjudge.cn/dsapre/27638/
 
+给定一棵二叉树，求该二叉树的高度和叶子数目二叉树高度定义：从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的结点数减1为树的高度。只有一个结点的二叉树，高度是0。
+
+**输入**
+
+第一行是一个整数n，表示二叉树的结点个数。二叉树结点编号从0到n-1，根结点n <= 100 接下来有n行，依次对应二叉树的编号为0,1,2....n-1的节点。 每行有两个整数，分别表示该节点的左儿子和右儿子的编号。如果第一个（第二个）数为-1则表示没有左（右）儿子
+
+**输出**
+
+在一行中输出2个整数，分别表示二叉树的高度和叶子结点个数
+
+样例输入
+
+```
+3
+-1 -1
+0 2
+-1 -1
+```
+
+样例输出
+
+```
+1 2
+```
+
+来源
+
+http://dsbpython.openjudge.cn/dspythonbook/P0610/
+
 
 
 ```python
@@ -8028,13 +8943,11 @@ print(f"{height} {leaves}")
 
 
 
-# 数算pre每日选做
+# 题目渐进性分类
 
 http://cs101.openjudge.cn/dsapre/
 
-后续课程是数据结构与算法，假期同学想提前学Python数算，按照数算学习顺序继续维护每日选做。
-
-把 http://xzmdsa.openjudge.cn/ 2023年春季的几次作业陆续加到cs101，可以先看下线性表这一块，涉及队列和栈，半期就到查找与排序。其中有些题目在 cs101已经有。
+把 http://xzmdsa.openjudge.cn/ 2023年春季的几次作业陆续加到cs101，其中有些题目在 cs101已经有。
 
 因为缺少图的题目，我们额外增加了 H7: 图应用
 
@@ -8046,25 +8959,17 @@ http://cs101.openjudge.cn/dsapre/
 
 http://cs101.openjudge.cn/dsapre/22359/
 
-
-
 02039: 反反复复
 
 http://cs101.openjudge.cn/dsapre/02039/
-
-
 
 22548: 机智的股民老张
 
 http://cs101.openjudge.cn/dsapre/22548/
 
-
-
 23563: 多项式时间复杂度
 
 http://cs101.openjudge.cn/practice/23563/
-
-
 
 
 
@@ -8074,43 +8979,29 @@ http://cs101.openjudge.cn/practice/23563/
 
 http://cs101.openjudge.cn/dsapre/05345/
 
- 
-
-05344: 最后的最后
+ 05344: 最后的最后
 
 http://cs101.openjudge.cn/dsapre/05344/
-
-
 
 05467: 多项式加法
 
 http://cs101.openjudge.cn/dsapre/05467/
 
-
-
 07297: 神奇的幻方
 
 http://cs101.openjudge.cn/dsapre/07297/
-
-
 
 21006: 放苹果（盘子相同）
 
 http://cs101.openjudge.cn/dsapre/21006/
 
-
-
 22068: 合法出栈序列
 
 http://cs101.openjudge.cn/dsapre/22068/
 
-
-
 23451: 交互四则运算计算器_带错误表达式版
 
 http://cs101.openjudge.cn/dsapre/23451/
-
-
 
 
 
@@ -8120,25 +9011,17 @@ http://cs101.openjudge.cn/dsapre/23451/
 
 http://cs101.openjudge.cn/practice/04117/
 
-
-
-
-
 02773: 采药
 
 http://cs101.openjudge.cn/practice/02773/
 
-
-
-
-
-### 08780: 拦截导弹
+08780: 拦截导弹
 
 http://cs101.openjudge.cn/dsapre/02945/
 
+题目出现在  https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md，
 
-
-提交Optional problems 的 02945: 拦截导弹 的代码直接AC了。
+提交Optional problems 部分的 02945: 拦截导弹 的代码直接AC了。
 
 ```python
 k=int(input())
@@ -8159,19 +9042,13 @@ print(max(dp))
 
 http://cs101.openjudge.cn/dsapre/22636/
 
-
-
 24375: 小木棍
 
 http://cs101.openjudge.cn/dsapre/24375/
 
-
-
 25815: 回文字符串
 
 http://cs101.openjudge.cn/dsapre/25815/
-
-
 
 20650: 最长的公共子序列的长度
 
@@ -8185,49 +9062,29 @@ http://cs101.openjudge.cn/dsapre/20650/
 
 http://cs101.openjudge.cn/dsapre/07745/
 
-
-
 04143: 和为给定数
 
 http://cs101.openjudge.cn/practice/04143/
-
-
 
 04135: 月度开销
 
 http://cs101.openjudge.cn/practice/04135/
 
-
-
 09201: Freda的越野跑
 
 http://cs101.openjudge.cn/dsapre/09201/
-
-
 
 20741: 两座孤岛最短距离
 
 http://cs101.openjudge.cn/practice/20741/
 
-
-
-
-
 23568: 幸福的寒假生活
 
 http://cs101.openjudge.cn/practice/23568/
 
-
-
-
-
 04136: 矩形分割
 
 http://cs101.openjudge.cn/practice/04136/
-
-
-
-
 
 
 
@@ -8237,39 +9094,25 @@ http://cs101.openjudge.cn/practice/04136/
 
 http://cs101.openjudge.cn/practice/01145/
 
-
-
-
-
 02255:重建二叉树
 
 http://cs101.openjudge.cn/practice/02255/
-
-
 
 02694: 波兰表达式
 
 http://cs101.openjudge.cn/practice/02694/
 
-
-
 02788: 二叉树
 
 http://cs101.openjudge.cn/dsapre/02788/
-
-
 
 04081: 树的转换
 
 http://cs101.openjudge.cn/practice/04081/
 
-
-
 04082: 树的镜面映射
 
 http://cs101.openjudge.cn/practice/04082/
-
-
 
 14683: 合并果子
 
@@ -8283,37 +9126,25 @@ http://cs101.openjudge.cn/dsapre/14683/
 
 http://cs101.openjudge.cn/practice/02756/
 
-
-
 06646: 二叉树的深度
 
 http://cs101.openjudge.cn/dsapre/06646/
-
-
 
 06648: Sequence
 
 http://cs101.openjudge.cn/practice/06648/
 
-
-
 01760: Disk Tree
 
 http://cs101.openjudge.cn/practice/01760
-
-
 
 04079: 二叉搜索树
 
 http://cs101.openjudge.cn/practice/04079/
 
- 
-
-04089: 电话号码
+ 04089: 电话号码
 
 http://cs101.openjudge.cn/practice/04089/
-
-
 
 05430: 表达式·表达式树·表达式求值
 
@@ -8327,25 +9158,17 @@ http://cs101.openjudge.cn/practice/05430/
 
 http://cs101.openjudge.cn/practice/05442/
 
-
-
 05443: 兔子与樱花
 
 http://cs101.openjudge.cn/practice/05443/
-
-
 
 01178: Camelot
 
 http://cs101.openjudge.cn/practice/01178/
 
-
-
 01376: Robot
 
 http://cs101.openjudge.cn/practice/01376/
-
-
 
 02049: Finding Nemo
 
@@ -8545,43 +9368,29 @@ if __name__ == "__main__":
 
 http://cs101.openjudge.cn/practice/02774/
 
-
-
 02766: 最大子矩阵
 
 http://cs101.openjudge.cn/practice/02766/
-
-
 
 26573: 康托集的图像表示
 
 http://cs101.openjudge.cn/practice/26573/
 
-
-
 26572: 多余的括号
 
 http://cs101.openjudge.cn/practice/26572/
-
-
 
 06364: 牛的选举
 
 http://cs101.openjudge.cn/practice/06364
 
-
-
 03720: 文本二叉树
 
 http://cs101.openjudge.cn/practice/03720/
 
-
-
 05907: 二叉树的操作
 
 http://cs101.openjudge.cn/practice/05907/
-
-
 
 
 
@@ -8591,31 +9400,21 @@ http://cs101.openjudge.cn/practice/05907/
 
 http://cs101.openjudge.cn/practice/24684/
 
-
-
 24677: 安全位置
 
 http://cs101.openjudge.cn/practice/24677/
-
-
 
 24676: 共同富裕
 
 http://cs101.openjudge.cn/practice/24676/
 
-
-
 24678: 任性买房
 
 http://cs101.openjudge.cn/practice/24678/
 
-
-
 24686: 树的重量
 
 http://cs101.openjudge.cn/dsapre/24686/
-
-
 
 24687: 封锁管控
 
@@ -8629,37 +9428,25 @@ http://cs101.openjudge.cn/practice/24687/
 
 http://cs101.openjudge.cn/practice/20742/
 
-
-
 20743: 整人的提词本
 
 http://cs101.openjudge.cn/practice/20743/
-
-
 
 20741: 两座孤岛最短距离
 
 http://cs101.openjudge.cn/practice/20741
 
-
-
 20746: 满足合法工时的最少人数
 
 http://cs101.openjudge.cn/practice/20746/
-
-
 
 20626: 对子数列做XOR运算
 
 http://cs101.openjudge.cn/practice/20626/
 
-
-
 20744: 土豪购物
 
 http://cs101.openjudge.cn/practice/20744/
-
-
 
 
 
@@ -8669,31 +9456,21 @@ http://cs101.openjudge.cn/practice/20744/
 
 http://cs101.openjudge.cn/practice/20449/
 
-
-
 20453: 和为k的子数组个数
 
 http://cs101.openjudge.cn/practice/20453/
-
-
 
 20456: 统计封闭岛屿的数目
 
 http://cs101.openjudge.cn/practice/20456/
 
-
-
 20472: 死循环的机器人
 
 http://cs101.openjudge.cn/practice/20472/
 
-
-
 20625: 1跟0数量相等的子字串
 
 http://cs101.openjudge.cn/practice/20625/
-
-
 
 20644: 统计全为 1 的正方形子矩阵
 
@@ -8745,7 +9522,7 @@ print(evaluate_expression(expression))
 
 
 
-### 20576: printExp
+20576: printExp
 
 http://cs101.openjudge.cn/practice/20576/
 
