@@ -1,6 +1,6 @@
 # 编程题目
 
-Updated 0912 GMT+8 Dec 25, 2024
+Updated 1841 GMT+8 March 9, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9,6 +9,12 @@ Updated 0912 GMT+8 Dec 25, 2024
 **homework**
 
 at "homework" folder, https://github.com/GMyhf/2024spring-cs201/
+
+Assignment #3 March 月考
+
+​	02945: 拦截导弹, 04147: 汉诺塔问题, 03253: 约瑟夫问题No.2,
+
+​	21554:排队做实验 (greedy)v0.2, 19963:买学区房, 27300: 模型整理
 
 Assignment #2 编程练习
 
