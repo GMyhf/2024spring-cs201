@@ -1,12 +1,14 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 1131 GMT+8 March 9, 2024
+Updated 1551 GMT+8 March 9, 2024
 
 2024 spring, Complied by Hongfei Yan
 
 
 
 说明：树相关内容准备在 Week4 ~6 讲。中间考虑穿插递归、dfs等内容。
+
+**预计 Week4 覆盖 一 中的 1～3**，Week5覆盖 一中 的 4~6, Week6覆盖 一 中7，及附录内容
 
 
 
@@ -18,8 +20,6 @@ Updated 1131 GMT+8 March 9, 2024
 
 My github, https://github.com/GMyhf
 
-
-
 ```mermaid
 graph TD
     A[(GMyhf)]; 
@@ -30,8 +30,6 @@ graph TD
     B --- E; B --- F; C --- G; 
     
 ```
-
-
 
 
 
@@ -1511,7 +1509,7 @@ for _ in range(n):
 
 
 
-## 3.3 Huffman 算法
+# 4 Huffman 算法
 
 > 2013-book-Data Structures And Algorithms In Python
 
@@ -1532,7 +1530,7 @@ Figure 13.9: An illustration of an example Huffman code for the input string X =
 
 
 
-### 3.3.1 The Huffman Coding Algorithm
+## 4.1 The Huffman Coding Algorithm
 
 The Huffman coding algorithm begins with each of the d distinct characters of the string X to encode being the root node of a single-node binary tree. The algorithm proceeds in a series of rounds. In each round, the algorithm takes the two binary
 trees with the smallest frequencies and merges them into a single binary tree. It repeats this process until only one tree is left. 
@@ -1544,7 +1542,7 @@ optimal code can be converted into an optimal code in which the code-words for t
 
 
 
-### 3.3.2 The Greedy Method
+## 4.2 The Greedy Method
 
 Huffman’s algorithm for building an optimal encoding is an example application of an algorithmic design pattern called the greedy method. This design pattern is applied to optimization problems, where we are trying to construct some structure
 while minimizing or maximizing some property of that structure. 
@@ -1555,7 +1553,7 @@ But there are several problems that it does work for, and such problems are said
 
 
 
-### 3.3.3 哈夫曼编码实现
+## 4.3 哈夫曼编码实现
 
 要构建一个最优的哈夫曼编码树，首先需要对给定的字符及其权值进行排序。然后，通过重复合并权值最小的两个节点（或子树），直到所有节点都合并为一棵树为止。
 
@@ -1581,7 +1579,7 @@ def huffman_encoding(char_freq):
     while len(heap) > 1:
         left = heapq.heappop(heap)
         right = heapq.heappop(heap)
-        merged = Node(None, left.freq + right.freq)
+        merged = Node(None, left.freq + right.freq) # note: 合并之后 char 字典是空
         merged.left = left
         merged.right = right
         heapq.heappush(heap, merged)
@@ -1612,6 +1610,273 @@ if __name__ == "__main__":
 这段代码首先定义了一个 `Node` 类来表示哈夫曼树的节点。然后，使用最小堆来构建哈夫曼树，每次从堆中取出两个频率最小的节点进行合并，直到堆中只剩下一个节点，即哈夫曼树的根节点。接着，使用递归方法计算哈夫曼树的带权外部路径长度（weighted external path length）。最后，输出计算得到的带权外部路径长度。
 
 你可以运行这段代码来得到该最优二叉编码树的带权外部路径长度。
+
+
+
+### 22161: 哈夫曼编码树
+
+http://cs101.openjudge.cn/practice/22161/
+
+根据字符使用频率(权值)生成一棵唯一的哈夫曼编码树。生成树时需要遵循以下规则以确保唯一性：
+
+选取最小的两个节点合并时，节点比大小的规则是:
+
+1) 权值小的节点算小。权值相同的两个节点，字符集里最小字符小的，算小。
+
+例如 （{'c','k'},12) 和 ({'b','z'},12)，后者小。
+
+2) 合并两个节点时，小的节点必须作为左子节点
+3) 连接左子节点的边代表0,连接右子节点的边代表1
+
+然后对输入的串进行编码或解码
+
+
+
+**输入**
+
+第一行是整数n，表示字符集有n个字符。
+接下来n行，每行是一个字符及其使用频率（权重）。字符都是英文字母。
+再接下来是若干行，有的是字母串，有的是01编码串。
+
+**输出**
+
+对输入中的字母串，输出该字符串的编码
+对输入中的01串,将其解码，输出原始字符串
+
+样例输入
+
+```
+3
+g 4
+d 8
+c 10
+dc
+110
+```
+
+样例输出
+
+```
+110
+dc
+```
+
+提示: 数据规模很小，不用在乎效率
+
+来源: 郭炜
+
+
+
+```python
+import heapq
+
+class Node:
+    def __init__(self, weight, char=None):
+        self.weight = weight
+        self.char = char
+        self.left = None
+        self.right = None
+
+    def __lt__(self, other):
+        if self.weight == other.weight:
+            return self.char < other.char
+        return self.weight < other.weight
+
+def build_huffman_tree(characters):
+    heap = []
+    for char, weight in characters.items():
+        heapq.heappush(heap, Node(weight, char))
+
+    while len(heap) > 1:
+        left = heapq.heappop(heap)
+        right = heapq.heappop(heap)
+        merged = Node(left.weight + right.weight) #note: 合并后，char 字段默认值是空
+        merged.left = left
+        merged.right = right
+        heapq.heappush(heap, merged)
+
+    return heap[0]
+
+def encode_huffman_tree(root):
+    codes = {}
+
+    def traverse(node, code):
+        if node.char:
+            codes[node.char] = code
+        else:
+            traverse(node.left, code + '0')
+            traverse(node.right, code + '1')
+
+    traverse(root, '')
+    return codes
+
+def huffman_encoding(codes, string):
+    encoded = ''
+    for char in string:
+        encoded += codes[char]
+    return encoded
+
+def huffman_decoding(root, encoded_string):
+    decoded = ''
+    node = root
+    for bit in encoded_string:
+        if bit == '0':
+            node = node.left
+        else:
+            node = node.right
+
+        if node.char:
+            decoded += node.char
+            node = root
+    return decoded
+
+# 读取输入
+n = int(input())
+characters = {}
+for _ in range(n):
+    char, weight = input().split()
+    characters[char] = int(weight)
+
+#string = input().strip()
+#encoded_string = input().strip()
+
+# 构建哈夫曼编码树
+huffman_tree = build_huffman_tree(characters)
+
+# 编码和解码
+codes = encode_huffman_tree(huffman_tree)
+
+strings = []
+while True:
+    try:
+        line = input()
+        if line:
+            strings.append(line)
+        else:
+            break
+    except EOFError:
+        break
+
+results = []
+#print(strings)
+for string in strings:
+    if string[0] in ('0','1'):
+        results.append(huffman_decoding(huffman_tree, string))
+    else:
+        results.append(huffman_encoding(codes, string))
+
+for result in results:
+    print(result)
+```
+
+
+
+### 18164: 剪绳子
+
+greedy/huffman, http://cs101.openjudge.cn/practice/18164/
+
+小张要将一根长度为L的绳子剪成N段。准备剪的绳子的长度为L1,L2,L3...,LN，未剪的绳子长度恰好为剪后所有绳子长度的和。 
+
+每次剪断绳子时，需要的开销是此段绳子的长度。
+
+比如，长度为10的绳子要剪成长度为2,3,5的三段绳子。长度为10的绳子切成5和5的两段绳子时，开销为10。再将5切成长度为2和3的绳子，开销为5。因此总开销为15。
+
+
+请按照目标要求将绳子剪完最小的开销时多少。
+
+已知，1<=N <= 20000，0<=Li<= 50000
+
+**输入**
+
+第一行：N，将绳子剪成的段数。
+第二行：准备剪成的各段绳子的长度。
+
+**输出**
+
+最小开销
+
+样例输入
+
+```
+3
+2 3 5
+```
+
+样例输出
+
+```
+15
+```
+
+来源：cs101-2017 期末机考备选
+
+
+
+与 05333: Fence Repair 一样。http://cs101.openjudge.cn/practice/05333
+
+思路： 剪绳子，实际上是 Huffman编码/树，https://zhuanlan.zhihu.com/p/42238580
+
+```python
+# OJ18164
+import sys
+try: fin = open('test.in','r').readline
+except: fin = sys.stdin.readline
+
+n = int(fin())
+import heapq
+a = list(map(int, fin().split()))
+heapq.heapify(a)
+ans = 0
+for i in range(n-1):
+    x = heapq.heappop(a)
+    y = heapq.heappop(a)
+    z = x + y
+    heapq.heappush(a, z)
+    ans += z
+print(ans)
+```
+
+
+
+bisect.insort时间复杂度？sorted时间复杂度？
+
+`bisect.insort`函数的时间复杂度为O(N)，其中N是列表的长度。在最坏情况下，需要在列表中插入元素时，需要移动N个元素来完成插入操作。
+
+`sorted`函数的时间复杂度为O(NlogN)，其中N是列表的长度。它使用的是Timsort算法（一种混合了插入排序和归并排序的排序算法），在平均情况下具有O(NlogN)的时间复杂度。
+
+需要注意的是，这些时间复杂度是基于比较排序的情况。如果列表中的元素具有固定长度，可以使用线性时间复杂度的排序算法，如计数排序或基数排序，来优化排序过程。但对于一般的比较排序算法，以上给出的时间复杂度是适用的。
+
+
+
+heapq时间复杂度？
+
+`heapq`模块中的主要操作函数的时间复杂度如下：
+
+- `heapify`: 将列表转换为堆的时间复杂度为O(N)，其中N是列表的长度。
+- `heappush`: 向堆中插入元素的时间复杂度为O(logN)，其中N是堆的大小。
+- `heappop`: 从堆中弹出最小元素的时间复杂度为O(logN)，其中N是堆的大小。
+- `heappushpop`: 向堆中插入元素并弹出最小元素的时间复杂度为O(logN)，其中N是堆的大小。
+- `heapreplace`: 弹出最小元素并插入新元素的时间复杂度为O(logN)，其中N是堆的大小。
+
+这些操作的时间复杂度都是基于二叉堆的实现方式。二叉堆是一种完全二叉树的数据结构，具有良好的堆特性，可以在O(logN)的时间内进行插入、删除最小元素等操作。
+
+需要注意的是，以上给出的时间复杂度是基于堆的大小的，而不是输入列表的大小。因此，在使用`heapq`模块时，操作的时间复杂度与堆的大小相关，而不是与输入列表的大小相关。
+
+```python
+#23-叶子涵-工院
+import bisect
+N=int(input())
+ribbons=sorted(list(map(lambda x:-int(x),input().split())))
+mini=0
+for i in [0]*(N-1):
+    A=ribbons.pop()
+    B=ribbons.pop()
+    mini-=A+B
+    bisect.insort(ribbons,A+B)
+print(mini)
+```
+
+
 
 
 
@@ -1683,7 +1948,52 @@ WPL = 12 + 16 + 20 + 24 + 27 + 24 + 22 + 24 = 169
 
 
 
-# 4 二叉搜索树
+# 5 利用二叉堆实现优先级队列
+
+我们学习过队列这一先进先出的数据结构。队列有一个重要的变体，叫作优先级队列。和队列一样，优先级队列从头部移除元素，不过元素的逻辑顺序是由优先级决定的。优先级最高的元素在最前，优先级最低的元素在最后。因此，当一个元素入队时，它可能直接被移到优先级队列的头部。后续学习图相关内容时会看到，对于一些图算法来说，优先级队列是一个有用的数据结构。
+
+你或许可以想到一些使用排序函数和列表实现优先级队列的简单方法。但是，就时间复杂度而言，列表的插入操作是 O(n) ，排序操作是 O(nlogn) 。其实，效率可以更高。实现优先级队列的经典方法是使用叫作二叉堆的数据结构。二叉堆的入队操作和出队操作均可达到 O(logn) 。
+
+二叉堆学起来很有意思，它画出来很像一棵树，但实现时只用一个列表作为内部表示。我们将实现最小堆（最小的元素一直在队首）。
+
+## 5.1 二叉堆的实现
+
+1. 结构性
+
+为了使二叉堆能高效地工作，我们利用树的对数性质来表示它。为了保证对数性能，必须维持树的平衡。平衡的二叉树是指，其根节点的左右子树含有数量大致相等的节点。在实现二叉堆时，我们通过创建一棵**完全二叉树**来维持树的平衡。在完全二叉树中，除了最底层，其他每一层的节点都是满的。在最底层，我们从左往右填充节点。图 6-14 展示了完全二叉树的一个例子。
+
+![image](https://raw.githubusercontent.com/GMyhf/img/main/img/compTree.png)
+
+图 6-14 完全二叉树
+
+
+
+完全二叉树的另一个有趣之处在于，可以用一个列表来表示它，而不需要采用“列表之列表”或“节点与引用”表示法。由于树是完全的，因此对于在列表中处于位置 p 的节点来说，它的左子节点正好处于位置 2p；同理，右子节点处于位置 2p+1。若要找到树中任意节点的父节点，只需使用 Python 的整数除法即可。给定列表中位置 n 处的节点，其父节点的位置就是 n/2。图 6-15 展示了
+一棵完全二叉树，并给出了列表表示。树的列表表示——加上这个“完全”的结构性质——让我们得以通过一些简单的数学运算遍历完全二叉树。我们会看到，这也有助于高效地实现二叉堆。
+
+![image](https://raw.githubusercontent.com/GMyhf/img/main/img/heapOrder.png)
+
+图 6-15 一棵完全二叉树及其列表表示
+
+
+
+2. 堆的有序性
+
+我们用来存储堆元素的方法依赖于堆的有序性。 堆的有序性是指：对于堆中任意元素 x 及其父元素 p， p 都不大于 x。图 6-15 也展示出完全二叉树具备堆的有序性。
+
+3. 堆操作
+
+首先实现二叉堆的构造方法。既然用一个列表就可以表示整个二叉堆，那么构造方法要做的就是初始化这个列表与属性 currentSize，用于记录堆的当前大小。代码清单 6-17 给出了构造方法的 Python 代码。列表 heapList 的第一个元素是 0，它的唯一用途是为了使后续的方法可以使用整数除法。
+
+
+
+
+
+
+
+
+
+# 6 二叉搜索树
 
 二叉搜索树（Binary Search Tree，BST），它是映射的另一种实现。我们感兴趣的不是元素在树中的确切位置，而是如何利用二叉树结构提供高效的搜索。
 
@@ -1899,7 +2209,7 @@ print(sorted_nums)
 
 
 
-# 5 平衡二叉搜索树
+# 7 平衡二叉搜索树
 
 在6.7节中，我们了解了二叉搜索树的构建过程。我们已经知道，当二叉搜索树不平衡时，get和put等操作的性能可能降到O(n)。本节将介绍一种特殊的二叉搜索树，它能自动维持平衡。这种树叫作 AVL树，以其发明者G. M. Adelson-Velskii和E. M. Landis的姓氏命名。
 
@@ -2419,7 +2729,7 @@ def rebalance(self, node):
 
 
 
-# 6 小结
+# 8 小结
 
 本章介绍了树这一数据结构。有了树，我们可以写出很多有趣的算法。我们用树做了以下这些事。
 ❏ 用二叉树解析并计算表达式。
