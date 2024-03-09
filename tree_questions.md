@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 0044 GMT+8 March 9, 2024
+Updated 1131 GMT+8 March 9, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1511,6 +1511,178 @@ for _ in range(n):
 
 
 
+## 3.3 Huffman 算法
+
+> 2013-book-Data Structures And Algorithms In Python
+
+In this section, we consider an important text-processing task, text compression. In this problem, we are given a string X defined over some alphabet, such as the ASCII  character sets, and we want to efficiently encode X into a small binary string Y (using only the characters 0 and 1). Text compression is useful in any situation where we wish to reduce bandwidth for digital communications, soas to minimize the time needed to transmit our text. Likewise, text compression is useful for storing large documents more efficiently, so as to allow a fixed-capacity storage device to contain as many documents as possible.
+
+The method for text compression explored in this section is the **Huffman code**. Standard encoding schemes, such as ASCII, use fixed-length binary strings to encode characters (with 7 or 8 bits in the traditional or extended ASCII systems, respectively). The Huffman code saves space over a fixed-length encoding by using short code-word strings to encode high-frequency characters and long code-word strings to encode low-frequency characters. Furthermore, the Huffman code uses a variable-length encoding specifically optimized for a given string X over any alphabet. The optimization is based on the use of character **frequencies**, where we have, for each character c, a count f(c) of the number of times c appears in the string X.
+
+To encode the string X, we convert each character in X to a variable-length code-word, and we concatenate all these code-words in order to produce the encoding Y for X. In order to avoid ambiguities, we insist that no code-word in our encoding be a prefix of another code-word in our encoding. Such a code is called a **prefix code**, and it simplifies the decoding of Y to retrieve X. (See Figure 13.9.) Even with this restriction, the savings produced by a variable-length prefix code can be significant, particularly if there is a wide variance in character frequencies (as is the case for natural language text in almost every written language).
+
+Huffman’s algorithm for producing an optimal variable-length prefix code for X is based on the construction of a binary tree T that represents the code. Each edge in T represents a bit in a code-word, with an edge to a left child representing a “0” and an edge to a right child representing a “1.” Each leaf v is associated with a specific character, and the code-word for that character is defined by the sequence of bits associated with the edges in the path from the root of T to v. (See Figure 13.9.) Each leaf v has a frequency, f(v), which is simply the frequency in X of the character associated with v. In addition, we give each internal node v in T
+a frequency, f(v), that is the sum of the frequencies of all the leaves in the subtree rooted at v.
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240309111247017.png" alt="image-20240309111247017" style="zoom: 50%;" />
+
+
+
+Figure 13.9: An illustration of an example Huffman code for the input string X = "a fast runner need never be afraid of the dark": (a) frequency of each character of X; (b) Huffman tree T for string X. The code for a character c is obtained by tracing the path from the root of T to the leaf where c is stored, and associating a left child with 0 and a right child with 1. For example, the code for “r” is 011, and the code for “h” is 10111.
+
+
+
+### 3.3.1 The Huffman Coding Algorithm
+
+The Huffman coding algorithm begins with each of the d distinct characters of the string X to encode being the root node of a single-node binary tree. The algorithm proceeds in a series of rounds. In each round, the algorithm takes the two binary
+trees with the smallest frequencies and merges them into a single binary tree. It repeats this process until only one tree is left. 
+
+Each iteration of the **while** loop in Huffman’s algorithm can be implemented in O(logd) time using a priority queue represented with a heap. In addition, each iteration takes two nodes out of Q and adds one in, a process that will be repeated d − 1 times before exactly one node is left in Q. Thus, this algorithm runs in O(n+ d logd) time. Although a full justification of this algorithm’s correctness is beyond our scope here, we note that its intuition comes from a simple idea—any
+optimal code can be converted into an optimal code in which the code-words for the two lowest-frequency characters, a and b, differ only in their last bit. Repeating the argument for a string with a and b replaced by a character c, gives the following:
+
+**Proposition** : Huffman’s algorithm constructs an optimal prefix code for a string of length n with d distinct characters in $O(n+d logd)$​ time.
+
+
+
+### 3.3.2 The Greedy Method
+
+Huffman’s algorithm for building an optimal encoding is an example application of an algorithmic design pattern called the greedy method. This design pattern is applied to optimization problems, where we are trying to construct some structure
+while minimizing or maximizing some property of that structure. 
+
+The general formula for the greedy method pattern is almost as simple as that for the brute-force method. In order to solve a given optimization problem using the greedy method, we proceed by a sequence of choices. The sequence starts from some well-understood starting condition, and computes the cost for that initial condition. The pattern then asks that we iteratively make additional choices by identifying the decision that achieves the best cost improvement from all of the choices that are currently possible. This approach does not always lead to an optimal solution.
+
+But there are several problems that it does work for, and such problems are said to possess the **greedy-choice** property. This is the property that a global optimal condition can be reached by a series of locally optimal choices (that is, choices that are each the current best from among the possibilities available at the time), starting from a well-defined starting condition. The problem of computing an optimal variable-length prefix code is just one example of a problem that possesses the greedy-choice property.
+
+
+
+### 3.3.3 哈夫曼编码实现
+
+要构建一个最优的哈夫曼编码树，首先需要对给定的字符及其权值进行排序。然后，通过重复合并权值最小的两个节点（或子树），直到所有节点都合并为一棵树为止。
+
+下面是用 Python 实现的代码：
+
+```python
+import heapq
+
+class Node:
+    def __init__(self, char, freq):
+        self.char = char
+        self.freq = freq
+        self.left = None
+        self.right = None
+
+    def __lt__(self, other):
+        return self.freq < other.freq
+
+def huffman_encoding(char_freq):
+    heap = [Node(char, freq) for char, freq in char_freq.items()]
+    heapq.heapify(heap)
+
+    while len(heap) > 1:
+        left = heapq.heappop(heap)
+        right = heapq.heappop(heap)
+        merged = Node(None, left.freq + right.freq)
+        merged.left = left
+        merged.right = right
+        heapq.heappush(heap, merged)
+
+    return heap[0]
+
+def external_path_length(node, depth=0):
+    if node is None:
+        return 0
+    if node.left is None and node.right is None:
+        return depth * node.freq
+    return (external_path_length(node.left, depth + 1) +
+            external_path_length(node.right, depth + 1))
+
+def main():
+    char_freq = {'a': 3, 'b': 4, 'c': 5, 'd': 6, 'e': 8, 'f': 9, 'g': 11, 'h': 12}
+    huffman_tree = huffman_encoding(char_freq)
+    external_length = external_path_length(huffman_tree)
+    print("The weighted external path length of the Huffman tree is:", external_length)
+
+if __name__ == "__main__":
+    main()
+
+# Output:
+# The weighted external path length of the Huffman tree is: 169 
+```
+
+这段代码首先定义了一个 `Node` 类来表示哈夫曼树的节点。然后，使用最小堆来构建哈夫曼树，每次从堆中取出两个频率最小的节点进行合并，直到堆中只剩下一个节点，即哈夫曼树的根节点。接着，使用递归方法计算哈夫曼树的带权外部路径长度（weighted external path length）。最后，输出计算得到的带权外部路径长度。
+
+你可以运行这段代码来得到该最优二叉编码树的带权外部路径长度。
+
+
+
+### 笔试题目举例
+
+**Q:** 用 Huffman 算法构造一个最优二叉编码树，待编码的字符权值分别为{3，4，5，6，8，9，11，12}，请问该最优二叉编码树的带权外部路径长度为（ B ）。（补充说明：树的带权外部路径长度定义为树中所有叶子结点的带权路径长度之和；其中，结点的带权路径长度定义为该结点到树根之间的路径长度与该结点权值的乘积）
+A：58	B：169	C：72	D：18
+
+
+
+解释：为了构造哈夫曼树，我们遵循一个重复的选择过程，每次选择两个最小的权值创建一个新的节点，直到只剩下一个节点为止。我们可以按照以下步骤操作：
+
+1. 将给定的权值排序：{3, 4, 5, 6, 8, 9, 11, 12}。
+
+2. 选择两个最小的权值：3 和 4，将它们组合成一个新的权值为 7 的节点。
+
+   现在权值变为：{5, 6, 7, 8, 9, 11, 12}。
+
+3. 再次选择两个最小的权值：5 和 6，将它们组合成一个新的权值为 11 的节点。
+
+   现在权值变为：{7, 8, 9, 11, 11, 12}。
+
+4. 选择两个最小的权值：7 和 8，将它们组合成一个新的权值为 15 的节点。
+
+   现在权值变为：{9, 11, 11, 12, 15}。
+
+5. 选择两个最小的权值：9 和 11，将它们合并成一个新的权值为 20 的节点。
+
+   现在权值变为：{11, 12, 15, 20}。
+
+6. 选择两个最小的权值：11 和 12，合并成一个新的权值为 23 的节点。
+
+   现在权值变为：{15, 20, 23}。
+
+7. 选择两个最小的权值：15 和 20，合并成一个新的权值为 35 的节点。
+
+   现在权值变为：{23, 35}。
+
+8. 最后，合并这两个节点得到根节点，权值为 23 + 35 = 58。
+
+现在我们可以计算哈夫曼树的带权外部路径长度（WPL）。
+
+```
+          (58)
+        /      \
+     (23)       (35)
+     /  \       /   \
+   (11)(12)  (20)    (15) 
+             / \       / \
+            (9)(11)   (7)(8)
+                / \   / \  
+               (5)(6)(3) (4)
+```
+
+现在让我们计算每个叶子节点的带权路径长度：
+
+- 权值 3 的节点路径长度为 4，WPL部分为 3 * 4 = 12。
+- 权值 4 的节点路径长度为 4，WPL部分为 4 * 4 = 16。
+- 权值 5 的节点路径长度为 4，WPL部分为 5 * 4 = 20。
+- 权值 6 的节点路径长度为 4，WPL部分为 6 * 4 = 24。
+- 权值 9 的节点路径长度为 3，WPL部分为 9 * 3 = 27。
+- 权值 11（左侧）的节点路径长度为 3，WPL部分为 8 * 3 = 24。
+- 权值 11（右侧）的节点路径长度为 2，WPL部分为 11 * 2 = 22。
+- 权值 12 的节点路径长度为 2，WPL部分为 12 * 2 = 24。
+
+将所有部分的 WPL 相加，我们得到整棵哈夫曼树的 WPL：
+
+WPL = 12 + 16 + 20 + 24 + 27 + 24 + 22 + 24 = 169
+
+
+
 # 4 二叉搜索树
 
 二叉搜索树（Binary Search Tree，BST），它是映射的另一种实现。我们感兴趣的不是元素在树中的确切位置，而是如何利用二叉树结构提供高效的搜索。
@@ -2268,7 +2440,15 @@ def rebalance(self, node):
 
 ## 选择（30分，每题2分）
 
-**Q:** 
+**Q:** 给定一个二叉树，若前序遍历序列与中序遍历序列相同，则二叉树是（ D ）。
+A：根结点无左子树的二叉树
+B：根结点无右子树的二叉树
+C：只有根结点的二叉树或非叶子结点只有左子树的二叉树
+**D：**只有根结点的二叉树或非叶子结点只有右子树的二叉树
+
+因为在前序遍历中，根节点总是首先访问的，而在中序遍历中，根节点必然在中间。
+
+
 
 
 
@@ -2357,7 +2537,9 @@ DGBAECF
 
 
 
-还一种写法
+笔试中，对于程序阅读理解，要求还是挺高的。因为AC的代码通常有多种写法，如果考出来写的不规范代码，就有点难受。例如：上面程序，递归程序带着全局变量，难受。
+
+较好的写法是：
 
 ```python
 class TreeNode:
