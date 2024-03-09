@@ -2,7 +2,7 @@
 
 
 
-Updated 1909 GMT+8 March 7, 2024
+Updated 1023 GMT+8 March 9, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2543,41 +2543,60 @@ Q不是None，是LinkList类的实例对象
 
 **Q:** 现有中缀表达式 $E=((20+5)/5+5*(30-7))*4$， 与 E 等价的后缀表达式为?
 
-20 ![$5 + 5 / 5 $](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)5 + 5 / 5 30 ![$7 - * 4 * +$](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)7 − ∗ 4 ∗ +
+**20 5 + 5 / 5 30 7 - * + 4 ***
 
 
 
-将中缀表达式转换为后缀表达式，也称为逆波兰表示法，通常使用栈来进行。转换的基本规则如下：
+找程序跑一下，最烦这种纸上跑程序的题目了
 
-1. 遇到操作数：直接输出（添加到后缀表达式中）。
-2. 遇到左括号：将其压入栈。
-3. 遇到右括号：依次弹出栈顶的运算符并输出，直到遇到左括号为止，左括号弹出但不输出。
-4. 遇到其他运算符：弹出所有优先级大于或等于当前运算符的栈顶元素，然后将当前运算符压入栈。
-5. 最后，将栈中剩余的运算符依次弹出并输出。
+```python
+def infix_to_postfix(expression):
+    precedence = {'+':1, '-':1, '*':2, '/':2}
+    stack = []
+    postfix = []
+    number = ''
 
-现在，按照这些规则，我们来将给定的中缀表达式 $E=((20+5)/5+5*(30-7))*4$ 转换为后缀表达式：
+    for char in expression:
+        if char.isnumeric() or char == '.':
+            number += char
+        else:
+            if number:
+                num = float(number)
+                postfix.append(int(num) if num.is_integer() else num)
+                number = ''
+            if char in '+-*/':
+                while stack and stack[-1] in '+-*/' and precedence[char] <= precedence[stack[-1]]:
+                    postfix.append(stack.pop())
+                stack.append(char)
+            elif char == '(':
+                stack.append(char)
+            elif char == ')':
+                while stack and stack[-1] != '(':
+                    postfix.append(stack.pop())
+                stack.pop()
 
-1. 遇到左括号，压栈：(
-2. 遇到数字 20，输出：20
-3. 遇到运算符 +，压栈：(+
-4. 遇到数字 5，输出：20 5
-5. 遇到右括号，弹出栈顶运算符直到遇到左括号，输出：20 5 +
-6. 遇到运算符 /，压栈：/
-7. 遇到数字 5，输出：20 5 + 5
-8. 遇到运算符 +，因为栈顶 / 的优先级大于 +，所以弹出 / 并输出，然后压栈 +：20 5 + 5 / +
-9. 遇到数字 5，输出：20 5 + 5 / + 5
-10. 遇到运算符 \*，压栈：*+
-11. 遇到左括号，压栈：*+(
-12. 遇到数字 30，输出：20 5 + 5 / + 5 30
-13. 遇到运算符 -，压栈：*+(-
-14. 遇到数字 7，输出：20 5 + 5 / + 5 30 7
-15. 遇到右括号，弹出栈顶运算符直到遇到左括号，输出：20 5 + 5 / + 5 30 7 -
-16. 弹出 * 并输出，因为之后是 +，优先级更低：20 5 + 5 / + 5 30 7 - *
-17. 遇到运算符 \*，压栈：+*
-18. 遇到数字 4，输出：20 5 + 5 / + 5 30 7 - * 4
-19. 将栈中剩余运算符弹出并输出：20 5 + 5 / + 5 30 7 - * 4 * +
+    if number:
+        num = float(number)
+        postfix.append(int(num) if num.is_integer() else num)
 
-所以，该中缀表达式 $E=((20+5)/5+5*(30-7))*4$ 的后缀表达式为：20 5 + 5 / 5 30 7 - * 4 * +
+    while stack:
+        postfix.append(stack.pop())
+
+    return ' '.join(str(x) for x in postfix)
+
+n = int(input())
+for _ in range(n):
+    expression = input()
+    print(infix_to_postfix(expression))
+
+"""
+sample input:
+((20+5)/5+5*(30-7))*4
+
+sample output:
+20 5 + 5 / 5 30 7 - * + 4 *
+"""
+```
 
 
 
