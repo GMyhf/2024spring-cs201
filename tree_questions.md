@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 1551 GMT+8 March 9, 2024
+Updated 0056 GMT+8 March 10, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3134,6 +3134,8 @@ def union(parent, rank, i, j):
 
 ```
 
+**Time complexity**: This approach is inefficient and could lead to tree of length O(n) in worst case.
+
 
 
 **Optimizations (Union by Rank/Size and Path Compression):**
@@ -3191,59 +3193,68 @@ Now recall that in the Union operation, it doesn’t matter which of the two tre
 
 
 
-```c++
-// Unites the set that includes i and the set
-// that includes j by rank
+```python
+class DisjointSet:
+	def __init__(self, size):
+		self.parent = [i for i in range(size)]
+		self.rank = [0] * size
 
-#include <bits/stdc++.h>
-using namespace std;
+	# Function to find the representative (or the root node) of a set
+	def find(self, i):
+		# If i is not the representative of its set, recursively find the representative
+		if self.parent[i] != i:
+			self.parent[i] = self.find(self.parent[i]) # Path compression
+		return self.parent[i]
 
-void unionbyrank(int i, int j) {
+	# Unites the set that includes i and the set that includes j by rank
+	def union_by_rank(self, i, j):
+		# Find the representatives (or the root nodes) for the set that includes i and j
+		irep = self.find(i)
+		jrep = self.find(j)
 
-	// Find the representatives (or the root nodes)
-	// for the set that includes i
-	int irep = this.find(i);
+		# Elements are in the same set, no need to unite anything
+		if irep == jrep:
+			return
 
-	// And do the same for the set that includes j
-	int jrep = this.Find(j);
+		# Get the rank of i's tree
+		irank = self.rank[irep]
 
-	// Elements are in same set, no need to
-	// unite anything.
-	if (irep == jrep)
-		return;
-	
-	// Get the rank of i’s tree
-	irank = Rank[irep],
+		# Get the rank of j's tree
+		jrank = self.rank[jrep]
 
-	// Get the rank of j’s tree
-	jrank = Rank[jrep];
+		# If i's rank is less than j's rank
+		if irank < jrank:
+			# Move i under j
+			self.parent[irep] = jrep
+		# Else if j's rank is less than i's rank
+		elif jrank < irank:
+			# Move j under i
+			self.parent[jrep] = irep
+		# Else if their ranks are the same
+		else:
+			# Move i under j (doesn't matter which one goes where)
+			self.parent[irep] = jrep
+			# Increment the result tree's rank by 1
+			self.rank[jrep] += 1
 
-	// If i’s rank is less than j’s rank
-	if (irank < jrank) {
+	def main(self):
+		# Example usage
+		size = 5
+		ds = DisjointSet(size)
 
-		// Then move i under j
-		this.parent[irep] = jrep;
-	}
+		# Perform some union operations
+		ds.union_by_rank(0, 1)
+		ds.union_by_rank(2, 3)
+		ds.union_by_rank(1, 3)
 
-	// Else if j’s rank is less than i’s rank
-	else if (jrank < irank) {
+		# Find the representative of each element
+		for i in range(size):
+			print(f"Element {i} belongs to the set with representative {ds.find(i)}")
 
-		// Then move j under i
-		this.Parent[jrep] = irep;
-	}
 
-	// Else if their ranks are the same
-	else {
-
-		// Then move i under j (doesn’t matter
-		// which one goes where)
-		this.Parent[irep] = jrep;
-
-		// And increment the result tree’s
-		// rank by 1
-		Rank[jrep]++;
-	}
-}
+# Creating an instance and calling the main method
+ds = DisjointSet(size=5)
+ds.main()
 
 ```
 
@@ -3257,64 +3268,70 @@ Now we are uniting two trees (or sets), let’s call them left and right, then i
 - If the size of **left** is less than the size of **right**, then it’s best to move **left under right** and increase size of right by size of left. In the same way, if the size of right is less than the size of left, then we should move right under left. and increase size of left by size of right.
 - If the sizes are equal, it doesn’t matter which tree goes under the other.
 
-```c++
-// Unites the set that includes i and the set
-// that includes j by size
+```python
+# Python program for the above approach
+class UnionFind:
+	def __init__(self, n):
+		# Initialize Parent array
+		self.Parent = list(range(n))
 
-#include <bits/stdc++.h>
-using namespace std;
+		# Initialize Size array with 1s
+		self.Size = [1] * n
 
-void unionbysize(int i, int j) {
+	# Function to find the representative (or the root node) for the set that includes i
+	def find(self, i):
+		if self.Parent[i] != i:
+			# Path compression: Make the parent of i the root of the set
+			self.Parent[i] = self.find(self.Parent[i])
+		return self.Parent[i]
 
-	// Find the representatives (or the root nodes)
-	// for the set that includes i
-	int irep = this.find(i);
+	# Unites the set that includes i and the set that includes j by size
+	def unionBySize(self, i, j):
+		# Find the representatives (or the root nodes) for the set that includes i
+		irep = self.find(i)
 
-	// And do the same for the set that includes j
-	int jrep = this.Find(j);
+		# And do the same for the set that includes j
+		jrep = self.find(j)
 
-	// Elements are in same set, no need to
-	// unite anything.
-	if (irep == jrep)
-		return;
-	
-	// Get the size of i’s tree
-	isize = Size[irep],
+		# Elements are in the same set, no need to unite anything.
+		if irep == jrep:
+			return
 
-	// Get the size of j’s tree
-	jsize = Size[jrep];
+		# Get the size of i’s tree
+		isize = self.Size[irep]
 
-	// If i’s size is less than j’s size
-	if (isize < jsize) {
+		# Get the size of j’s tree
+		jsize = self.Size[jrep]
 
-		// Then move i under j
-		this.parent[irep] = jrep;
-	
-	// Increment j's size by i'size
-		Size[jrep]+=Size[irep];
-	}
+		# If i’s size is less than j’s size
+		if isize < jsize:
+			# Then move i under j
+			self.Parent[irep] = jrep
 
-	// Else if j’s rank is less than i’s rank
-	else if (jsize < isize) {
+			# Increment j's size by i's size
+			self.Size[jrep] += self.Size[irep]
+		# Else if j’s size is less than i’s size
+		else:
+			# Then move j under i
+			self.Parent[jrep] = irep
 
-		// Then move j under i
-		this.Parent[jrep] = irep;
-	
-	// Increment i's size by j'size
-		Size[irep]+=Size[jrep];
-	}
+			# Increment i's size by j's size
+			self.Size[irep] += self.Size[jrep]
 
-	// Else if their ranks are the same
-	else {
+# Example usage
+n = 5
+unionFind = UnionFind(n)
 
-		// Then move i under j (doesn’t matter
-		// which one goes where)
-		this.Parent[irep] = jrep;
+# Perform union operations
+unionFind.unionBySize(0, 1)
+unionFind.unionBySize(2, 3)
+unionFind.unionBySize(0, 4)
 
-		// Increment j's size by i'size
-		Size[jrep]+=Size[irep];
-	}
-}
+# Print the representative of each element after unions
+for i in range(n):
+	print("Element {}: Representative = {}".format(i, unionFind.find(i)))
+
+# This code is contributed by Susobhan Akhuli
 
 ```
 
@@ -3403,9 +3420,14 @@ else:
 
 ```
 
+```
+Yes
+No
+```
 
 
-**Time complexity**: O(n) for creating n single item sets . The two techniques -path compression with the union by rank/size, the time complexity will reach nearly constant time. It turns out, that the final[ amortized time complexity](https://www.geeksforgeeks.org/introduction-to-amortized-analysis/) is O(α(n)), where α(n) is the inverse Ackermann function, which grows very steadily (it does not even exceed for n<10600  approximately).
+
+**Time complexity**: O(n) for creating n single item sets . The two techniques -path compression with the union by rank/size, the time complexity will reach nearly constant time. It turns out, that the final[ amortized time complexity](https://www.geeksforgeeks.org/introduction-to-amortized-analysis/) is O(α(n)), where α(n) is the inverse Ackermann function, which grows very steadily (it does not even exceed for $n<10^{600}$  approximately).
 
 **Space complexity:** O(n) because we need to store n elements in the Disjoint Set Data Structure.
 
