@@ -36,7 +36,7 @@ C/C++编程环境：Mac terminal vi (version 9.0.1424), g++/gcc (Apple clang ver
 
 ## 1. 题目
 
-**02945: 拦截导弹**
+### 02945: 拦截导弹
 
 http://cs101.openjudge.cn/practice/02945/
 
@@ -46,7 +46,7 @@ http://cs101.openjudge.cn/practice/02945/
 
 
 
-##### 代码
+代码
 
 ```python
 # 
@@ -61,7 +61,7 @@ http://cs101.openjudge.cn/practice/02945/
 
 
 
-**04147:汉诺塔问题(Tower of Hanoi)**
+### 04147:汉诺塔问题(Tower of Hanoi)
 
 http://cs101.openjudge.cn/practice/04147
 
@@ -71,7 +71,7 @@ http://cs101.openjudge.cn/practice/04147
 
 
 
-##### 代码
+代码
 
 ```python
 # 
@@ -86,7 +86,7 @@ http://cs101.openjudge.cn/practice/04147
 
 
 
-**03253: 约瑟夫问题No.2**
+### 03253: 约瑟夫问题No.2
 
 http://cs101.openjudge.cn/practice/03253
 
@@ -96,7 +96,7 @@ http://cs101.openjudge.cn/practice/03253
 
 
 
-##### 代码
+代码
 
 ```python
 # 
@@ -111,7 +111,7 @@ http://cs101.openjudge.cn/practice/03253
 
 
 
-**21554:排队做实验 (greedy)v0.2**
+### 21554:排队做实验 (greedy)v0.2
 
 http://cs101.openjudge.cn/practice/21554
 
@@ -121,7 +121,7 @@ http://cs101.openjudge.cn/practice/21554
 
 
 
-##### 代码
+代码
 
 ```python
 # 
@@ -136,7 +136,7 @@ http://cs101.openjudge.cn/practice/21554
 
 
 
-**19963:买学区房**
+### 19963:买学区房
 
 http://cs101.openjudge.cn/practice/19963
 
@@ -146,7 +146,7 @@ http://cs101.openjudge.cn/practice/19963
 
 
 
-##### 代码
+代码
 
 ```python
 # 
@@ -161,7 +161,7 @@ http://cs101.openjudge.cn/practice/19963
 
 
 
-**27300: 模型整理**
+### 27300: 模型整理
 
 http://cs101.openjudge.cn/practice/27300
 
@@ -171,7 +171,7 @@ http://cs101.openjudge.cn/practice/27300
 
 
 
-##### 代码
+代码
 
 ```python
 # 
