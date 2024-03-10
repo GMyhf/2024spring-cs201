@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 2311 GMT+8 March 8, 2024
+Updated 2359 GMT+8 March 10, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2095,11 +2095,14 @@ Waterloo local 2005.02.05
 
 ```python
 """
-这是一个需要你分析特定排序算法的问题。该算法通过交换两个相邻的序列元素来处理n个不同的整数序列，直到序列按升序排序。
-对于输入序列，Ultra-QuickSort会产生输出。你的任务是确定Ultra-QuickSort需要执行多少次交换操作才能对给定的输入序列进行排序。  
-这个问题可以通过使用归并排序的修改版本来解决，其中我们计算在每次合并步骤中需要的交换次数。在归并排序中，我们将数组分成两半，
-对每一半进行排序，然后将它们合并在一起。在合并步骤中，我们可以计算需要交换的次数，因为每当我们从右半部分取出一个元素时，
-我们需要交换与左半部分中剩余元素相同数量的次数。
+问题：分析特定排序算法，通过交换两个相邻的序列元素来处理n个不同的整数序列，直到序列按升序排序。
+任务是确定需要执行多少次交换操作才能对给定的输入序列进行排序。  
+
+可以通过使用归并排序的修改版本来解决，计算在每次合并步骤中需要的交换次数。
+在归并排序中，将数组分成两半，对每一半进行排序，然后将它们合并在一起。
+
+在合并步骤中，计算需要交换的次数，因为每当从右半部分取出一个元素时，
+需要交换与左半部分中剩余元素相同数量的次数。
 """
 def merge_sort(lst):
     # The list is already sorted if it contains a single element.
@@ -2129,7 +2132,7 @@ def merge(left, right):
         else:
             merged.append(right[j])
             j += 1
-            inv_count += len(left) - i
+            inv_count += len(left) - i #left[i~mid)都比right[j]要大，他们都会与right[j]构成逆序对，将他们加入答案
 
     # If there are remaining elements in the left or right half, append them to the result.
     merged += left[i:]
