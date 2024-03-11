@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 2359 GMT+8 March 10, 2024
+Updated 2143 GMT+8 March 11, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -300,6 +300,34 @@ for i in range(n):
 root = nodes[0]
 depth = tree_depth(root)
 print(depth)
+```
+
+
+
+
+
+```python
+# 钟明衡 物理学院
+# 用两个列表来存储每个节点左右子树的索引，判断深度用dfs进行先序遍历
+ans, l, r = 1, [-1], [-1]
+
+
+def dfs(n, count):
+    global ans, l, r
+    if l[n] != -1:
+        dfs(l[n], count + 1)
+    if r[n] != -1:
+        dfs(r[n], count + 1)
+    ans = max(ans, count)
+
+
+n = int(input())
+for i in range(n):
+    a, b = map(int, input().split())
+    l.append(a)
+    r.append(b)
+dfs(1, 1)
+print(ans)
 ```
 
 
