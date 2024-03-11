@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 2359 GMT+8 March 10, 2024
+Updated 2142 GMT+8 March 11, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2817,6 +2817,32 @@ http://cs101.openjudge.cn/dsapre/02945/
 
 
 
+数据不大可以用搜索（其实主要是不想写动规）
+
+```python
+# 2300012148熊奕凯
+ans=0
+a=int(input())
+l=list(map(int,input().split()))
+def dfs(cnt, pos):
+    global ans
+    cnt+=1
+    if cnt>ans:
+        ans=cnt
+    if pos == a-1:
+        return
+    else:
+        for i in range(pos+1,a):
+            if l[i]<=l[pos]:
+                dfs(cnt,i)
+        return
+for i in range(0,a):
+    dfs(0,i)
+print(ans)
+```
+
+
+
 ## 03720: 文本二叉树
 
 http://cs101.openjudge.cn/dsapre/03720/
@@ -4598,6 +4624,34 @@ depth = max_depth(root)
 
 # 输出结果
 print(depth)
+```
+
+
+
+
+
+```python
+# 钟明衡 物理学院
+# 用两个列表来存储每个节点左右子树的索引，判断深度用dfs进行先序遍历
+ans, l, r = 1, [-1], [-1]
+
+
+def dfs(n, count):
+    global ans, l, r
+    if l[n] != -1:
+        dfs(l[n], count + 1)
+    if r[n] != -1:
+        dfs(r[n], count + 1)
+    ans = max(ans, count)
+
+
+n = int(input())
+for i in range(n):
+    a, b = map(int, input().split())
+    l.append(a)
+    r.append(b)
+dfs(1, 1)
+print(ans)
 ```
 
 
