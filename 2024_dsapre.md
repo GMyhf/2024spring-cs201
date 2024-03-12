@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 2142 GMT+8 March 11, 2024
+Updated 2245 GMT+8 March 11, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1986,11 +1986,17 @@ http://cs101.openjudge.cn/dsapre/02255/
 
 样例输入
 
-`DBACEGF ABCDEFG BCAD CBAD `
+```
+DBACEGF ABCDEFG
+BCAD CBAD
+```
 
 样例输出
 
-`ACBFGED CDAB `
+```
+ACBFGED
+CDAB
+```
 
 提示
 
@@ -1998,48 +2004,35 @@ http://cs101.openjudge.cn/dsapre/02255/
 
 
 
+通过递归地划分左右子树并重建二叉树，然后再按照左子树、右子树、根节点的顺序进行后序遍历。
+
 ```python
-ls = []
-rs = []
-root = 0
-cnt = 0
-cot = 0
-
-def Solve(l,r):
-    global cnt
-    if cnt >= len(Line1):
-        return -1
-    Pl = Line2.find(Line1[cnt])
-    if Pl < l or Pl > r:
-        return -1
-
-    x = ord(Line1[cnt]) - 65
-    cnt = cnt + 1
-    ls[x] = Solve(l,Pl-1)
-    rs[x] = Solve(Pl+1,r)
-    return x
-
-def Pout(x):
-    if ls[x] != -1:
-        Pout(ls[x])
-    if rs[x] != -1:
-        Pout(rs[x])
-    print(chr(x+65),end = '')
+def build_tree(preorder, inorder):
+    if not preorder:
+        return ''
+    
+    root = preorder[0]
+    root_index = inorder.index(root)
+    
+    left_preorder = preorder[1:1 + root_index]
+    right_preorder = preorder[1 + root_index:]
+    
+    left_inorder = inorder[:root_index]
+    right_inorder = inorder[root_index + 1:]
+    
+    left_tree = build_tree(left_preorder, left_inorder)
+    right_tree = build_tree(right_preorder, right_inorder)
+    
+    return left_tree + right_tree + root
 
 while True:
     try:
-        Line1,Line2 = input().split()
-        ls = [-1]*len(Line1)
-        rs = [-1]*len(Line1)
-        cnt = 0
-        
-        root = Solve(0,len(Line1) - 1)
-
-        Pout(root)
-        print()
-
-    except:
+        preorder, inorder = input().split()
+        postorder = build_tree(preorder, inorder)
+        print(postorder)
+    except EOFError:
         break
+
 ```
 
 
@@ -6335,6 +6328,22 @@ http://cs101.openjudge.cn/dsapre/20744/
 提示
 
 最大价值总和是买[1,-5,0,3]，并放回-5后的总和
+
+
+
+定义多个dp数组。类似于 1195C. Basketball Exercise, dp, 1400, https://codeforces.com/problemset/problem/1195/C ，25573: 红蓝玫瑰，dp, greedy, http://cs101.openjudge.cn/practice/25573/
+
+```python
+a = list(map(int, input().split(',')))
+dp1 = [0] * len(a);
+dp2 = [0] * len(a)
+dp1[0] = a[0];
+dp2[0] = a[0]
+for i in range(1, len(a)):
+    dp1[i] = max(dp1[i - 1] + a[i], a[i])
+    dp2[i] = max(dp1[i - 1], dp2[i - 1] + a[i], a[i])
+print(max(dp2))
+```
 
 
 
