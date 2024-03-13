@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 2048 GMT+8 March 13, 2024
+Updated 2307 GMT+8 March 13, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -185,8 +185,6 @@ mindmap
 
 
 **定义二：**一棵树要么为空，要么由一个根节点和零棵或多棵子树构成，子树本身也是一棵树。每棵子树的根节点通过一条边连到父树的根节点。图3展示了树的递归定义。从树的递归定义可知，图中的树至少有4个节点，因为三角形代表的子树必定有一个根节点。这棵树或许有更多的节点，但必须更深入地查看子树后才能确定。
-
-
 
 ![image](https://raw.githubusercontent.com/GMyhf/img/main/img/TreeDefRecursive.png)
 
