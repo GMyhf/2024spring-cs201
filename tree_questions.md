@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 1003 GMT+8 March 13, 2024
+Updated 2048 GMT+8 March 13, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -12,7 +12,7 @@ Updated 1003 GMT+8 March 13, 2024
 
 
 
-# 一、基本数据结构及其编程题目
+# 一、主要内容
 
 # 0 练习用类写程序
 
@@ -90,6 +90,39 @@ graph TD
 
 
 在看了一些树的例子之后，现在来正式地定义树及其构成。
+
+```mermaid
+mindmap
+  root(Generic Tree)
+    Notations
+    	Node
+    	Edge
+    	Root
+    	Path
+    	Children
+    	Parent
+    	Sibling
+    	Subtree
+    	Leaf Node
+    	Level
+    	Height
+    	Depth
+      
+    Representation
+      Nested parentheses
+      Node-Based
+      Indented Tree
+      Adjacency List 
+      
+    Binary Tree(Binary Tree)
+      Applications
+      	Parse Tree
+      	Traversals
+      	Huffman
+      Heap Implementation
+      Binary Search Tree
+      AVL Tree
+```
 
 **节点 Node**：节点是树的基础部分。
 每个节点具有名称，或“键值”。节点还可以保存额外数据项，数据项根据不同的应用而变。
@@ -189,6 +222,241 @@ graph TD
 
 
 
+## 1.1 Application of Tree Data Structure
+
+- **File System**: This allows for efficient navigation and organization of files.
+- **Data Compression**:[ Huffman coding](https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/) is a popular technique for data compression that involves constructing a binary tree where the leaves represent characters and their frequency of occurrence. The resulting tree is used to encode the data in a way that minimizes the amount of storage required.
+- **Compiler Design:** In compiler design, a syntax tree is used to represent the structure of a program. 
+- **Database Indexing**: B-trees and other tree structures are used in database indexing to efficiently search for and retrieve data. 
+
+### Advantages of Tree Data Structure:
+
+- Tree offer **Efficient Searching** Depending on the type of tree, with average search times of O(log n) for balanced trees like AVL. 
+- Trees provide a hierarchical representation of data, making it **easy to organize and navigate** large amounts of information.
+- The recursive nature of trees makes them **easy to traverse and manipulate** using recursive algorithms.
+
+### Disadvantages of Tree Data Structure:
+
+- Unbalanced Trees, meaning that the height of the tree is skewed towards one side, which can lead to **inefficient search times.**
+- Trees demand **more memory space requirements** than some other data structures like arrays and linked lists, especially if the tree is very large.
+
+
+
+## 1.2 Generic Trees (N-ary Trees)
+
+https://www.geeksforgeeks.org/generic-treesn-array-trees/?ref=outind
+
+Generic trees are a collection of nodes where each node is a data structure that consists of records and a list of references to its children(duplicate references are not allowed). Unlike the linked list, each node stores the address of multiple nodes. Every node stores address of its children and the very first node’s address will be stored in a separate pointer called root.
+
+The Generic trees are the N-ary trees which have the following properties: 
+
+​      1. Many children at every node.
+
+​      2. The number of nodes for each node is not known in advance.
+
+**Example:** 
+
+
+ ![img](https://raw.githubusercontent.com/GMyhf/img/main/img/generic-tree_gfg.png)
+
+
+
+Generic Tree
+
+
+
+To represent the above tree, we have to consider the worst case, that is the node with maximum children (in above example, 6 children) and allocate that many pointers for each node.
+The node representation based on this method can be written as:
+
+```python
+class Node: 
+	def __init__(self, data): 
+		self.data = data 
+		self.firstchild = None
+		self.secondchild = None
+		self.thirdchild = None
+		self.fourthchild = None
+		self.fifthchild = None
+		self.sixthchild = None
+
+```
+
+
+
+**Disadvantages of the above representation are:** 
+
+1. **Memory Wastage** – All the pointers are not required in all the cases. Hence, there is lot of memory wastage.
+2. **Unknown number of children** – The number of children for each node is not known in advance.
+
+**Simple Approach:** 
+
+For storing the address of children in a node we can use an array or linked list. But we will face some issues with both of them.
+
+1. In **Linked list**, we can not randomly access any child’s address. So it will be expensive.
+2. In **array**, we can randomly access the address of any child, but we can store only fixed number of children’s addresses in it.
+
+**Better Approach:**
+
+We can use [Dynamic Arrays](https://www.geeksforgeeks.org/how-do-dynamic-arrays-work/) for storing the address of children. We can randomly access any child’s address and the size of the vector is also not fixed.
+
+```python
+class Node: 
+	
+	def __init__(self,data): 
+		self.data=data 
+		self.children=[]
+
+```
+
+
+
+### Efficient Approach
+
+First child / Next sibling representation
+
+ In the first child/next sibling representation, the steps taken are: 
+
+At each node-link the children of the same parent(siblings) from left to right.
+
+- Remove the links from parent to all children except the first child.
+
+Since we have a link between children, we do not need extra links from parents to all the children. This representation allows us to traverse all the elements by starting at the first child of the parent.
+
+
+
+
+ ![img](https://raw.githubusercontent.com/GMyhf/img/main/img/generictree_gfg.png)
+
+
+
+FIRST CHILD/NEXT SIBLING REPRESENTATION
+
+
+
+The node declaration for first child / next sibling representation can be written as: 
+
+```python
+class Node: 
+	def __init__(self, data): 
+		self.data = data 
+		self.firstChild = None
+		self.nextSibling = None
+
+		# This code is contributed by aadityamaharshi
+
+```
+
+
+
+**Advantages:** 
+
+- Memory efficient – No extra links are required, hence a lot of memory is saved.
+- Treated as binary trees – Since we are able to convert any generic tree to binary representation, we can treat all generic trees with a first child/next sibling representation as binary trees. Instead of left and right pointers, we just use firstChild and nextSibling.
+- Many algorithms can be expressed more easily because it is just a binary tree.
+- Each node is of fixed size ,so no auxiliary array or vector is required.
+
+
+
+
+
+
+## 1.3 编程题目
+
+### 06646: 二叉树的深度
+
+http://cs101.openjudge.cn/dsapre/06646/
+
+给定一棵二叉树，求该二叉树的深度
+
+二叉树**深度**定义：从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的节点个数为树的深度
+
+**输入**
+
+第一行是一个整数n，表示二叉树的结点个数。二叉树结点编号从1到n，根结点为1，n <= 10
+接下来有n行，依次对应二叉树的n个节点。
+每行有两个整数，分别表示该节点的左儿子和右儿子的节点编号。如果第一个（第二个）数为-1则表示没有左（右）儿子
+
+**输出**
+
+输出一个整型数，表示树的深度
+
+样例输入
+
+```
+3
+2 3
+-1 -1
+-1 -1
+```
+
+样例输出
+
+```
+2
+```
+
+
+
+ 推荐这种类的写法，在笔试中也常见
+
+```python
+class TreeNode:
+    def __init__(self):
+        self.left = None
+        self.right = None
+
+def tree_depth(node):
+    if node is None:
+        return 0
+    left_depth = tree_depth(node.left)
+    right_depth = tree_depth(node.right)
+    return max(left_depth, right_depth) + 1
+
+n = int(input())  # 读取节点数量
+nodes = [TreeNode() for _ in range(n)]
+
+for i in range(n):
+    left_index, right_index = map(int, input().split())
+    if left_index != -1:
+        nodes[i].left = nodes[left_index-1]
+    if right_index != -1:
+        nodes[i].right = nodes[right_index-1]
+
+root = nodes[0]
+depth = tree_depth(root)
+print(depth)
+```
+
+
+
+虽然也正确，但是数算思维更倾向于上面类的写法。
+
+```python
+# 钟明衡 物理学院
+# 用两个列表来存储每个节点左右子树的索引，判断深度用dfs进行先序遍历
+ans, l, r = 1, [-1], [-1]
+
+
+def dfs(n, count):
+    global ans, l, r
+    if l[n] != -1:
+        dfs(l[n], count + 1)
+    if r[n] != -1:
+        dfs(r[n], count + 1)
+    ans = max(ans, count)
+
+
+n = int(input())
+for i in range(n):
+    a, b = map(int, input().split())
+    l.append(a)
+    r.append(b)
+dfs(1, 1)
+print(ans)
+```
+
+
+
 ### 27638: 求二叉树的高度和叶子数目
 
 http://cs101.openjudge.cn/practice/27638/
@@ -265,98 +533,272 @@ print(f"{height} {leaves}")
 
 
 
-### 06646: 二叉树的深度
+### Height of a generic tree from parent array
 
-http://cs101.openjudge.cn/dsapre/06646/
+https://www.geeksforgeeks.org/height-generic-tree-parent-array/
 
-给定一棵二叉树，求该二叉树的深度
+We are given a tree of size n as array `parent[0..n-1]` where every index `i` in the `parent[]` represents a node and the value at i represents the immediate parent of that node. For root node value will be -1. Find the height of the generic tree given the parent links.
 
-二叉树**深度**定义：从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的节点个数为树的深度
-
-**输入**
-
-第一行是一个整数n，表示二叉树的结点个数。二叉树结点编号从1到n，根结点为1，n <= 10
-接下来有n行，依次对应二叉树的n个节点。
-每行有两个整数，分别表示该节点的左儿子和右儿子的节点编号。如果第一个（第二个）数为-1则表示没有左（右）儿子
-
-**输出**
-
-输出一个整型数，表示树的深度
-
-样例输入
+**Examples:** 
 
 ```
-3
-2 3
--1 -1
--1 -1
+Input : parent[] = {-1, 0, 0, 0, 3, 1, 1, 2}
+Output : 2
 ```
 
-样例输出
+![Height of a generic tree from parent array 1](https://raw.githubusercontent.com/GMyhf/img/main/img/Tree7-300x151.jpg)
 
 ```
-2
+Input  : parent[] = {-1, 0, 1, 2, 3}
+Output : 4
 ```
 
+![Height of a generic tree from parent array 2](https://raw.githubusercontent.com/GMyhf/img/main/img/Tree-_5.jpg)
 
+
+
+
+
+Here, a **generic tree** is sometimes also called an N-ary tree or N-way tree where N denotes the maximum number of child a node can have. In this problem, the array represents n number of nodes in the tree.
+
+
+
+
+**Approach1:** Build graph for N-ary Tree in O(n) time and apply BFS on the stored graph in O(n) time and while doing BFS store maximum reached level. This solution does two iterations to find the height of N-ary tree.
+
+**Implementation:**
 
 ```python
-class TreeNode:
-    def __init__(self):
-        self.left = None
-        self.right = None
+# find height of N-ary tree in O(n)
+from collections import deque
 
-def tree_depth(node):
-    if node is None:
+MAX = 1001
+adj = [[] for i in range(MAX)] # Adjacency list to store N-ary tree
+
+def build_tree(arr, n): # Build tree in tree in O(n)
+    root_index = 0
+
+    for i in range(n):
+        if (arr[i] == -1): # if root node, store index
+            root_index = i
+        else:
+            adj[i].append(arr[i])
+            adj[arr[i]].append(i)
+
+    return root_index
+
+
+def BFS(start):
+    vis = {} # map is used as visited array
+
+    q = deque()
+    max_level_reached = 0
+
+    q.append([start, 0]) # height of root node is zero
+
+    # p[0] denotes node in adjacency list
+    # p[1] denotes level of p[0]
+    p = []
+
+    while (len(q) > 0):
+        p = q.popleft()
+        vis[p[0]] = 1
+
+        max_level_reached = max(max_level_reached, p[1])
+
+        for i in range(len(adj[p[0]])):
+            if (adj[p[0]][i] not in vis):
+                q.append([adj[p[0]][i], p[1] + 1]) # adding 1 to pre_level
+
+    return max_level_reached
+
+
+# Driver code
+if __name__ == '__main__':
+    parent = [-1, 0, 1, 2, 3] # node 0 to node n-1
+    n = len(parent) # Number of nodes in tree
+
+    root_index = build_tree(parent, n)
+    ma = BFS(root_index)
+    print("Height of N-ary Tree =", ma)
+
+# output: Height of N-ary Tree = 4
+
+```
+
+**Time Complexity:** O(n) which converges to O(n) for very large n.
+**Auxiliary Space:** O(n), we are using an adjacency list to store the tree in memory. The size of the adjacency list is proportional to the number of nodes in the tree, so the space complexity of the algorithm is O(n).
+
+
+
+**Approach 2:** 
+
+We can find the height of the N-ary Tree in only one iteration. We visit nodes from 0 to n-1 iteratively and mark the unvisited ancestors recursively if they are not visited before till we reach a node which is visited, or we reach the root node. If we reach the visited node while traversing up the tree using parent links, then we use its height and will not go further in recursion.
+
+```python
+# find height of N-ary tree in O(n) (Efficient Approach)
+
+# Recur For Ancestors of node and store height of node at last
+def fillHeight(p, node, visited, height):
+    if (p[node] == -1): # If root node
+        visited[node] = 1 # mark root node as visited
         return 0
-    left_depth = tree_depth(node.left)
-    right_depth = tree_depth(node.right)
-    return max(left_depth, right_depth) + 1
 
-n = int(input())  # 读取节点数量
-nodes = [TreeNode() for _ in range(n)]
+    if (visited[node]):
+        return height[node]
 
-for i in range(n):
-    left_index, right_index = map(int, input().split())
-    if left_index != -1:
-        nodes[i].left = nodes[left_index-1]
-    if right_index != -1:
-        nodes[i].right = nodes[right_index-1]
+    visited[node] = 1
 
-root = nodes[0]
-depth = tree_depth(root)
-print(depth)
+    # recur for the parent node
+    height[node] = 1 + fillHeight(p, p[node], visited, height)
+
+    # return calculated height for node
+    return height[node]
+
+
+def findHeight(parent, n):
+    ma = 0
+    visited = [0] * n
+    height = [0] * n
+
+    for i in range(n):
+        if (not visited[i]):
+            height[i] = fillHeight(parent, i, visited, height)
+
+        ma = max(ma, height[i])
+
+    return ma
+
+
+# Driver Code
+if __name__ == '__main__':
+    parent = [-1, 0, 0, 0, 3, 1, 1, 2]
+    n = len(parent)
+
+    print("Height of N-ary Tree =", findHeight(parent, n))
+
+# Output: Height of N-ary Tree = 2
+
 ```
 
+**Time Complexity:** O(n)
+**Auxiliary Space**: O(n), this is because we need to store the visited and height arrays which are of size n.
 
 
 
+### General Tree Level Order Traversal
+
+https://www.geeksforgeeks.org/generic-tree-level-order-traversal/
+
+Given a generic tree, perform a Level order traversal and print all of its nodes
+
+**Examples:** 
+
+```
+Input :            10
+             /   /    \   \
+            2  34    56   100
+           / \        |   / | \
+          77  88      1   7  8  9
+
+Output : 10
+         2 34 56 100
+         77 88 1 7 8 9
+
+Input :             1
+             /   /    \   \
+            2  3      4    5
+           / \        |  /  | \
+          6   7       8 9  10  11
+Output : 1
+         2 3 4 5
+         6 7 8 9 10 11
+```
+
+The approach to this problem is similar to [Level Order traversal in a binary tree](https://www.geeksforgeeks.org/level-order-tree-traversal/). We Start with pushing root node in a queue and for each node we pop it, print it and push all its child in the queue.
+
+In case of a generic tree we store child nodes in a vector. Thus we put all elements of the vector in the queue. 
 
 ```python
-# 钟明衡 物理学院
-# 用两个列表来存储每个节点左右子树的索引，判断深度用dfs进行先序遍历
-ans, l, r = 1, [-1], [-1]
+# do level order traversal of a generic tree
+from collections import deque
 
 
-def dfs(n, count):
-    global ans, l, r
-    if l[n] != -1:
-        dfs(l[n], count + 1)
-    if r[n] != -1:
-        dfs(r[n], count + 1)
-    ans = max(ans, count)
+# Represents a node of an n-ary tree
+class Node:
+    def __init__(self, key):
+        self.key = key
+        self.child = []
 
 
-n = int(input())
-for i in range(n):
-    a, b = map(int, input().split())
-    l.append(a)
-    r.append(b)
-dfs(1, 1)
-print(ans)
+def newNode(key):
+    temp = Node(key)
+    return temp
+
+
+# Prints the n-ary tree level wise
+def LevelOrderTraversal(root):
+    if (root == None):
+        return;
+
+    # Standard level order traversal using queue
+    q = deque()  # Create a queue
+    q.append(root);  # Enqueue root
+    while (len(q) != 0):
+
+        n = len(q);
+
+        # If this node has children
+        while (n > 0):
+
+            # Dequeue an item from queue and print it
+            p = q[0]
+            q.popleft();
+            print(p.key, end=' ')
+
+            # Enqueue all children of the dequeued item
+            for i in range(len(p.child)):
+                q.append(p.child[i]);
+            n -= 1
+
+        print()  # Print new line between two levels
+
+
+# Driver program
+if __name__ == '__main__':
+    ''' Let us create below tree
+                10
+            / / \ \
+            2 34 56 100
+        / \		 | / | \
+        77 88	 1 7 8 9
+    '''
+    root = newNode(10);
+    (root.child).append(newNode(2));
+    (root.child).append(newNode(34));
+    (root.child).append(newNode(56));
+    (root.child).append(newNode(100));
+    (root.child[0].child).append(newNode(77));
+    (root.child[0].child).append(newNode(88));
+    (root.child[2].child).append(newNode(1));
+    (root.child[3].child).append(newNode(7));
+    (root.child[3].child).append(newNode(8));
+    (root.child[3].child).append(newNode(9));
+
+    print("Level order traversal Before Mirroring")
+    LevelOrderTraversal(root);
+
+"""
+Level order traversal Before Mirroring
+10 
+2 34 56 100 
+77 88 1 7 8 9 
+"""
+
 ```
 
-
+Time Complexity: O(n) where n is the number of nodes in the n-ary tree.
+Auxiliary Space: O(n)
 
 
 
@@ -371,13 +813,17 @@ https://blog.csdn.net/qq_41891805/article/details/104473065
 
 树的表示方法包括
 
-（1）嵌套括号表示法
+（1）嵌套括号表示法 Nested parentheses representation
 
-Nested parentheses representation
+是一种表示树结构的方法，通过括号的嵌套来表示树的层次关系。
+
+先将根结点放入一对圆括号中，然后把它的子树按由左而右的顺序放入括号中，而对子树也采用同样方法处理：同层子树与它的根结点用圆括号括起来，同层子树之间用逗号隔开，最后用闭括号括起来。例如下图可写成如下形式
+$(a(b,c,d,e))$
+  a
+/ | | 
+b c d e
 
 
-
-$(A(B(EK,L),F),C(G),D(H(M),I,J))$​
 
 
 
@@ -397,22 +843,118 @@ graph TD
     E --- K; E --- L; H --- M
 ```
 
+它的嵌套括号表示为：
+
+$(A(B(E(K),(L)),(F)),(C(G)),(D(H(M),(I),(J)))$​
 
 
-（3）文氏图
 
-文氏图（英语：Venn diagram），或译Venn图、温氏图、维恩图、范氏图，是在所谓的集合论（或者类的理论）数学分支中，在不太严格的意义下用以表示集合（或类）的一种草图。
+（3）文氏图（Venn diagram）
+
+Venn图是在所谓的集合论（或者类的理论）数学分支中，在不太严格的意义下用以表示集合（或类）的一种草图。
 
 ![在这里插入图片描述](https://raw.githubusercontent.com/GMyhf/img/main/img/watermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxODkxODA1%252Csize_16%252Ccolor_FFFFFF%252Ct_70-20240211143714968.png)
 
-（4）凹入表
+（4）凹入表（Indented Tree Representation）
 ![在这里插入图片描述](https://raw.githubusercontent.com/GMyhf/img/main/img/20200224102939456.png)
 
+（5）邻接表表示法（Adjacency List Representation）是一种常见的树的表示方法，特别适用于表示稀疏树（树中节点的度数相对较小）。
+
+在邻接表表示法中，使用一个数组来存储树的节点，数组中的每个元素对应一个节点。对于每个节点，使用链表或数组等数据结构来存储它的子节点。
+
+下面是一个示例，展示了如何使用邻接表表示法表示一个树：
+
+假设我们有以下树的结构：
+
+```
+       A
+     / | \
+    B  C  D
+   / \    \
+  E   F    G
+       \
+        H
+```
+
+使用邻接表表示法，我们可以得到如下的表示：
+
+```
+A: ['B', 'C', 'D']
+B: ['E', 'F']
+E: []
+F: ['H']
+H: []
+C: []
+D: ['G']
+G: []
+```
+
+在这个示例中，每个节点用一个数组来表示，数组的索引对应节点的标识。数组中的每个元素是一个链表，存储了该节点的子节点。
+
+这种表示方法可以有效地存储树的结构，并且可以快速地查找和访问节点的子节点。
+
+```python
+class TreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.children = []
+
+def build_tree():
+    # 创建树节点
+    root = TreeNode('A')
+    node_b = TreeNode('B')
+    node_c = TreeNode('C')
+    node_d = TreeNode('D')
+    node_e = TreeNode('E')
+    node_f = TreeNode('F')
+    node_g = TreeNode('G')
+    node_h = TreeNode('H')
+
+    # 构建树的结构
+    root.children.extend([node_b, node_c, node_d])
+    node_b.children.extend([node_e, node_f])
+    node_d.children.append(node_g)
+    node_f.children.append(node_h)
+
+    return root
+
+def print_tree_adjacency_list(root):
+    adjacency_list = {}
+
+    # 递归构建邻接表
+    def build_adjacency_list(node):
+        adjacency_list[node.value] = [child.value for child in node.children]
+        for child in node.children:
+            build_adjacency_list(child)
+
+    # 构建并打印邻接表
+    build_adjacency_list(root)
+    for node, children in adjacency_list.items():
+        print(f"{node}: {children}")
+
+# 构建树
+root_node = build_tree()
+
+# 打印邻接表表示的树
+print_tree_adjacency_list(root_node)
+
+"""
+A: ['B', 'C', 'D']
+B: ['E', 'F']
+E: []
+F: ['H']
+H: []
+C: []
+D: ['G']
+G: []
+"""
+```
 
 
 
 
-## 嵌套括号表示法、凹入表题目
+
+## 2.1 编程题目
 
 ### 24729: 括号嵌套树
 
@@ -1012,7 +1554,9 @@ def evaluate(parseTree):
 
 
 
-### 25140:根据后序表达式建立队列表达式
+### 编程题目
+
+#### 25140: 根据后序表达式建立队列表达式
 
 http://cs101.openjudge.cn/practice/25140/
 
@@ -1228,7 +1772,9 @@ print(printexp(pt))
 
 
 
-### 20576: printExp（逆波兰表达式建树）
+### 编程题目
+
+#### 20576: printExp（逆波兰表达式建树）
 
 http://cs101.openjudge.cn/dsapre/20576/
 
@@ -1360,7 +1906,7 @@ main()
 
 
 
-### 24750: 根据二叉树中后序序列建树
+#### 24750: 根据二叉树中后序序列建树
 
 http://cs101.openjudge.cn/practice/24750/
 
@@ -1487,7 +2033,7 @@ print(''.join(preorderTraversal(root)))
 
 
 
-### 22158: 根据二叉树前中序序列建树
+#### 22158: 根据二叉树前中序序列建树
 
 http://cs101.openjudge.cn/practice/22158/
 
@@ -1571,7 +2117,7 @@ while True:
 
 
 
-### 25145: 猜二叉树（按层次遍历）
+#### 25145: 猜二叉树（按层次遍历）
 
 http://cs101.openjudge.cn/practice/25145/
 
@@ -1652,7 +2198,7 @@ for _ in range(n):
 
 
 
-### 27637: 括号嵌套二叉树
+#### 27637: 括号嵌套二叉树
 
 http://cs101.openjudge.cn/practice/27637/
 
@@ -1765,7 +2311,7 @@ for _ in range(n):
 
 
 
-# 4 Huffman 算法
+## 3.3 Huffman 算法
 
 > 2013-book-Data Structures And Algorithms In Python
 
@@ -1786,7 +2332,7 @@ Figure 13.9: An illustration of an example Huffman code for the input string X =
 
 
 
-## 4.1 The Huffman Coding Algorithm
+### 3.3.1 The Huffman Coding Algorithm
 
 The Huffman coding algorithm begins with each of the d distinct characters of the string X to encode being the root node of a single-node binary tree. The algorithm proceeds in a series of rounds. In each round, the algorithm takes the two binary
 trees with the smallest frequencies and merges them into a single binary tree. It repeats this process until only one tree is left. 
@@ -1798,7 +2344,7 @@ optimal code can be converted into an optimal code in which the code-words for t
 
 
 
-## 4.2 The Greedy Method
+### 3.3.2 The Greedy Method
 
 Huffman’s algorithm for building an optimal encoding is an example application of an algorithmic design pattern called the greedy method. This design pattern is applied to optimization problems, where we are trying to construct some structure
 while minimizing or maximizing some property of that structure. 
@@ -1809,7 +2355,7 @@ But there are several problems that it does work for, and such problems are said
 
 
 
-## 4.3 哈夫曼编码实现
+### 3.3.3 哈夫曼编码实现
 
 要构建一个最优的哈夫曼编码树，首先需要对给定的字符及其权值进行排序。然后，通过重复合并权值最小的两个节点（或子树），直到所有节点都合并为一棵树为止。
 
@@ -1869,7 +2415,9 @@ if __name__ == "__main__":
 
 
 
-### 22161: 哈夫曼编码树
+### 编程题目
+
+#### 22161: 哈夫曼编码树
 
 http://cs101.openjudge.cn/practice/22161/
 
@@ -2027,116 +2575,11 @@ for result in results:
 
 
 
-### 18164: 剪绳子
-
-greedy/huffman, http://cs101.openjudge.cn/practice/18164/
-
-小张要将一根长度为L的绳子剪成N段。准备剪的绳子的长度为L1,L2,L3...,LN，未剪的绳子长度恰好为剪后所有绳子长度的和。 
-
-每次剪断绳子时，需要的开销是此段绳子的长度。
-
-比如，长度为10的绳子要剪成长度为2,3,5的三段绳子。长度为10的绳子切成5和5的两段绳子时，开销为10。再将5切成长度为2和3的绳子，开销为5。因此总开销为15。
-
-
-请按照目标要求将绳子剪完最小的开销时多少。
-
-已知，1<=N <= 20000，0<=Li<= 50000
-
-**输入**
-
-第一行：N，将绳子剪成的段数。
-第二行：准备剪成的各段绳子的长度。
-
-**输出**
-
-最小开销
-
-样例输入
-
-```
-3
-2 3 5
-```
-
-样例输出
-
-```
-15
-```
-
-来源：cs101-2017 期末机考备选
-
-
-
-与 05333: Fence Repair 一样。http://cs101.openjudge.cn/practice/05333
-
-思路： 剪绳子，实际上是 Huffman编码/树，https://zhuanlan.zhihu.com/p/42238580
-
-```python
-# OJ18164
-import sys
-try: fin = open('test.in','r').readline
-except: fin = sys.stdin.readline
-
-n = int(fin())
-import heapq
-a = list(map(int, fin().split()))
-heapq.heapify(a)
-ans = 0
-for i in range(n-1):
-    x = heapq.heappop(a)
-    y = heapq.heappop(a)
-    z = x + y
-    heapq.heappush(a, z)
-    ans += z
-print(ans)
-```
-
-
-
-bisect.insort时间复杂度？sorted时间复杂度？
-
-`bisect.insort`函数的时间复杂度为O(N)，其中N是列表的长度。在最坏情况下，需要在列表中插入元素时，需要移动N个元素来完成插入操作。
-
-`sorted`函数的时间复杂度为O(NlogN)，其中N是列表的长度。它使用的是Timsort算法（一种混合了插入排序和归并排序的排序算法），在平均情况下具有O(NlogN)的时间复杂度。
-
-需要注意的是，这些时间复杂度是基于比较排序的情况。如果列表中的元素具有固定长度，可以使用线性时间复杂度的排序算法，如计数排序或基数排序，来优化排序过程。但对于一般的比较排序算法，以上给出的时间复杂度是适用的。
-
-
-
-heapq时间复杂度？
-
-`heapq`模块中的主要操作函数的时间复杂度如下：
-
-- `heapify`: 将列表转换为堆的时间复杂度为O(N)，其中N是列表的长度。
-- `heappush`: 向堆中插入元素的时间复杂度为O(logN)，其中N是堆的大小。
-- `heappop`: 从堆中弹出最小元素的时间复杂度为O(logN)，其中N是堆的大小。
-- `heappushpop`: 向堆中插入元素并弹出最小元素的时间复杂度为O(logN)，其中N是堆的大小。
-- `heapreplace`: 弹出最小元素并插入新元素的时间复杂度为O(logN)，其中N是堆的大小。
-
-这些操作的时间复杂度都是基于二叉堆的实现方式。二叉堆是一种完全二叉树的数据结构，具有良好的堆特性，可以在O(logN)的时间内进行插入、删除最小元素等操作。
-
-需要注意的是，以上给出的时间复杂度是基于堆的大小的，而不是输入列表的大小。因此，在使用`heapq`模块时，操作的时间复杂度与堆的大小相关，而不是与输入列表的大小相关。
-
-```python
-#23-叶子涵-工院
-import bisect
-N=int(input())
-ribbons=sorted(list(map(lambda x:-int(x),input().split())))
-mini=0
-for i in [0]*(N-1):
-    A=ribbons.pop()
-    B=ribbons.pop()
-    mini-=A+B
-    bisect.insort(ribbons,A+B)
-print(mini)
-```
 
 
 
 
-
-### 笔试题目举例
+### 笔试题目
 
 **Q:** 用 Huffman 算法构造一个最优二叉编码树，待编码的字符权值分别为{3，4，5，6，8，9，11，12}，请问该最优二叉编码树的带权外部路径长度为（ B ）。（补充说明：树的带权外部路径长度定义为树中所有叶子结点的带权路径长度之和；其中，结点的带权路径长度定义为该结点到树根之间的路径长度与该结点权值的乘积）
 A：58	B：169	C：72	D：18
@@ -2204,7 +2647,7 @@ WPL = 12 + 16 + 20 + 24 + 27 + 24 + 22 + 24 = 169
 
 
 
-# 5 利用二叉堆实现优先级队列
+# 4 利用二叉堆实现优先级队列
 
 我们学习过队列这一先进先出的数据结构。队列有一个重要的变体，叫作优先级队列。和队列一样，优先级队列从头部移除元素，不过元素的逻辑顺序是由优先级决定的。优先级最高的元素在最前，优先级最低的元素在最后。因此，当一个元素入队时，它可能直接被移到优先级队列的头部。后续学习图相关内容时会看到，<u>对于一些图算法来说，优先级队列是一个有用的数据结构</u>。
 
@@ -2212,7 +2655,7 @@ WPL = 12 + 16 + 20 + 24 + 27 + 24 + 22 + 24 = 169
 
 二叉堆学起来很有意思，它画出来很像一棵树，但实现时只用一个列表作为内部表示。我们将实现最小堆（最小的元素一直在队首）。
 
-## 5.1 二叉堆的实现
+## 4.1 二叉堆的实现
 
 1. 结构性
 
@@ -2370,7 +2813,116 @@ i = 0  [0, 2, 3, 6, 5, 9]
 
 
 
-### 笔试题目：
+### 18164: 剪绳子
+
+greedy/huffman, http://cs101.openjudge.cn/practice/18164/
+
+小张要将一根长度为L的绳子剪成N段。准备剪的绳子的长度为L1,L2,L3...,LN，未剪的绳子长度恰好为剪后所有绳子长度的和。 
+
+每次剪断绳子时，需要的开销是此段绳子的长度。
+
+比如，长度为10的绳子要剪成长度为2,3,5的三段绳子。长度为10的绳子切成5和5的两段绳子时，开销为10。再将5切成长度为2和3的绳子，开销为5。因此总开销为15。
+
+
+请按照目标要求将绳子剪完最小的开销时多少。
+
+已知，1<=N <= 20000，0<=Li<= 50000
+
+**输入**
+
+第一行：N，将绳子剪成的段数。
+第二行：准备剪成的各段绳子的长度。
+
+**输出**
+
+最小开销
+
+样例输入
+
+```
+3
+2 3 5
+```
+
+样例输出
+
+```
+15
+```
+
+来源：cs101-2017 期末机考备选
+
+
+
+与 05333: Fence Repair 一样。http://cs101.openjudge.cn/practice/05333
+
+思路： 剪绳子，实际上是 Huffman编码/树，https://zhuanlan.zhihu.com/p/42238580
+
+```python
+# OJ18164
+import sys
+try: fin = open('test.in','r').readline
+except: fin = sys.stdin.readline
+
+n = int(fin())
+import heapq
+a = list(map(int, fin().split()))
+heapq.heapify(a)
+ans = 0
+for i in range(n-1):
+    x = heapq.heappop(a)
+    y = heapq.heappop(a)
+    z = x + y
+    heapq.heappush(a, z)
+    ans += z
+print(ans)
+```
+
+
+
+bisect.insort时间复杂度？sorted时间复杂度？
+
+`bisect.insort`函数的时间复杂度为O(N)，其中N是列表的长度。在最坏情况下，需要在列表中插入元素时，需要移动N个元素来完成插入操作。
+
+`sorted`函数的时间复杂度为O(NlogN)，其中N是列表的长度。它使用的是Timsort算法（一种混合了插入排序和归并排序的排序算法），在平均情况下具有O(NlogN)的时间复杂度。
+
+需要注意的是，这些时间复杂度是基于比较排序的情况。如果列表中的元素具有固定长度，可以使用线性时间复杂度的排序算法，如计数排序或基数排序，来优化排序过程。但对于一般的比较排序算法，以上给出的时间复杂度是适用的。
+
+
+
+heapq时间复杂度？
+
+`heapq`模块中的主要操作函数的时间复杂度如下：
+
+- `heapify`: 将列表转换为堆的时间复杂度为O(N)，其中N是列表的长度。
+- `heappush`: 向堆中插入元素的时间复杂度为O(logN)，其中N是堆的大小。
+- `heappop`: 从堆中弹出最小元素的时间复杂度为O(logN)，其中N是堆的大小。
+- `heappushpop`: 向堆中插入元素并弹出最小元素的时间复杂度为O(logN)，其中N是堆的大小。
+- `heapreplace`: 弹出最小元素并插入新元素的时间复杂度为O(logN)，其中N是堆的大小。
+
+这些操作的时间复杂度都是基于二叉堆的实现方式。二叉堆是一种完全二叉树的数据结构，具有良好的堆特性，可以在O(logN)的时间内进行插入、删除最小元素等操作。
+
+需要注意的是，以上给出的时间复杂度是基于堆的大小的，而不是输入列表的大小。因此，在使用`heapq`模块时，操作的时间复杂度与堆的大小相关，而不是与输入列表的大小相关。
+
+```python
+#23-叶子涵-工院
+import bisect
+N=int(input())
+ribbons=sorted(list(map(lambda x:-int(x),input().split())))
+mini=0
+for i in [0]*(N-1):
+    A=ribbons.pop()
+    B=ribbons.pop()
+    mini-=A+B
+    bisect.insort(ribbons,A+B)
+print(mini)
+```
+
+
+
+
+
+## 4.2 笔试题目
 
 **Q**: 下图是一棵完全二叉树:
 1)请根据初始建堆算法对该完全二叉树建堆，请画出构建的小根堆(2分);
@@ -2549,13 +3101,15 @@ GPT3.5:
 
 
 
-# 6 二叉搜索树
+# 5 二叉搜索树
 
 二叉搜索树（Binary Search Tree，BST），它是映射的另一种实现。我们感兴趣的不是元素在树中的确切位置，而是如何利用二叉树结构提供高效的搜索。
 
 二叉搜索树依赖于这样一个性质：小于父节点的键都在左子树中，大于父节点的键则都在右子树中。我们称这个性质为二叉搜索性。
 
 
+
+## 5.1 编程题目
 
 ### 22275: 二叉搜索树的遍历
 
@@ -2702,7 +3256,7 @@ This code reads the sequence of numbers from the input, removes duplicates, cons
 
 
 
-## 4.2 二叉搜索树实现快排
+## 5.2 二叉搜索树实现快排
 
 快速排序是一种基于分治法的排序算法，它通过选择一个元素作为基准（pivot），将数组分割为两个子数组，其中一个子数组的元素都小于基准，另一个子数组的元素都大于基准。然后，对两个子数组递归地应用相同的排序过程，直到排序完成。
 
@@ -2765,9 +3319,9 @@ print(sorted_nums)
 
 
 
-# 7 平衡二叉搜索树
+# 6 平衡二叉搜索树
 
-在6.7节中，我们了解了二叉搜索树的构建过程。我们已经知道，当二叉搜索树不平衡时，get和put等操作的性能可能降到O(n)。本节将介绍一种特殊的二叉搜索树，它能自动维持平衡。这种树叫作 AVL树，以其发明者G. M. Adelson-Velskii和E. M. Landis的姓氏命名。
+当二叉搜索树不平衡时，get和put等操作的性能可能降到O(n)。本节将介绍一种特殊的二叉搜索树，它能自动维持平衡。这种树叫作 AVL树，以其发明者G. M. Adelson-Velskii和E. M. Landis的姓氏命名。
 
 AVL树实现映射抽象数据类型的方式与普通的二叉搜索树一样，唯一的差别就是性能。实现AVL树时，要记录每个节点的平衡因子。我们通过查看每个节点左右子树的高度来实现这一点。更正式地说，我们将平衡因子定义为左右子树的高度之差。
 
@@ -2779,7 +3333,7 @@ $balance Factor = height (left SubTree) - height(right SubTree)$
 
 图6-26 带平衡因子的右倾树
 
-## 5.1 AVL树的性能
+## 6.1 AVL树的性能
 
 我们先看看限定平衡因子带来的结果。我们认为，保证树的平衡因子为-1、0或1，可以使关键操作获得更好的大 O 性能。首先考虑平衡因子如何改善最坏情况。有左倾与右倾这两种可能性。如果考虑高度为0、1、2和3的树，图6-27展示了应用新规则后最不平衡的左倾树。
 
@@ -2792,6 +3346,8 @@ $balance Factor = height (left SubTree) - height(right SubTree)$
 $N_h = 1 + N_{h-1} + N_{h-2}$​
 
 
+
+### 编程题目
 
 > ### P1350: AVL树至少有几个结点
 >
@@ -3017,9 +3573,11 @@ $\begin{split}\log{(N_h+1)} = (h+2)\log{\Phi} - \frac{1}{2} \log{5} \\
 h = \frac{\log{(N_h+1)} - 2 \log{\Phi} + \frac{1}{2} \log{5}}{\log{\Phi}} \\
 h = 1.44 \log{N_h}\end{split}$​​​​
 
-在任何时间，AVL树的高度都等于节点数取对数再乘以一个常数（1.44）。对于搜索AVL树来说，这是一件好事，因为时间复杂度被限制为$O(\log{N})$。
+在任何时间，AVL树的高度都等于节点数取对数再乘以一个常数（1.44）。对于搜索AVL树来说，这是一件好事，因为时间复杂度被限制为$O(\log{N})$​。
 
-## 5.2 AVL树的实现
+
+
+## 6.2 AVL树的实现
 
 我们已经证明，保持AVL树的平衡会带来很大的性能优势，现在看看如何往树中插入一个键。所有新键都是以叶子节点插入的，因为新叶子节点的平衡因子是零，所以新插节点没有什么限制条件。但插入新节点后，必须更新父节点的平衡因子。新的叶子节点对其父节点平衡因子的影响取决于它是左子节点还是右子节点。如果是右子节点，父节点的平衡因子减一。如果是左子节点，则父节点的平衡因子加一。这个关系可以递归地应用到每个祖先，直到根节点。既然更新平衡因子是递归过程，就来检查以下两种基本情况：
 
@@ -3270,9 +3828,9 @@ def rebalance(self, node):
 
 
 
-## 5.3 映射实现总结
+## 6.3 映射实现总结
 
-本章和第5章介绍了可以用来实现映射这一抽象数据类型的多种数据结构，包括有序列表、散列表、二叉搜索树以及AVL树。表6-1总结了每个数据结构的性能。
+用来实现映射这一抽象数据类型的多种数据结构，包括有序列表、散列表、二叉搜索树以及AVL树。表6-1总结了每个数据结构的性能。
 
 表6-1 映射的不同实现间的性能对比
 
@@ -3285,14 +3843,7 @@ def rebalance(self, node):
 
 
 
-# 8 小结
 
-本章介绍了树这一数据结构。有了树，我们可以写出很多有趣的算法。我们用树做了以下这些事。
-❏ 用二叉树解析并计算表达式。
-❏ 用二叉树实现映射。
-❏ 用平衡二叉树（AVL树）实现映射。
-❏ 用二叉树实现最小堆。
-❏ 用最小堆实现优先级队列。
 
 
 
@@ -4113,6 +4664,8 @@ print(ans)
 
 https://www.geeksforgeeks.org/introduction-to-trie-data-structure-and-algorithm-tutorials/
 
+Todo
+
 
 
 ## D 线段树和树状数组
@@ -4127,7 +4680,7 @@ Todo
 
 **正则表达式**，又称规则表达式**,**（Regular Expression，在代码中常简写为regex、regexp或RE），是一种[文本模式](https://baike.baidu.com/item/文本模式/7355156?fromModule=lemma_inlink)，包括普通字符（例如，a 到 z 之间的字母）和[特殊字符](https://baike.baidu.com/item/特殊字符/112715?fromModule=lemma_inlink)（称为"[元字符](https://baike.baidu.com/item/元字符/6062776?fromModule=lemma_inlink)"），是[计算机科学](https://baike.baidu.com/item/计算机科学/9132?fromModule=lemma_inlink)的一个概念。正则表达式使用单个[字符串](https://baike.baidu.com/item/字符串/1017763?fromModule=lemma_inlink)来描述、匹配一系列匹配某个[句法规则](https://baike.baidu.com/item/句法规则/53352483?fromModule=lemma_inlink)的字符串，通常被用来检索、替换那些符合某个模式（规则）的文本。
 
-
+Todo
 
 
 
