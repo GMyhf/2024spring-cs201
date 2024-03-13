@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 2223 GMT+8 March 11, 2024
+Updated 1003 GMT+8 March 13, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -386,9 +386,9 @@ graph TD
 
 ## 2.1 嵌套括号表示法
 
-### P0740: 括号嵌套树
+### 24729: 括号嵌套树
 
-http://dsbpython.openjudge.cn/dspythonbook/P0740/
+http://cs101.openjudge.cn/practice/24729/
 
 可以用括号嵌套的方式来表示一棵树。表示方法如下：
 
@@ -840,9 +840,9 @@ def evaluate(parseTree):
 
 
 
-### P0580:根据后序表达式建立队列表达式
+### 25140:根据后序表达式建立队列表达式
 
-http://dsbpython.openjudge.cn/dspythonbook/P0580/
+http://cs101.openjudge.cn/practice/25140/
 
 后序算术表达式可以通过栈来计算其值，做法就是从左到右扫描表达式，碰到操作数就入栈，碰到运算符，就取出栈顶的2个操作数做运算(先出栈的是第二个操作数，后出栈的是第一个)，并将运算结果压入栈中。最后栈里只剩下一个元素，就是表达式的值。
 
@@ -1315,9 +1315,9 @@ print(''.join(preorderTraversal(root)))
 
 
 
-### P0570: 根据二叉树前中序序列建树
+### 22158: 根据二叉树前中序序列建树
 
-http://dsbpython.openjudge.cn/dspythonbook/P0570/
+http://cs101.openjudge.cn/practice/22158/
 
 假设二叉树的节点里包含一个大写字母，每个节点的字母都不同。
 
@@ -1399,9 +1399,9 @@ while True:
 
 
 
-### P0650: 猜二叉树（按层次遍历）
+### 25145: 猜二叉树（按层次遍历）
 
-http://dsbpython.openjudge.cn/dspythonbook/P0650/
+http://cs101.openjudge.cn/practice/25145/
 
 一棵二叉树，结点都是大写英文字母，且不重复。
 
@@ -2439,9 +2439,9 @@ print(' '.join(map(str, post_order(pre_order))))
 
 
 
-### P1320: 二叉搜索树的层次遍历
+### 05455: 二叉搜索树的层次遍历
 
-http://dsbpython.openjudge.cn/dspythonbook/P1320/
+http://cs101.openjudge.cn/practice/05455/
 
 二叉搜索树在动态查表中有特别的用处，一个无序序列可以通过构造一棵二叉搜索树变成一个有序序列，
 
@@ -2449,7 +2449,7 @@ http://dsbpython.openjudge.cn/dspythonbook/P1320/
 
 插入操作时，不必移动其它结点，只需改动某个结点的指针，由空变为非空即可。
 
-   这里，我们想探究二叉树的建立和层次输出。
+这里，我们想探究二叉树的建立和层次输出。
 
 **输入**
 
