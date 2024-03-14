@@ -1254,6 +1254,89 @@ for data in datas:
 
 
 
+### 18182: 打怪兽
+
+implementation/sortings/data structures, http://cs101.openjudge.cn/practice/18182/
+
+Q神无聊的时候经常打怪兽。现在有一只怪兽血量是b，Q神在一些时刻可以选择一些技能打怪兽，每次释放技能都会让怪兽掉血。
+现在给出一些技能t~i~,x~i~，代表这个技能可以在ti时刻使用，并且使得怪兽的血量下降x~i~。这个打怪兽游戏有个限制，每一时刻最多可以使用m个技能（一个技能只能用一次）。如果技能使用得当，那么怪兽会在哪一时刻死掉呢？
+
+**输入**
+
+第一行是数据组数nCases, nCases≤ 100
+对于每组数据，第一行是三个整数n,m,b，n代表技能的个数，m代表每一时刻可以使用最多m个技能，b代表怪兽初始的血量。
+1≤ n≤ 1000，1≤ m≤ 1000，1≤ b≤ 10^9^
+接下来n行，每一行一个技能t~i~,x~i~，1≤ t~i~≤ 10^9^，1≤ x~i~≤ 10^9^
+
+**输出**
+
+对于每组数据，输出怪兽在哪一时刻死掉，血量小于等于0就算挂，如果不能杀死怪兽，输出alive
+
+样例输入
+
+```
+2
+1 1 10
+1 5
+2 2 10
+1 5
+1 5
+```
+
+样例输出
+
+```
+alive
+1
+```
+
+提示：技能不保证按照时刻顺序输入
+
+来源：cs101-2015 期末机考
+
+
+
+2020fall-cs101，杨永祥，思路比较简单，时间做 key，技能为 value，然后创建字典，在遍历过程中修改 value中保存的技能伤害就可。
+
+
+
+2020fall-cs101，成泽恺。思路：创建字典，将技能的 t~i~ 作为键，x~i~ 作为值存入，x~i~ 存成列表形式，然后每一个回合按时间从前向后遍历字典的值，按 m 判断这一时刻最多能打掉多少血，situation 初始值设为 alive，一旦血量小于等于 0，赋值为这个回合，最后输出 situation。
+
+
+
+用了字典，注意字典本身无序，只能对 keys 或 values 排序。
+
+```python
+cases = int(input())
+for _ in range(cases):    
+    situation = "alive"
+    n, m, b = map(int, input().split())
+    a = {}
+    
+    # Input coordinates
+    for _ in range(n):
+        x, y = map(int, input().split())
+        a.setdefault(x, []).append(y)
+        
+    # Sort coordinates by x-coordinate
+    c = sorted(a)
+    for x in c:
+        if m >= len(a[x]):
+            b -= sum(a[x])
+        else:
+            a[x].sort(reverse=True)
+            b -= sum(a[x][:m])
+        if b <= 0:
+            situation = x
+            break
+    
+    print(situation)
+```
+
+
+
+
+
 # 3 二叉树的应用
 
 ## 3.1 解析树
