@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 2307 GMT+8 March 13, 2024
+Updated 2112 GMT+8 March 15, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4745,7 +4745,582 @@ print(ans)
 
 https://www.geeksforgeeks.org/introduction-to-trie-data-structure-and-algorithm-tutorials/
 
-Todo
+Trie data structure is defined as a Tree based data structure that is used for storing some collection of strings and performing efficient search operations on them. The word Trie is derived from re**TRIE**val, which means finding something or obtaining it. 
+
+Trie follows some property that If two strings have a common prefix then they will have the same ancestor in the trie. A trie can be used to sort a collection of strings alphabetically as well as search whether a string with a given prefix is present in the trie or not.
+
+
+
+**Need for Trie Data Structure?**
+
+A Trie data structure is used for storing and retrieval of data and the same operations could be done using another data structure which is Hash Table but Trie can perform these operations more efficiently than a Hash Table. Moreover, Trie has its own advantage over the Hash table. A Trie data structure can be used for **prefix-based** searching whereas a Hash table can’t be used in the same way. 
+
+
+
+**Advantages of Trie Data Structure over a Hash Table:**
+
+The A trie data structure has the following advantages over a hash table:  
+
+- We can efficiently do **prefix search** (or auto-complete) with Trie.
+- We can easily print all words in alphabetical order which is not easily possible with hashing.
+- There is no overhead of Hash functions in a Trie data structure.
+- Searching for a String even in the large collection of strings in a Trie data structure can be done in **O(L)** Time complexity, Where L is the number of words in the query string. This searching time could be even less than O(L) if the query string does not exist in the trie.
+
+
+
+**Properties of a Trie Data Structure**
+
+Now we already know that Trie has a tree-like structure. So, it is very important to know its properties.
+Below are some important properties of the Trie data structure:
+
+- There is one root node in each Trie.
+- Each node of a Trie represents a string and each edge represents a character.
+- Every node consists of hashmaps or **an array of pointers**, with each index representing a character and a flag to indicate if any string ends at the current node.
+- Trie data structure can contain any number of characters including **alphabets**, **numbers**, and **special characters**. But for this article, we will discuss strings with characters a-z. Therefore, only 26 pointers need for every node, where the ***\*0th\**** index represents **‘a’** and the **25th** index represents **‘z’** characters.
+- Each path from the root to any node represents a word or string.
+
+Below is a simple example of Trie data structure.
+
+![Trie Data Structure](https://raw.githubusercontent.com/GMyhf/img/main/img/Triedatastructure1.png)
+
+Trie Data Structure
+
+
+
+**How does Trie Data Structure work?**
+
+We already know that the Trie data structure can contain any number of characters including **alphabets**, **numbers**, and **special characters**. But for this article, we will discuss strings with characters **a-z**. Therefore, only 26 pointers need for every node, where the **0th** index represents **‘a’** and the **25th** index represents **‘z’** characters.
+
+Any lowercase English word can start with **a-z**, then the next letter of the word could be **a-z,** the third letter of the word again could be **a-z**, and so on. So for storing a word, we need to take an array (container) of size ***\*26\**** and initially, all the characters are empty as there are no words and it will look as shown below.
+
+![An array of pointers inside every Trie node](https://raw.githubusercontent.com/GMyhf/img/main/img/nodeintrie.png)
+
+An array of pointers inside every Trie node
+
+Let’s see how a word `and` and `ant` is stored in the Trie data structure: 
+
+1. Store `and` in Trie data structure:
+
+   - The word `and` starts with `a`, So we will mark the position `a` as filled in the Trie node, which represents the use of `a`. 
+   - After placing the first character, for the second character again there are `26 possibilities`, So from `a`, again there is an array of size `26`, for storing the 2nd character.
+   - The second character is `n`, So from `a`, we will move to `n` and mark `n` in the `2nd` array as used.
+   - After `n`, the 3rd character is `d`, So mark the position `d` as used in the respective array.
+   
+2. Store `ant` in the Trie data structure:
+
+   - The word `ant` starts with `a` and the position of `a` in the root node has already been filled. So, no need to fill it again, just move to the node `a` in Trie.
+   - For the second character `n` we can observe that the position of ‘n’ in the ‘a’ node has already been filled. So, no need to fill it again, just move to node `n` in Trie.
+   - For the last character `t` of the word, The position for `t` in the `n` node is not filled. So, filled the position of `t`‘ in `n` node and move to `t` node.
+
+After storing the word “and” and “ant” the Trie will look like this:
+
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/a1.png)
+
+ 
+
+**Representation of Trie Node:**
+
+Every Trie node consists of a character pointer array or hashmap and a flag to represent if the word is ending at that node or not. But if the words contain only **lower-case** letters (i.e. a-z), then we can define Trie Node with an array instead of a hashmap.
+
+
+
+```python
+# Python code
+class TrieNode:
+
+	# Trie node class
+	def _init_(self):
+		self.children = [None for _ in range(26)]
+
+		# This will keep track of number of strings that are
+		# stored in the Trie from root node to any Trie node.
+		self.wordCount = 0
+		
+		# This code is contributed by ishankhandelwals.
+
+```
+
+**Basic Operations on Trie Data Structure:**
+
+1. Insertion
+2. Search
+3. Deletion
+
+**1. Insertion in Trie Data Structure:**
+
+This operation is used to insert new strings into the Trie data structure. Let us see how this works:
+
+Let us try to Insert “and” & “ant” in this Trie:
+
+![Insert "and" & "ant"](https://raw.githubusercontent.com/GMyhf/img/main/img/ex1-660x399.png)
+
+
+
+From the above representation of insertion, we can see that the word “and” & “ant” have shared some common node (i.e “an”) this is because of the property of the Trie data structure that If two strings have a common prefix then they will have the same ancestor in the trie.
+
+Now let us try to Insert “dad” & “do”:
+
+![Insertion in Trie Data Structure](https://raw.githubusercontent.com/GMyhf/img/main/img/ex2.png)
+
+Insertion in Trie Data Structure
+
+**Implementation of Insertion in Trie data structure:**
+
+Algorithm:
+
+1. Define a function `insert(TrieNode root, string &word)` which will take two parameters one for the root and the other for the string that we want to insert in the Trie data structure.
+
+2. Now take another pointer `currentNode` and initialize it with the `root` node.
+
+3. Iterate over the length of the given string and check if the value is `NULL` or not in the array of pointers at the current character of the string.
+
+   - If It’s `NULL` then, make a new node and point the current character to this newly created node.
+   - Move the curr to the newly created node.
+   
+4. Finally, increment the `wordCount` of the last `currentNode`, this implies that there is a string ending currentNode.
+
+Below is the implementation of the above algorithm:
+
+
+
+```python
+def insert_key(root, key):
+	# Initialize the currentNode pointer
+	# with the root node
+	currentNode = root
+
+	# Iterate across the length of the string
+	for c in key:
+		# Check if the node exist for the current
+		# character in the Trie.
+		if currentNode.childNode[ord(c) - ord('a')] == None:
+			# If node for current character does not exist
+			# then make a new node
+			newNode = TrieNode()
+
+			# Keep the reference for the newly created
+			# node.
+			currentNode.childNode[ord(c) - ord('a')] = newNode
+
+		# Now, move the current node pointer to the newly
+		# created node.
+		currentNode = currentNode.childNode[ord(c) - ord('a')]
+
+	# Increment the wordEndCount for the last currentNode
+	# pointer this implies that there is a string ending at
+	# currentNode.
+	currentNode.wordCount += 1
+
+```
+
+**2. Searching in Trie Data Structure:**
+
+Search operation in Trie is performed in a similar way as the insertion operation but the only difference is that whenever we find that the array of pointers in `curr node` does not point to the `current character` of the `word` then return false instead of creating a new node for that current character of the word. 
+
+This operation is used to search whether a string is present in the Trie data structure or not. There are two search approaches in the Trie data structure.
+
+1. Find whether the given word exists in Trie.
+2. Find whether any word that starts with the given prefix exists in Trie.
+
+There is a similar search pattern in both approaches. The first step in searching a given word in Trie is to convert the word to characters and then compare every character with the trie node from the root node. If the current character is present in the node, move forward to its children. Repeat this process until all characters are found.
+
+**2.1 Searching Prefix in Trie Data Structure:**
+
+Search for the prefix “an” in the Trie Data Structure.
+
+![Search for the prefix "an" in Trie](https://raw.githubusercontent.com/GMyhf/img/main/img/searchforprefix.png)
+
+Search for the prefix “an” in Trie
+
+
+
+Implementation of Prefix Search in Trie data structure:
+
+```python
+def is_prefix_exist(root, key):
+	# Initialize the currentNode pointer
+	# with the root node
+	current_node = root
+
+	# Iterate across the length of the string
+	for c in key:
+		# Check if the node exist for the current
+		# character in the Trie.
+		if current_node.child_node[ord(c) - ord('a')] is None:
+			# Given word as a prefix does not exist in Trie
+			return False
+
+		# Move the currentNode pointer to the already 
+		# existing node for current character.
+		current_node = current_node.child_node[ord(c) - ord('a')]
+
+	# Prefix exist in the Trie
+	return True
+
+```
+
+**2.2 Searching Complete word in Trie Data Structure:**
+
+It is similar to prefix search but additionally, we have to check if the word is ending at the last character of the word or not.
+
+![Searching in Trie Data Structure](https://raw.githubusercontent.com/GMyhf/img/main/img/search1.png)
+
+Search “dad” in the Trie data structure
+
+Implementation of Search in Trie data structure:
+
+```python
+def search_key(root, key):
+	# Initialize the currentNode pointer with the root node
+	currentNode = root
+
+	# Iterate across the length of the string
+	for c in key:
+		# Check if the node exist for the current character in the Trie
+		if currentNode.childNode[ord(c) - ord('a')] is None:
+			# Given word does not exist in Trie
+			return False
+
+		# Move the currentNode pointer to the already existing node for current character
+		currentNode = currentNode.childNode[ord(c) - ord('a')]
+
+	# Return if the wordCount is greater than 0
+	return currentNode.wordCount > 0
+
+```
+
+**3. Deletion in Trie Data Structure**
+
+This operation is used to delete strings from the Trie data structure. There are three cases when deleting a word from Trie.
+
+1. The deleted word is a prefix of other words in Trie.
+2. The deleted word shares a common prefix with other words in Trie.
+3. The deleted word does not share any common prefix with other words in Trie.
+
+Example :
+
+**3.1 The deleted word is a prefix of other words in Trie.**
+
+As shown in the following figure, the deleted word “an” share a complete prefix with another word “and” and “ant“.
+
+![Deletion of word which is a prefix of other words in Trie](https://raw.githubusercontent.com/GMyhf/img/main/img/case1.png)
+
+Deletion of word which is a prefix of other words in Trie
+
+
+An easy solution to perform a delete operation for this case is to just decrement the **wordCount** by 1 at the ending node of the word.
+
+**3.2 The deleted word shares a common prefix with other words in Trie.**
+
+As shown in the following figure, the deleted word “and” has some common prefixes with other words ‘ant’. They share the prefix ‘an’.
+
+![Deletion of word which shares a common prefix with other words in Trie](https://raw.githubusercontent.com/GMyhf/img/main/img/Case2.png)
+
+Deletion of word which shares a common prefix with other words in Trie
+
+
+The solution for this case is to delete all the nodes starting from the end of the prefix to the last character of the given word.
+
+3.3 The deleted word does not share any common prefix with other words in Trie.
+
+As shown in the following figure, the word “geek” does not share any common prefix with any other words.
+
+![Deletion of a word that does not share any common prefix with other words in Trie](https://raw.githubusercontent.com/GMyhf/img/main/img/case3.png)
+
+Deletion of a word that does not share any common prefix with other words in Trie
+
+
+The solution for this case is just to delete all the nodes.
+
+Below is the implementation that handles all the above cases:
+
+```python
+def delete_key(root, word):
+	current_node = root
+	last_branch_node = None
+	last_branch_char = 'a'
+
+	# loop through each character in the word
+	for c in word:
+		# if the current node doesn't have a child with the current character,
+		# return False as the word is not present in Trie
+		if current_node.childNode[ord(c) - ord('a')] is None:
+			return False
+		else:
+			count = 0
+			# count the number of children nodes of the current node
+			for i in range(26):
+				if current_node.childNode[i] is not None:
+					count += 1
+
+			# if the count of children is more than 1,
+			# store the node and the current character
+			if count > 1:
+				last_branch_node = current_node
+				last_branch_char = c
+
+			current_node = current_node.childNode[ord(c) - ord('a')]
+
+	count = 0
+	# count the number of children nodes of the current node
+	for i in range(26):
+		if current_node.childNode[i] is not None:
+			count += 1
+
+	# Case 1: The deleted word is a prefix of other words in Trie
+	if count > 0:
+		current_node.wordCount -= 1
+		return True
+
+	# Case 2: The deleted word shares a common prefix with other words in Trie
+	if last_branch_node is not None:
+		last_branch_node.childNode[ord(last_branch_char) - ord('a')] = None
+		return True
+
+	# Case 3: The deleted word does not share any common prefix with other words in Trie
+	else:
+		root.childNode[ord(word[0]) - ord('a')] = None
+		return True
+
+```
+
+**How to implement Trie Data Structure?**
+
+- Create a root node with the help of `TrieNode()` constructor.
+
+- Store a collection of strings that we have to insert in the trie in a vector of strings say, `arr`.
+
+- Inserting all strings in Trie with the help of the `insertkey()` function,
+
+- Search strings from `searchQueryStrings\` with the help of `search_key()` function.
+
+- Delete the strings present in the `deleteQueryStrings` with the help of `delete_key`.
+
+  
+
+```python
+# Trie implementation in Python 
+
+class TrieNode:
+	def __init__(self):
+		# pointer array for child nodes of each node
+		self.childNode = [None] * 26
+		self.wordCount = 0
+		
+def insert_key(root, key):
+	# Initialize the currentNode pointer with the root node
+	currentNode = root
+
+	# Iterate across the length of the string
+	for c in key:
+		# Check if the node exist for the current character in the Trie.
+		if not currentNode.childNode[ord(c) - ord('a')]:
+			# If node for current character does not exist
+			# then make a new node
+			newNode = TrieNode()
+			# Keep the reference for the newly created node.
+			currentNode.childNode[ord(c) - ord('a')] = newNode
+		# Now, move the current node pointer to the newly created node.
+		currentNode = currentNode.childNode[ord(c) - ord('a')]
+	# Increment the wordEndCount for the last currentNode
+	# pointer this implies that there is a string ending at currentNode.
+	currentNode.wordCount += 1
+	
+def search_key(root, key):
+	# Initialize the currentNode pointer with the root node
+	currentNode = root
+
+	# Iterate across the length of the string
+	for c in key:
+		# Check if the node exist for the current character in the Trie.
+		if not currentNode.childNode[ord(c) - ord('a')]:
+			# Given word does not exist in Trie
+			return False
+		# Move the currentNode pointer to the already existing node for current character.
+		currentNode = currentNode.childNode[ord(c) - ord('a')]
+
+	return currentNode.wordCount > 0
+
+def delete_key(root, word):
+	currentNode = root
+	lastBranchNode = None
+	lastBrachChar = 'a'
+
+	for c in word:
+		if not currentNode.childNode[ord(c) - ord('a')]:
+			return False
+		else:
+			count = 0
+			for i in range(26):
+				if currentNode.childNode[i]:
+					count += 1
+			if count > 1:
+				lastBranchNode = currentNode
+				lastBrachChar = c
+			currentNode = currentNode.childNode[ord(c) - ord('a')]
+
+	count = 0
+	for i in range(26):
+		if currentNode.childNode[i]:
+			count += 1
+
+	# Case 1: The deleted word is a prefix of other words in Trie.
+	if count > 0:
+		currentNode.wordCount -= 1
+		return True
+
+	# Case 2: The deleted word shares a common prefix with other words in Trie.
+	if lastBranchNode:
+		lastBranchNode.childNode[ord(lastBrachChar) - ord('a')] = None
+		return True
+	# Case 3: The deleted word does not share any common prefix with other words in Trie.
+	else:
+		root.childNode[ord(word[0]) - ord('a')] = None
+		return True
+# Driver Code
+if __name__ == '__main__':
+	# Make a root node for the Trie
+	root = TrieNode()
+
+	# Stores the strings that we want to insert in the Trie
+	input_strings = ["and", "ant", "do", "geek", "dad", "ball"]
+
+	# number of insert operations in the Trie
+	n = len(input_strings)
+
+	for i in range(n):
+		insert_key(root, input_strings[i])
+
+	# Stores the strings that we want to search in the Trie
+	search_query_strings = ["do", "geek", "bat"]
+
+	# number of search operations in the Trie
+	search_queries = len(search_query_strings)
+
+	for i in range(search_queries):
+		print("Query String:", search_query_strings[i])
+		if search_key(root, search_query_strings[i]):
+			# the queryString is present in the Trie
+			print("The query string is present in the Trie")
+		else:
+			# the queryString is not present in the Trie
+			print("The query string is not present in the Trie")
+
+	# stores the strings that we want to delete from the Trie
+	delete_query_strings = ["geek", "tea"]
+
+	# number of delete operations from the Trie
+	delete_queries = len(delete_query_strings)
+
+	for i in range(delete_queries):
+		print("Query String:", delete_query_strings[i])
+		if delete_key(root, delete_query_strings[i]):
+			# The queryString is successfully deleted from the Trie
+			print("The query string is successfully deleted")
+		else:
+			# The query string is not present in the Trie
+			print("The query string is not present in the Trie")
+
+# This code is contributed by Vikram_Shirsat
+
+```
+
+**Output**
+
+```
+Query String: do
+The query string is present in the Trie
+Query String: geek
+The query string is present in the Trie
+Query String: bat
+The query string is not present in the Trie
+Query String: geek
+The query string is successfully deleted
+Query String: tea
+The query string is not present in the Trie
+```
+
+**Complexity Analysis of Trie Data Structure**
+
+| Operation | Time Complexity | Auxiliary Space |
+| :-------: | :-------------: | :-------------: |
+| Insertion |      O(n)       |     O(n*m)      |
+| Searching |      O(n)       |      O(1)       |
+| Deletion  |      O(n)       |      O(1)       |
+
+**Note:** In the above complexity table `n`, `m` represents the size of the string and the number of strings that are stored in the trie.
+
+**Applications of Trie data structure:** 
+
+1. Autocomplete Feature: Autocomplete provides suggestions based on what you type in the search box. Trie data structure is used to implement autocomplete functionality.  
+
+
+
+
+
+![Autocomplete feature of Trie Data Structure](https://media.geeksforgeeks.org/wp-content/uploads/20220831154521/AutoComplete.png)
+
+Autocomplete feature of Trie Data Structure
+
+2. Spell Checkers: If the word typed does not appear in the dictionary, then it shows suggestions based on what you typed.
+   It is a 3-step process that includes :
+
+- Checking for the word in the data dictionary.
+
+- Generating potential suggestions.
+
+- Sorting the suggestions with higher priority on top.
+
+Trie stores the data dictionary and makes it easier to build an algorithm for searching the word from the dictionary and provides the list of valid words for the suggestion.
+
+3. Longest Prefix Matching Algorithm(Maximum Prefix Length Match): This algorithm is used in networking by the routing devices in IP networking. Optimization of network routes requires contiguous masking that bound the complexity of lookup a time to O(n), where n is the length of the URL address in bits.
+
+To speed up the lookup process, Multiple Bit trie schemes were developed that perform the lookups of multiple bits faster.
+
+**Advantages of Trie data structure:**
+
+- Trie allows us to input and finds strings in O(l) time, where l is the length of a single word. It is faster as compared to both hash tables and binary search trees.
+- It provides alphabetical filtering of entries by the key of the node and hence makes it easier to print all words in alphabetical order.
+- Trie takes less space when compared to BST because the keys are not explicitly saved instead each key requires just an amortized fixed amount of space to be stored.
+- Prefix search/Longest prefix matching can be efficiently done with the help of trie data structure.
+- Since trie doesn’t need any hash function for its implementation so they are generally faster than hash tables for small keys like integers and pointers.
+- Tries support ordered iteration whereas iteration in a hash table will result in pseudorandom order given by the hash function which is usually more cumbersome.
+- Deletion is also a straightforward algorithm with O(l) as its time complexity, where l is the length of the word to be deleted.
+
+**Disadvantages of Trie data structure:**
+
+- The main disadvantage of the trie is that it takes a lot of memory to store all the strings. For each node, we have too many node pointers which are equal to the no of characters in the worst case.
+- An efficiently constructed hash table(i.e. a good hash function and a reasonable load factor) has O(1) as lookup time which is way faster than O(l) in the case of a trie, where l is the length of the string.
+
+
+
+**Frequently asked questions (FAQs) about Trie Data Structure:**
+
+**1. Is trie an advanced data structure?**
+
+A Trie is an advanced data structure that is sometimes also known as a prefix tree
+
+**2. What is the difference between trie and tree data structure?**
+
+A tree is a general structure of recursive nodes. There are many types of trees. Popular ones are the binary tree and balanced tree. A Trie is a kind of tree, known by many names including prefix tree, digital search tree, and retrieval tree (hence the name ‘trie’).
+
+**3. What are some applications of Trie?**
+
+The longest common prefix, pattern searching, autocomplete and implementation of the dictionary are some of the common applications of a Trie Data Structure.
+
+**4. Does Google use trie?**
+
+Google even stores each word/sentence in the form of a trie.
+
+**5. What is the advantage of trie?**
+
+The main disadvantage of Trie is that it takes a lot of memory to store all the Strings. For each node, we have too many node pointers (equal to the number of characters of the alphabet).
+
+**Conclusion:**
+
+Our discussion so far has led us to the conclusion that the Trie data structure is a Tree based data structure that is used for storing some collection of strings and performing efficient search operations on them and we have also discussed the various advantage and applications of trie data structure.
+
+
 
 
 
