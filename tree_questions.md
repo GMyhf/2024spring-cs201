@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 0017 GMT+8 March 17, 2024
+Updated 0019 GMT+8 March 17, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8,7 +8,7 @@ Updated 0017 GMT+8 March 17, 2024
 
 说明：树相关内容准备在 Week4 ~6 讲。中间考虑穿插递归、dfs等内容。
 
-**预计 Week4 覆盖 一 中的 1～3**，Week5覆盖 一中 的 4~6, Week6覆盖 一 中7，及附录内容
+**预计 Week4 覆盖 一 中的 1～3.1**，Week5覆盖 一中 的 3.2~5, Week6覆盖 一 中6，及附录内容
 
 
 
