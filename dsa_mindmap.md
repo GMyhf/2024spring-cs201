@@ -1,6 +1,6 @@
 # 数算知识图谱
 
-Updated 17:30 GMT+8 March 15, 2024
+Updated 1113 GMT+8 March 16, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -59,34 +59,29 @@ mindmap
 ```mermaid
 mindmap
   root(Generic Tree)
-    Notations
-    	Node
-    	Edge
-    	Root
-    	Path
-    	Children
-    	Parent
-    	Sibling
-    	Subtree
-    	Leaf Node
-    	Level
-    	Height
-    	Depth
+    Notations{{**NOTATIONS**}}
+    	Node,Edge
+    	Root,Subtree
+    	Parent,Children,Sibling,Leaf
+    	Path: Level,Height,Depth
       
-    Representation
-      Nested parentheses
+    Representation{{**REPRESENTATION**}}
+      Nested Parentheses
       Node-Based
       Indented Tree
-      Adjacency List 
+      Adjacency List
+      	*Disjoint Set
+      	*Trie
       
-    Binary Tree(Binary Tree)
+    Binary Tree{{**Binary Tree**}}
       Applications
       	Parse Tree
-      	Traversals
+      	Tree Traversals
       	Huffman
-      Heap Implementation
+      Priority Queues with Binary Heaps
       Binary Search Tree
       AVL Tree
+      *Segment Tree
 ```
 
 图2 树的知识图谱
