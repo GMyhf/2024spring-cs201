@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 1101 GMT+8 March 16, 2024
+Updated 1102 GMT+8 March 16, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -219,27 +219,31 @@ mindmap
 
 
 
-## 1.1 Application of Tree Data Structure
+**Application of Tree Data Structure**
 
 - **File System**: This allows for efficient navigation and organization of files.
 - **Data Compression**: **Huffman coding** is a popular technique for data compression that involves constructing a binary tree where the leaves represent characters and their frequency of occurrence. The resulting tree is used to encode the data in a way that minimizes the amount of storage required.
 - **Compiler Design:** In compiler design, a **syntax tree** is used to represent the structure of a program. 
 - **Database Indexing**: B-trees and other tree structures are used in database indexing to efficiently search for and retrieve data. 
 
-### Advantages of Tree Data Structure:
+
+
+**Advantages of Tree Data Structure**
 
 - Tree offer **Efficient Searching** depending on the type of tree, with average search times of O(log n) for balanced trees like AVL. 
 - Trees provide a hierarchical representation of data, making it **easy to organize and navigate** large amounts of information.
 - The recursive nature of trees makes them **easy to traverse and manipulate** using recursive algorithms.
 
-### Disadvantages of Tree Data Structure:
+
+
+**Disadvantages of Tree Data Structure**
 
 - Unbalanced Trees, meaning that the height of the tree is skewed towards one side, which can lead to **inefficient search times.**
 - Trees demand **more memory space requirements** than some other data structures like arrays and linked lists, especially if the tree is very large.
 
 
 
-## 1.2 n阶多叉树 (N-ary Trees)
+## 1.1 n阶多叉树 (N-ary Trees)
 
 https://www.geeksforgeeks.org/generic-treesn-array-trees/?ref=outind
 
@@ -361,7 +365,7 @@ class Node:
 
 
 
-## 1.3 编程题目
+## 1.2 编程题目
 
 ### 06646: 二叉树的深度
 
@@ -430,7 +434,7 @@ print(depth)
 
 
 
-虽然也正确，但是数算思维更倾向于上面类的写法。
+下面程序虽然也正确，但是数算思维更倾向于上面类的写法。
 
 ```python
 # 钟明衡 物理学院
