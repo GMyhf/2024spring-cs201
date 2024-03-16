@@ -119,7 +119,7 @@ mindmap
       *Segment Tree
 ```
 
-图 树的知识图谱
+树的知识图谱
 
 
 
@@ -222,13 +222,13 @@ mindmap
 ## 1.1 Application of Tree Data Structure
 
 - **File System**: This allows for efficient navigation and organization of files.
-- **Data Compression**:[ Huffman coding](https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/) is a popular technique for data compression that involves constructing a binary tree where the leaves represent characters and their frequency of occurrence. The resulting tree is used to encode the data in a way that minimizes the amount of storage required.
-- **Compiler Design:** In compiler design, a syntax tree is used to represent the structure of a program. 
+- **Data Compression**: **Huffman coding** is a popular technique for data compression that involves constructing a binary tree where the leaves represent characters and their frequency of occurrence. The resulting tree is used to encode the data in a way that minimizes the amount of storage required.
+- **Compiler Design:** In compiler design, a **syntax tree** is used to represent the structure of a program. 
 - **Database Indexing**: B-trees and other tree structures are used in database indexing to efficiently search for and retrieve data. 
 
 ### Advantages of Tree Data Structure:
 
-- Tree offer **Efficient Searching** Depending on the type of tree, with average search times of O(log n) for balanced trees like AVL. 
+- Tree offer **Efficient Searching** depending on the type of tree, with average search times of O(log n) for balanced trees like AVL. 
 - Trees provide a hierarchical representation of data, making it **easy to organize and navigate** large amounts of information.
 - The recursive nature of trees makes them **easy to traverse and manipulate** using recursive algorithms.
 
@@ -239,7 +239,7 @@ mindmap
 
 
 
-## 1.2 Generic Trees (N-ary Trees)
+## 1.2 n阶多叉树 (N-ary Trees)
 
 https://www.geeksforgeeks.org/generic-treesn-array-trees/?ref=outind
 
@@ -280,21 +280,25 @@ class Node:
 
 
 
-**Disadvantages of the above representation are:** 
+Disadvantages of the above representation are: 
 
-1. **Memory Wastage** – All the pointers are not required in all the cases. Hence, there is lot of memory wastage.
-2. **Unknown number of children** – The number of children for each node is not known in advance.
+1. Memory Wastage – All the pointers are not required in all the cases. Hence, there is lot of memory wastage.
+2. Unknown number of children – The number of children for each node is not known in advance.
 
-**Simple Approach:** 
+
+
+Simple Approach: 
 
 For storing the address of children in a node we can use an array or linked list. But we will face some issues with both of them.
 
 1. In **Linked list**, we can not randomly access any child’s address. So it will be expensive.
 2. In **array**, we can randomly access the address of any child, but we can store only fixed number of children’s addresses in it.
 
+
+
 **Better Approach:**
 
-We can use [Dynamic Arrays](https://www.geeksforgeeks.org/how-do-dynamic-arrays-work/) for storing the address of children. We can randomly access any child’s address and the size of the vector is also not fixed.
+We can use **Dynamic Arrays** for storing the address of children. We can randomly access any child’s address and the size of the vector is also not fixed.
 
 ```python
 class Node: 
@@ -348,7 +352,7 @@ class Node:
 **Advantages:** 
 
 - Memory efficient – No extra links are required, hence a lot of memory is saved.
-- Treated as binary trees – Since we are able to convert any generic tree to binary representation, we can treat all generic trees with a first child/next sibling representation as binary trees. Instead of left and right pointers, we just use firstChild and nextSibling.
+- Treated as binary trees – Since we are able to convert any generic tree to binary representation, we can <u>treat all generic trees with a first child/next sibling representation as binary trees</u>. Instead of left and right pointers, we just use firstChild and nextSibling.
 - Many algorithms can be expressed more easily because it is just a binary tree.
 - Each node is of fixed size ,so no auxiliary array or vector is required.
 
