@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 1102 GMT+8 March 16, 2024
+Updated 0017 GMT+8 March 17, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -358,7 +358,7 @@ class Node:
 - Memory efficient – No extra links are required, hence a lot of memory is saved.
 - Treated as binary trees – Since we are able to convert any generic tree to binary representation, we can <u>treat all generic trees with a first child/next sibling representation as binary trees</u>. Instead of left and right pointers, we just use firstChild and nextSibling.
 - Many algorithms can be expressed more easily because it is just a binary tree.
-- Each node is of fixed size ,so no auxiliary array or vector is required.
+- Each node is of fixed size, so no auxiliary array or vector is required.
 
 
 
@@ -695,6 +695,8 @@ if __name__ == '__main__':
 
 https://www.geeksforgeeks.org/generic-tree-level-order-traversal/
 
+树的遍历，除了前序、中序、后序，还有一个是 level order，就是使用队列的bfs方式。
+
 Given a generic tree, perform a Level order traversal and print all of its nodes
 
 **Examples:** 
@@ -824,8 +826,8 @@ https://blog.csdn.net/qq_41891805/article/details/104473065
 
 先将根结点放入一对圆括号中，然后把它的子树按由左而右的顺序放入括号中，而对子树也采用同样方法处理：同层子树与它的根结点用圆括号括起来，同层子树之间用逗号隔开，最后用闭括号括起来。例如下图可写成如下形式
 $(a(b,c,d,e))$
-  a
-/ | | 
+    a
+/ | | \
 b c d e
 
 
@@ -850,7 +852,7 @@ graph TD
 
 它的嵌套括号表示为：
 
-$(A(B(E(K),(L)),(F)),(C(G)),(D(H(M),(I),(J)))$​
+$(A(B(E(K,L),F),C(G),D(H(M),I,J))$​
 
 
 
@@ -862,6 +864,8 @@ Venn图是在所谓的集合论（或者类的理论）数学分支中，在不�
 
 （4）凹入表（Indented Tree Representation）
 ![在这里插入图片描述](https://raw.githubusercontent.com/GMyhf/img/main/img/20200224102939456.png)
+
+
 
 （5）邻接表表示法（Adjacency List Representation）是一种常见的树的表示方法，特别适用于表示稀疏树（树中节点的度数相对较小）。
 
@@ -957,6 +961,12 @@ G: []
 
 
 
+邻接表，不陌生。18182: 打怪兽，data structures, http://cs101.openjudge.cn/practice/18182/
+
+用字典模拟邻接表，存储相同时刻的技能。
+
+
+
 
 
 ## 2.1 编程题目
@@ -1005,24 +1015,13 @@ EBFGCIHDA
 
 
 
-题面提到了遍历，但是没有给出定义。定义如下：
-
-**前序遍历**
-在前序遍历中，先访问根节点，然后递归地前序遍历左子树，最后递归地前序遍历右子树。
-
-**中序遍历**
-在中序遍历中，先递归地中序遍历左子树，然后访问根节点，最后递归地中序遍历右子树。
-
-**后序遍历**
-在后序遍历中，先递归地后序遍历右子树，然后递归地后序遍历左子树，最后访问根节点。
-
-
+题面提到了遍历，但是没有给出定义。定义在3.2 树的遍历 一节。
 
 下面两个代码。先给出用类表示node
 
 ```python
 class TreeNode:
-    def __init__(self, value):
+    def __init__(self, value): #类似字典
         self.value = value
         self.children = []
 
@@ -1150,13 +1149,13 @@ file2
 
 **输入**
 
-你的任务是写一个程序读取一些测试数据。每组测试数据表示一个计算机的文件结构。每组测试数据以'*'结尾，而所有合理的输入数据以'#'结尾。一组测试数据包括一些文件和目录的名字（虽然在输入中我们没有给出，但是我们总假设ROOT目录是最外层的目录）。在输入中,以']'表示一个目录的内容的结束。目录名字的第一个字母是'd'，文件名字的第一个字母是'f'。文件名可能有扩展名也可能没有（比如fmyfile.dat和fmyfile）。文件和目录的名字中都不包括空格,长度都不超过30。一个目录下的子目录个数和文件个数之和不超过30。
+你的任务是写一个程序读取一些测试数据。每组测试数据表示一个计算机的文件结构。每组测试数据以`*`结尾，而所有合理的输入数据以`#`结尾。一组测试数据包括一些文件和目录的名字（虽然在输入中我们没有给出，但是我们总假设ROOT目录是最外层的目录）。在输入中,以`]`表示一个目录的内容的结束。目录名字的第一个字母是'd'，文件名字的第一个字母是`f`。文件名可能有扩展名也可能没有（比如`fmyfile.dat`和`fmyfile`）。文件和目录的名字中都不包括空格,长度都不超过30。一个目录下的子目录个数和文件个数之和不超过30。
 
 **输出**
 
-在显示一个目录中内容的时候，先显示其中的子目录（如果有的话），然后再显示文件（如果有的话）。文件要求按照名字的字母表的顺序显示（目录不用按照名字的字母表顺序显示，只需要按照目录出现的先后显示）。对每一组测试数据，我们要先输出"DATA SET x:"，这里x是测试数据的编号（从1开始）。在两组测试数据之间要输出一个空行来隔开。
+在显示一个目录中内容的时候，先显示其中的子目录（如果有的话），然后再显示文件（如果有的话）。<u>文件要求按照名字的字母表的顺序显示</u>（目录不用按照名字的字母表顺序显示，只需要按照目录出现的先后显示）。对每一组测试数据，我们要先输出`DATA SET x:`，这里`x`是测试数据的编号（从1开始）。在两组测试数据之间要输出一个空行来隔开。
 
-你需要注意的是，我们使用一个'|'和5个空格来表示出缩排的层次。
+你需要注意的是，我们使用一个`|`和5个空格来表示出缩排的层次。
 
 样例输入
 
@@ -1261,114 +1260,33 @@ for data in datas:
 
 
 
-### 18182: 打怪兽
-
-implementation/sortings/data structures, http://cs101.openjudge.cn/practice/18182/
-
-Q神无聊的时候经常打怪兽。现在有一只怪兽血量是b，Q神在一些时刻可以选择一些技能打怪兽，每次释放技能都会让怪兽掉血。
-现在给出一些技能t~i~,x~i~，代表这个技能可以在ti时刻使用，并且使得怪兽的血量下降x~i~。这个打怪兽游戏有个限制，每一时刻最多可以使用m个技能（一个技能只能用一次）。如果技能使用得当，那么怪兽会在哪一时刻死掉呢？
-
-**输入**
-
-第一行是数据组数nCases, nCases≤ 100
-对于每组数据，第一行是三个整数n,m,b，n代表技能的个数，m代表每一时刻可以使用最多m个技能，b代表怪兽初始的血量。
-1≤ n≤ 1000，1≤ m≤ 1000，1≤ b≤ 10^9^
-接下来n行，每一行一个技能t~i~,x~i~，1≤ t~i~≤ 10^9^，1≤ x~i~≤ 10^9^
-
-**输出**
-
-对于每组数据，输出怪兽在哪一时刻死掉，血量小于等于0就算挂，如果不能杀死怪兽，输出alive
-
-样例输入
-
-```
-2
-1 1 10
-1 5
-2 2 10
-1 5
-1 5
-```
-
-样例输出
-
-```
-alive
-1
-```
-
-提示：技能不保证按照时刻顺序输入
-
-来源：cs101-2015 期末机考
-
-
-
-2020fall-cs101，杨永祥，思路比较简单，时间做 key，技能为 value，然后创建字典，在遍历过程中修改 value中保存的技能伤害就可。
-
-
-
-2020fall-cs101，成泽恺。思路：创建字典，将技能的 t~i~ 作为键，x~i~ 作为值存入，x~i~ 存成列表形式，然后每一个回合按时间从前向后遍历字典的值，按 m 判断这一时刻最多能打掉多少血，situation 初始值设为 alive，一旦血量小于等于 0，赋值为这个回合，最后输出 situation。
-
-
-
-用了字典，注意字典本身无序，只能对 keys 或 values 排序。
-
-```python
-cases = int(input())
-for _ in range(cases):    
-    situation = "alive"
-    n, m, b = map(int, input().split())
-    a = {}
-    
-    # Input coordinates
-    for _ in range(n):
-        x, y = map(int, input().split())
-        a.setdefault(x, []).append(y)
-        
-    # Sort coordinates by x-coordinate
-    c = sorted(a)
-    for x in c:
-        if m >= len(a[x]):
-            b -= sum(a[x])
-        else:
-            a[x].sort(reverse=True)
-            b -= sum(a[x][:m])
-        if b <= 0:
-            situation = x
-            break
-    
-    print(situation)
-```
-
-
-
 
 
 # 3 二叉树的应用
 
 ## 3.1 解析树
 
-现在来看看如何用树解决一些实际问题。本节介绍解析树，可以用它来表示现实世界中像句子（如图4所示）或数学表达式这样的构造。
+现在来看看如何用树解决一些实际问题。本节介绍解析树，可以用它来表示现实世界中像句子（如图1所示）或数学表达式这样的构造。
 
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202401311914368.png" alt="image-20240131191318107" style="zoom: 25%;" />
 
-图4 一个简单句子的解析树
+图1 一个简单句子的解析树
 
 
 
-图4展示了一个简单句子的层次结构。用树状结构表示句子让我们可以使用子树处理句子的独立部分。
+图1展示了一个简单句子的层次结构。用树状结构表示句子让我们可以使用子树处理句子的独立部分。
 
-我们也可以将` ( ( 7 + 3) * ( 5 - 2 ) )` 这样的数学表达式表示成解析树，如图5所示。这是完全括号表达式，乘法的优先级高于加法和减法，但因为有括号，所以在做乘法前必须先做括号内的加法和减法。树的层次性有助于理解整个表达式的计算次序。在计算顶层的乘法前，必须先计算子树中的加法和减法。加法（左子树）的结果是`10`，减法（右子树）的结果是`3`。利用树的层次结构，在计算完子树的表达式后，只需用一个节点代替整棵子树即可。应用这个替换过程后，便得到如图5所示的简化树。
+我们也可以将` ( ( 7 + 3) * ( 5 - 2 ) )` 这样的数学表达式表示成解析树，如图2所示。这是完全括号表达式，乘法的优先级高于加法和减法，但因为有括号，所以在做乘法前必须先做括号内的加法和减法。树的层次性有助于理解整个表达式的计算次序。在计算顶层的乘法前，必须先计算子树中的加法和减法。加法（左子树）的结果是`10`，减法（右子树）的结果是`3`。利用树的层次结构，在计算完子树的表达式后，只需用一个节点代替整棵子树即可。应用这个替换过程后，便得到如图3所示的简化树。
 
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202401311918463.png" alt="image-20240131191832905" style="zoom:25%;" />
 
-图5 `( ( 7 + 3) * ( 5 - 2 ) )`的解析树
+图2 `( ( 7 + 3) * ( 5 - 2 ) )`的解析树
 
 
 
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202401311919250.png" alt="image-20240131191907102" style="zoom: 50%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202401311919250.png" alt="image-20240131191907102" style="zoom: 33%;" />
 
-图6 `( ( 7 + 3 ) * ( 5 - 2 ) )`的简化解析树
+图3 `( ( 7 + 3 ) * ( 5 - 2 ) )`的简化解析树
 
 本节的剩余部分将仔细考察解析树，重点如下：
 	❏ 如何根据完全括号表达式构建解析树；
@@ -1402,11 +1320,11 @@ for _ in range(cases):
 
 编写Python代码前，我们先通过一个例子来理解上述规则。将表达式`(3 + (4 ∗ 5))`拆分成标记列表`['(', '3', '+', '(', '4', '＊', '5', ')', ')']`。起初，解析树只有一个空的根节点，随着对每个标记的处理，解析树的结构和内容逐渐充实，如图6所示。
 
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202401311922845.png" alt="image-20240131192244859" style="zoom: 50%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202401311922845.png" alt="image-20240131192244859" style="zoom: 33%;" />
 
-图7 一步步地构建解析树
+图4 一步步地构建解析树
 
-以图7为例，我们来一步步地构建解析树。
+以图4为例，我们来一步步地构建解析树。
 
 (a) 创建一棵空树。
 (b) 读入第一个标记(。根据规则1，为根节点添加一个左子节点。
@@ -1600,7 +1518,7 @@ print(printexp(pt))
 
 
 
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202401311919250.png" alt="image-20240131191907102" style="zoom: 50%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202401311919250.png" alt="image-20240131191907102" style="zoom: 33%;" />
 
 图6 `( ( 7 + 3 ) * ( 5 - 2 ) )`的简化解析树
 
@@ -1753,7 +1671,7 @@ for _ in range(n):
 
 让我们通过几个例子来理解这3种遍历方式。首先看看前序遍历。我们将一本书的内容结构表示为一棵树，整本书是根节点，每一章是根节点的子节点，每一章中的每一节是这章的子节点，每小节又是这节的子节点，依此类推。图8 展示了一本书的树状结构，它包含两章。注意，遍历算法对每个节点的子节点数没有要求，但本例只针对二叉树。
 
-![image](https://raw.githubusercontent.com/GMyhf/img/main/img/booktree.png)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/booktree.png" alt="image" style="zoom:67%;" />
 
 图8 一本书的树状结构
 
@@ -1862,7 +1780,11 @@ print(printexp(pt))
 
 ### 编程题目
 
-#### 20576: printExp（逆波兰表达式建树）
+打*的题目，可以跳过。比如：20576，输出部分逻辑复杂，不容易看懂。
+
+
+
+#### *20576: printExp（逆波兰表达式建树）
 
 http://cs101.openjudge.cn/dsapre/20576/
 
@@ -2409,8 +2331,7 @@ The method for text compression explored in this section is the **Huffman code**
 
 To encode the string X, we convert each character in X to a variable-length code-word, and we concatenate all these code-words in order to produce the encoding Y for X. In order to avoid ambiguities, we insist that no code-word in our encoding be a prefix of another code-word in our encoding. Such a code is called a **prefix code**, and it simplifies the decoding of Y to retrieve X. (See Figure 13.9.) Even with this restriction, the savings produced by a variable-length prefix code can be significant, particularly if there is a wide variance in character frequencies (as is the case for natural language text in almost every written language).
 
-Huffman’s algorithm for producing an optimal variable-length prefix code for X is based on the construction of a binary tree T that represents the code. Each edge in T represents a bit in a code-word, with an edge to a left child representing a “0” and an edge to a right child representing a “1.” Each leaf v is associated with a specific character, and the code-word for that character is defined by the sequence of bits associated with the edges in the path from the root of T to v. (See Figure 13.9.) Each leaf v has a frequency, f(v), which is simply the frequency in X of the character associated with v. In addition, we give each internal node v in T
-a frequency, f(v), that is the sum of the frequencies of all the leaves in the subtree rooted at v.
+Huffman’s algorithm for producing an optimal variable-length prefix code for X is based on the construction of a binary tree T that represents the code. Each edge in T represents a bit in a code-word, with an edge to a left child representing a “0” and an edge to a right child representing a “1.” Each leaf v is associated with a specific character, and the code-word for that character is defined by the sequence of bits associated with the edges in the path from the root of T to v. (See Figure 13.9.) Each leaf v has a frequency, f(v), which is simply the frequency in X of the character associated with v. In addition, we give each internal node v in T a frequency, f(v), that is the sum of the frequencies of all the leaves in the subtree rooted at v.
 
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240309111247017.png" alt="image-20240309111247017" style="zoom: 50%;" />
 
@@ -2642,10 +2563,8 @@ strings = []
 while True:
     try:
         line = input()
-        if line:
-            strings.append(line)
-        else:
-            break
+        strings.append(line)
+
     except EOFError:
         break
 
@@ -2725,8 +2644,8 @@ A：58	B：169	C：72	D：18
 - 权值 5 的节点路径长度为 4，WPL部分为 5 * 4 = 20。
 - 权值 6 的节点路径长度为 4，WPL部分为 6 * 4 = 24。
 - 权值 9 的节点路径长度为 3，WPL部分为 9 * 3 = 27。
-- 权值 11（左侧）的节点路径长度为 3，WPL部分为 8 * 3 = 24。
-- 权值 11（右侧）的节点路径长度为 2，WPL部分为 11 * 2 = 22。
+- 权值 8 的节点路径长度为 3，WPL部分为 8 * 3 = 24。
+- 权值 11 的节点路径长度为 2，WPL部分为 11 * 2 = 22。
 - 权值 12 的节点路径长度为 2，WPL部分为 12 * 2 = 24。
 
 将所有部分的 WPL 相加，我们得到整棵哈夫曼树的 WPL：
@@ -2747,19 +2666,19 @@ WPL = 12 + 16 + 20 + 24 + 27 + 24 + 22 + 24 = 169
 
 1. 结构性
 
-为了使二叉堆能高效地工作，我们利用树的对数性质来表示它。为了保证对数性能，必须维持树的平衡。平衡的二叉树是指，其根节点的左右子树含有数量大致相等的节点。在实现二叉堆时，我们通过创建一棵**完全二叉树**来维持树的平衡。在完全二叉树中，除了最底层，其他每一层的节点都是满的。在最底层，我们从左往右填充节点。图 6-14 展示了完全二叉树的一个例子。
+为了使二叉堆能高效地工作，我们利用树的对数性质来表示它。为了保证对数性能，必须维持树的平衡。平衡的二叉树是指，其根节点的左右子树含有数量大致相等的节点。在实现二叉堆时，我们通过创建一棵**完全二叉树complete binary tree**来维持树的平衡。在完全二叉树中，除了最底层，其他每一层的节点都是满的。在最底层，我们从左往右填充节点。图 1 展示了完全二叉树的一个例子。
 
 ![image](https://raw.githubusercontent.com/GMyhf/img/main/img/compTree.png)
 
-图 6-14 完全二叉树
+图 1 完全二叉树
 
 
 
-完全二叉树的另一个有趣之处在于，<u>可以用一个列表来表示它</u>，而不需要采用“列表之列表”或“节点与引用”表示法。由于树是完全的，因此对于在列表中处于位置 p 的节点来说，它的左子节点正好处于位置 2p；同理，右子节点处于位置 2p+1。若要找到树中任意节点的父节点，只需使用 Python 的整数除法即可。给定列表中位置 n 处的节点，其父节点的位置就是 n/2。图 6-15 展示了一棵完全二叉树，并给出了列表表示。树的列表表示——加上这个“完全”的结构性质——让我们得以通过一些简单的数学运算遍历完全二叉树。我们会看到，这也有助于高效地实现二叉堆。
+完全二叉树的另一个有趣之处在于，<u>可以用一个列表来表示它</u>，而不需要采用“列表之列表”或“节点与引用”表示法。由于树是完全的，因此对于在列表中处于位置 p 的节点来说，它的左子节点正好处于位置 2p；同理，右子节点处于位置 2p+1。若要找到树中任意节点的父节点，只需使用 Python 的整数除法即可。给定列表中位置 n 处的节点，其父节点的位置就是 n/2。图 2 展示了一棵完全二叉树，并给出了列表表示。树的列表表示——加上这个“完全”的结构性质——让我们得以通过一些简单的数学运算遍历完全二叉树。我们会看到，这也有助于高效地实现二叉堆。
 
 ![image](https://raw.githubusercontent.com/GMyhf/img/main/img/heapOrder.png)
 
-图 6-15 一棵完全二叉树及其列表表示
+图 2 一棵完全二叉树及其列表表示
 
 
 
@@ -2778,11 +2697,11 @@ class BinHeap:
         self.currentSize = 0
 ```
 
-接下来实现insert方法。将元素加入列表的最简单、最高效的方法就是将元素追加到列表的末尾。追加操作的优点在于，它能保证完全树的性质，但缺点是很可能会破坏堆的结构性质。不过可以写一个方法，通过比较新元素与其父元素来重新获得堆的结构性质。如果新元素小于其父元素，就将二者交换。图6-16展示了将新元素放到正确位置上所需的一系列交换操作。
+接下来实现insert方法。将元素加入列表的最简单、最高效的方法就是将元素追加到列表的末尾。追加操作的优点在于，它能保证完全树的性质，但缺点是很可能会破坏堆的结构性质。不过可以写一个方法，通过比较新元素与其父元素来重新获得堆的结构性质。如果新元素小于其父元素，就将二者交换。图3展示了将新元素放到正确位置上所需的一系列交换操作。
 
-![image](https://raw.githubusercontent.com/GMyhf/img/main/img/percUp.png)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/percUp.png" alt="image" style="zoom:67%;" />
 
-图6-16 将新元素往上移到正确位置 Percolate the New Node up to Its Proper Position
+图3 将新元素往上移到正确位置 Percolate the New Node up to Its Proper Position
 
 注意，将元素往上移时，其实是在新元素及其父元素之间重建堆的结构性质。此外，也保留了兄弟元素之间的堆性质。当然，如果新元素很小，需要继续往上一层交换。代码清单6-18给出了percUp方法的代码，该方法将元素一直沿着树向上移动，直到重获堆的结构性质。此时，heapList中的元素0正好能发挥重要作用。我们使用整数除法计算任意节点的父节点。就当前节点而言，父节点的下标就是当前节点的下标除以2。
 
@@ -2809,13 +2728,13 @@ def insert(self,k):
     self.percUp(self.currentSize)
 ```
 
-正确定义insert方法后，就可以编写delMin方法。既然堆的结构性质要求根节点是树的最小元素，那么查找最小值就很简单。delMin方法的难点在于，如何在移除根节点之后重获堆的结构性质和有序性。可以分两步重建堆。第一步，取出列表中的最后一个元素，将其移到根节点的位置。移动最后一个元素保证了堆的结构性质，但可能会破坏二叉堆的有序性。第二步，将新的根节点沿着树推到正确的位置，以重获堆的有序性。图6-17展示了将新的根节点移动到正确位置所需的一系列交换操作。
+正确定义insert方法后，就可以编写delMin方法。既然堆的结构性质要求根节点是树的最小元素，那么查找最小值就很简单。delMin方法的难点在于，如何在移除根节点之后重获堆的结构性质和有序性。可以分两步重建堆。第一步，取出列表中的最后一个元素，将其移到根节点的位置。移动最后一个元素保证了堆的结构性质，但可能会破坏二叉堆的有序性。第二步，将新的根节点沿着树推到正确的位置，以重获堆的有序性。图4展示了将新的根节点移动到正确位置所需的一系列交换操作。
 
-![image](https://raw.githubusercontent.com/GMyhf/img/main/img/percDown.png)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/percDown.png" alt="image" style="zoom:67%;" />
 
 
 
-图6-17 Percolating the Root Node down the Tree
+图4 Percolating the Root Node down the Tree
 
 
 
@@ -2865,7 +2784,7 @@ def delMin(self):
 
 ```python
 def buildHeap(self,alist):
-    i = len(alist) // 2
+    i = len(alist) // 2  # 超过中点的节点都是叶子节点
     self.currentSize = len(alist)
     self.heapList = [0] + alist[:]
     while (i > 0):
@@ -2875,23 +2794,89 @@ def buildHeap(self,alist):
 
 
 
-图6-18展示了buildHeap方法进行的交换过程，它将各节点从最初状态移到各自的正确位置上。尽管从树的中间开始，向根的方向操作，但是percDown方法保证了最大的节点总是沿着树向下移动。在这棵完全二叉树中，超过中点的节点都是叶子节点，没有任何子节点。当i = 1时，从树的根节点往下移，可能需要经过多次交换。如你所见，9先被移出根节点，然后percDown会沿着树检查子节点，以确保尽量将它往下移。在本例中，9的第2次交换对象是3。这样一来，9就移到了树的底层，不需要再做交换了。比较一系列交换操作后的列表表示将有助于理解，如图6-19所示。
+图5展示了buildHeap方法进行的交换过程，它将各节点从最初状态移到各自的正确位置上。尽管从树的中间开始，向根的方向操作，但是percDown方法保证了最大的节点总是沿着树向下移动。<u>在这棵完全二叉树中，超过中点的节点都是叶子节点，没有任何子节点</u>。当i = 1时，从树的根节点往下移，可能需要经过多次交换。如你所见，9先被移出根节点，然后percDown会沿着树检查子节点，以确保尽量将它往下移。在本例中，9的第2次交换对象是3。这样一来，9就移到了树的底层，不需要再做交换了。比较一系列交换操作后的列表表示将有助于理解，如图5所示。
 
-![image](https://raw.githubusercontent.com/GMyhf/img/main/img/buildheap.png)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/buildheap.png" alt="image" style="zoom:67%;" />
 
-
-
-图6-18 根据列表[9, 6, 5, 2, 3]构建堆
+图5 根据列表[9, 6, 5, 2, 3]构建堆
 
 
 
+```python
+class BinHeap:
+    def __init__(self):
+        self.heapList = [0]
+        self.currentSize = 0
+
+    def percUp(self, i):
+        while i // 2 > 0:
+            if self.heapList[i] < self.heapList[i // 2]:
+                tmp = self.heapList[i // 2]
+                self.heapList[i // 2] = self.heapList[i]
+                self.heapList[i] = tmp
+            i = i // 2
+
+    def insert(self, k):
+        self.heapList.append(k)
+        self.currentSize = self.currentSize + 1
+        self.percUp(self.currentSize)
+
+    def percDown(self, i):
+        while (i * 2) <= self.currentSize:
+            mc = self.minChild(i)
+            if self.heapList[i] > self.heapList[mc]:
+                tmp = self.heapList[i]
+                self.heapList[i] = self.heapList[mc]
+                self.heapList[mc] = tmp
+            i = mc
+
+    def minChild(self, i):
+        if i * 2 + 1 > self.currentSize:
+            return i * 2
+        else:
+            if self.heapList[i * 2] < self.heapList[i * 2 + 1]:
+                return i * 2
+            else:
+                return i * 2 + 1
+
+    def delMin(self):
+        retval = self.heapList[1]
+        self.heapList[1] = self.heapList[self.currentSize]
+        self.currentSize = self.currentSize - 1
+        self.heapList.pop()
+        self.percDown(1)
+        return retval
+
+    def buildHeap(self, alist):
+        i = len(alist) // 2
+        self.currentSize = len(alist)
+        self.heapList = [0] + alist[:]
+        while (i > 0):
+            print(f'i = {i}, {self.heapList}')
+            self.percDown(i)
+            i = i - 1
+        print(f'i = {i}, {self.heapList}')
+
+
+
+bh = BinHeap()
+bh.buildHeap([9, 5, 6, 2, 3])
+"""
+i = 2, [0, 9, 5, 6, 2, 3]
+i = 1, [0, 9, 2, 6, 5, 3]
+i = 0, [0, 2, 3, 6, 5, 9]
+"""
+
+for _ in range(bh.currentSize):
+    print(bh.delMin())
+"""
+2
+3
+5
+6
+9
+"""
 ```
-i = 2  [0, 9, 5, 6, 2, 3]
-i = 1  [0, 9, 2, 6, 5, 3]
-i = 0  [0, 2, 3, 6, 5, 9]
-```
-
-图6-19 根据列表[9, 6, 5, 2, 3]构建堆
 
 
 
@@ -3415,19 +3400,21 @@ AVL树实现映射抽象数据类型的方式与普通的二叉搜索树一样�
 
 $balance Factor = height (left SubTree) - height(right SubTree)$
 
-根据上述定义，如果平衡因子大于零，我们称之为左倾；如果平衡因子小于零，就是右倾；如果平衡因子等于零，那么树就是完全平衡的。为了实现AVL树并利用平衡树的优势，我们将平衡因子为-1、0和1的树都定义为平衡树。一旦某个节点的平衡因子超出这个范围，我们就需要通过一个过程让树恢复平衡。图6-26展示了一棵右倾树及其中每个节点的平衡因子。
+根据上述定义，如果平衡因子大于零，我们称之为左倾；如果平衡因子小于零，就是右倾；如果平衡因子等于零，那么树就是完全平衡的。为了实现AVL树并利用平衡树的优势，我们将平衡因子为-1、0和1的树都定义为平衡树。一旦某个节点的平衡因子超出这个范围，我们就需要通过一个过程让树恢复平衡。图1展示了一棵右倾树及其中每个节点的平衡因子。
 
 ![../_images/unbalanced.png](https://raw.githubusercontent.com/GMyhf/img/main/img/unbalanced.png)
 
-图6-26 带平衡因子的右倾树
+图1 带平衡因子的右倾树
 
 ## 6.1 AVL树的性能
 
-我们先看看限定平衡因子带来的结果。我们认为，保证树的平衡因子为-1、0或1，可以使关键操作获得更好的大 O 性能。首先考虑平衡因子如何改善最坏情况。有左倾与右倾这两种可能性。如果考虑高度为0、1、2和3的树，图6-27展示了应用新规则后最不平衡的左倾树。
+我们先看看限定平衡因子带来的结果。我们认为，保证树的平衡因子为-1、0或1，可以使关键操作获得更好的大 O 性能。首先考虑平衡因子如何改善最坏情况。有左倾与右倾这两种可能性。如果考虑高度为0、1、2和3的树，图2展示了应用新规则后最不平衡的左倾树。
 
 ![../_images/worstAVL.png](https://raw.githubusercontent.com/GMyhf/img/main/img/worstAVL.png)
 
-图6-27 左倾AVL树的最坏情况
+图2 左倾AVL树的最坏情况
+
+
 
 查看树中的节点数之后可知，高度为0时有1个节点，高度为1时有2个节点（1 + 1 = 2），高度为2时有4个节点（1 + 1 + 2 = 4），高度为3时有7个节点（1 + 2 + 4 = 7）。也就是说，当高度为h时，节点数$N_h$是：
 
@@ -3437,11 +3424,11 @@ $N_h = 1 + N_{h-1} + N_{h-2}$​
 
 ### 编程题目
 
-> ### P1350: AVL树至少有几个结点
+> ### 27625: AVL树至少有几个结点
 >
 > http://cs101.openjudge.cn/practice/27625/
 >
-> 输入n(0<n<50),输出一个n层的AVL树至少有多少个结点。
+> 输入n (0<n<50), 输出一个n层的AVL树至少有多少个结点。
 >
 > **输入**
 >
@@ -3514,11 +3501,11 @@ $N_h = 1 + N_{h-1} + N_{h-2}$​
 >
 > n个结点的AVL树最多有多少层？
 >
-> 输入
+> **输入**
 >
 > 整数n 。 0< n < 50,000,000
 >
-> 输出
+> **输出**
 >
 > AVL树最多有多少层
 >
@@ -3710,7 +3697,7 @@ class AVLTree(BinarySearchTree):
 
 
 
-码清单6-25 二叉树插入新节点
+为了对照，这里放了份：码清单6-25 二叉树插入新节点
 
 ```python
 class BinarySearchTree:
@@ -3738,67 +3725,76 @@ class BinarySearchTree:
 
 新方法updateBalance做了大部分工作，它实现了前面描述的递归过程。updateBalance方法先检查当前节点是否需要再平衡（第18行）。如果符合判断条件，就进行再平衡，不需要更新父节点；如果当前节点不需要再平衡，就调整父节点的平衡因子。如果父节点的平衡因子非零，那么沿着树往根节点的方向递归调用updateBalance方法。
 
+> AVL运行的例子程序
+>
+> https://github.com/Yuqiu-Yang/problem_solving_with_algorithms_and_data_structures_using_python/blob/master/ch6/ch6_avl_tree.py
+>
+> https://github.com/Yuqiu-Yang/problem_solving_with_algorithms_and_data_structures_using_python/blob/master/ch6/ch6_binary_search_tree.py
+>
+> ```python
+> # 使用 ch6_avl_tree.py 程序的例子
+> 
+> if __name__=='__main__' :
+>     # 创建一个AVL树对象
+>     avl_tree = AVLTree()
+> 
+>     # 向树中插入键值对
+>     avl_tree.put(ord('A'), 'Apple')
+>     avl_tree.put(ord('B'), 'Banana')
+>     avl_tree.put(ord('C'), 'Cat')
+> 
+> 
+>     # 获取键对应的值
+>     print(avl_tree.get(ord('B')))  # 输出: Banana
+> 
+>     # 使用索引运算符也可以获取键对应的值
+>     print(avl_tree[ord('B')])  # 输出: Banana
+> 
+>     # 检查键是否存在于树中
+>     print(ord('A') in avl_tree)  # 输出: True
+>     print(ord('D') in avl_tree)  # 输出: False
+> 
+>     # 删除键值对
+>     avl_tree.delete(ord('A'))   # 输出：balance subtract 1
+> 
+>     # 遍历树中的键
+>     for key in avl_tree:
+>         print(chr(key))  # 输出: B, C
+> ```
+>
+> 
+
+
+
 如果需要进行再平衡，该怎么做呢？高效的再平衡是让AVL树发挥作用同时不损性能的关键。为了让AVL树恢复平衡，需要在树上进行一次或多次旋转。
 
-要理解什么是旋转，来看一个简单的例子。考虑图6-28中左边的树。这棵树失衡了，平衡因子是-2。要让它恢复平衡，我们围绕以节点A为根节点的子树做一次左旋。
+要理解什么是旋转，来看一个简单的例子。考虑图3中左边的树。这棵树失衡了，平衡因子是-2。要让它恢复平衡，我们围绕以节点A为根节点的子树做一次左旋。
 
 ![../_images/simpleunbalanced.png](https://raw.githubusercontent.com/GMyhf/img/main/img/simpleunbalanced.png)
 
-图6-28 通过左旋让失衡的树恢复平衡
+图3 通过左旋让失衡的树恢复平衡
 
 本质上，左旋包括以下步骤。
 
 ❏ 将右子节点（节点B）提升为子树的根节点。
 ❏ 将旧根节点（节点A）作为新根节点的左子节点。
-❏ 如果新根节点（节点B）已经有一个左子节点，将其作为新左子节点（节点A）的右子节点。注意，因为节点B之前是节点A的右子节点，所以此时节点A必然没有右子节点。因此，可以为它添加新的右子节点，而无须过多考虑。
+❏ 如果新根节点（节点B）已经有一个左子节点，将其作为新左子节点（节点A）的右子节点。注意，<u>因为节点B之前是节点A的右子节点，所以此时节点A必然没有右子节点。</u>因此，可以为它添加新的右子节点，而无须过多考虑。
 
 左旋过程在概念上很简单，但代码细节有点复杂，因为需要将节点挪来挪去，以保证二叉搜索树的性质。另外，还要保证正确地更新父指针。
-我们来看一棵稍微复杂一点的树，并理解右旋过程。图6-29左边的是一棵左倾的树，根节点的平衡因子是2。右旋步骤如下。
+我们来看一棵稍微复杂一点的树，并理解右旋过程。图4左边的是一棵左倾的树，根节点的平衡因子是2。右旋步骤如下。
 
 ![../_images/rightrotate1.png](https://raw.githubusercontent.com/GMyhf/img/main/img/rightrotate1.png)
 
-图6-29 通过右旋让失衡的树恢复平衡
+图4 通过右旋让失衡的树恢复平衡
 
 ❏ 将左子节点（节点C）提升为子树的根节点。
 ❏ 将旧根节点（节点E）作为新根节点的右子节点。
-❏ 如果新根节点（节点C）已经有一个右子节点（节点D），将其作为新右子节点（节点E）的左子节点。注意，因为节点C之前是节点E的左子节点，所以此时节点E必然没有左子节点。因此，可以为它添加新的左子节点，而无须过多考虑。
+❏ 如果新根节点（节点C）已经有一个右子节点（节点D），将其作为新右子节点（节点E）的左子节点。注意，<u>因为节点C之前是节点E的左子节点，所以此时节点E必然没有左子节点。</u>因此，可以为它添加新的左子节点，而无须过多考虑。
 了解旋转的基本原理之后，来看看代码。代码清单6-38给出了左旋的代码。第2行创建一个临时变量，用于记录子树的新根节点。如前所述，新根节点是旧根节点的右子节点。既然临时变量存储了指向右子节点的引用，便可以将旧根节点的右子节点替换为新根节点的左子节点。
 
 下一步是调整这两个节点的父指针。如果新根节点有左子节点，那么这个左子节点的新父节点就是旧根节点。将新根节点的父指针指向旧根节点的父节点。如果旧根节点是整棵树的根节点，那么必须将树的根节点设为新根节点；如果不是，则当旧根节点是左子节点时，将左子节点的父指针指向新根节点；当旧根节点是右子节点时，将右子节点的父指针指向新根节点（第10～13行）。最后，将旧根节点的父节点设为新根节点。这一系列描述很复杂，所以建议你根据图6-28的例子运行一遍函数。rotateRight与rotateLeft对称，所以留作练习。
 
 
-
-根据图6-28的例子运行的例子程序
-
-```python
-# 使用 ch6_avl_tree.py 程序的例子
-if __name__=='__main__' :
-    # 创建一个AVL树对象
-    avl_tree = AVLTree()
-
-    # 向树中插入键值对
-    avl_tree.put(ord('A'), 'Apple')
-    avl_tree.put(ord('B'), 'Banana')
-    avl_tree.put(ord('C'), 'Cat')
-
-
-    # 获取键对应的值
-    print(avl_tree.get(ord('B')))  # 输出: Banana
-
-    # 使用索引运算符也可以获取键对应的值
-    print(avl_tree[ord('B')])  # 输出: Orange
-
-    # 检查键是否存在于树中
-    print(ord('A') in avl_tree)  # 输出: True
-    print(ord('D') in avl_tree)  # 输出: False
-
-    # 删除键值对
-    avl_tree.delete(ord('A'))   # 输出：balance subtract 1
-
-    # 遍历树中的键
-    for key in avl_tree:
-        print(chr(key))  # 输出: B, C
-```
 
 
 
@@ -3828,7 +3824,7 @@ if __name__=='__main__' :
 
 
 
-第16～19行需要特别解释一下。这几行更新了旧根节点和新根节点的平衡因子。由于其他移动操作都是针对整棵子树，因此旋转后其他节点的平衡因子都不受影响。但在没有完整地重新计算新子树高度的情况下，怎么能更新平衡因子呢？下面的推导过程能证明，这些代码是对的。
+第16～19行需要特别解释一下。这几行更新了旧根节点和新根节点的平衡因子。<u>由于其他移动操作都是针对整棵子树，因此旋转后其他节点的平衡因子都不受影响。</u>但在没有完整地重新计算新子树高度的情况下，怎么能更新平衡因子呢？下面的推导过程能证明，这些代码是对的。
 图6-30展示了左旋结果。B和D是关键节点，A、C、E是它们的子树。针对根节点为x的子树，将其高度记为hx。由定义可知：
 
 ![../_images/bfderive.png](https://raw.githubusercontent.com/GMyhf/img/main/img/bfderive.png)
