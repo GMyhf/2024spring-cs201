@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 2112 GMT+8 March 15, 2024
+Updated 1101 GMT+8 March 16, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -14,7 +14,7 @@ Updated 2112 GMT+8 March 15, 2024
 
 # 一、主要内容
 
-# 0 练习用类写程序
+# Recap 用类写程序
 
 接下来开始学习树，大量程序会给出类的实现代码。复习一个类写法的小程序，可以debug模式运行，或者 https://pythontutor.com 可视化运行，辅助理解。类实现程序，补充缺失行代码。是笔试中必考的题目。
 
@@ -94,35 +94,34 @@ graph TD
 ```mermaid
 mindmap
   root(Generic Tree)
-    Notations
-    	Node
-    	Edge
-    	Root
-    	Path
-    	Children
-    	Parent
-    	Sibling
-    	Subtree
-    	Leaf Node
-    	Level
-    	Height
-    	Depth
+    Notations{{**NOTATIONS**}}
+    	Node,Edge
+    	Root,Subtree
+    	Parent,Children,Sibling,Leaf
+    	Path: Level,Height,Depth
       
-    Representation
-      Nested parentheses
+    Representation{{**REPRESENTATION**}}
+      Nested Parentheses
       Node-Based
       Indented Tree
-      Adjacency List 
+      Adjacency List
+      	*Disjoint Set
+      	*Trie
       
-    Binary Tree(Binary Tree)
+    Binary Tree{{**Binary Tree**}}
       Applications
       	Parse Tree
-      	Traversals
+      	Tree Traversals
       	Huffman
-      Heap Implementation
+      Priority Queues with Binary Heaps
       Binary Search Tree
       AVL Tree
+      *Segment Tree
 ```
+
+图 树的知识图谱
+
+
 
 **节点 Node**：节点是树的基础部分。
 每个节点具有名称，或“键值”。节点还可以保存额外数据项，数据项根据不同的应用而变。
@@ -4196,7 +4195,19 @@ brew install Graphviz
 
 
 
-## B Disjoint Set (Union-Find Algorithm)
+## B 并查集（Disjoint Set）
+
+是的，通常情况下，使用邻接表来表示并查集（Disjoint Set）和前缀树（Trie Tree）是比较常见的做法。
+
+1. **并查集（Disjoint Set）**：在并查集中，每个元素都属于一个集合，并且这些集合之间是不相交的。为了高效地实现并查集操作，通常会使用树形结构来表示集合之间的关系。每个集合可以用一个树表示，其中树的根节点是集合的代表元素。使用邻接表来表示这种树形结构是一种常见的做法，其中每个节点存储其父节点的指针。
+
+2. **前缀树（Trie Tree）**：前缀树是一种用于存储字符串集合的数据结构，通常用于快速地进行字符串匹配和搜索。在前缀树中，每个节点代表一个字符，从根节点到叶子节点的路径表示一个字符串。为了表示字符串的结构，通常会使用邻接表来表示前缀树，其中每个节点存储一个字符以及指向子节点的指针列表。
+
+使用邻接表表示并查集和前缀树可以高效地支持各种操作，如并查集的合并和查找操作，以及前缀树的插入、搜索和删除操作。同时，邻接表也能够比较直观地表示数据结构之间的关系，便于理解和实现。
+
+
+
+Disjoint Set (Union-Find Algorithm)
 
 https://www.geeksforgeeks.org/introduction-to-disjoint-set-data-structure-or-union-find-algorithm/
 
@@ -4741,7 +4752,9 @@ print(ans)
 
 
 
-## C Trie – Data Structure and Algorithm Tutorials
+## C 前缀树（Trie Tree）
+
+Trie – Data Structure and Algorithm Tutorials
 
 https://www.geeksforgeeks.org/introduction-to-trie-data-structure-and-algorithm-tutorials/
 
@@ -5324,19 +5337,62 @@ Our discussion so far has led us to the conclusion that the Trie data structure 
 
 
 
-## D 线段树和树状数组
+## D 线段树（Segment Tree）
 
-Todo
+请参照 https://github.com/GMyhf/2023fall-cs101
+
+中 20231031_SegmentTree_BIT.md
 
 
 
-## E Regular expression
+## E 树形结构学习方法
 
-正则表达式是对字符串操作的一种逻辑公式，就是用事先定义好的一些特定字符、及这些特定字符的组合，组成一个“规则字符串”，这个“规则字符串”用来表达对字符串的一种过滤逻辑。
+2024年3月16日，说明：在计算机科学领域内，树形结构是最为关键同时也是掌握难度较高的概念之一。不同于计算机概论，数据结构与算法的学习不仅需要借助面向对象编程的抽象和复用理念，还要通过使用链表来表达树结构，并采用递归的方法进行树的遍历。在这一过程中，经典算法和编程技巧的应用至关重要，而对于时间复杂度的优化技巧也是必不可少的。
+即便是参加过计算机概论提高班的学生，也可能会发现树结构的学习颇具挑战。一些学生可能会通过类比和综合的方式来促进理解，比如通过深度优先搜索（DFS）来深入理解树的前序遍历和后序遍历；有的学生可能会通过吟诵诗歌来激励自己；还有的学生则投入大量时间复现经典算法，或在集成开发环境（IDE）中探索如何调试递归程序。
+教材中不免存在一些内容遗漏或逻辑不连贯的部分，因此我们制作的课件也在持续更新以补充和完善这些内容。
+鉴于我们班课程的进度相对较快，如果三周内无法掌握树结构的相关知识，可以考虑将学习周期延长至四周。
 
-**正则表达式**，又称规则表达式**,**（Regular Expression，在代码中常简写为regex、regexp或RE），是一种[文本模式](https://baike.baidu.com/item/文本模式/7355156?fromModule=lemma_inlink)，包括普通字符（例如，a 到 z 之间的字母）和[特殊字符](https://baike.baidu.com/item/特殊字符/112715?fromModule=lemma_inlink)（称为"[元字符](https://baike.baidu.com/item/元字符/6062776?fromModule=lemma_inlink)"），是[计算机科学](https://baike.baidu.com/item/计算机科学/9132?fromModule=lemma_inlink)的一个概念。正则表达式使用单个[字符串](https://baike.baidu.com/item/字符串/1017763?fromModule=lemma_inlink)来描述、匹配一系列匹配某个[句法规则](https://baike.baidu.com/item/句法规则/53352483?fromModule=lemma_inlink)的字符串，通常被用来检索、替换那些符合某个模式（规则）的文本。
 
-Todo
+
+> Python数据结构与算法分析 这本书，树这一章没有讲generic tree，直接就到binary tree了。我把课件重构一下，下周（tree的2/3讲）捋清楚。之前感觉它的 算法分析 那章不好，现在感觉树这章也差强人意。
+>
+> 写的比较随意，树有个重要的应用，文本压缩——哈夫曼编码。在pdf中，搜不到“哈夫曼”，也搜不到"Huffman"
+>
+> 
+>
+> 有没有直接的理解，就是比如给我一棵树，我可以直接用遍历方法给出中序和后序?
+>
+> 前序遍历就是dfs序列，后序的反序是不是就是原树优先走右边的dfs。
+>
+> 
+>
+> 树状数组惨遭内存超出，现学分治依旧遥遥领先。
+> 合法出栈序列简单模拟，树节无树求二叉树深度。
+> 双端队列还是宝宝巴士，波兰表达式仍游刃有余。
+> 中序转后序写了两小时，水平不够还得多家练习！
+>
+> 
+>
+> 本周算是真正进入了数算的重点章节，难度肉眼可见地增长。百字令一首，聊表感受。
+> 树
+> 不熟
+> 真可恶
+> 无能狂怒
+> 找大佬求助
+> WA百般苦楚
+> 心茫然拔剑四顾
+> 栈与队列前后弹出
+> 好在学东西可以顿悟
+> 各种序表达式需要关注
+> 逐渐解决了本周题目
+> 尤其写栈有如神助
+> 但没到精通程度
+> 递归循环次数
+> AC趣味足
+> 乐不思蜀
+> 刚上路
+> 刻苦
+> 赴 
 
 
 
