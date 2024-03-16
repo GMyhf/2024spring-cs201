@@ -1,6 +1,6 @@
 # 2024年4月 图
 
-Updated 1858 GMT+8 March 16, 2024
+Updated 2114 GMT+8 March 16, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -255,6 +255,20 @@ class Graph:
 
 
 ## 3.1 宽度优先搜索
+
+Breadth First Search (BFS), algorithm for traversing or searching graphs
+
+O(|V| + |E|) time complexity, |V| number of nodes, |E| number of edges
+
+Applications:
+
+Shortest path between two nodes (unweighted Graph)
+
+Ford-Fulkson algorithm (Maximum Flow in a network)
+
+
+
+
 
 ```python
 
