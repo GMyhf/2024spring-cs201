@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 1610 GMT+8 March 17, 2024
+Updated 2200 GMT+8 March 17, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -7990,6 +7990,8 @@ Guo wei
 
 
 
+接收浮点数，是number buffer技巧。
+
 ```python
 def infix_to_postfix(expression):
     precedence = {'+':1, '-':1, '*':2, '/':2}
@@ -8030,6 +8032,27 @@ for _ in range(n):
     expression = input()
     print(infix_to_postfix(expression))
 ```
+
+
+
+接收数据，还可以用re处理。
+
+```python
+# 24591:中序表达式转后序表达式
+# http://cs101.openjudge.cn/practice/24591/
+
+def inp(s):
+    #s=input().strip()
+    import re
+    s=re.split(r'([\(\)\+\-\*\/])',s)
+    s=[item for item in s if item.strip()]
+    return s
+
+exp = "(3)*((3+4)*(2+3.5)/(4+5)) "
+print(inp(exp))
+```
+
+
 
 
 
