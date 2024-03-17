@@ -1,6 +1,6 @@
 # Assignment #5: "树"算：概念、表示、解析、遍历
 
-Updated 1923 GMT+8 March 17, 2024
+Updated 2124 GMT+8 March 17, 2024
 
 2024 spring, Complied by ==同学的姓名、院系==
 
@@ -29,22 +29,6 @@ Learn about Time complexities, learn the basics of individual Data Structures, l
 Python编程环境：Spyder IDE 5.2.2, PyCharm 2023.1.4 (Professional Edition)
 
 C/C++编程环境：Mac terminal vi (version 9.0.1424), g++/gcc (Apple clang version 14.0.3, clang-1403.0.22.14.1)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
