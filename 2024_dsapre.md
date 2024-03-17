@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 0908 GMT+8 March 16, 2024
+Updated 1610 GMT+8 March 17, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1006,7 +1006,7 @@ Hacker Bill has accidentally lost all the information from his workstation's har
 
 **输入**
 
-The first line of the input file contains single integer number N (1 <= N <= 500) that denotes a total number of distinct directory paths. Then N lines with directory paths follow. Each directory path occupies a single line and does not contain any spaces, including leading or trailing ones. No path exceeds 80 characters. Each path is listed once and consists of a number of directory names separated by a back slash ("\"). 
+The first line of the input file contains single integer number N (1 <= N <= 500) that denotes a total number of distinct directory paths. Then N lines with directory paths follow. Each directory path occupies a single line and does not contain any spaces, including leading or trailing ones. No path exceeds 80 characters. Each path is listed once and consists of a number of directory names separated by a back slash `\`. 
 
 Each directory name consists of 1 to 8 uppercase letters, numbers, or the special characters from the following list: exclamation mark, number sign, dollar sign, percent sign, ampersand, apostrophe, opening and closing parenthesis, hyphen sign, commercial at, circumflex accent, underscore, grave accent, opening and closing curly bracket, and tilde ("!#$%&'()-@^_`{}~").
 
@@ -4384,6 +4384,144 @@ for _ in range(int(input())):
         if res[i]!=0:
             print(f'[ {res[i]} {i} ] ',end='')
     print()
+```
+
+
+
+## 05902: 双端队列
+
+http://cs101.openjudge.cn/practice/05902/
+
+定义一个双端队列，进队操作与普通队列一样，从队尾进入。出队操作既可以从队头，也可以从队尾。编程实现这个数据结构。
+
+**输入**
+第一行输入一个整数t，代表测试数据的组数。
+每组数据的第一行输入一个整数n，表示操作的次数。
+接着输入n行，每行对应一个操作，首先输入一个整数type。
+当type=1，进队操作，接着输入一个整数x，表示进入队列的元素。
+当type=2，出队操作，接着输入一个整数c，c=0代表从队头出队，c=1代表从队尾出队。
+n <= 1000
+
+**输出**
+对于每组测试数据，输出执行完所有的操作后队列中剩余的元素,元素之间用空格隔开，按队头到队尾的顺序输出，占一行。如果队列中已经没有任何的元素，输出NULL。
+
+样例输入
+
+```
+2
+5
+1 2
+1 3
+1 4
+2 0
+2 1
+6
+1 1
+1 2
+1 3
+2 0
+2 1
+2 0
+```
+
+样例输出
+
+```
+3
+NULL
+```
+
+
+
+计概的话，可以用 from collections import deque。数算课程的话，可以练习自己实现deque。
+
+```python
+class Node:
+    def __init__(self, value=None):
+        self.value = value
+        self.next = None
+        self.prev = None
+
+class MyDeque:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+
+    def isEmpty(self):
+        return self.head is None
+
+    def append(self, value):
+        """添加元素到队尾"""
+        new_node = Node(value)
+        if self.isEmpty():
+            self.head = self.tail = new_node
+        else:
+            self.tail.next = new_node
+            new_node.prev = self.tail
+            self.tail = new_node
+
+    def appendleft(self, value):
+        """添加元素到队头"""
+        new_node = Node(value)
+        if self.isEmpty():
+            self.head = self.tail = new_node
+        else:
+            new_node.next = self.head
+            self.head.prev = new_node
+            self.head = new_node
+
+    def pop(self):
+        """从队尾移除元素"""
+        if self.isEmpty():
+            return None
+        ret_value = self.tail.value
+        if self.head == self.tail:
+            self.head = self.tail = None
+        else:
+            self.tail = self.tail.prev
+            self.tail.next = None
+        return ret_value
+
+    def popleft(self):
+        """从队头移除元素"""
+        if self.isEmpty():
+            return None
+        ret_value = self.head.value
+        if self.head == self.tail:
+            self.head = self.tail = None
+        else:
+            self.head = self.head.next
+            self.head.prev = None
+        return ret_value
+
+    def printDeque(self):
+        """打印队列元素"""
+        elements = []
+        current = self.head
+        while current:
+            elements.append(current.value)
+            current = current.next
+        return elements
+
+# 接下来是根据题目要求处理输入输出的部分
+t = int(input())  # 测试数据的组数
+for _ in range(t):
+    n = int(input())  # 操作次数
+    my_deque = MyDeque()
+    for _ in range(n):
+        parts = list(map(int, input().split()))
+        if parts[0] == 1:  # 进队操作
+            my_deque.append(parts[1])
+        elif parts[0] == 2:  # 出队操作
+            if parts[1] == 0:
+                my_deque.popleft()
+            else:
+                my_deque.pop()
+    if my_deque.isEmpty():
+        print("NULL")
+    else:
+        print(' '.join(map(str, my_deque.printDeque())))
+
 ```
 
 
