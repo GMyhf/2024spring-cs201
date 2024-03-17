@@ -14,17 +14,41 @@ at "homework" folder, https://github.com/GMyhf/2024spring-cs201/
 
 Todo: 
 
+20743: 整人的提词本
+
+http://cs101.openjudge.cn/dsapre/20743/
+
+02255: 重建二叉树
+
+http://cs101.openjudge.cn/dsapre/02255/
+
+04081: 树的转换
+
+http://cs101.openjudge.cn/dsapre/04081/
+
+05907: 二叉树的操作
+
+http://cs101.openjudge.cn/dsapre/05907/
+
 22067: 快速堆猪
 
 http://cs101.openjudge.cn/practice/22067/
 
-27638: 求二叉树的高度和叶子数目
+08581: 扩展二叉树
 
-http://cs101.openjudge.cn/dsapre/27638/
+http://cs101.openjudge.cn/dsapre/08581/
+
+22275: 二叉搜索树的遍历
+
+http://cs101.openjudge.cn/practice/22275/
 
 
 
+Assignment #5: "树"算：概念、表示、解析、遍历
 
+​	27638: 求二叉树的高度和叶子数目, 24729: 括号嵌套树, 02775: 文件结构“图”
+
+​	25140: 根据后序表达式建立队列表达式, 24750: 根据二叉树中后序序列建树, 22158: 根据二叉树前中序序列建树
 
 Assignment #4 排序、栈、队列和树
 
