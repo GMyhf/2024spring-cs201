@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 1529 GMT+8 March 18, 2024
+Updated 2106 GMT+8 March 18, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3311,6 +3311,37 @@ if __name__ == "__main__":
 ```
 
 
+
+加lru_cache就快了，相当于dp。n=15,也是瞬间出。
+
+```python
+"""
+尝试所有可能的进栈和出栈顺序，并统计满足条件的序列数量。
+当进栈次数和出栈次数都达到n时，即得到一个有效的出栈序列，计数器加1
+"""
+
+from functools import lru_cache
+
+def count_stack_sequences(n):
+    
+    @lru_cache(None)
+    def backtrack(open_count, close_count):
+        if open_count == n and close_count == n:
+            return 1
+        total_count = 0
+        if open_count < n:
+            total_count += backtrack(open_count + 1, close_count)
+        if close_count < open_count:
+            total_count += backtrack(open_count, close_count + 1)
+        return total_count
+
+    return backtrack(0, 0)
+
+if __name__ == "__main__":
+    n = int(input())
+    result = count_stack_sequences(n)
+    print(result)
+```
 
 
 
