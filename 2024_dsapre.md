@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 2200 GMT+8 March 17, 2024
+Updated 1040 GMT+8 March 18, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2752,6 +2752,185 @@ print(ans)
 ```
 
 
+
+## 02775: 文件结构“图”
+
+http://cs101.openjudge.cn/practice/02775/
+
+在计算机上看到文件系统的结构通常很有用。Microsoft Windows上面的"explorer"程序就是这样的一个例子。但是在有图形界面之前，没有图形化的表示方法的，那时候最好的方式是把目录和文件的结构显示成一个"图"的样子，而且使用缩排的形式来表示目录的结构。比如：
+
+```
+ROOT
+|     dir1
+|     file1
+|     file2
+|     file3
+|     dir2
+|     dir3
+|     file1
+file1
+file2
+```
+
+这个图说明：ROOT目录包括三个子目录和两个文件。第一个子目录包含3个文件，第二个子目录是空的，第三个子目录包含一个文件。
+
+**输入**
+
+你的任务是写一个程序读取一些测试数据。每组测试数据表示一个计算机的文件结构。每组测试数据以'*'结尾，而所有合理的输入数据以'#'结尾。一组测试数据包括一些文件和目录的名字（虽然在输入中我们没有给出，但是我们总假设ROOT目录是最外层的目录）。在输入中,以']'表示一个目录的内容的结束。目录名字的第一个字母是'd'，文件名字的第一个字母是'f'。文件名可能有扩展名也可能没有（比如fmyfile.dat和fmyfile）。文件和目录的名字中都不包括空格,长度都不超过30。一个目录下的子目录个数和文件个数之和不超过30。
+
+**输出**
+
+在显示一个目录中内容的时候，先显示其中的子目录（如果有的话），然后再显示文件（如果有的话）。文件要求按照名字的字母表的顺序显示（目录不用按照名字的字母表顺序显示，只需要按照目录出现的先后显示）。对每一组测试数据，我们要先输出"DATA SET x:"，这里x是测试数据的编号（从1开始）。在两组测试数据之间要输出一个空行来隔开。
+
+你需要注意的是，我们使用一个'|'和5个空格来表示出缩排的层次。
+
+样例输入
+
+```
+file1
+file2
+dir3
+dir2
+file1
+file2
+]
+]
+file4
+dir1
+]
+file3
+*
+file2
+file1
+*
+#
+```
+
+样例输出
+
+```
+DATA SET 1:
+ROOT
+|     dir3
+|     |     dir2
+|     |     file1
+|     |     file2
+|     dir1
+file1
+file2
+file3
+file4
+
+DATA SET 2:
+ROOT
+file1
+file2
+```
+
+提示
+
+一个目录和它的子目录处于不同的层次
+一个目录和它的里面的文件处于同一层次
+
+来源: 翻译自 Pacific Northwest 1998 的试题
+
+
+
+
+
+钟明衡-23-物理学院：写了一个File类，默认名称为'ROOT'，当出现file就存储，dir就建一个新的类接收，直到']'结束
+
+输出时，先输出原顺序的dir，要在每一行以前加上'|     '，这个可以自动嵌套，然后输出排序了的file。
+
+OJ上大部分树题目其实不用类也能做，用defaultdict存索引还是很方便的。但是，递归思想在很多方面都可以使用，是一种省事而且优美的方法。我对递归的理解是，规定一个base case，然后告诉计算机大概要做什么，让它自己用同一套逻辑去算就好了。包括写类的时候，指针指向同样是这个类的元素，也是一种递归想法。举个例子，建树的时候，把左右子节点都看成一棵新的树，大概就是这么个想法。这种思路在各种场景下都有不错的表现。
+
+```python
+class File:
+    def __init__(self):
+        self.name = 'ROOT'
+        self.files = []
+        self.dirs = []
+
+    def __str__(self):
+        return '\n'.join([self.name]+['|     '+s for d in self.dirs for s in str(d).split('\n')]+sorted(self.files))
+
+    def build(self, parent, s):
+        if s[0] == 'f':
+            parent.files.append(s)
+        else:
+            dir = File()
+            dir.name = s
+            parent.dirs.append(dir)
+            while True:
+                s = input()
+                if s == ']':
+                    break
+                dir.build(dir, s)
+
+
+x = 0
+while True:
+    s = input()
+    if s == '#':
+        break
+    x += 1
+    root = File()
+    while s != '*':
+        root.build(root, s)
+        s = input()
+    print('DATA SET %d:' % x)
+    print(root, end='\n\n')
+
+```
+
+
+
+
+
+```python
+# 蒋子轩23工学院
+def print_structure(node,indent=0):
+	#indent为缩进个数
+    prefix='|     '*indent
+    print(prefix+node['name'])
+    for dir in node['dirs']:
+    	#若为目录继续递归
+        print_structure(dir,indent+1)
+    for file in sorted(node['files']):
+    	#若为文件直接打印
+        print(prefix+file)
+dataset=1
+datas=[]
+temp=[]
+#读取输入
+while True:
+    line=input()
+    if line=='#':
+        break
+    if line=='*':
+        datas.append(temp)
+        temp=[]
+    else:
+        temp.append(line)
+for data in datas:
+    print(f'DATA SET {dataset}:')
+    root={'name':'ROOT','dirs':[],'files':[]}
+    stack=[root]
+    #用栈实现后进先出
+    for line in data:
+        if line[0]=='d':
+            dir={'name':line,'dirs':[],'files':[]}
+            stack[-1]['dirs'].append(dir)
+            stack.append(dir)
+        elif line[0]=='f':
+            stack[-1]['files'].append(line)
+        else:  #某种结束符
+            stack.pop()
+    print_structure(root)
+    if dataset<len(datas):
+        print()
+    dataset+=1
+```
 
 
 
@@ -9286,6 +9465,8 @@ http://cs101.openjudge.cn/dsapre/27638/
 http://dsbpython.openjudge.cn/dspythonbook/P0610/
 
 
+
+由于输入无法分辨谁为根节点，所以写寻找根节点语句。
 
 ```python
 class TreeNode:
