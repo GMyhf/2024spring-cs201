@@ -1,6 +1,6 @@
 # 数算知识图谱
 
-Updated 1113 GMT+8 March 16, 2024
+Updated 0058 GMT+8 March 20, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -32,7 +32,7 @@ mindmap
     	Graph
       
     Algorithm{{**ALGORITHM**}}
-    	Sorting
+    	Other Sortings
     	DC(Divide & Conquer)
     		Quick Sort
     		Merge Sort
