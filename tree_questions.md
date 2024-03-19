@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 0019 GMT+8 March 17, 2024
+Updated 1430 GMT+8 March 19, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1212,50 +1212,40 @@ file2
 
 
 ```python
-class Node:
-    def __init__(self, name):
-        self.name = name
+# 夏天明，元培学院
+from sys import exit
+
+class dir:
+    def __init__(self, dname):
+        self.name = dname
         self.dirs = []
         self.files = []
+    
+    def getGraph(self):
+        g = [self.name]
+        for d in self.dirs:
+            subg = d.getGraph()
+            g.extend(["|     " + s for s in subg])
+        for f in sorted(self.files):
+            g.append(f)
+        return g
 
-def print_structure(node, indent=0):
-    prefix = '|     ' * indent
-    print(prefix + node.name)
-    for dir in node.dirs:
-        print_structure(dir, indent + 1)
-    for file in sorted(node.files):
-        print(prefix + file)
-
-dataset = 1
-datas = []
-temp = []
+n = 0
 while True:
-    line = input()
-    if line == '#':
-        break
-    if line == '*':
-        datas.append(temp)
-        temp = []
-    else:
-        temp.append(line)
-
-for data in datas:
-    print(f'DATA SET {dataset}:')
-    root = Node('ROOT')
-    stack = [root]
-    for line in data:
-        if line[0] == 'd':
-            dir = Node(line)
-            stack[-1].dirs.append(dir)
-            stack.append(dir)
-        elif line[0] == 'f':
-            stack[-1].files.append(line)
-        elif line == ']':
+    n += 1
+    stack = [dir("ROOT")]
+    while (s := input()) != "*":
+        if s == "#": exit(0)
+        if s[0] == 'f':
+            stack[-1].files.append(s)
+        elif s[0] == 'd':
+            stack.append(dir(s))
+            stack[-2].dirs.append(stack[-1])
+        else:
             stack.pop()
-    print_structure(root)
-    if dataset < len(datas):
-        print()
-    dataset += 1
+    print(f"DATA SET {n}:")
+    print(*stack[0].getGraph(), sep='\n')
+    print()
 ```
 
 
@@ -2504,6 +2494,8 @@ def build_huffman_tree(characters):
         left = heapq.heappop(heap)
         right = heapq.heappop(heap)
         merged = Node(left.weight + right.weight) #note: 合并后，char 字段默认值是空
+        #merged = Node(left.weight + right.weight, min(left.char, right.char))
+        #改了下提交RE，不知道影响了哪里？59行有个 if node.char: ，不知道是否原因。
         merged.left = left
         merged.right = right
         heapq.heappush(heap, merged)
