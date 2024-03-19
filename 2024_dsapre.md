@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 1425 GMT+8 March 19, 2024
+Updated 0124 GMT+8 March 20, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2224,6 +2224,75 @@ while True:
 
     _, inversions = merge_sort(lst)
     print(inversions)
+```
+
+
+
+卢卓然-23-生命科学学院，思路：
+
+Ultra-QuickSort题目使用的排序方法是归并排序（本题解答是基于归并排序的解法，用其他解法如冒泡排序时间复杂度较高）。在归并排序中，将序列递归地分为左右两半，分别排序后再合并到一起。在归并排序中，**合并函数的书写**是重点，也是本题关注的点。在两个有序序列进行合并的过程中，若通过**交换两个相邻数字的位置**来实现合并，一共需要交换多少次，就是本题需要解决的问题。
+
+以下是归并排序（mergesort）的代码。`merge(arr,l,m,r)`函数是合并两个有序序列的函数。函数的主体是三个while。第一个while运用双指针法，是对两个序列的合并，涉及到了元素位置的改变。第二、三个while是简单地将L1或L2中的剩余有序元素复制到arr队尾，并不涉及到元素位置的改变。所以只需关注第一个while的内容。
+
+
+
+现在来分析用双指针法合并两个有序序列时，与其（复杂度上）等效的交换相邻数字的方法是怎样实现的。在双指针法中，是将 `L1[i]`和`L2[j]`中更小的一个放在arr的k处，在两个指针逐渐变大的过程中，将合并后的递增序列覆盖在`arr`的一段上。这种方法相对交换相邻数字，无疑很节省时间复杂度。交换相邻数字，关心的只是数字之间的相对位置，而不是绝对位置。所以可以假定这样的规则：当`L1[i]<=L2[j]`时，不改变数字的相对位置；当`L1[i]>L2[j]`时，将L2[j]通过不断换位向前移动，从而“插入”到L1[i]的前面一个位置。
+
+那么L2[j]需要换多少次才能达到L1[i]前面呢？想象用交换位置法得到新序列的过程，那么在L2[j]动身之前，**L2中所有L2[j]之前的元素已经全部跑到了L1[i]的左边，并且与L1中L1[i]左边的元素组成了递增序列**。L2[j]的“目的地”就是这个已组成的递增序列和L1[i]之间的位置。L2和目的地之间相隔的元素，也就是**L1中L1[i]及其之后的元素**，其数量为`n1-i`（n1为原L1的长度）。所以在这一步中，交换的次数为`d+=(n1-i)`。
+
+随着递归的进行，每一次合并中d不断累加，最终就可以得到总交换次数。
+
+```python
+import sys
+sys.setrecursionlimit(100000)
+d=0
+def merge(arr,l,m,r):
+    '''对l到m和m到r两段进行合并'''
+    global d
+    n1=m-l+1#L1长
+    n2=r-m#L2长
+    L1=arr[l:m+1]
+    L2=arr[m+1:r+1]
+    ''' L1和L2均为有序序列'''
+    i,j,k=0,0,l#i为L1指针，j为L2指针，k为arr指针
+    '''双指针法合并序列'''
+    while i<n1 and j<n2:
+        if L1[i]<=L2[j]:
+            arr[k]=L1[i]
+            i+=1
+        else:
+            arr[k]=L2[j]
+            d+=(n1-i)#精髓所在
+            j+=1
+        k+=1
+    while i<n1:
+        arr[k]=L1[i]
+        i+=1
+        k+=1
+    while j<n2:
+        arr[k]=L2[j]
+        j+=1
+        k+=1
+def mergesort(arr,l,r):
+    '''对arr的l到r一段进行排序'''
+    if l<r:#递归结束条件，很重要
+        m=(l+r)//2
+        mergesort(arr,l,m)
+        mergesort(arr,m+1,r)
+        merge(arr,l,m,r)
+results=[]
+while True:
+    n=int(input())#序列长
+    if n==0:
+        break
+    array=[]
+    for b in range(n):
+        array.append(int(input()))
+    d=0
+    mergesort(array,0,n-1)
+    results.append(d)
+for r in results:
+    print(r)
 ```
 
 
@@ -7366,6 +7435,85 @@ while True:
 
 
 
+卢卓然-23-生命科学学院，思路：  
+
+**利用stack的FILO的性质**
+
+入栈的顺序是降序排列（如6,5,4,3,2,1)，由于栈是FILO，那么出栈序列任意数A的后面比A大的数都是按照升序排列的；
+
+入栈的顺序是升序排列（如1,2,3,4,5,6)，由于栈是FILO，那么出栈序列任意数A的后面比A小的数都是按照降序排列的。
+
+以第二种情况为例，因为在出栈序列任意数A的后面比A小的数，都具有的特点是，比A早进栈而且比A晚出栈。那么这些数组成的序列就必然是恰好倒序的。
+
+```python
+#23 生科 卢卓然
+#将x中每个字符正序编号1~n
+x=input()
+L=len(x)
+dic=dict()
+i=1
+for string in x:
+    dic[string]=i
+    i+=1
+#提前声明一个maximum，防止oj特有的一种CE
+maximum=-1
+
+def check(index,length):#index当前字符的位置,length是s的长度
+    '''鉴定该位置之后所有编号比他小的字符是否全为降序排列'''
+    
+    global s,maximum#maximum该位置之前字符中出现的最大编号
+    number=dic[s[index]]
+    if number<=maximum:
+        return True
+    '''之前的最大的编号的字符之后的所有编号比他小的字符全为降序排列,
+    所以编号比maximum小的字符之后的就更是降序排列,剪枝'''
+    
+    tempmax=number#tempmax暂时的最大符号，不断更新以判断是否为降序排列
+    flag=True#标记是否为降序排列
+    for k in range(index+1,length):
+        tempstr=s[k]
+        tempnum=dic[tempstr]
+        if tempnum<=number:#编号比number小
+            if tempnum<=tempmax:#是否为降序排列
+                tempmax=tempnum#更新tempmax
+                continue
+            else:
+                flag=False
+                break
+    if flag:
+        maximum=number#更新maximum
+        return True
+    else:
+        return False
+
+output=[]
+while True:
+    try:
+        s = input()
+        if set(s)==set(x) and len(set(s))==len(s):#防止蛇皮数据导致RE
+            f=True#YES还是NO
+            maximum=-1#初始化为一个比较小的值
+            for j in range(L-2):#L-2:最后两位不用看，没有意义
+                if not check(j,L):
+                    f=False
+                    break
+            if f:
+                output.append('YES')
+            else:
+                output.append("NO")
+        else:
+            output.append("NO")
+    except EOFError:
+        break
+
+for o in output:
+    print(o)
+```
+
+
+
+
+
 ## 22275: 二叉搜索树的遍历
 
 http://cs101.openjudge.cn/practice/22275/
@@ -8357,6 +8505,113 @@ def inp(s):
 
 exp = "(3)*((3+4)*(2+3.5)/(4+5)) "
 print(inp(exp))
+```
+
+
+
+```python
+def tokenize(expression):
+    import re
+    tokens = re.findall(r'\d+.\d+|\d+|\D', expression)
+    tokens = [token.strip() for token in tokens if token.strip()]
+    return tokens
+
+exp = "(3)*((3+4)*(2+3.5)/(4+5)) "
+print(tokenize(exp))
+# ['(', '3', ')', '*', '(', '(', '3', '+', '4', ')', '*', '(', '2', '+', '3.5', ')', '/', '(', '4', '+', '5', ')', ')']
+
+
+```
+
+
+
+卢卓然-23-生命科学学院，思路：
+
+首先我们来考虑一个括号内的转化。对于一个括号内的表达式，可以写为这种格式：**乘除 加减 乘除 加减 乘除**。其中，乘除可以包括连乘连除或先乘后除。注意：中序和后序的**数字相对位置**是不变的。
+
+对于**连续同级运算**的转换，例如1+2-3转化为12+3-，其规律为：从左向右遍历表达式，若遇到运算符，则证明前一个运算符已经算完了，所以在后序中添加前一个运算符。例如遍历到减号，则说明1+2的运算已经结束，按照同级运算从左到右的原则，应该在后序表达式里写12+。然后将减号储存起来。遍历完3后，储存器内剩了一个减号，把这个减号加到表达式最后。
+
+接着考虑如加粗字体所示的表达式形式（没有括号），倘若遍历到一个加号或减号，就说明**其前面的乘除表达式已经计算完毕了**，根据上一段的内容，应该将储存器内剩余的一个乘除号添加到末尾。而后，倘若储存器中还剩余加减运算（当前加减号之前的加减号），那么说明**这个加减运算已经运算完毕**（因为这个加减运算的两个因子都计算完了），所以要把这个加减号写到表达式的末尾。最后，将当前加减号加入储存器。就可以一直运行下去。
+
+
+
+如果**带括号**，那么带括号的部分要做到**单独运算**，括号内部的规则与上面是一样的。因此，可以界定一个“边界”，也就是左括号的位置。如果遇到了右括号，就需要把括号内剩余的加减乘除完成。相当于在每一个括号内运行了上面的代码。具体实现如下，函数`trans_input()`是将输入数据改成易于操作的列表形式。
+
+代码
+
+```python
+'''带括号的部分独立运算
+（表达式）->后序表达式，再与其他组合在一起
+遇到(入栈，遇到操作符同上操作，遇到）弹出（之后所有操作符，相当于独立处理了这部分。
+'''
+def trans_input(string):
+    '''处理输入数据,返回所需列表l'''
+    operators={'+','-','*','/','(',')'}
+    l=[]
+    i=0
+    string=string.strip()
+    length=len(string)
+    flag=False
+    while i<length:
+        letter=string[i]
+        if letter!='.' and letter not in operators:
+            if not flag:
+                flag=True
+                l.append(letter)
+                i+=1
+            else:
+                l[-1]=l[-1]+letter
+                i+=1
+        elif letter in operators:
+            flag=False
+            l.append(letter)
+            i+=1            
+        elif letter=='.':
+            temp='.'
+            j=i+1
+            while j<length and string[j].isdigit()==True:
+                temp=temp+string[j]
+                j+=1
+            i=j
+            l[-1]=l[-1]+temp
+    return l
+case=int(input())
+output=[]
+for _ in range(case):
+    infix_notation=input()
+    l=trans_input(infix_notation)
+    operators={'+','-','*','/','(',')'}
+    result_stack=[]
+    operator_stack=[]
+    n=len(l)
+    for i in range(n):
+        letter=l[i]
+        if letter not in operators:
+            result_stack.append(letter)
+        else:
+            if letter=='(':
+                operator_stack.append(letter)
+            elif letter=="*" or letter=='/':
+                while operator_stack and operator_stack[-1]!='(' and (operator_stack[-1]=='*' or operator_stack[-1]=='/'):
+                    p=operator_stack.pop(-1)
+                    result_stack.append(p)
+                operator_stack.append(letter)
+            elif letter==')':#将括号内剩余的加减写出来
+                while operator_stack[-1]!='(':
+                    p=operator_stack.pop(-1)
+                    result_stack.append(p)
+                operator_stack.pop(-1)#删除'('
+            else:#letter是加减的情况
+                while operator_stack and operator_stack[-1]!='(':
+                    p=operator_stack.pop(-1)
+                    result_stack.append(p)
+                operator_stack.append(letter)
+    while operator_stack:#整体剩余的加减写出来
+        p=operator_stack.pop(-1)
+        result_stack.append(p)
+    output.append(' '.join(result_stack))
+for o in output:
+    print(o)
 ```
 
 
