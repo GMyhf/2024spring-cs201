@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 2106 GMT+8 March 18, 2024
+Updated 1425 GMT+8 March 19, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2835,6 +2835,43 @@ file2
 来源: 翻译自 Pacific Northwest 1998 的试题
 
 
+
+```python
+# 夏天明，元培学院
+from sys import exit
+
+class dir:
+    def __init__(self, dname):
+        self.name = dname
+        self.dirs = []
+        self.files = []
+    
+    def getGraph(self):
+        g = [self.name]
+        for d in self.dirs:
+            subg = d.getGraph()
+            g.extend(["|     " + s for s in subg])
+        for f in sorted(self.files):
+            g.append(f)
+        return g
+
+n = 0
+while True:
+    n += 1
+    stack = [dir("ROOT")]
+    while (s := input()) != "*":
+        if s == "#": exit(0)
+        if s[0] == 'f':
+            stack[-1].files.append(s)
+        elif s[0] == 'd':
+            stack.append(dir(s))
+            stack[-2].dirs.append(stack[-1])
+        else:
+            stack.pop()
+    print(f"DATA SET {n}:")
+    print(*stack[0].getGraph(), sep='\n')
+    print()
+```
 
 
 
