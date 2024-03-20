@@ -161,6 +161,8 @@ mindmap
 
 **高度 Height**：树中所有节点的最大层级称为树的高度，如图1所示树的高度为 2。
 
+
+
 > 2024/3/20 说明：对于只有一个节点的树来说，高度为0，深度为0。如果是空树，高度、深度都是 -1.
 >
 > 
@@ -191,12 +193,16 @@ mindmap
 >
 > ```python
 > def depth(self, p):
->     """Return the number of levels separating Position p from the root."""
->     if self.is_root(p):
->         return 0
->     else:
->         return 1 + self.depth(self.parent(p))
+>  """Return the number of levels separating Position p from the root."""
+>  if self.is_root(p):
+>      return 0
+>  else:
+>      return 1 + self.depth(self.parent(p))
 > ```
+>
+> 
+>
+> 根据前三个参考出处，高度、深度，都是数边的个数，与节点个数无关。
 >
 > 
 >
