@@ -1516,6 +1516,312 @@ print(height(nodes[0]))
 
 
 
+## 5 树的结点层号
+
+https://sunnywhy.com/sfbj/9/3/349
+
+现有一棵个结点的树（结点编号为从`0`到`n-1`，根结点为`0`号结点），求这棵树的所有结点的层号（假设根结点的层号为`1`）。
+
+输入
+
+第一行一个整数 $n (1 \le n \le 50)$，表示树的结点个数；
+
+接下来行，每行一个结点的子结点信息，格式如下：
+
+```text
+k child_1 child_2 ... child_k
+```
+
+其中k表示该结点的子结点个数，child1、child2、...、childk表示子结点的编号。
+
+输出
+
+输出个整数，分别表示编号从`0`到`n-1`的结点的层号，中间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+7
+3 2 4 5
+0
+2 1 6
+0
+0
+1 3
+0
+```
+
+输出
+
+```
+1 3 2 3 2 2 3
+```
+
+解释
+
+对应的树如下图所示，层号为`1`的结点编号为`0`，层号为`2`的结点编号为`2`、`4`、`5`，层号为`3`的结点编号为`1`、`6`、`3`。
+
+![树的先根遍历.png](https://raw.githubusercontent.com/GMyhf/img/main/img/6259b6fa-bd37-4ade-9e7f-6eefc1e1af74.png)
+
+
+
+```python
+n = int(input().strip())
+tree = [[] for _ in range(n)]
+levels = [0 for _ in range(n)]
+
+for i in range(n):
+    line = list(map(int, input().strip().split()))
+    k = line[0]
+    for j in range(1, k + 1):
+        tree[i].append(line[j])
+
+q = [(0, 1)]
+while q:
+    node, level = q.pop(0)
+    levels[node] = level
+    for child in tree[node]:
+        q.append((child, level + 1))
+
+print(' '.join(map(str, levels)))
+```
+
+
+
+
+
+```python
+class Tree:
+    def __init__(self, n):
+        self.n = n
+        self.tree = [[] for _ in range(n)]
+        self.levels = [0 for _ in range(n)]
+
+    def add_node(self, node, children):
+        self.tree[node] = children
+
+    def bfs(self):
+        q = [(0, 1)]
+        while q:
+            node, level = q.pop(0)
+            self.levels[node] = level
+            for child in self.tree[node]:
+                q.append((child, level + 1))
+
+    def print_levels(self):
+        print(' '.join(map(str, self.levels)))
+
+
+n = int(input().strip())
+tree = Tree(n)
+
+for i in range(n):
+    line = list(map(int, input().strip().split()))
+    k = line[0]
+    children = line[1:k+1]
+    tree.add_node(i, children)
+
+tree.bfs()
+tree.print_levels()
+```
+
+
+
+## 6 树的路径和
+
+https://sunnywhy.com/sfbj/9/3/350
+
+现有一棵个结点的树（结点编号为从`0`到`n-1`，根结点为`0`号结点），每个结点有各自的权值。
+
+1. 结点的路径和是指，从根结点到该结点的路径上所有结点的权值之和；
+2. 树的路径和是指，树所有叶结点的路径和之和。
+
+求这棵树的路径和。
+
+输入
+
+第一行一个整数 $n (1 \le n \le 50)$，表示树的结点个数；
+
+第二行个整数，分别给出编号从`0`到`n-1`的个结点的权值$w (1 \le w \le 100)$，；
+
+接下来行，每行一个结点的子结点信息，格式如下：
+
+```text
+k child_1 child_2 ... child_k
+```
+
+其中k表示该结点的子结点个数，child1、child2、...、childk表示子结点的编号。
+
+输出
+
+输出一个整数，表示树的路径和。
+
+样例1
+
+输入
+
+```
+7
+3 5 1 1 2 4 2
+3 2 4 5
+0
+2 1 6
+0
+0
+1 3
+0
+```
+
+输出
+
+```
+28
+```
+
+解释
+
+对应的树如下图所示，其中黑色数字为结点编号，编号右下角的灰色数字为结点权值。由此可得叶结点`1`的路径和为，叶结点`6`的路径和为，叶结点`4`的路径和为，叶结点`3`的路径和为，因此二叉树的路径和为。
+
+![树的路径和.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403202120669.png)
+
+
+
+
+
+```python
+n = int(input().strip())
+weights = list(map(int, input().strip().split()))
+tree = [[] for _ in range(n)]
+
+for i in range(n):
+    line = list(map(int, input().strip().split()))
+    k = line[0]
+    for j in range(1, k + 1):
+        tree[i].append(line[j])
+
+def dfs(node, path_sum):
+    path_sum += weights[node]
+    if not tree[node]:  # if the node is a leaf node
+        return path_sum
+    return sum(dfs(child, path_sum) for child in tree[node])
+
+result = dfs(0, 0)
+print(result)
+```
+
+
+
+## 7 树的带权路径长度
+
+https://sunnywhy.com/sfbj/9/3/351
+
+现有一棵个结点的树（结点编号为从`0`到`n-1`，根结点为`0`号结点），每个结点有各自的权值。
+
+1. 结点的路径长度是指，从根结点到该结点的边数；
+2. 结点的带权路径长度是指，结点权值乘以结点的路径长度；
+3. 树的带权路径长度是指，树的所有叶结点的带权路径长度之和。
+
+求这棵树的带权路径长度。
+
+输入
+
+第一行一个整数 $n (1 \le n \le 50)$，表示树的结点个数；
+
+第二行个整数，分别给出编号从`0`到`n-1`的个结点的权值（）；
+
+接下来行，每行一个结点的子结点信息，格式如下：
+
+```text
+k child_1 child_2 ... child_k
+```
+
+其中k表示该结点的子结点个数，child1、child2、...、childk表示子结点的编号。
+
+输出描述
+
+输出一个整数，表示树的带权路径长度。
+
+样例1
+
+输入
+
+```
+7
+3 5 1 1 2 4 2
+3 2 4 5
+0
+2 1 6
+0
+0
+1 3
+0
+```
+
+输出
+
+```
+18
+```
+
+解释
+
+对应的树如下图所示，其中黑色数字为结点编号，编号右下角的格式为`结点权值*结点路径长度=结点带权路径长度`。由此可得树的带权路径长度为。
+
+![树的带权路径长度.png](https://cdn.sunnywhy.com/202203/2d112f11-2165-4105-ab75-3c0782aa4572.png)
+
+
+
+```python
+class TreeNode:
+    def __init__(self, weight=0):
+        self.weight = weight
+        self.children = []
+
+def build_tree(weights, edges):
+    nodes = [TreeNode(weight=w) for w in weights]
+    for i, children in enumerate(edges):
+        for child in children:
+            nodes[i].children.append(nodes[child])
+    return nodes[0]  # 返回根节点
+
+def dfs(node, depth):
+    # 如果当前节点是叶子节点，则返回其带权路径长度
+    if not node.children:
+        return node.weight * depth
+    # 否则，递归遍历其子节点
+    total_weight_path_length = 0
+    for child in node.children:
+        total_weight_path_length += dfs(child, depth + 1)
+    return total_weight_path_length
+
+def weighted_path_length(n, weights, edges):
+    # 构建树
+    root = build_tree(weights, edges)
+    # 从根节点开始深度优先搜索
+    return dfs(root, 0)
+
+# 输入处理
+n = int(input().strip())
+weights = list(map(int, input().strip().split()))
+edges = []
+for _ in range(n):
+    line = list(map(int, input().strip().split()))
+    if line[0] != 0:  # 忽略没有子节点的情况
+        edges.append(line[1:])
+    else:
+        edges.append([])
+
+# 计算带权路径长度
+print(weighted_path_length(n, weights, edges))
+
+```
+
+
+
+
+
 
 
 
