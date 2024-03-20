@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 1430 GMT+8 March 19, 2024
+Updated 1637 GMT+8 March 20, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -161,7 +161,50 @@ mindmap
 
 **高度 Height**：树中所有节点的最大层级称为树的高度，如图1所示树的高度为 2。
 
-**二叉树深度**：从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的节点个数为树的深度
+> 2024/3/20 说明：对于只有一个节点的树来说，高度为0，深度为0。如果是空树，高度、深度都是 -1.
+>
+> 
+>
+> **1 教材《Python数据结构与算法分析（第2版）》第六章**
+>
+> 层级 Level：从根节点开始到达一个节点的路径，所包含的边的数量，称为这个节点的层级。根节点的层级为 0。
+>
+> 高度 Height：树中所有节点的最大层级称为树的高度。因此空树的高度是-1。
+>
+> 
+>
+> **2 Tree (graph theory)**
+>
+> https://en.wikipedia.org/wiki/Tree_(graph_theory)#:~:text=The%20height%20of%20a%20vertex,its%20root%20(root%20path).
+>
+> The *height* of a vertex in a rooted tree is the length of the longest downward path to a leaf from that vertex. The *height* of the tree is the height of the root. The *depth* of a vertex is the length of the path to its root (*root path*). This is commonly needed in the manipulation of the various self-balancing trees, AVL trees in particular. The root has depth zero, leaves have height zero, and a tree with only a single vertex (hence both a root and leaf) has depth and height zero. 
+>
+> Conventionally, an empty tree (a tree with no vertices, if such are allowed) has depth and height −1.
+>
+> 
+>
+> **3 2013-book-DataStructuresAndAlgorithmsInPython, page 308, Chapter 8. Trees**
+>
+> Let p be the position of a node of a tree T . The depth of p is the number of ancestors of p, excluding p itself. Note that this definition implies that the depth of the root of T is 0. The depth of p can also be recursively defined as follows:
+> • If p is the root, then the depth of p is 0.
+> • Otherwise, the depth of p is one plus the depth of the parent of p
+>
+> ```python
+> def depth(self, p):
+>     """Return the number of levels separating Position p from the root."""
+>     if self.is_root(p):
+>         return 0
+>     else:
+>         return 1 + self.depth(self.parent(p))
+> ```
+>
+> 
+>
+> **4 这个题目的定义有问题**：与上面常见的深度定义不一致。
+>
+> http://cs101.openjudge.cn/dsapre/06646/
+>
+> 二叉树深度：从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的节点个数为树的深度。
 
 
 
