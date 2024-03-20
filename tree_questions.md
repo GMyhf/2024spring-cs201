@@ -202,11 +202,16 @@ mindmap
 >
 > 
 >
-> 根据前三个参考出处，高度、深度，都是数边的个数，与节点个数无关。
+> Height and Depth of a node in a Binary Tree,  https://www.geeksforgeeks.org/height-and-depth-of-a-node-in-a-binary-tree/   The depth of a node is the number of edges present in path from the root node of a tree to that node.
+> The height of a node is the number of edges present in the longest path connecting that node to a leaf node.
 >
 > 
 >
-> **4 这个题目的定义有问题**：与上面常见的深度定义不一致。
+> 根据前四个参考出处，高度、深度，都是数边的个数，与节点个数无关。
+>
+> 
+>
+> **5 这个题目的定义有问题**：与上面常见的深度定义不一致。
 >
 > http://cs101.openjudge.cn/practice/06646/
 >
