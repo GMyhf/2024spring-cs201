@@ -202,7 +202,7 @@ mindmap
 >
 > **4 这个题目的定义有问题**：与上面常见的深度定义不一致。
 >
-> http://cs101.openjudge.cn/dsapre/06646/
+> http://cs101.openjudge.cn/practice/06646/
 >
 > 二叉树深度：从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的节点个数为树的深度。
 
@@ -412,7 +412,7 @@ class Node:
 
 ### 06646: 二叉树的深度
 
-http://cs101.openjudge.cn/dsapre/06646/
+http://cs101.openjudge.cn/practice/06646/
 
 给定一棵二叉树，求该二叉树的深度
 
