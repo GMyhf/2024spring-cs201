@@ -1,6 +1,6 @@
 # 树的编程题目 continue
 
-Updated 2026 GMT+8 March 20, 2024
+Updated 0142 GMT+8 March 21, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1828,53 +1828,42 @@ print(weighted_path_length(n, weights, edges))
 
 # 二叉查找树（BST）5题
 
+## 1 二叉查找树的建立
 
+https://sunnywhy.com/sfbj/9/4
 
+将n个互不相同的正整数先后插入到一棵空的二叉查找树中，求最后生成的二叉查找树的先序序列。
 
+输入
 
-```python
+第一行一个整数 $n (1 \le n \le 50)$，表示二叉查找树的结点个数；
 
-```
+第二行 n 个整数 $a_i (1 \le a_i \le 100)$，表示插入序列。
 
+输出
 
+输出个整数，表示先序遍历序列，中间用空格隔开，行末不允许有多余的空格。
 
+样例1
 
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
+输入
 
 ```
-
-
-
-
-
-
-
-```python
-
+6
+5 2 3 6 1 8
 ```
 
-
-
-
-
-
-
-```python
+输出
 
 ```
+5 2 1 3 6 8
+```
+
+解释
+
+插入的过程如下图所示。
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403202151255.png" alt="二叉查找树的建立.png" style="zoom:67%;" />
 
 
 
@@ -1883,110 +1872,428 @@ print(weighted_path_length(n, weights, edges))
 
 
 ```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
 
+class BST:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, value):
+        if self.root is None:
+            self.root = Node(value)
+        else:
+            self._insert(value, self.root)
+
+    def _insert(self, value, node):
+        if value < node.value:
+            if node.left is None:
+                node.left = Node(value)
+            else:
+                self._insert(value, node.left)
+        else:
+            if node.right is None:
+                node.right = Node(value)
+            else:
+                self._insert(value, node.right)
+
+    def preorder(self):
+        return self._preorder(self.root)
+
+    def _preorder(self, node):
+        if node is None:
+            return []
+        return [node.value] + self._preorder(node.left) + self._preorder(node.right)
+
+n = int(input().strip())
+values = list(map(int, input().strip().split()))
+bst = BST()
+for value in values:
+    bst.insert(value)
+print(' '.join(map(str, bst.preorder())))
 ```
 
 
+
+## 2 二叉查找树的判定
+
+https://sunnywhy.com/sfbj/9/4/353
+
+现有一棵二叉树的中序遍历序列，问这棵二叉树是否是二叉查找树。
+
+二叉查找树的定义：在二叉树定义的基础上，满足左子结点的数据域小于或等于根结点的数据域，右子结点的数据域大于根结点的数据域。
+
+输入
+
+第一行一个整数 $n (1 \le n \le 50)$，表示二叉查找树的结点个数；
+
+第二行 n 个整数 $a_i (1 \le a_i \le 100)$，表示中序遍历序列。数据保证序列元素互不相同。
+
+输出
+
+如果是二叉查找树，那么输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+3
+1 2 3
+```
+
+输出
+
+```
+Yes
+```
+
+解释
+
+对应的二叉树如下所示，是二叉查找树。
+
+![二叉查找树的判定.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403202221291.png)
+
+样例2
+
+输入
+
+```
+3
+2 1 3
+```
+
+输出
+
+```
+No
+```
+
+解释
+
+对应的二叉树如下所示，不是二叉查找树。
+
+![二叉查找树的判定_2.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403202222819.png)
 
 
 
 
 
 ```python
+n = int(input().strip())
+sequence = list(map(int, input().strip().split()))
 
+if sequence == sorted(sequence):
+    print("Yes")
+else:
+    print("No")
 ```
 
 
+
+## 3 还原二叉查找树
+
+https://sunnywhy.com/sfbj/9/4/354
+
+现有一棵二叉查找树的先序遍历序列，还原这棵二叉查找树，并输出它的后序序列。
+
+输入描述
+
+第一行一个整数 $n (1 \le n \le 50)$，表示二叉查找树的结点个数；
+
+第二行 n 个整数 $a_i (1 \le a_i \le 100)$，表示先序遍历序列。数据保证序列元素互不相同。
+
+输出
+
+输出个整数，表示后序遍历序列，中间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+6
+5 2 1 3 6 8
+```
+
+输出
+
+```
+1 3 2 8 6 5
+```
+
+解释
+
+对应的二叉查找树如下所示，后序序列为`1 3 2 8 6 5`。
+
+![还原二叉查找树.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403202231311.png)
 
 
 
 
 
 ```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
 
+class BST:
+    def __init__(self, preorder):
+        if not preorder:
+            self.root = None
+        else:
+            self.root = self.build(preorder)
+
+    def build(self, preorder):
+        if not preorder:
+            return None
+        root = Node(preorder[0])
+        i = 1
+        while i < len(preorder) and preorder[i] < root.value:
+            i += 1
+        root.left = self.build(preorder[1:i])
+        root.right = self.build(preorder[i:])
+        return root
+
+    def postorder(self):
+        return self._postorder(self.root)
+
+    def _postorder(self, node):
+        if node is None:
+            return []
+        return self._postorder(node.left) + self._postorder(node.right) + [node.value]
+
+n = int(input().strip())
+preorder = list(map(int, input().strip().split()))
+bst = BST(preorder)
+print(' '.join(map(str, bst.postorder())))
 ```
 
 
 
+## 4 相同的二叉查找树
+
+https://sunnywhy.com/sfbj/9/4/355
+
+将第一组个互不相同的正整数先后插入到一棵空的二叉查找树中，得到二叉查找树；再将第二组个互不相同的正整数先后插入到一棵空的二叉查找树中，得到二叉查找树。判断和是否是同一棵二叉查找树。
+
+输入
+
+第一行一个整数 $n (1 \le n \le 50)$，表示二叉查找树的结点个数；
+
+第二行个 n 个整数 $a_i (1 \le a_i \le 100)$，表示第一组插入序列；
+
+第三行个 n 个整数 $b_i (1 \le b_i \le 100)$，表示第二组插入序列。
+
+输出
+
+如果是同一棵二叉查找树，那么输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+6
+5 2 3 6 1 8
+5 6 8 2 1 3
+```
+
+输出
+
+```
+Yes
+```
+
+解释
+
+两种插入方式均可以得到下面这棵二叉查找树。
+
+![还原二叉查找树.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403202231311.png)
+
+样例2
+
+输入
+
+```
+6
+5 2 3 6 1 8
+5 6 8 3 1 2
+```
+
+输出
+
+```
+No
+```
+
+解释
+
+两种插入方式分别得到下图的两种二叉查找树。
+
+![相同的二叉查找树_2.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403202341265.png)
 
 
 
+先定义了`TreeNode`类用于表示二叉树的节点，然后定义了`insert_into_bst`函数用于将一个新值插入到二叉查找树中。`build_bst_from_sequence`函数接收一个序列，依次调用`insert_into_bst`来构建出一棵二叉查找树。`is_same_tree`函数用于比较两棵二叉树是否结构相同（即形状相同且对应位置的节点值相等）。
 
 ```python
+class TreeNode:
+    def __init__(self, val=0):
+        self.val = val
+        self.left = None
+        self.right = None
+
+def insert_into_bst(root, val):
+    if not root:
+        return TreeNode(val)
+    if val < root.val:
+        root.left = insert_into_bst(root.left, val)
+    else:
+        root.right = insert_into_bst(root.right, val)
+    return root
+
+def build_bst_from_sequence(sequence):
+    root = None
+    for val in sequence:
+        root = insert_into_bst(root, val)
+    return root
+
+def is_same_tree(p, q):
+    if not p and not q:
+        return True
+    if not p or not q:
+        return False
+    if p.val != q.val:
+        return False
+    return is_same_tree(p.left, q.left) and is_same_tree(p.right, q.right)
+
+# 输入处理
+n = int(input().strip())
+seq1 = list(map(int, input().strip().split()))
+seq2 = list(map(int, input().strip().split()))
+
+# 构建二叉查找树
+tree1 = build_bst_from_sequence(seq1)
+tree2 = build_bst_from_sequence(seq2)
+
+# 判断是否为同一棵树
+if is_same_tree(tree1, tree2):
+    print("Yes")
+else:
+    print("No")
 
 ```
 
 
 
+## 5 填充二叉查找树
+
+https://sunnywhy.com/sfbj/9/4/356
+
+现有一棵个结点的二叉树（结点编号为从`0`到`n-1`，根结点为`0`号结点），将个互不相同的正整数填入这棵二叉树结点的数据域中，使其成为二叉查找树。求填充后二叉查找树的先序序列。
+
+输入
+
+第一行一个整数 $n (1 \le n \le 50)$，表示二叉树的结点个数；
+
+第二行 n 个整数，表示需要填入二叉树中的数 $val_i$, 其中填入数字的范围为 $1 \le val_i \le 100$。
+
+接下来 n 行，每行一个结点，按顺序给出编号为从`0`到`n-1`的个结点的左子结点编号和右子结点编号，中间用空格隔开。如果不存在对应的子结点，那么用`-1`表示。
+
+输出
+
+输出 n 个整数，表示先序遍历序列，中间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+6
+1 2 3 5 6 8
+2 5
+-1 -1
+1 4
+-1 -1
+-1 -1
+-1 3
+```
+
+输出
+
+```
+5 2 1 3 6 8
+```
+
+解释
+
+下左图为输入的二叉树，填入`6`个整数后变为下右图的二叉查找树。
+
+![填充二叉查找树.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403202353104.png)
 
 
 
+
+
+To solve this problem, you can follow these steps:
+
+1. Read the input values and the structure of the binary tree.
+2. Sort the input values in ascending order.
+3. Perform an inorder traversal of the binary tree and fill the nodes with the sorted values. This will make the binary tree a binary search tree (BST) because the inorder traversal of a BST is a sorted sequence.
+4. Perform a preorder traversal of the BST and print the result.
+
+Here is the Python code that implements this plan:
 
 ```python
+class Node:
+    def __init__(self, value=None):
+        self.value = value
+        self.left = None
+        self.right = None
 
+class BST:
+    def __init__(self, n):
+        self.nodes = [Node() for _ in range(n)]
+        self.index = 0
+
+    def insert_values(self, values):
+        self.values = iter(sorted(values))
+        self._insert_values(self.nodes[0])
+
+    def _insert_values(self, node):
+        if node is not None:
+            self._insert_values(node.left)
+            node.value = next(self.values)
+            self._insert_values(node.right)
+
+    def preorder(self):
+        return self._preorder(self.nodes[0])
+
+    def _preorder(self, node):
+        if node is None:
+            return []
+        return [node.value] + self._preorder(node.left) + self._preorder(node.right)
+
+n = int(input().strip())
+values = list(map(int, input().strip().split()))
+bst = BST(n)
+for i in range(n):
+    left, right = map(int, input().strip().split())
+    if left != -1:
+        bst.nodes[i].left = bst.nodes[left]
+    if right != -1:
+        bst.nodes[i].right = bst.nodes[right]
+bst.insert_values(values)
+print(' '.join(map(str, bst.preorder())))
 ```
 
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
-
-
+This code reads the input values and the structure of the binary tree from the input, sorts the input values, fills the nodes of the binary tree with the sorted values, performs a preorder traversal of the BST, and then prints the result.
 
 
 
@@ -1994,115 +2301,394 @@ print(weighted_path_length(n, weights, edges))
 
 # 平衡二叉树（AVL树）3题
 
+## 1 二叉查找树的平衡因子
 
+https://sunnywhy.com/sfbj/9/5
 
+对一棵二叉查找树来说，我们把结点的左子树和右子树的高度之差称为结点的平衡因子。
 
+现将个互不相同的正整数先后插入到一棵空的二叉查找树中，然后按中序遍历的顺序，给出二叉查找树中各结点的平衡因子。
 
+输入
 
+第一行一个整数 $n (1 \le n \le 50)$，表示二叉查找树的结点个数；
 
-```python
+第二行个整数$a_i (1 \le a_i \le 100)$，表示插入序列。
 
-```
+输出
 
+输出个整数，表示个结点的平衡因子，中间用空格隔开，行末不允许有多余的空格。
 
+样例1
 
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
+输入
 
 ```
-
-
-
-
-
-
-
-```python
-
+7
+5 2 3 6 1 8 7
 ```
 
-
-
-
-
-
-
-```python
+输出
 
 ```
-
-
-
-
-
-
-
-```python
-
+0 0 0 -1 -2 0 1
 ```
 
+解释
+
+生成的二叉查找树和每个结点的平衡因子计算过程如图所示。
+
+![二叉查找树的平衡因子.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403210006174.png)
 
 
 
+To solve this problem, you can follow these steps:
 
+1. Read the input sequence.
+2. Insert the values into a binary search tree (BST).
+3. Perform an inorder traversal of the BST and calculate the balance factor for each node. The balance factor of a node is the height of its left subtree minus the height of its right subtree.
+4. Print the balance factors in the order they were visited during the inorder traversal.
 
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
+Here is the Python code that implements this plan:
 
 ```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+        self.height = 1
 
+class BST:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, value):
+        if self.root is None:
+            self.root = Node(value)
+        else:
+            self._insert(value, self.root)
+
+    def _insert(self, value, node):
+        if value < node.value:
+            if node.left is None:
+                node.left = Node(value)
+            else:
+                self._insert(value, node.left)
+        else:
+            if node.right is None:
+                node.right = Node(value)
+            else:
+                self._insert(value, node.right)
+        node.height = 1 + max(self._get_height(node.left), self._get_height(node.right))
+
+    def _get_height(self, node):
+        if node is None:
+            return 0
+        return node.height
+
+    def balance_factors(self):
+        return self._balance_factors(self.root)
+
+    def _balance_factors(self, node):
+        if node is None:
+            return []
+        balance_factor = self._get_height(node.left) - self._get_height(node.right)
+        return self._balance_factors(node.left) + [balance_factor] + self._balance_factors(node.right)
+
+n = int(input().strip())
+sequence = list(map(int, input().strip().split()))
+
+bst = BST()
+for value in sequence:
+    bst.insert(value)
+
+print(' '.join(map(str, bst.balance_factors())))
 ```
 
+This code reads the sequence from the input, inserts its values into a BST, calculates the balance factors of the nodes during an inorder traversal of the BST, and then prints the results.
 
 
 
+## 2 平衡二叉树的判定
+
+https://sunnywhy.com/sfbj/9/5/358
+
+将 n 个互不相同的正整数先后插入到一棵空的二叉查找树中，判断最后生成的二叉查找树是否是平衡二叉树（AVL树）。
+
+输入
+
+第一行一个整数$n (1 \le n \le 50)$，表示二叉查找树的结点个数；
+
+第二行个整数$a_i (1 \le a_i \le 100)$，表示插入序列。数据保证序列元素互不相同。
+
+输出
+
+如果是平衡二叉树，那么输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+5
+5 2 3 6 1
+```
+
+输出
+
+```
+Yes
+```
+
+解释
+
+对应的二叉查找树如下所示，是平衡二叉树。
+
+![平衡二叉树的判定_样例1.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403210034791.png)
+
+样例2
+
+输入
+
+```
+4
+5 2 3 1
+```
+
+输出
+
+```
+No
+```
+
+解释
+
+对应的二叉查找树如下所示，不是平衡二叉树。
+
+![平衡二叉树的判定_样例2.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403210034500.png)
 
 
+
+To solve this problem, you can follow these steps:
+
+1. Read the input sequence.
+2. Insert the values into a binary search tree (BST).
+3. Check if the BST is balanced. A BST is balanced if the absolute difference between the heights of the left and right subtrees of every node is at most 1.
+4. Print "Yes" if the BST is balanced, otherwise print "No".
+
+Here is the Python code that implements this plan:
 
 ```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+        self.height = 1
 
+class BST:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, value):
+        if self.root is None:
+            self.root = Node(value)
+        else:
+            self._insert(value, self.root)
+
+    def _insert(self, value, node):
+        if value < node.value:
+            if node.left is None:
+                node.left = Node(value)
+            else:
+                self._insert(value, node.left)
+        else:
+            if node.right is None:
+                node.right = Node(value)
+            else:
+                self._insert(value, node.right)
+        node.height = 1 + max(self._get_height(node.left), self._get_height(node.right))
+
+    def _get_height(self, node):
+        if node is None:
+            return 0
+        return node.height
+
+    def is_balanced(self):
+        return self._is_balanced(self.root)
+
+    def _is_balanced(self, node):
+        if node is None:
+            return True
+        balance_factor = abs(self._get_height(node.left) - self._get_height(node.right))
+        return balance_factor <= 1 and self._is_balanced(node.left) and self._is_balanced(node.right)
+
+n = int(input().strip())
+sequence = list(map(int, input().strip().split()))
+
+bst = BST()
+for value in sequence:
+    bst.insert(value)
+
+if bst.is_balanced():
+    print("Yes")
+else:
+    print("No")
 ```
 
+This code reads the sequence from the input, inserts its values into a BST, checks if the BST is balanced, and then prints the result.
 
 
 
 
 
+## 3 平衡二叉树的建立
+
+https://sunnywhy.com/sfbj/9/5/359
+
+将个互不相同的正整数先后插入到一棵空的AVL树中，求最后生成的AVL树的先序序列。
+
+输入
+
+第一行一个整数$n (1 \le n \le 50)$，表示AVL树的结点个数；
+
+第二行个整数$a_i (1 \le a_i \le 100)$，表示表示插入序列。
+
+输出
+
+输出个整数，表示先序遍历序列，中间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+5
+5 2 3 6 8
+```
+
+输出
+
+```
+3 2 6 5 8
+```
+
+解释
+
+插入的过程如下图所示。
+
+![平衡二叉树的建立.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403210041932.png)
+
+
+
+
+
+
+
+To solve this problem, you can follow these steps:
+
+1. Read the input sequence.
+2. Insert the values into an AVL tree. An AVL tree is a self-balancing binary search tree, and the heights of the two child subtrees of any node differ by at most one.
+3. Perform a preorder traversal of the AVL tree and print the result.
+
+Here is the Python code that implements this plan:
 
 ```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+        self.height = 1
 
+class AVL:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, value):
+        if not self.root:
+            self.root = Node(value)
+        else:
+            self.root = self._insert(value, self.root)
+
+    def _insert(self, value, node):
+        if not node:
+            return Node(value)
+        elif value < node.value:
+            node.left = self._insert(value, node.left)
+        else:
+            node.right = self._insert(value, node.right)
+
+        node.height = 1 + max(self._get_height(node.left), self._get_height(node.right))
+
+        balance = self._get_balance(node)
+
+        if balance > 1:
+            if value < node.left.value:
+                return self._rotate_right(node)
+            else:
+                node.left = self._rotate_left(node.left)
+                return self._rotate_right(node)
+
+        if balance < -1:
+            if value > node.right.value:
+                return self._rotate_left(node)
+            else:
+                node.right = self._rotate_right(node.right)
+                return self._rotate_left(node)
+
+        return node
+
+    def _get_height(self, node):
+        if not node:
+            return 0
+        return node.height
+
+    def _get_balance(self, node):
+        if not node:
+            return 0
+        return self._get_height(node.left) - self._get_height(node.right)
+
+    def _rotate_left(self, z):
+        y = z.right
+        T2 = y.left
+        y.left = z
+        z.right = T2
+        z.height = 1 + max(self._get_height(z.left), self._get_height(z.right))
+        y.height = 1 + max(self._get_height(y.left), self._get_height(y.right))
+        return y
+
+    def _rotate_right(self, y):
+        x = y.left
+        T2 = x.right
+        x.right = y
+        y.left = T2
+        y.height = 1 + max(self._get_height(y.left), self._get_height(y.right))
+        x.height = 1 + max(self._get_height(x.left), self._get_height(x.right))
+        return x
+
+    def preorder(self):
+        return self._preorder(self.root)
+
+    def _preorder(self, node):
+        if not node:
+            return []
+        return [node.value] + self._preorder(node.left) + self._preorder(node.right)
+
+n = int(input().strip())
+sequence = list(map(int, input().strip().split()))
+
+avl = AVL()
+for value in sequence:
+    avl.insert(value)
+
+print(' '.join(map(str, avl.preorder())))
 ```
+
+This code reads the sequence from the input, inserts its values into an AVL tree, performs a preorder traversal of the AVL tree, and then prints the result.
+
+
 
 
 
@@ -2110,115 +2696,453 @@ print(weighted_path_length(n, weights, edges))
 
 # 并查集 5题
 
+## 1 学校的班级个数（1）
 
+https://sunnywhy.com/sfbj/9/6/360
 
+现有一个学校，学校中有若干个班级，每个班级中有若干个学生，每个学生只会存在于一个班级中。如果学生`A`和学生`B`处于一个班级，学生`B`和学生`C`处于一个班级，那么我们称学生`A`和学生`C`也处于一个班级。
 
+现已知学校中共个学生（编号为从`1`到`n`），并给出组学生关系（指定两个学生处于一个班级），问总共有多少个班级。
 
-```python
+输入
 
-```
+第一行两个整数 $m、n (1 \le n \le 100, 1 \le m \le 100)$，、（），分别表示学生个数、学生关系个数；
 
+接下来 m 行，每行两个整数 a 和 b $ (1 \le a \le n, 1 \le b \le n, a \ne b)$，表示编号为`a`的学生和编号为`b`的学生处于一个班级。
 
+输出
 
+输出一个整数，表示班级个数。
 
+样例1
 
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
+输入
 
 ```
-
-
-
-
-
-
-
-```python
-
+5 3
+4 2
+1 3
+2 5
 ```
 
-
-
-
-
-
-
-```python
+输出
 
 ```
-
-
-
-
-
-
-
-```python
-
+2
 ```
 
+解释
+
+编号`2`、`4`、`5`的学生在同一个班级，编号`1`、`3`的学生在同一个班级，因此共有两个班级。
 
 
 
+To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each student is initially in their own set (or class). When a relationship between two students is given, you unite their sets. The number of disjoint sets at the end will be the number of classes.
 
+Here is a step-by-step plan:
 
+1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each student is in their own class.
+2. For each student relationship, unite their sets using the union operation.
+3. Count the number of unique parents. This will be the number of classes.
 
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
+Here is the Python code that implements this plan:
 
 ```python
+def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])
+    return parent[x]
 
+def union(x, y):
+    parent[find(x)] = find(y)
+
+n, m = map(int, input().split())
+parent = list(range(n + 1))
+
+for _ in range(m):
+    a, b = map(int, input().split())
+    union(a, b)
+
+classes = set(find(x) for x in range(1, n + 1))
+print(len(classes))
 ```
 
+This code reads the number of students and relationships from the input, initializes each student to be in their own class, unites the classes of each pair of students that have a relationship, and then counts and prints the number of unique classes.
 
 
 
 
 
+## 2 学校的班级人数（2）
+
+https://sunnywhy.com/sfbj/9/6/361
+
+现有一个学校，学校中有若干个班级，每个班级中有若干个学生，每个学生只会存在于一个班级中。如果学生`A`和学生`B`处于一个班级，学生`B`和学生`C`处于一个班级，那么我们称学生`A`和学生`C`也处于一个班级。
+
+现已知学校中共个学生（编号为从`1`到`n`），并给出组学生关系（指定两个学生处于一个班级），问总共有多少个班级，并按降序给出每个班级的人数。
+
+输入
+
+第一行两个整数 $m、n (1 \le n \le 100, 1 \le m \le 100)$，分别表示学生个数、学生关系个数；
+
+接下来 m 行，每行两个整数 a 和 b $ (1 \le a \le n, 1 \le b \le n, a \ne b)$，表示编号为`a`的学生和编号为`b`的学生处于一个班级。
+
+输出
+
+第一行输出一个整数，表示班级个数；
+
+第二行若干个整数，按降序给出每个班级的人数。整数之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+5 3
+4 2
+1 3
+2 5
+```
+
+输出
+
+```
+2
+3 2
+```
+
+解释
+
+编号`2`、`4`、`5`的学生在同一个班级，编号`1`、`3`的学生在同一个班级，因此共有两个班级，人数分别是`3`和`2`。
+
+
+
+
+
+To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each student is initially in their own set (or class). When a relationship between two students is given, you unite their sets. The number of disjoint sets at the end will be the number of classes. You can also maintain a count of the number of students in each class.
+
+Here is a step-by-step plan:
+
+1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each student is in their own class.
+2. Initialize an array `size` of size `n+1` where `size[i]` is initially `1`. This means each class initially has one student.
+3. For each student relationship, unite their sets using the union operation and update the size of the new set.
+4. Count the number of unique parents. This will be the number of classes.
+5. Print the sizes of the classes in descending order.
+
+Here is the Python code that implements this plan:
 
 ```python
+def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])
+    return parent[x]
 
+def union(x, y):
+    root_x = find(x)
+    root_y = find(y)
+    if root_x != root_y:
+        parent[root_x] = root_y
+        size[root_y] += size[root_x]
+
+n, m = map(int, input().split())
+parent = list(range(n + 1))
+size = [1] * (n + 1)
+
+for _ in range(m):
+    a, b = map(int, input().split())
+    union(a, b)
+
+classes = [size[find(x)] for x in range(1, n + 1) if x == parent[x]]
+print(len(classes))
+print(' '.join(map(str, sorted(classes, reverse=True))))
 ```
 
+This code reads the number of students and relationships from the input, initializes each student to be in their own class, unites the classes of each pair of students that have a relationship, counts and prints the number of unique classes, and prints the sizes of the classes in descending order.
 
 
 
 
 
+## 3 是否相同班级
+
+https://sunnywhy.com/sfbj/9/6/362
+
+现有一个学校，学校中有若干个班级，每个班级中有若干个学生，每个学生只会存在于一个班级中。如果学生`A`和学生`B`处于一个班级，学生`B`和学生`C`处于一个班级，那么我们称学生`A`和学生`C`也处于一个班级。
+
+现已知学校中共个学生（编号为从`1`到`n`），并给出组学生关系（指定两个学生处于一个班级）。然后给出个查询，每个查询询问两个学生是否在同一个班级。
+
+输入描述
+
+第一行两个整数$m、n (1 \le n \le 10^5, 1 \le m \le 10^5)$，分别表示学生个数、学生关系个数；
+
+接下来行，每行两个整数 a 和 b $ (1 \le a \le n, 1 \le b \le n, a \ne b)$，表示编号为`a`的学生和编号为`b`的学生处于一个班级。
+
+然后一个整数$k (1 \le k \le 10^3)$，表示查询个数；
+
+接下来 k 行，每行两个整数a 和 b $ (1 \le a \le n, 1 \le b \le n, a \ne b)$，表示询问编号为`a`的学生和编号为`b`的学生是否在同一个班级。
+
+输出
+
+每个查询输出一行，如果在同一个班级，那么输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+5 3
+4 2
+1 3
+2 5
+2
+4 5
+1 2
+```
+
+输出
+
+```
+Yes
+No
+```
+
+解释
+
+编号`2`、`4`、`5`的学生在同一个班级，编号`1`、`3`的学生在同一个班级，因此编号`4`和`5`的学生在同一个班级，编号`1`和`2`的学生不在同一个班级。
+
+
+
+
+
+To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each student is initially in their own set (or class). When a relationship between two students is given, you unite their sets. For each query, you check if the two students are in the same set.
+
+Here is a step-by-step plan:
+
+1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each student is in their own class.
+2. For each student relationship, unite their sets using the union operation.
+3. For each query, check if the two students are in the same set using the find operation.
+
+Here is the Python code that implements this plan:
 
 ```python
+def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])
+    return parent[x]
 
+def union(x, y):
+    parent[find(x)] = find(y)
+
+n, m = map(int, input().split())
+parent = list(range(n + 1))
+
+for _ in range(m):
+    a, b = map(int, input().split())
+    union(a, b)
+
+k = int(input())
+for _ in range(k):
+    a, b = map(int, input().split())
+    if find(a) == find(b):
+        print('Yes')
+    else:
+        print('No')
 ```
 
+This code reads the number of students and relationships from the input, initializes each student to be in their own class, unites the classes of each pair of students that have a relationship, and then for each query, checks and prints whether the two students are in the same class.
 
+
+
+## 4 迷宫连通性
+
+https://sunnywhy.com/sfbj/9/6/363
+
+现有一个迷宫，迷宫中有个房间（编号为从`1`到`n`），房间与房间之间可能连通。如果房间`A`和房间`B`连通，房间`B`和房间`C`连通，那么我们称房间`A`和房间`C`也连通。给定组连通关系（指定两个房间连通），问迷宫中的所有房间是否连通。
+
+输入
+
+第一行两个整数$m、n (1 \le n \le 100, 1 \le m \le 100)$，分别表示房间个数、连通关系个数；
+
+接下来行，每行两个整数a 和 b $ (1 \le a \le n, 1 \le b \le n, a \ne b)$，表示编号为`a`的房间和编号为`b`的房间是连通的。
+
+输出
+
+如果所有房间连通，那么输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+5 4
+4 2
+1 3
+2 5
+1 5
+```
+
+输出
+
+```
+Yes
+```
+
+解释
+
+所有房间都连通，因此输出`Yes`。
+
+样例2
+
+输入
+
+```
+5 3
+4 2
+1 3
+2 5
+```
+
+输出
+
+```
+No
+```
+
+解释
+
+编号`2`、`4`、`5`的房间互相连通，编号`1`、`3`的房间互相连通，因此没有全部互相连通，输出`No`。
+
+
+
+To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each room is initially in its own set. When a connection between two rooms is given, you unite their sets. If at the end there is only one set, then all rooms are connected.
+
+Here is a step-by-step plan:
+
+1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each room is in its own set.
+2. For each connection, unite their sets using the union operation.
+3. Check if all rooms are in the same set.
+
+Here is the Python code that implements this plan:
+
+```python
+def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])
+    return parent[x]
+
+def union(x, y):
+    parent[find(x)] = find(y)
+
+n, m = map(int, input().split())
+parent = list(range(n + 1))
+
+for _ in range(m):
+    a, b = map(int, input().split())
+    union(a, b)
+
+sets = set(find(x) for x in range(1, n + 1))
+if len(sets) == 1:
+    print('Yes')
+else:
+    print('No')
+```
+
+This code reads the number of rooms and connections from the input, initializes each room to be in its own set, unites the sets of each pair of rooms that have a connection, and then checks and prints whether all rooms are in the same set.
+
+
+
+
+
+## 5 班级最高分
+
+https://sunnywhy.com/sfbj/9/6/364
+
+现有一个学校，学校中有若干个班级，每个班级中有若干个学生，每个学生只会存在于一个班级中。如果学生`A`和学生`B`处于一个班级，学生`B`和学生`C`处于一个班级，那么我们称学生`A`和学生`C`也处于一个班级。
+
+现已知学校中共个学生（编号为从`1`到`n`），每个学生有一个考试分数，再给出组学生关系（指定两个学生处于一个班级），问总共有多少个班级，并按降序给出每个班级的最高考试分数。
+
+输入
+
+第一行两个整数 $m、n (1 \le n \le 100, 1 \le m \le 100)$，分别表示学生个数、学生关系个数；
+
+第二行为用空格隔开的 n 个整数（$0 \le 每个整数 \le 100$），表示个学生的考试分数；
+
+接下来行，每行两个整数a 和 b $ (1 \le a \le n, 1 \le b \le n, a \ne b)$，表示编号为`a`的学生和编号为`b`的学生处于一个班级。
+
+输出
+
+第一行输出一个整数，表示班级个数；
+
+第二行若干个整数，按降序给出每个班级的最高考试分数。整数之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+
+
+```
+5 3
+88 90 86 92 95
+4 2
+1 3
+2 5
+```
+
+输出
+
+```
+2
+95 88
+```
+
+解释
+
+编号`2`、`4`、`5`的学生在同一个班级，编号`1`、`3`的学生在同一个班级，因此共有两个班级，最高分数分别是编号`1`的学生的`88`分、编号`5`的学生的`95`分。
+
+
+
+To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each student is initially in their own set (or class). When a relationship between two students is given, you unite their sets. The number of disjoint sets at the end will be the number of classes. You can also maintain a list of scores for each class and find the maximum score for each class.
+
+Here is a step-by-step plan:
+
+1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each student is in their own class.
+2. Initialize an array `scores` of size `n+1` to store the scores of each student.
+3. For each student relationship, unite their sets using the union operation.
+4. For each class, find the maximum score.
+5. Count the number of unique parents. This will be the number of classes.
+6. Print the maximum scores of the classes in descending order.
+
+Here is the Python code that implements this plan:
+
+```python
+def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])
+    return parent[x]
+
+def union(x, y):
+    root_x = find(x)
+    root_y = find(y)
+    if root_x != root_y:
+        parent[root_x] = root_y
+        scores[root_y] = max(scores[root_y], scores[root_x])
+
+n, m = map(int, input().split())
+parent = list(range(n + 1))
+scores = list(map(int, input().split()))
+scores.insert(0, 0)  # to make the scores 1-indexed
+
+for _ in range(m):
+    a, b = map(int, input().split())
+    union(a, b)
+
+classes_scores = [scores[find(x)] for x in range(1, n + 1) if x == parent[x]]
+print(len(classes_scores))
+print(' '.join(map(str, sorted(classes_scores, reverse=True))))
+```
+
+This code reads the number of students and relationships from the input, initializes each student to be in their own class, unites the classes of each pair of students that have a relationship, finds the maximum score for each class, counts and prints the number of unique classes, and prints the maximum scores of the classes in descending order.
 
 
 
@@ -2226,125 +3150,516 @@ print(weighted_path_length(n, weights, edges))
 
 # 堆 6题
 
+## 1 向下调整构建大顶堆
 
+https://sunnywhy.com/sfbj/9/7
 
+现有个不同的正整数，将它们按层序生成完全二叉树，然后使用**向下调整**的方式构建一个完整的大顶堆。最后按层序输出堆中的所有元素。
 
+输入
 
-```python
+第一行一个整数$n (1 \le n \le 10^3)$，表示正整数的个数；
 
-```
+第二行 n 个整数$a_i (1 \le a_i \le 10^4) $​，表示正整数序列。
 
+输出
 
+输出个整数，表示堆的层序序列，中间用空格隔开，行末不允许有多余的空格。
 
+样例1
 
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
+输入
 
 ```
-
-
-
-
-
-
-
-```python
-
+6
+3 2 6 5 8 7
 ```
 
-
-
-
-
-
-
-```python
+输出
 
 ```
-
-
-
-
-
-
-
-```python
-
+8 5 7 3 2 6
 ```
 
+解释
+
+调整前的完全二叉树和调整后的堆如下图所示。
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403210116556.png" alt="向下调整构建大顶堆.png" style="zoom:67%;" />
 
 
 
 
 
+To solve this problem, you can use the concept of a binary heap. A binary heap is a complete binary tree where each node is either greater than or equal to its children (in a max heap) or less than or equal to its children (in a min heap). In this case, you are asked to create a max heap.
 
-```python
+Here is a step-by-step plan:
 
-```
+1. Initialize an array `heap` of size `n` to store the elements of the heap.
+2. For each element in the input, insert it into the `heap` array.
+3. For each non-leaf node in the `heap` array (starting from the last non-leaf node and moving to the root), perform a downward adjustment to ensure the max heap property is maintained.
+4. Print the elements of the `heap` array in order.
 
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
+Here is the Python code that implements this plan:
 
 ```python
+def down_adjust(parent_index, length):
+    temp = heap[parent_index]
+    child_index = 2 * parent_index + 1
+    while child_index < length:
+        if child_index + 1 < length and heap[child_index + 1] > heap[child_index]:
+            child_index += 1
+        if temp > heap[child_index]:
+            break
+        heap[parent_index] = heap[child_index]
+        parent_index = child_index
+        child_index = 2 * child_index + 1
+    heap[parent_index] = temp
 
+n = int(input().strip())
+heap = list(map(int, input().strip().split()))
+
+for i in range((n - 2) // 2, -1, -1):
+    down_adjust(i, n)
+
+print(' '.join(map(str, heap)))
 ```
 
+This code reads the number of elements and the elements themselves from the input, inserts each element into the `heap` array, performs a downward adjustment for each non-leaf node in the `heap` array to ensure the max heap property is maintained, and then prints the elements of the `heap` array in order.
 
 
 
 
 
+## 2 向上调整构建大顶堆
+
+https://sunnywhy.com/sfbj/9/7/366
+
+现有个不同的正整数，将它们按层序生成完全二叉树，然后使用**向上调整**的方式构建一个完整的大顶堆。最后按层序输出堆中的所有元素。
+
+输入
+
+第一行一个整数$n (1 \le n \le 10^3)$，表示正整数的个数；
+
+第二行 n 个整数$a_i (1 \le a_i \le 10^4) $​，表示正整数序列。
+
+输出
+
+输出个整数，表示堆的层序序列，中间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+6
+3 2 6 5 8 7
+```
+
+输出
+
+```
+8 6 7 2 5 3
+```
+
+解释
+
+调整前的完全二叉树和调整后的堆如下图所示。
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403210120258.png" alt="向上调整构建大顶堆.png" style="zoom: 67%;" />
+
+
+
+
+
+To solve this problem, you can use the concept of a binary heap. A binary heap is a complete binary tree where each node is either greater than or equal to its children (in a max heap) or less than or equal to its children (in a min heap). In this case, you are asked to create a max heap.
+
+Here is a step-by-step plan:
+
+1. Initialize an array `heap` of size `n` to store the elements of the heap.
+2. For each element in the input, insert it into the `heap` array.
+3. For each inserted node in the `heap` array (starting from the last inserted node and moving to the root), perform an upward adjustment to ensure the max heap property is maintained.
+4. Print the elements of the `heap` array in order.
+
+Here is the Python code that implements this plan:
 
 ```python
+def up_adjust(child_index):
+    temp = heap[child_index]
+    parent_index = (child_index - 1) // 2
+    while child_index > 0 and temp > heap[parent_index]:
+        heap[child_index] = heap[parent_index]
+        child_index = parent_index
+        parent_index = (parent_index - 1) // 2
+    heap[child_index] = temp
 
+n = int(input().strip())
+heap = list(map(int, input().strip().split()))
+
+for i in range(1, n):
+    up_adjust(i)
+
+print(' '.join(map(str, heap)))
 ```
 
+This code reads the number of elements and the elements themselves from the input, inserts each element into the `heap` array, performs an upward adjustment for each inserted node in the `heap` array to ensure the max heap property is maintained, and then prints the elements of the `heap` array in order.
 
 
 
 
 
+
+
+## 3 删除堆顶元素
+
+https://sunnywhy.com/sfbj/9/7/367
+
+现有个不同的正整数，将它们按层序生成完全二叉树，然后使用**向下调整**的方式构建一个完整的大顶堆。然后删除堆顶元素，并将层序最后一个元素置于堆顶，进行一次向下调整，以形成新的堆。最后按层序输出新堆中的所有元素。
+
+输入
+
+第一行一个整数$n (1 \le n \le 10^3)$，表示正整数的个数；
+
+第二行 n 个整数$a_i (1 \le a_i \le 10^4) $​，表示正整数序列。
+
+输出
+
+输出个整数，表示堆的层序序列，中间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+6
+3 2 6 5 8 7
+```
+
+输出
+
+```
+7 5 6 3 2
+```
+
+解释
+
+操作过程如下图所示。
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403210124838.png" alt="删除堆顶元素.png" style="zoom:67%;" />
+
+
+
+
+
+To solve this problem, you can use the concept of a binary heap. A binary heap is a complete binary tree where each node is either greater than or equal to its children (in a max heap) or less than or equal to its children (in a min heap). In this case, you are asked to create a max heap, delete the root, and then adjust the heap.
+
+Here is a step-by-step plan:
+
+1. Initialize an array `heap` of size `n` to store the elements of the heap.
+2. For each element in the input, insert it into the `heap` array.
+3. For each non-leaf node in the `heap` array (starting from the last non-leaf node and moving to the root), perform a downward adjustment to ensure the max heap property is maintained.
+4. Delete the root of the heap and replace it with the last element in the heap.
+5. Perform a downward adjustment on the new root to maintain the max heap property.
+6. Print the elements of the `heap` array in order.
+
+Here is the Python code that implements this plan:
 
 ```python
+def down_adjust(parent_index, length):
+    temp = heap[parent_index]
+    child_index = 2 * parent_index + 1
+    while child_index < length:
+        if child_index + 1 < length and heap[child_index + 1] > heap[child_index]:
+            child_index += 1
+        if temp > heap[child_index]:
+            break
+        heap[parent_index] = heap[child_index]
+        parent_index = child_index
+        child_index = 2 * child_index + 1
+    heap[parent_index] = temp
 
+n = int(input().strip())
+heap = list(map(int, input().strip().split()))
+
+for i in range((n - 2) // 2, -1, -1):
+    down_adjust(i, n)
+
+heap[0] = heap[n - 1]
+down_adjust(0, n - 1)
+
+print(' '.join(map(str, heap[:-1])))
 ```
 
+This code reads the number of elements and the elements themselves from the input, inserts each element into the `heap` array, performs a downward adjustment for each non-leaf node in the `heap` array to ensure the max heap property is maintained, deletes the root of the heap and replaces it with the last element in the heap, performs a downward adjustment on the new root to maintain the max heap property, and then prints the elements of the `heap` array in order.
 
 
 
 
 
+## 4 堆排序
+
+https://sunnywhy.com/sfbj/9/7/368
+
+输入个正整数，使用堆排序算法将它们按从小到大的顺序进行排序。
+
+输入
+
+第一行一个整数 $n (1 \le n \le 10^3)$，表示正整数的个数；
+
+第二行为用空格隔开的个正整数（每个正整数均不超过`100`）。
+
+输出
+
+输出一行，表示排序后的个正整数。整数间用一个空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+5
+2 8 5 1 3
+```
+
+输出
+
+```
+1 2 3 5 8
+```
+
+解释
+
+从小到大排序后可以得到序列`1 2 3 5 8`
+
+
+
+To solve this problem, you can use the heap sort algorithm. Heap sort is a comparison-based sorting algorithm that uses a binary heap data structure. It works by building a max heap from the input data, then iteratively removing the maximum element from the heap and inserting it at the end of the sorted section of the array.
+
+Here is a step-by-step plan:
+
+1. Initialize an array `heap` of size `n` to store the elements of the heap.
+2. For each element in the input, insert it into the `heap` array.
+3. For each non-leaf node in the `heap` array (starting from the last non-leaf node and moving to the root), perform a downward adjustment to ensure the max heap property is maintained.
+4. Repeatedly swap the first element in the heap with the last element in the unsorted section of the array, then perform a downward adjustment on the new root to maintain the max heap property.
+5. Print the elements of the `heap` array in order.
+
+Here is the Python code that implements this plan:
 
 ```python
+def down_adjust(parent_index, length):
+    temp = heap[parent_index]
+    child_index = 2 * parent_index + 1
+    while child_index < length:
+        if child_index + 1 < length and heap[child_index + 1] > heap[child_index]:
+            child_index += 1
+        if temp > heap[child_index]:
+            break
+        heap[parent_index] = heap[child_index]
+        parent_index = child_index
+        child_index = 2 * child_index + 1
+    heap[parent_index] = temp
 
+n = int(input().strip())
+heap = list(map(int, input().strip().split()))
+
+for i in range((n - 2) // 2, -1, -1):
+    down_adjust(i, n)
+
+for i in range(n - 1, 0, -1):
+    heap[i], heap[0] = heap[0], heap[i]
+    down_adjust(0, i)
+
+print(' '.join(map(str, heap)))
 ```
 
+This code reads the number of elements and the elements themselves from the input, inserts each element into the `heap` array, performs a downward adjustment for each non-leaf node in the `heap` array to ensure the max heap property is maintained, repeatedly swaps the first element in the heap with the last element in the unsorted section of the array and performs a downward adjustment on the new root, and then prints the elements of the `heap` array in order.
 
+
+
+
+
+## 5 数据流第K大元素
+
+https://sunnywhy.com/sfbj/9/7/369
+
+现有一个初始为空的序列，对其执行个操作，每个操作是以下两种操作之一：
+
+1. 往序列中加入一个正整数；
+2. 输出当前序列中第大的数。
+
+其中，第大是指将序列从大到小排序后的第个数。
+
+输入
+
+第一行两个整数$n、k (1 \le n \le 10^4, 2 \le k \le 100)$，分别表示操作个数、需要输出第几大的数；
+
+接下来 n 行，每行一个操作信息：使用"`Push x`"来表示往序列中加入正整数 $x (1 \le x \le 10^9)$，使用"`Print`"来表示需要输出当前序列中第大的数。
+
+输出
+
+每次执行`Print`操作时，输出一行，表示当前序列中第大的数。如果不存在第大的数，那么输出`-1`。
+
+样例1
+
+输入
+
+```
+7 2
+Push 1
+Print
+Push 3
+Print
+Push 7
+Push 6
+Print
+```
+
+输出
+
+```
+-1
+1
+6
+```
+
+解释
+
+第一个`Print`时序列中元素为`1`，不存在第`2`大的元素，因此输出`-1`；
+
+第二个`Print`时序列中元素为`1 3`，因此第`2`大的元素为`1`；
+
+第三个`Print`时序列中元素为`1 3 7 6`，因此第`2`大的元素为`6`。
+
+
+
+
+
+To solve this problem, you can use a priority queue data structure. A priority queue can efficiently insert elements and retrieve the maximum element. In Python, you can use the `heapq` module to implement a priority queue. However, Python's `heapq` module only provides a min-heap, so you need to insert the negative of the numbers to simulate a max-heap.
+
+Here is a step-by-step plan:
+
+1. Initialize an empty list `heap` to store the elements of the heap.
+2. For each operation:
+   - If the operation is "Push x", insert `-x` into the `heap`.
+   - If the operation is "Print", if the size of the `heap` is less than `k`, print `-1`. Otherwise, create a copy of the `heap`, pop `k` elements from the copy, and print the negative of the last popped element.
+
+Here is the Python code that implements this plan:
+
+```python
+import heapq
+
+n, k = map(int, input().split())
+heap = []
+
+for _ in range(n):
+    operation = input().split()
+    if operation[0] == "Push":
+        heapq.heappush(heap, -int(operation[1]))
+    else:  # operation[0] == "Print"
+        if len(heap) < k:
+            print(-1)
+        else:
+            temp_heap = heap.copy()
+            for _ in range(k):
+                result = heapq.heappop(temp_heap)
+            print(-result)
+```
+
+This code reads the number of operations and the value of `k` from the input, then for each operation, if the operation is "Push x", it inserts `-x` into the `heap`, and if the operation is "Print", it checks if the size of the `heap` is less than `k`, if so, it prints `-1`, otherwise, it creates a copy of the `heap`, pops `k` elements from the copy, and prints the negative of the last popped element.
+
+
+
+
+
+## 6 数据流中位数
+
+https://sunnywhy.com/sfbj/9/7/370
+
+现有一个初始为空的序列，对其执行个操作，每个操作是以下两种操作之一：
+
+1. 往序列 S 中加入一个正整数 x ；
+2. 输出当前序列 S 的中位数。
+
+注：序列的中位数是指，将这个序列从小到大排序后最中间的那个元素；如果最中间有两个元素，那么取这两个元素的平均数作为序列的中位数。
+
+输入
+
+第一行一个整数$n (2 \le n \le 10^4)$，表示操作个数；
+
+接下来行，每行一个操作信息：使用"`Push x`"来表示往序列中加入正整数$x (2 \le x \le 10^5)$，使用"`Print`"来表示需要输出当前序列的中位数。
+
+数据保证不会在序列为空时进行`Print`操作。
+
+输出
+
+每次执行`Print`操作时，输出一行，表示当前序列的中位数。结果保留一位小数。
+
+样例1
+
+输入
+
+```
+6
+Push 3
+Push 7
+Push 6
+Print
+Push 1
+Print
+```
+
+输出
+
+```
+6.0
+4.5
+```
+
+解释
+
+第一个`Print`时序列中元素为`3 7 6`，因此中位数是`6`；
+
+第二个`Print`时序列中元素为`3 7 6 1`，因此中位数是。
+
+
+
+To solve this problem, you can use two heaps: a max heap to store the smaller half of the numbers, and a min heap to store the larger half. The median is then either the maximum element in the max heap (when the total number of elements is odd) or the average of the maximum element in the max heap and the minimum element in the min heap (when the total number of elements is even).
+
+Here is a step-by-step plan:
+
+1. Initialize an empty max heap `left` and an empty min heap `right`.
+2. For each operation:
+   - If the operation is "Push x", insert `x` into the appropriate heap. If the size of the heaps differ by more than 1 after the insertion, balance the heaps by moving the top element from the heap with more elements to the heap with fewer elements.
+   - If the operation is "Print", print the median. The median is the top element of `left` if the total number of elements is odd, or the average of the top elements of `left` and `right` if the total number of elements is even.
+
+Here is the Python code that implements this plan:
+
+```python
+import heapq
+
+n = int(input().strip())
+left, right = [], []
+
+for _ in range(n):
+    operation = input().split()
+    if operation[0] == "Push":
+        x = int(operation[1])
+        if not left or x <= -left[0]:
+            heapq.heappush(left, -x)
+        else:
+            heapq.heappush(right, x)
+        if len(left) < len(right):
+            heapq.heappush(left, -heapq.heappop(right))
+        elif len(left) > len(right) + 1:
+            heapq.heappush(right, -heapq.heappop(left))
+    else:  # operation[0] == "Print"
+        if len(left) > len(right):
+            print(f"{-left[0]:.1f}")
+        else:
+            print(f"{(-left[0] + right[0]) / 2:.1f}")
+```
+
+This code reads the number of operations from the input, then for each operation, if the operation is "Push x", it inserts `x` into the appropriate heap and balances the heaps if necessary, and if the operation is "Print", it prints the median.
 
 
 
@@ -2352,167 +3667,236 @@ print(weighted_path_length(n, weights, edges))
 
 # 哈夫曼树 3题
 
+## 1 合并果子
 
+https://sunnywhy.com/sfbj/9/8
 
+有堆果子，每堆果子的质量已知，现在需要把这些果子合并成一堆，但是每次只能把两堆果子合并到一起，同时会消耗与两堆果子质量之和等值的体力。显然，在进行次合并之后，就只剩下一堆了。为了尽可能节省体力，需要使耗费的总体力最小。求需要耗费的最小总体力。
 
+输入
 
-```python
+第一行一个整数$n (2 \le n \le 100)$，表示果子的堆数；
 
-```
+第二行为用空格隔开的 n 个正整数（每个正整数均不超过`100`），表示每堆果子的质量。
 
+输出
 
+输出一个整数，表示需要耗费的最小总体力。
 
+样例1
 
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
+输入
 
 ```
-
-
-
-
-
-
-
-```python
-
+3
+1 2 9
 ```
 
-
-
-
-
-
-
-```python
+输出
 
 ```
-
-
-
-
-
-
-
-```python
-
+15
 ```
 
+解释
+
+先将质量为`1`的果堆和质量为`2`的果堆合并，得到质量为`3`的果堆，同时消耗体力值`3`；
+
+接着将质量为`3`的果堆和质量为`9`的果堆合并，得到质量为`12`的果堆，同时消耗体力值`12`；
+
+因此共消耗体力值。
 
 
 
+To solve this problem, you can use a priority queue data structure. A priority queue can efficiently insert elements and retrieve the minimum element. In Python, you can use the `heapq` module to implement a priority queue.
 
+Here is a step-by-step plan:
 
+1. Initialize an empty min heap `heap`.
+2. For each pile of fruits, insert its weight into the `heap`.
+3. While there is more than one pile of fruits, remove the two piles with the smallest weights from the `heap`, add their weights together, add the result to the total energy consumption, and insert the result back into the `heap`.
+4. Print the total energy consumption.
 
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
+Here is the Python code that implements this plan:
 
 ```python
+import heapq
 
+n = int(input().strip())
+heap = list(map(int, input().strip().split()))
+heapq.heapify(heap)
+
+energy = 0
+while len(heap) > 1:
+    a = heapq.heappop(heap)
+    b = heapq.heappop(heap)
+    energy += a + b
+    heapq.heappush(heap, a + b)
+
+print(energy)
 ```
 
+This code reads the number of piles of fruits and the weights of the piles from the input, inserts each weight into the `heap`, while there is more than one pile of fruits, removes the two piles with the smallest weights from the `heap`, adds their weights together, adds the result to the total energy consumption, and inserts the result back into the `heap`, and then prints the total energy consumption.
 
 
 
+## 2 树的最小带权路径长度
+
+https://sunnywhy.com/sfbj/9/8/372
+
+对一棵个结点的树（结点编号为从`0`到`n-1`，根结点为`0`号结点，每个结点有各自的权值）来说：
+
+1. 结点的路径长度是指，从根结点到该结点的边数；
+2. 结点的带权路径长度是指，结点权值乘以结点的路径长度；
+3. 树的带权路径长度是指，树的所有叶结点的带权路径长度之和。
+
+现有个不同的正整数，需要寻找一棵树，使得树的所有叶子结点的权值恰好为这个数，并且使得这棵树的带权路径长度是所有可能的树中最小的。求最小带权路径长度。
+
+输入
+
+第一行一个整数$n (2 \le n \le 50)$，表示正整数的个数；
+
+第二行为用空格隔开的 n 个正整数（每个正整数均不超过`100`），含义如题意所示。
+
+输出
+
+输出一个整数，表示最小带权路径长度。
+
+样例1
+
+输
+
+```
+3
+1 2 9
+```
+
+输出
+
+```
+15
+```
+
+解释
+
+对应最小带权路径长度的树如下图所示，其中黑色数字为结点编号，编号右下角的格式为`结点权值*结点路径长度=结点带权路径长度`。由此可得树的带权路径长度为，是所有可能的树中最小的。
+
+![树的最小带权路径长度.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403210139224.png)
 
 
+
+To solve this problem, you can use a priority queue data structure. A priority queue can efficiently insert elements and retrieve the minimum element. In Python, you can use the `heapq` module to implement a priority queue.
+
+Here is a step-by-step plan:
+
+1. Initialize an empty min heap `heap`.
+2. For each weight, insert it into the `heap`.
+3. While there is more than one weight in the `heap`, remove the two weights with the smallest values from the `heap`, add them together, add the result to the total weighted path length, and insert the result back into the `heap`.
+4. Print the total weighted path length.
+
+Here is the Python code that implements this plan:
 
 ```python
+import heapq
 
+n = int(input().strip())
+heap = list(map(int, input().strip().split()))
+heapq.heapify(heap)
+
+weighted_path_length = 0
+while len(heap) > 1:
+    a = heapq.heappop(heap)
+    b = heapq.heappop(heap)
+    weighted_path_length += a + b
+    heapq.heappush(heap, a + b)
+
+print(weighted_path_length)
 ```
 
+This code reads the number of weights from the input, inserts each weight into the `heap`, while there is more than one weight in the `heap`, removes the two weights with the smallest values from the `heap`, adds them together, adds the result to the total weighted path length, and inserts the result back into the `heap`, and then prints the total weighted path length.
 
 
 
+## 3 最小前缀编码长度
+
+https://sunnywhy.com/sfbj/9/8/373
+
+现需要将一个字符串使用**前缀编码**的方式编码为 01 串，使得解码时不会产生混淆。求编码出的 01 串的最小长度。
+
+输入
+
+一个仅由大写字母组成、长度不超过的字符串。
+
+输出
+
+输出一个整数，表示最小长度。
+
+样例1
+
+输入
+
+```
+ABBC
+```
+
+输出
+
+```
+6
+```
+
+解释
+
+将`A`编码为`00`，`B`编码为`1`，`C`编码为`01`，可以得到`ABBC`的前缀编码串`001101`，此时达到了所有可能情况中的最小长度`6`。
 
 
+
+To solve this problem, you can use Huffman coding, which is a common algorithm for constructing prefix codes. Huffman coding is a greedy algorithm that uses a priority queue where the node with the lowest probability is given the highest priority.
+
+Here is a step-by-step plan:
+
+1. Count the frequency of each character in the string.
+2. Create a priority queue (min heap) where each node contains a character and its frequency. The priority of a node is determined by its frequency.
+3. While there is more than one node in the queue:
+   - Dequeue the two nodes with the highest priority (lowest frequency).
+   - Create a new node with these two nodes as children and with frequency equal to the sum of the two nodes' frequencies.
+   - Enqueue the new node.
+4. The remaining node is the root of the Huffman tree. Traverse the Huffman tree and assign a binary code to each character. The binary code of a character is the path from the root to the character, where going to the left child adds a '0' and going to the right child adds a '1'.
+5. Replace each character in the string with its binary code. The length of the resulting string is the minimum length of the prefix encoding.
+
+Here is the Python code that implements this plan:
 
 ```python
+import heapq
+from collections import Counter
 
+def huffman_encoding(s):
+    # Count the frequency of each character
+    freq = Counter(s)
+
+    # Create a priority queue with single node trees
+    heap = [[weight, [char, ""]] for char, weight in freq.items()]
+    heapq.heapify(heap)
+
+    while len(heap) > 1:
+        lo = heapq.heappop(heap)
+        hi = heapq.heappop(heap)
+        for pair in lo[1:]:
+            pair[1] = '0' + pair[1]
+        for pair in hi[1:]:
+            pair[1] = '1' + pair[1]
+        heapq.heappush(heap, [lo[0] + hi[0]] + lo[1:] + hi[1:])
+
+    huff = sorted(heapq.heappop(heap)[1:], key=lambda p: (len(p[-1]), p))
+
+    # Compute the length of the encoded string
+    length = sum(freq[char] * len(code) for char, code in huff)
+
+    return length
+
+s = input().strip()
+print(huffman_encoding(s))
 ```
 
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
-
-```python
-
-```
-
-
-
-
-
-
+This code reads a string from the input, counts the frequency of each character, creates a priority queue with single node trees, while there is more than one node in the queue, dequeues the two nodes with the highest priority (lowest frequency), creates a new node with these two nodes as children and with frequency equal to the sum of the two nodes' frequencies, enqueues the new node, the remaining node is the root of the Huffman tree, traverses the Huffman tree and assigns a binary code to each character, replaces each character in the string with its binary code, and then prints the length of the resulting string.
 
