@@ -9960,6 +9960,8 @@ class Node:
         if self.child:
             for nd in self.child:
                 nd.getSPNE()
+            # 选择子结点的SPNE中，自己颜色收益最大的收益数对，作为这个节点的收益数对
+            # 根据color。代表该节点是几号博弈者进行抉择
             self.val = max([nd.val for nd in self.child], key=lambda x:x[self.color])
 
 
