@@ -1,6 +1,6 @@
 # 树的编程题目 continue
 
-Updated 2022 GMT+8 March 21, 2024
+Updated 0026 GMT+8 March 22, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3161,7 +3161,7 @@ https://sunnywhy.com/sfbj/9/7
 
 **输出**
 
-输出个整数，表示堆的层序序列，中间用空格隔开，行末不允许有多余的空格。
+输出 n 个整数，表示堆的层序序列，中间用空格隔开，行末不允许有多余的空格。
 
 样例1
 
@@ -3185,6 +3185,72 @@ https://sunnywhy.com/sfbj/9/7
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403210116556.png" alt="向下调整构建大顶堆.png" style="zoom:67%;" />
 
 
+
+```python
+class BinHeap:
+    def __init__(self):
+        self.heapList = [0]
+        self.currentSize = 0
+
+    def percUp(self, i):
+        while i // 2 > 0:
+            if self.heapList[i] < self.heapList[i // 2]:
+                tmp = self.heapList[i // 2]
+                self.heapList[i // 2] = self.heapList[i]
+                self.heapList[i] = tmp
+            i = i // 2
+
+    def insert(self, k):
+        self.heapList.append(k)
+        self.currentSize = self.currentSize + 1
+        self.percUp(self.currentSize)
+
+    def percDown(self, i):
+        while (i * 2) <= self.currentSize:
+            mc = self.minChild(i)
+            if self.heapList[i] > self.heapList[mc]:
+                tmp = self.heapList[i]
+                self.heapList[i] = self.heapList[mc]
+                self.heapList[mc] = tmp
+            i = mc
+
+    def minChild(self, i):
+        if i * 2 + 1 > self.currentSize:
+            return i * 2
+        else:
+            if self.heapList[i * 2] < self.heapList[i * 2 + 1]:
+                return i * 2
+            else:
+                return i * 2 + 1
+
+    def delMin(self):
+        retval = self.heapList[1]
+        self.heapList[1] = self.heapList[self.currentSize]
+        self.currentSize = self.currentSize - 1
+        self.heapList.pop()
+        self.percDown(1)
+        return retval
+
+    def buildHeap(self, alist):
+        i = len(alist) // 2
+        self.currentSize = len(alist)
+        self.heapList = [0] + alist[:]
+        while (i > 0):
+            #print(f'i = {i}, {self.heapList}')
+            self.percDown(i)
+            i = i - 1
+        #print(f'i = {i}, {self.heapList}')
+
+
+n = int(input().strip())
+heap = list(map(int, input().strip().split())) # [9, 5, 6, 2, 3]
+heap = [-x for x in heap]
+
+bh = BinHeap()
+bh.buildHeap(heap)
+ans = [-x for x in bh.heapList[1:]]
+print(*ans)
+```
 
 
 
@@ -3346,6 +3412,75 @@ https://sunnywhy.com/sfbj/9/7/367
 
 
 
+```python
+class BinHeap:
+    def __init__(self):
+        self.heapList = [0]
+        self.currentSize = 0
+
+    def percUp(self, i):
+        while i // 2 > 0:
+            if self.heapList[i] < self.heapList[i // 2]:
+                tmp = self.heapList[i // 2]
+                self.heapList[i // 2] = self.heapList[i]
+                self.heapList[i] = tmp
+            i = i // 2
+
+    def insert(self, k):
+        self.heapList.append(k)
+        self.currentSize = self.currentSize + 1
+        self.percUp(self.currentSize)
+
+    def percDown(self, i):
+        while (i * 2) <= self.currentSize:
+            mc = self.minChild(i)
+            if self.heapList[i] > self.heapList[mc]:
+                tmp = self.heapList[i]
+                self.heapList[i] = self.heapList[mc]
+                self.heapList[mc] = tmp
+            i = mc
+
+    def minChild(self, i):
+        if i * 2 + 1 > self.currentSize:
+            return i * 2
+        else:
+            if self.heapList[i * 2] < self.heapList[i * 2 + 1]:
+                return i * 2
+            else:
+                return i * 2 + 1
+
+    def delMin(self):
+        retval = self.heapList[1]
+        self.heapList[1] = self.heapList[self.currentSize]
+        self.currentSize = self.currentSize - 1
+        self.heapList.pop()
+        self.percDown(1)
+        return retval
+
+    def buildHeap(self, alist):
+        i = len(alist) // 2
+        self.currentSize = len(alist)
+        self.heapList = [0] + alist[:]
+        while (i > 0):
+            #print(f'i = {i}, {self.heapList}')
+            self.percDown(i)
+            i = i - 1
+        #print(f'i = {i}, {self.heapList}')
+
+
+n = int(input().strip())
+heap = list(map(int, input().strip().split())) # [9, 5, 6, 2, 3]
+heap = [-x for x in heap]
+
+bh = BinHeap()
+bh.buildHeap(heap)
+
+bh.delMin()
+
+ans = [-x for x in bh.heapList[1:]]
+print(*ans)
+```
+
 
 
 To solve this problem, you can use the concept of a binary heap. A binary heap is a complete binary tree where each node is either greater than or equal to its children (in a max heap) or less than or equal to its children (in a min heap). In this case, you are asked to create a max heap, delete the root, and then adjust the heap.
@@ -3427,6 +3562,76 @@ https://sunnywhy.com/sfbj/9/7/368
 解释
 
 从小到大排序后可以得到序列`1 2 3 5 8`
+
+
+
+```python
+class BinHeap:
+    def __init__(self):
+        self.heapList = [0]
+        self.currentSize = 0
+
+    def percUp(self, i):
+        while i // 2 > 0:
+            if self.heapList[i] < self.heapList[i // 2]:
+                tmp = self.heapList[i // 2]
+                self.heapList[i // 2] = self.heapList[i]
+                self.heapList[i] = tmp
+            i = i // 2
+
+    def insert(self, k):
+        self.heapList.append(k)
+        self.currentSize = self.currentSize + 1
+        self.percUp(self.currentSize)
+
+    def percDown(self, i):
+        while (i * 2) <= self.currentSize:
+            mc = self.minChild(i)
+            if self.heapList[i] > self.heapList[mc]:
+                tmp = self.heapList[i]
+                self.heapList[i] = self.heapList[mc]
+                self.heapList[mc] = tmp
+            i = mc
+
+    def minChild(self, i):
+        if i * 2 + 1 > self.currentSize:
+            return i * 2
+        else:
+            if self.heapList[i * 2] < self.heapList[i * 2 + 1]:
+                return i * 2
+            else:
+                return i * 2 + 1
+
+    def delMin(self):
+        retval = self.heapList[1]
+        self.heapList[1] = self.heapList[self.currentSize]
+        self.currentSize = self.currentSize - 1
+        self.heapList.pop()
+        self.percDown(1)
+        return retval
+
+    def buildHeap(self, alist):
+        i = len(alist) // 2
+        self.currentSize = len(alist)
+        self.heapList = [0] + alist[:]
+        while (i > 0):
+            #print(f'i = {i}, {self.heapList}')
+            self.percDown(i)
+            i = i - 1
+        #print(f'i = {i}, {self.heapList}')
+
+
+n = int(input().strip())
+heap = list(map(int, input().strip().split())) # [9, 5, 6, 2, 3]
+
+bh = BinHeap()
+bh.buildHeap(heap)
+
+ans = []
+while bh.currentSize > 0:
+    ans.append(bh.delMin())
+print(*ans)
+```
 
 
 
@@ -3761,7 +3966,7 @@ https://sunnywhy.com/sfbj/9/8/372
 
 样例1
 
-输
+输入
 
 ```
 3
@@ -3845,6 +4050,66 @@ ABBC
 解释
 
 将`A`编码为`00`，`B`编码为`1`，`C`编码为`01`，可以得到`ABBC`的前缀编码串`001101`，此时达到了所有可能情况中的最小长度`6`。
+
+
+
+使用一种基于哈夫曼编码的方法。哈夫曼编码是一种用于无损数据压缩的最优前缀编码方法。简单来说，它通过创建一棵二叉树，其中每个叶节点代表一个字符，每个节点的路径长度（从根到叶）代表该字符编码的长度，来生成最短的编码。字符出现的频率越高，其在树中的路径就越短，这样可以保证整个编码的总长度最小。
+
+首先需要统计输入字符串中每个字符的出现频率。然后，根据这些频率构建哈夫曼树。构建完成后，遍历这棵树以确定每个字符的编码长度。最后，将所有字符的编码长度乘以其出现次数，累加起来，就得到了编码后的字符串的最小长度。
+
+```python
+from collections import Counter
+import heapq
+
+class HuffmanNode:
+    def __init__(self, char, freq):
+        self.char = char
+        self.freq = freq
+        self.left = None
+        self.right = None
+    
+    # 为了让节点可以在优先队列中被比较，定义比较方法
+    def __lt__(self, other):
+        return self.freq < other.freq
+
+def build_huffman_tree(frequencies):
+    priority_queue = [HuffmanNode(char, freq) for char, freq in frequencies.items()]
+    heapq.heapify(priority_queue)
+    
+    while len(priority_queue) > 1:
+        left = heapq.heappop(priority_queue)
+        right = heapq.heappop(priority_queue)
+
+        merged = HuffmanNode(None, left.freq + right.freq)
+        merged.left = left
+        merged.right = right
+
+        heapq.heappush(priority_queue, merged)
+    
+    return priority_queue[0]
+
+def calculate_huffman_code_lengths(node, length=0):
+    if node is None:
+        return {}
+    if node.char is not None:
+        return {node.char: length}
+    left_lengths = calculate_huffman_code_lengths(node.left, length + 1)
+    right_lengths = calculate_huffman_code_lengths(node.right, length + 1)
+    left_lengths.update(right_lengths)
+    return left_lengths
+
+def min_encoding_length(s):
+    frequencies = Counter(s)
+    huffman_tree = build_huffman_tree(frequencies)
+    code_lengths = calculate_huffman_code_lengths(huffman_tree)
+    return sum(frequencies[char] * length for char, length in code_lengths.items())
+
+
+s = input().strip()
+print(min_encoding_length(s)) 
+```
+
+
 
 
 
