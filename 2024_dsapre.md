@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 0124 GMT+8 March 20, 2024
+Updated 1225 GMT+8 March 21, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8075,7 +8075,7 @@ while True:
 
 
 
-# 23563~27638
+# 23563~27862
 
 ## 23563: 多项式时间复杂度
 
@@ -9895,6 +9895,134 @@ print(f"{height} {leaves}")
 ```
 
 
+
+## 27862: 博弈树分析与最优策略确定:获得最大收益的抉择路径
+
+http://cs101.openjudge.cn/practice/27862/
+
+博弈论是当今的一个热门领域，如下图是一棵博弈树，从博弈者1开始2人轮流做出抉择，叶子结点下方是相应博弈路径的两人的收益，左边第一个叶子结点代表当博弈者1选择C，博弈者2选择E时博弈者1收获为2，博弈者2收获为1。
+
+我们知道每个人做抉择时都希望获得此时的最大收益，所以可以从博弈树中逆推求出2人的策略。如下图中左边子树博弈者2选择E可以获得最大收益1，右边子树博弈者2选择H可以获得最大收益3，而博弈者1在C,D中选择的时候应该考虑到自己选C则博弈者2会选择E，自己选D博弈者2会选择H，所以他为了自己收益最大会选择C-->E可以获得2的收益。
+
+<img src="http://media.openjudge.cn/images/upload/6442/1710986373.jpg" alt="img" style="zoom:67%;" />
+
+**输入**
+
+每组测试数据第一行给出节点数n，分别标为1--n，接下来n-1行给出n-1条边所连的2个节点。
+
+下一行给出叶子节点数k，接下来k行每一行三个数a,b,c，分别代表叶子节点编号和博弈者1、博弈者2的收益。
+
+**输出**
+
+最后2人选择的博弈路径2人的收益各是多少。数据保证根节点为博弈者1的抉择，且根节点编号一定为1，每人每次的策略一定有2种选择，2种选择的收益不相等。
+
+样例输入
+
+```
+7
+1 2
+1 3
+2 4
+2 5
+3 6
+3 7
+4
+4 2 1
+5 3 0
+6 0 2
+7 1 3
+```
+
+样例输出
+
+```
+2 1
+```
+
+来源: HYS 结合通选课知识出了一道树题。
+
+
+
+SPNE代表"Sequentially Perfect Nash Equilibrium"（顺序完美纳什均衡），是博弈论中的一个概念。
+在博弈论中，纳什均衡是指在一个博弈中，每个参与者选择的策略是相互协调的，即在其他参与者选择其策略的情况下，没有参与者有动机单独改变自己的策略。纳什均衡是一种稳定的策略组合。
+顺序完美纳什均衡是在考虑博弈的顺序和时间因素的基础上定义的。它要求在博弈的每个子阶段中，参与者的策略都是最优的，即在当前阶段的最佳反应。这意味着每个参与者都能够根据先前的动作和信息做出最佳决策，并且在整个博弈过程中没有后悔的动作。顺序完美纳什均衡是纳什均衡的一个更严格的概念。
+顺序完美纳什均衡在博弈论中具有重要的理论和应用价值，特别是在分析顺序博弈、动态博弈和信息博弈等方面。它帮助人们理解和预测参与者在博弈中的决策行为，并为博弈策略的设计和分析提供了理论基础。
+
+```python
+# 23 元培 夏天明
+class Node:
+    def __init__(self):
+        self.val = None
+        self.child = []
+        self.color = 0
+    
+    def getSPNE(self):
+        if self.child:
+            for nd in self.child:
+                nd.getSPNE()
+            self.val = max([nd.val for nd in self.child], key=lambda x:x[self.color])
+
+
+n = int(input())
+nodes = [Node() for i in range(n+1)]
+for o in range(n-1):
+    a, b = map(int, input().split())
+    nodes[a].child.append(nodes[b])
+this = [nodes[1]]
+col = 0
+for o in range(int(input())):
+    leaf, v1, v2 = map(int, input().split())
+    nodes[leaf].val = (v1, v2)
+while this:
+    new = []
+    for nd in this:
+        nd.color = col
+        new.extend(nd.child)
+    this = new
+    col = 1-col
+nodes[1].getSPNE()
+print(*nodes[1].val)
+```
+
+
+
+
+
+```python
+# 黄源森23工院，从下往上
+from collections import defaultdict
+def f(x,layer):
+    if x in leaf:
+        return leaf[x]
+    l=dic[x]
+    for u in l:
+        if u in vis:
+            l.remove(u)
+    vis.update(l)
+    t=[]
+    for u in l:
+        t.append(f(u,layer+1))
+        
+    if layer%2==1:
+        t.sort()
+        return t[-1]
+    else:
+        t.sort(key=lambda x:x[1])
+        return t[-1]
+n=int(input())
+vis=set([1])
+dic=defaultdict(list)
+for _ in range(n-1):
+    a,b=map(int,input().split())
+    dic[a].append(b)
+    dic[b].append(a)
+leaf={}
+k=int(input())
+for _ in range(k):
+    a,b,c=map(int,input().split())
+    leaf[a]=(b,c)
+print(*f(1,1))
+```
 
 
 
