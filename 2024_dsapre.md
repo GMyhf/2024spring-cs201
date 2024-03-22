@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 1225 GMT+8 March 21, 2024
+Updated 1549 GMT+8 March 22, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -7512,6 +7512,248 @@ for o in output:
 
 
 
+## 22158: 根据二叉树前中序序列建树
+
+http://cs101.openjudge.cn/practice/22158/
+
+假设二叉树的节点里包含一个大写字母，每个节点的字母都不同。
+
+给定二叉树的前序遍历序列和中序遍历序列(长度均不超过26)，请输出该二叉树的后序遍历序列
+
+**输入**
+
+多组数据
+每组数据2行，第一行是前序遍历序列，第二行是中序遍历序列
+
+**输出**
+
+对每组序列建树，输出该树的后序遍历序列
+
+样例输入
+
+```
+DURPA
+RUDPA
+XTCNB
+CTBNX
+```
+
+样例输出
+
+```
+RUAPD
+CBNTX
+```
+
+来源：郭炜
+
+
+
+The problem is asking to construct a binary tree from given preorder and inorder traversal sequences, and then output the postorder traversal sequence of the constructed tree.  
+
+Here is a step-by-step plan:  
+1.Create a TreeNode class to represent each node in the tree.
+2.Create a function build_tree that takes the preorder and inorder sequences as input and returns the root of the constructed tree.
+	The first character of the preorder sequence is the root of the tree.
+	Find the position of the root in the inorder sequence.
+	Recursively construct the left subtree using the left part of the inorder sequence and the corresponding part of the preorder sequence.
+	Recursively construct the right subtree using the right part of the inorder sequence and the corresponding part of the preorder sequence.
+3.Create a function postorder_traversal that takes the root of the tree as input and returns the postorder traversal sequence of the tree.
+4.For each pair of preorder and inorder sequences, construct the tree and output the postorder traversal sequence.
+Here is the Python code that implements this plan:
+
+```python
+class TreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+def build_tree(preorder, inorder):
+    if not preorder or not inorder:
+        return None
+    root_value = preorder[0]
+    root = TreeNode(root_value)
+    root_index_inorder = inorder.index(root_value)
+    root.left = build_tree(preorder[1:1+root_index_inorder], inorder[:root_index_inorder])
+    root.right = build_tree(preorder[1+root_index_inorder:], inorder[root_index_inorder+1:])
+    return root
+
+def postorder_traversal(root):
+    if root is None:
+        return ''
+    return postorder_traversal(root.left) + postorder_traversal(root.right) + root.value
+
+while True:
+    try:
+        preorder = input().strip()
+        inorder = input().strip()
+        root = build_tree(preorder, inorder)
+        print(postorder_traversal(root))
+    except EOFError:
+        break
+```
+
+
+
+## 22161: 哈夫曼编码树
+
+http://cs101.openjudge.cn/practice/22161/
+
+根据字符使用频率(权值)生成一棵唯一的哈夫曼编码树。生成树时需要遵循以下规则以确保唯一性：
+
+选取最小的两个节点合并时，节点比大小的规则是:
+
+1) 权值小的节点算小。权值相同的两个节点，字符集里最小字符小的，算小。
+
+例如 （{'c','k'},12) 和 ({'b','z'},12)，后者小。
+
+2) 合并两个节点时，小的节点必须作为左子节点
+3) 连接左子节点的边代表0,连接右子节点的边代表1
+
+然后对输入的串进行编码或解码
+
+
+
+**输入**
+
+第一行是整数n，表示字符集有n个字符。
+接下来n行，每行是一个字符及其使用频率（权重）。字符都是英文字母。
+再接下来是若干行，有的是字母串，有的是01编码串。
+
+**输出**
+
+对输入中的字母串，输出该字符串的编码
+对输入中的01串,将其解码，输出原始字符串
+
+样例输入
+
+```
+3
+g 4
+d 8
+c 10
+dc
+110
+```
+
+样例输出
+
+```
+110
+dc
+```
+
+提示: 数据规模很小，不用在乎效率
+
+来源: 郭炜
+
+
+
+```python
+import heapq
+
+class Node:
+    def __init__(self, weight, char=None):
+        self.weight = weight
+        self.char = char
+        self.left = None
+        self.right = None
+
+    def __lt__(self, other):
+        if self.weight == other.weight:
+            return self.char < other.char
+        return self.weight < other.weight
+
+def build_huffman_tree(characters):
+    heap = []
+    for char, weight in characters.items():
+        heapq.heappush(heap, Node(weight, char))
+
+    while len(heap) > 1:
+        left = heapq.heappop(heap)
+        right = heapq.heappop(heap)
+        merged = Node(left.weight + right.weight) #note: 合并后，char 字段默认值是空
+        #merged = Node(left.weight + right.weight, min(left.char, right.char))
+        #改了下提交RE，不知道影响了哪里？59行有个 if node.char: ，不知道是否原因。
+        merged.left = left
+        merged.right = right
+        heapq.heappush(heap, merged)
+
+    return heap[0]
+
+def encode_huffman_tree(root):
+    codes = {}
+
+    def traverse(node, code):
+        if node.char:
+            codes[node.char] = code
+        else:
+            traverse(node.left, code + '0')
+            traverse(node.right, code + '1')
+
+    traverse(root, '')
+    return codes
+
+def huffman_encoding(codes, string):
+    encoded = ''
+    for char in string:
+        encoded += codes[char]
+    return encoded
+
+def huffman_decoding(root, encoded_string):
+    decoded = ''
+    node = root
+    for bit in encoded_string:
+        if bit == '0':
+            node = node.left
+        else:
+            node = node.right
+
+        if node.char:
+            decoded += node.char
+            node = root
+    return decoded
+
+# 读取输入
+n = int(input())
+characters = {}
+for _ in range(n):
+    char, weight = input().split()
+    characters[char] = int(weight)
+
+#string = input().strip()
+#encoded_string = input().strip()
+
+# 构建哈夫曼编码树
+huffman_tree = build_huffman_tree(characters)
+
+# 编码和解码
+codes = encode_huffman_tree(huffman_tree)
+
+strings = []
+while True:
+    try:
+        line = input()
+        strings.append(line)
+
+    except EOFError:
+        break
+
+results = []
+#print(strings)
+for string in strings:
+    if string[0] in ('0','1'):
+        results.append(huffman_decoding(huffman_tree, string))
+    else:
+        results.append(huffman_encoding(codes, string))
+
+for result in results:
+    print(result)
+```
+
+
+
 
 
 ## 22275: 二叉搜索树的遍历
@@ -9116,6 +9358,159 @@ print(min_population_flow(n, m, populations))
 
 
 
+## 24729: 括号嵌套树
+
+http://cs101.openjudge.cn/practice/24729/
+
+可以用括号嵌套的方式来表示一棵树。表示方法如下：
+
+1) 如果一棵树只有一个结点，则该树就用一个大写字母表示，代表其根结点。
+2) 如果一棵树有子树，则用“树根(子树1,子树2,...,子树n)”的形式表示。树根是一个大写字母，子树之间用逗号隔开，没有空格。子树都是用括号嵌套法表示的树。
+
+给出一棵不超过26个结点的树的括号嵌套表示形式，请输出其前序遍历序列和后序遍历序列。
+
+输入样例代表的树如下图：
+
+![img](http://media.openjudge.cn/images/upload/5805/1653472173.png)
+
+**输入**
+
+一行，一棵树的括号嵌套表示形式
+
+**输出**
+
+两行。第一行是树的前序遍历序列，第二行是树的后序遍历序列
+
+
+
+样例输入
+
+```
+A(B(E),C(F,G),D(H(I)))
+```
+
+样例输出
+
+```
+ABECFGDHI
+EBFGCIHDA
+```
+
+来源：Guo Wei
+
+
+
+看清楚题目里面的树是不是二叉树。
+
+下面两个代码。先给出用类表示node
+
+```python
+class TreeNode:
+    def __init__(self, value): #类似字典
+        self.value = value
+        self.children = []
+
+def parse_tree(s):
+    stack = []
+    node = None
+    for char in s:
+        if char.isalpha():  # 如果是字母，创建新节点
+            node = TreeNode(char)
+            if stack:  # 如果栈不为空，把节点作为子节点加入到栈顶节点的子节点列表中
+                stack[-1].children.append(node)
+        elif char == '(':  # 遇到左括号，当前节点可能会有子节点
+            if node:
+                stack.append(node)  # 把当前节点推入栈中
+                node = None
+        elif char == ')':  # 遇到右括号，子节点列表结束
+            if stack:
+                node = stack.pop()  # 弹出当前节点
+    return node  # 根节点
+
+
+def preorder(node):
+    output = [node.value]
+    for child in node.children:
+        output.extend(preorder(child))
+    return ''.join(output)
+
+def postorder(node):
+    output = []
+    for child in node.children:
+        output.extend(postorder(child))
+    output.append(node.value)
+    return ''.join(output)
+
+# 主程序
+def main():
+    s = input().strip()
+    s = ''.join(s.split())  # 去掉所有空白字符
+    root = parse_tree(s)  # 解析整棵树
+    if root:
+        print(preorder(root))  # 输出前序遍历序列
+        print(postorder(root))  # 输出后序遍历序列
+    else:
+        print("input tree string error!")
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+用字典表示node
+
+```python
+def parse_tree(s):
+    stack = []
+    node = None
+    for char in s:
+        if char.isalpha():  # 如果是字母，创建新节点
+            node = {'value': char, 'children': []}
+            if stack:  # 如果栈不为空，把节点作为子节点加入到栈顶节点的子节点列表中
+                stack[-1]['children'].append(node)
+        elif char == '(':  # 遇到左括号，当前节点可能会有子节点
+            if node:
+                stack.append(node)  # 把当前节点推入栈中
+                node = None
+        elif char == ')':  # 遇到右括号，子节点列表结束
+            if stack:
+                node = stack.pop()  # 弹出当前节点
+    return node  # 根节点
+
+
+def preorder(node):
+    output = [node['value']]
+    for child in node['children']:
+        output.extend(preorder(child))
+    return ''.join(output)
+
+def postorder(node):
+    output = []
+    for child in node['children']:
+        output.extend(postorder(child))
+    output.append(node['value'])
+    return ''.join(output)
+
+# 主程序
+def main():
+    s = input().strip()
+    s = ''.join(s.split())  # 去掉所有空白字符
+    root = parse_tree(s)  # 解析整棵树
+    if root:
+        print(preorder(root))  # 输出前序遍历序列
+        print(postorder(root))  # 输出后序遍历序列
+    else:
+        print("input tree string error!")
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+
+
 ## 24750: 根据二叉树中后序序列建树
 
 http://cs101.openjudge.cn/dsapre/24750/
@@ -9237,6 +9632,181 @@ root = buildTree(list(inorder), list(postorder))
 
 # 输出前序遍历序列
 print(''.join(preorderTraversal(root)))
+```
+
+
+
+## 25140: 根据后序表达式建立队列表达式
+
+http://cs101.openjudge.cn/practice/25140/
+
+后序算术表达式可以通过栈来计算其值，做法就是从左到右扫描表达式，碰到操作数就入栈，碰到运算符，就取出栈顶的2个操作数做运算(先出栈的是第二个操作数，后出栈的是第一个)，并将运算结果压入栈中。最后栈里只剩下一个元素，就是表达式的值。
+
+有一种算术表达式不妨叫做“队列表达式”，它的求值过程和后序表达式很像，只是将栈换成了队列：从左到右扫描表达式，碰到操作数就入队列，碰到运算符，就取出队头2个操作数做运算（先出队的是第2个操作数，后出队的是第1个），并将运算结果加入队列。最后队列里只剩下一个元素，就是表达式的值。
+
+给定一个后序表达式，请转换成等价的队列表达式。例如，`3 4 + 6 5 * -`的等价队列表达式就是`5 6 4 3 * + -` 。
+
+**输入**
+
+第一行是正整数n(n<100)。接下来是n行，每行一个由字母构成的字符串，长度不超过100,表示一个后序表达式，其中小写字母是操作数，大写字母是运算符。运算符都是需要2个操作数的。
+
+**输出**
+
+对每个后序表达式，输出其等价的队列表达式。
+
+样例输入
+
+```
+2
+xyPzwIM
+abcABdefgCDEF
+```
+
+样例输出
+
+```
+wzyxIPM
+gfCecbDdAaEBF
+```
+
+提示
+
+建立起表达式树，按层次遍历表达式树的结果前后颠倒就得到队列表达式
+
+来源：Guo Wei modified from Ulm Local 2007
+
+
+
+The problem is asking to convert a postfix expression to an equivalent queue expression. The queue expression is obtained by reversing the level order traversal of the expression tree built from the postfix expression.  
+
+Here is a step-by-step plan:  
+1.Create a TreeNode class to represent each node in the tree.
+2.Create a function build_tree that takes the postfix expression as input and returns the root of the constructed tree.
+	Use a stack to store the nodes.
+	Iterate over the characters in the postfix expression.
+	If the character is an operand, create a new node and push it onto the stack.
+	If the character is an operator, pop two nodes from the stack, make them the children of a new node, and push the new node onto the stack.
+3.Create a function level_order_traversal that takes the root of the tree as input and returns the level order traversal of the tree.
+	Use a queue `traversal` to store the nodes to be visited.
+	While the queue is not empty, dequeue a node, visit it, and enqueue its children.
+4.For each postfix expression, construct the tree, perform the level order traversal, reverse the result, and output it.
+
+```python
+class TreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+def build_tree(postfix):
+    stack = []
+    for char in postfix:
+        node = TreeNode(char)
+        if char.isupper():
+            node.right = stack.pop()
+            node.left = stack.pop()
+        stack.append(node)
+    return stack[0]
+
+def level_order_traversal(root):
+    queue = [root]
+    traversal = []
+    while queue:
+        node = queue.pop(0)
+        traversal.append(node.value)
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+    return traversal
+
+n = int(input().strip())
+for _ in range(n):
+    postfix = input().strip()
+    root = build_tree(postfix)
+    queue_expression = level_order_traversal(root)[::-1]
+    print(''.join(queue_expression))
+```
+
+
+
+## 25145: 猜二叉树（按层次遍历）
+
+http://cs101.openjudge.cn/practice/25145/
+
+一棵二叉树，结点都是大写英文字母，且不重复。
+
+给出它的中序遍历序列和后序遍历序列，求其按层次遍历的序列。
+
+ 
+
+**输入**
+
+第一行是整数n, n <=30，表示有n棵二叉树
+接下来每两行代表一棵二叉树，第一行是其中序遍历序列，第二行是后序遍历序列
+
+**输出**
+
+对每棵二叉树输出其按层次遍历序列
+
+样例输入
+
+```
+2
+LZGD
+LGDZ
+BKTVQP
+TPQVKB
+```
+
+样例输出
+
+```
+ZLDG
+BKVTQP
+```
+
+来源: Guo Wei
+
+
+
+```python
+from collections import deque
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def build_tree(inorder, postorder):
+    if inorder:
+        root = Node(postorder.pop())
+        root_index = inorder.index(root.data)
+        root.right = build_tree(inorder[root_index+1:], postorder)
+        root.left = build_tree(inorder[:root_index], postorder)
+        return root
+
+def level_order_traversal(root):
+    if root is None:
+        return []
+    result = []
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        result.append(node.data)
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+    return result
+
+n = int(input())
+for _ in range(n):
+    inorder = list(input().strip())
+    postorder = list(input().strip())
+    root = build_tree(inorder, postorder)
+    print(''.join(level_order_traversal(root)))
 ```
 
 
