@@ -23,9 +23,15 @@ Updated 1722 GMT+8 March 21, 2024
 
 
 
-说明：树相关内容准备在 Week4 ~6 讲。中间考虑穿插递归、dfs等内容。
+说明：
 
-**预计 Week4 覆盖 一 中的 1～3.1**，Week5覆盖 一中 的 3.2~5, Week6覆盖 一 中6，及附录内容
+1）树相关内容准备在 Week4 ~6 讲。
+
+2）**预计 Week4 覆盖 一 中的 1～3.1**，Week5覆盖 一中 的 3.2~3.3, Week6覆盖 一 中4～7，及附录内容。
+
+3）此md文件有目录，思路是原理学习+编程题目实际
+
+
 
 
 
@@ -2964,6 +2970,119 @@ for _ in range(bh.currentSize):
 
 
 
+
+
+## 4.2 编程题目
+
+### 1 向下调整构建大顶堆
+
+https://sunnywhy.com/sfbj/9/7
+
+现有个不同的正整数，将它们按层序生成完全二叉树，然后使用**向下调整**的方式构建一个完整的大顶堆。最后按层序输出堆中的所有元素。
+
+**输入**
+
+第一行一个整数$n (1 \le n \le 10^3)$，表示正整数的个数；
+
+第二行 n 个整数$a_i (1 \le a_i \le 10^4) $​，表示正整数序列。
+
+**输出**
+
+输出 n 个整数，表示堆的层序序列，中间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+6
+3 2 6 5 8 7
+```
+
+输出
+
+```
+8 5 7 3 2 6
+```
+
+解释
+
+调整前的完全二叉树和调整后的堆如下图所示。
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403210116556.png" alt="向下调整构建大顶堆.png" style="zoom:67%;" />
+
+
+
+```python
+class BinHeap:
+    def __init__(self):
+        self.heapList = [0]
+        self.currentSize = 0
+
+    def percUp(self, i):
+        while i // 2 > 0:
+            if self.heapList[i] < self.heapList[i // 2]:
+                tmp = self.heapList[i // 2]
+                self.heapList[i // 2] = self.heapList[i]
+                self.heapList[i] = tmp
+            i = i // 2
+
+    def insert(self, k):
+        self.heapList.append(k)
+        self.currentSize = self.currentSize + 1
+        self.percUp(self.currentSize)
+
+    def percDown(self, i):
+        while (i * 2) <= self.currentSize:
+            mc = self.minChild(i)
+            if self.heapList[i] > self.heapList[mc]:
+                tmp = self.heapList[i]
+                self.heapList[i] = self.heapList[mc]
+                self.heapList[mc] = tmp
+            i = mc
+
+    def minChild(self, i):
+        if i * 2 + 1 > self.currentSize:
+            return i * 2
+        else:
+            if self.heapList[i * 2] < self.heapList[i * 2 + 1]:
+                return i * 2
+            else:
+                return i * 2 + 1
+
+    def delMin(self):
+        retval = self.heapList[1]
+        self.heapList[1] = self.heapList[self.currentSize]
+        self.currentSize = self.currentSize - 1
+        self.heapList.pop()
+        self.percDown(1)
+        return retval
+
+    def buildHeap(self, alist):
+        i = len(alist) // 2
+        self.currentSize = len(alist)
+        self.heapList = [0] + alist[:]
+        while (i > 0):
+            #print(f'i = {i}, {self.heapList}')
+            self.percDown(i)
+            i = i - 1
+        #print(f'i = {i}, {self.heapList}')
+
+
+n = int(input().strip())
+heap = list(map(int, input().strip().split())) # [9, 5, 6, 2, 3]
+heap = [-x for x in heap]
+
+bh = BinHeap()
+bh.buildHeap(heap)
+ans = [-x for x in bh.heapList[1:]]
+print(*ans)
+```
+
+
+
+
+
 ### 18164: 剪绳子
 
 greedy/huffman, http://cs101.openjudge.cn/practice/18164/
@@ -3031,49 +3150,15 @@ print(ans)
 
 
 
-bisect.insort时间复杂度？sorted时间复杂度？
-
-`bisect.insort`函数的时间复杂度为O(N)，其中N是列表的长度。在最坏情况下，需要在列表中插入元素时，需要移动N个元素来完成插入操作。
-
-`sorted`函数的时间复杂度为O(NlogN)，其中N是列表的长度。它使用的是Timsort算法（一种混合了插入排序和归并排序的排序算法），在平均情况下具有O(NlogN)的时间复杂度。
-
-需要注意的是，这些时间复杂度是基于比较排序的情况。如果列表中的元素具有固定长度，可以使用线性时间复杂度的排序算法，如计数排序或基数排序，来优化排序过程。但对于一般的比较排序算法，以上给出的时间复杂度是适用的。
-
-
-
-heapq时间复杂度？
-
-`heapq`模块中的主要操作函数的时间复杂度如下：
-
-- `heapify`: 将列表转换为堆的时间复杂度为O(N)，其中N是列表的长度。
-- `heappush`: 向堆中插入元素的时间复杂度为O(logN)，其中N是堆的大小。
-- `heappop`: 从堆中弹出最小元素的时间复杂度为O(logN)，其中N是堆的大小。
-- `heappushpop`: 向堆中插入元素并弹出最小元素的时间复杂度为O(logN)，其中N是堆的大小。
-- `heapreplace`: 弹出最小元素并插入新元素的时间复杂度为O(logN)，其中N是堆的大小。
-
-这些操作的时间复杂度都是基于二叉堆的实现方式。二叉堆是一种完全二叉树的数据结构，具有良好的堆特性，可以在O(logN)的时间内进行插入、删除最小元素等操作。
-
-需要注意的是，以上给出的时间复杂度是基于堆的大小的，而不是输入列表的大小。因此，在使用`heapq`模块时，操作的时间复杂度与堆的大小相关，而不是与输入列表的大小相关。
-
-```python
-#23-叶子涵-工院
-import bisect
-N=int(input())
-ribbons=sorted(list(map(lambda x:-int(x),input().split())))
-mini=0
-for i in [0]*(N-1):
-    A=ribbons.pop()
-    B=ribbons.pop()
-    mini-=A+B
-    bisect.insort(ribbons,A+B)
-print(mini)
-```
 
 
 
 
 
-## 4.2 笔试题目
+
+
+
+## 4.3 笔试题目
 
 **Q**: 下图是一棵完全二叉树:
 1)请根据初始建堆算法对该完全二叉树建堆，请画出构建的小根堆(2分);
@@ -3486,7 +3571,7 @@ AVL树实现映射抽象数据类型的方式与普通的二叉搜索树一样�
 
 $balance Factor = height (left SubTree) - height(right SubTree)$
 
-根据上述定义，如果平衡因子大于零，我们称之为左倾；如果平衡因子小于零，就是右倾；如果平衡因子等于零，那么树就是完全平衡的。为了实现AVL树并利用平衡树的优势，我们将平衡因子为-1、0和1的树都定义为平衡树。一旦某个节点的平衡因子超出这个范围，我们就需要通过一个过程让树恢复平衡。图1展示了一棵右倾树及其中每个节点的平衡因子。
+根据上述定义，如果平衡因子大于零，我们称之为左倾；如果平衡因子小于零，就是右倾；如果平衡因子等于零，那么树就是完全平衡的。为了实现AVL树并利用平衡树的优势，我们将平衡因子为-1、0和1的树都定义为**平衡树**。一旦某个节点的平衡因子超出这个范围，我们就需要通过一个过程让树恢复平衡。图1展示了一棵右倾树及其中每个节点的平衡因子。
 
 ![../_images/unbalanced.png](https://raw.githubusercontent.com/GMyhf/img/main/img/unbalanced.png)
 
@@ -3510,7 +3595,7 @@ $N_h = 1 + N_{h-1} + N_{h-2}$​
 
 
 
-### 编程题目
+### 6.1.1 编程题目
 
 > ### 27625: AVL树至少有几个结点
 >
@@ -3547,12 +3632,12 @@ $N_h = 1 + N_{h-1} + N_{h-2}$​
 > 
 > @lru_cache(maxsize=None)
 > def avl_min_nodes(n):
->     if n == 0:
->         return 0
->     elif n == 1:
->         return 1
->     else:
->         return avl_min_nodes(n-1) + avl_min_nodes(n-2) + 1
+>  if n == 0:
+>      return 0
+>  elif n == 1:
+>      return 1
+>  else:
+>      return avl_min_nodes(n-1) + avl_min_nodes(n-2) + 1
 > 
 > n = int(input())
 > min_nodes = avl_min_nodes(n)
@@ -3563,15 +3648,15 @@ $N_h = 1 + N_{h-1} + N_{h-2}$​
 >
 > ```python
 > def avl_min_nodes(n, memo):
->     if n == 0:
->         return 0
->     elif n == 1:
->         return 1
->     elif memo[n] != 0:  # 如果已经计算过，直接返回保存的结果
->         return memo[n]
->     else:
->         memo[n] = avl_min_nodes(n-1, memo) + avl_min_nodes(n-2, memo) + 1
->         return memo[n]
+>  if n == 0:
+>      return 0
+>  elif n == 1:
+>      return 1
+>  elif memo[n] != 0:  # 如果已经计算过，直接返回保存的结果
+>      return memo[n]
+>  else:
+>      memo[n] = avl_min_nodes(n-1, memo) + avl_min_nodes(n-2, memo) + 1
+>      return memo[n]
 > 
 > n = int(input())
 > memo = [0] * (n+1)  # 创建一个数组来保存已计算的结果
@@ -3581,9 +3666,9 @@ $N_h = 1 + N_{h-1} + N_{h-2}$​
 
 
 
-> 
->
-> ## AVL树最多有几层
+
+
+> ## 27626: AVL树最多有几层
 >
 > http://cs101.openjudge.cn/practice/27626/
 >
@@ -3600,15 +3685,15 @@ $N_h = 1 + N_{h-1} + N_{h-2}$​
 > 样例输入
 >
 > ```
-> 20
+>20
 > ```
->
+> 
 > 样例输出
 >
 > ```
-> 6
+>6
 > ```
->
+> 
 > 来源：Guo Wei
 >
 > 
@@ -3618,48 +3703,45 @@ $N_h = 1 + N_{h-1} + N_{h-2}$​
 > 设`N(h)`表示高度为`h`的AVL树的最少节点数，那么有如下递归关系：
 >
 > ```
-> N(h) = N(h-1) + N(h-2) + 1
+>N(h) = N(h-1) + N(h-2) + 1
 > ```
->
+> 
 > 这里，`N(h-1)`是较高子树的最少节点数，`N(h-2)`是较矮子树的最少节点数，`+1`是根节点自身。
 >
 > 基本情况是：
 >
 > ```
-> N(1) = 1  （单个节点的树）
+>N(1) = 1  （单个节点的树）
 > N(0) = 0  （空树）
 > ```
->
+> 
 > 可以使用这个递归关系来计算任何高度的AVL树的最少节点数。然后，我们可以通过递增高度，直到计算出的节点数超过输入的`n`，来找出具有`n`个节点的AVL树的最大高度。
 >
 > 用于计算具有`n`个节点的AVL树的最大高度：
 >
 > ```python
-> from functools import lru_cache
+>from functools import lru_cache
 > 
 > @lru_cache(maxsize=None)
 > def min_nodes(h):
->     if h == 0: return 0
->     if h == 1: return 1
+>  if h == 0: return 0
+>  if h == 1: return 1
 >     return min_nodes(h-1) + min_nodes(h-2) + 1
-> 
-> def max_height(n):
->     h = 0
->     while min_nodes(h) <= n:
+>    
+>    def max_height(n):
+>  h = 0
+>  while min_nodes(h) <= n:
 >         h += 1
 >     return h - 1
-> 
-> n = int(input())
+>    
+>    n = int(input())
 > print(max_height(n))
 > ```
->
 > 
 
 
 
-你或许觉得这个公式很眼熟，因为它与斐波那契数列很相似。可以根据它推导出由AVL树的节点数计算高度的公式。在斐波那契数列中，第i个数是：
-
-
+因为与斐波那契数列很相似，可以根据它推导出由AVL树的节点数计算高度的公式。在斐波那契数列中，第i个数是：
 
 $\begin{split}F_0 = 0 \\
 F_1 = 1 \\
@@ -3744,267 +3826,251 @@ h = 1.44 \log{N_h}\end{split}$​​​​
 
 我们已经证明，保持AVL树的平衡会带来很大的性能优势，现在看看如何往树中插入一个键。所有新键都是以叶子节点插入的，因为新叶子节点的平衡因子是零，所以新插节点没有什么限制条件。但插入新节点后，必须更新父节点的平衡因子。新的叶子节点对其父节点平衡因子的影响取决于它是左子节点还是右子节点。如果是右子节点，父节点的平衡因子减一。如果是左子节点，则父节点的平衡因子加一。
 
-
-
-这个关系可以递归地应用到每个祖先，直到根节点。既然更新平衡因子是递归过程，就来检查以下两种基本情况：
-
-❏ 递归调用抵达根节点；
-❏ 父节点的平衡因子调整为零；可以确信，如果子树的平衡因子为零，那么祖先节点的平衡因子将不会有变化。
-
-我们将AVL树实现为BinarySearchTree的子类。首先重载\_put方法，然后新写updateBalance辅助方法，如代码清单6-37所示。可以看到，除了在第10行和第16行调用updateBalance以外，\_put方法的定义和代码清单6-25中的几乎一模一样。
-
-代码清单6-37 更新平衡因子
-
-```python
-class AVLTree(BinarySearchTree):
-    def __init__(self):
-        super().__init__()
-    def _put(self, key, val, currentNode):
-        if key < currentNode.key:
-            if currentNode.hasLeftChild():
-                self._put(key, val, currentNode.leftChild)
-            else:
-                currentNode.leftChild = TreeNode(key, val, parent = currentNode)
-                self.updateBalance(currentNode.leftChild)
-        else:
-            if currentNode.hasRightChild():
-                self._put(key, val, currentNode.rightChild)
-            else:
-                currentNode.rightChild = TreeNode(key, val, parent = currentNode)
-                self.updateBalance(currentNode.rightChild)
-    def updateBalance(self, node, mode = 'put'):
-        if mode == 'put':
-            if node.balanceFactor > 1 or node.balanceFactor < -1:
-                self.rebalance(node)
-                return
-            # if we want to put node
-            if node.parent != None:
-                if node.isLeftChild():
-                    node.parent.balanceFactor += 1
-                else:
-                    node.parent.balanceFactor -= 1
-                if node.parent.balanceFactor != 0:
-                    self.updateBalance(node.parent)
-```
+假设现在已有一棵平衡二叉树，那么可以预见到，在往其中插入一个结点时，一定会有结点的平衡因子发生变化，此时可能会有结点的平衡因子的绝对值大于 1（这些平衡因子只可能是 2 或者 -2)，这样以该结点为根结点的子树就是失衡的，需要进行调整。显然，只有在从根结点到该插入结点的路径上的结点才可能发生平衡因子变化，因此只需对这条路径上失衡的结点进行调整。可以证明，**只要把最靠近插入结点的失衡结点调整到正常，路径上的所有结点就都会平衡**。
 
 
 
-为了对照，这里放了份：码清单6-25 二叉树插入新节点
-
-```python
-class BinarySearchTree:
-    ...
-    def put(self, key, val):
-        if self.root:
-            self._put(key, val, self.root)
-        else:
-            self.root = TreeNode(key, val)
-        self.size += 1
-    def _put(self, key, val, currentNode):
-        if key < currentNode.key:
-            if currentNode.hasLeftChild():
-                self._put(key, val, currentNode.leftChild)
-            else:
-                currentNode.leftChild = TreeNode(key, val, parent = currentNode)
-        elif key > currentNode.key:
-            if currentNode.hasRightChild():
-                self._put(key, val, currentNode.rightChild)
-            else:
-                currentNode.rightChild = TreeNode(key, val, parent = currentNode)
-        else:
-            currentNode.replaceNodeData(key, val, currentNode.leftChild, currentNode.rightChild)
-```
-
-新方法updateBalance做了大部分工作，它实现了前面描述的递归过程。updateBalance方法先检查当前节点是否需要再平衡（第18行）。如果符合判断条件，就进行再平衡，不需要更新父节点；如果当前节点不需要再平衡，就调整父节点的平衡因子。如果父节点的平衡因子非零，那么沿着树往根节点的方向递归调用updateBalance方法。
-
-> AVL运行的例子程序
+> 如果需要进行再平衡，该怎么做呢？高效的再平衡是让AVL树发挥作用同时不损性能的关键。为了让AVL树恢复平衡，需要在树上进行一次或多次旋转。
 >
-> https://github.com/Yuqiu-Yang/problem_solving_with_algorithms_and_data_structures_using_python/blob/master/ch6/ch6_avl_tree.py
+> 要理解什么是旋转，来看一个简单的例子。考虑图3中左边的树。这棵树失衡了，平衡因子是-2。要让它恢复平衡，我们围绕以节点A为根节点的子树做一次左旋。
 >
-> https://github.com/Yuqiu-Yang/problem_solving_with_algorithms_and_data_structures_using_python/blob/master/ch6/ch6_binary_search_tree.py
+> ![../_images/simpleunbalanced.png](https://raw.githubusercontent.com/GMyhf/img/main/img/simpleunbalanced.png)
 >
-> ```python
-> # 使用 ch6_avl_tree.py 程序的例子
-> 
-> if __name__=='__main__' :
->     # 创建一个AVL树对象
->     avl_tree = AVLTree()
-> 
->     # 向树中插入键值对
->     avl_tree.put(ord('A'), 'Apple')
->     avl_tree.put(ord('B'), 'Banana')
->     avl_tree.put(ord('C'), 'Cat')
-> 
-> 
->     # 获取键对应的值
->     print(avl_tree.get(ord('B')))  # 输出: Banana
-> 
->     # 使用索引运算符也可以获取键对应的值
->     print(avl_tree[ord('B')])  # 输出: Banana
-> 
->     # 检查键是否存在于树中
->     print(ord('A') in avl_tree)  # 输出: True
->     print(ord('D') in avl_tree)  # 输出: False
-> 
->     # 删除键值对
->     avl_tree.delete(ord('A'))   # 输出：balance subtract 1
-> 
->     # 遍历树中的键
->     for key in avl_tree:
->         print(chr(key))  # 输出: B, C
-> ```
+> 图3 通过左旋让失衡的树恢复平衡
 >
-> 
+> 本质上，左旋包括以下步骤。
+>
+> ❏ 将右子节点（节点B）提升为子树的根节点。
+> ❏ 将旧根节点（节点A）作为新根节点的左子节点。
+> ❏ 如果新根节点（节点B）已经有一个左子节点，将其作为新左子节点（节点A）的右子节点。注意，<u>因为节点B之前是节点A的右子节点，所以此时节点A必然没有右子节点。</u>因此，可以为它添加新的右子节点，而无须过多考虑。
+>
+> 我们来看一棵稍微复杂一点的树，并理解右旋过程。图4左边的是一棵左倾的树，根节点的平衡因子是2。右旋步骤如下。
+>
+> ![../_images/rightrotate1.png](https://raw.githubusercontent.com/GMyhf/img/main/img/rightrotate1.png)
+>
+> 图4 通过右旋让失衡的树恢复平衡
+>
+> ❏ 将左子节点（节点C）提升为子树的根节点。
+> ❏ 将旧根节点（节点E）作为新根节点的右子节点。
+> ❏ 如果新根节点（节点C）已经有一个右子节点（节点D），将其作为新右子节点（节点E）的左子节点。注意，<u>因为节点C之前是节点E的左子节点，所以此时节点E必然没有左子节点。</u>因此，可以为它添加新的左子节点，而无须过多考虑。
 
 
 
-如果需要进行再平衡，该怎么做呢？高效的再平衡是让AVL树发挥作用同时不损性能的关键。为了让AVL树恢复平衡，需要在树上进行一次或多次旋转。
+假设最靠近插入结点的失衡结点是 A，显然它的平衡因子只可能是 2 或者 -2。很容易发现这两种情况完全对称，因此主要讨论结点 A 的平衡因子是 2 的情形。
 
-要理解什么是旋转，来看一个简单的例子。考虑图3中左边的树。这棵树失衡了，平衡因子是-2。要让它恢复平衡，我们围绕以节点A为根节点的子树做一次左旋。
-
-![../_images/simpleunbalanced.png](https://raw.githubusercontent.com/GMyhf/img/main/img/simpleunbalanced.png)
-
-图3 通过左旋让失衡的树恢复平衡
-
-本质上，左旋包括以下步骤。
-
-❏ 将右子节点（节点B）提升为子树的根节点。
-❏ 将旧根节点（节点A）作为新根节点的左子节点。
-❏ 如果新根节点（节点B）已经有一个左子节点，将其作为新左子节点（节点A）的右子节点。注意，<u>因为节点B之前是节点A的右子节点，所以此时节点A必然没有右子节点。</u>因此，可以为它添加新的右子节点，而无须过多考虑。
-
-左旋过程在概念上很简单，但代码细节有点复杂，因为需要将节点挪来挪去，以保证二叉搜索树的性质。另外，还要保证正确地更新父指针。
-我们来看一棵稍微复杂一点的树，并理解右旋过程。图4左边的是一棵左倾的树，根节点的平衡因子是2。右旋步骤如下。
-
-![../_images/rightrotate1.png](https://raw.githubusercontent.com/GMyhf/img/main/img/rightrotate1.png)
-
-图4 通过右旋让失衡的树恢复平衡
-
-❏ 将左子节点（节点C）提升为子树的根节点。
-❏ 将旧根节点（节点E）作为新根节点的右子节点。
-❏ 如果新根节点（节点C）已经有一个右子节点（节点D），将其作为新右子节点（节点E）的左子节点。注意，<u>因为节点C之前是节点E的左子节点，所以此时节点E必然没有左子节点。</u>因此，可以为它添加新的左子节点，而无须过多考虑。
-了解旋转的基本原理之后，来看看代码。代码清单6-38给出了左旋的代码。第2行创建一个临时变量，用于记录子树的新根节点。如前所述，新根节点是旧根节点的右子节点。既然临时变量存储了指向右子节点的引用，便可以将旧根节点的右子节点替换为新根节点的左子节点。
-
-下一步是调整这两个节点的父指针。如果新根节点有左子节点，那么这个左子节点的新父节点就是旧根节点。将新根节点的父指针指向旧根节点的父节点。如果旧根节点是整棵树的根节点，那么必须将树的根节点设为新根节点；如果不是，则当旧根节点是左子节点时，将左子节点的父指针指向新根节点；当旧根节点是右子节点时，将右子节点的父指针指向新根节点（第10～13行）。最后，将旧根节点的父节点设为新根节点。这一系列描述很复杂，所以建议你根据图6-28的例子运行一遍函数。rotateRight与rotateLeft对称，所以留作练习。
+由于结点 A 的平衡因子是 2，因此左子树的高度比右子树大 2，于是以结点 A 为根结点的子树一定是图4的两种形态 LL 型与 LR 型之一（**注意：LL 和 LR 只表示树型，不是左右旋的意思**），其中☆、★、◇、◆是图中相应结点的 AVL 子树，结点 A、B、C 的权值满足 A > B > C。可以发现，**当结点 A 的左孩子的平衡因子是 1 时为 LL 型，是 -1 时为 LR 型**。那么，为什么结点 A 的左孩子的平衡因子只可能是 1 或者 -1 ，而不可能是 0 呢?这是因为这种情况无法由平衡二叉树插入一个结点得到。(不信举个反例？)
 
 
 
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403221922941.png" alt="image-20240322192203776" style="zoom:50%;" />
 
-
-代码清单6-38 左旋
-
-```python
-    def rotateLeft(self, rotRoot):
-        newRoot = rotRoot.rightChild
-        rotRoot.rightChild = newRoot.leftChild
-        if newRoot.leftChild != None:
-            newRoot.leftChild.parent = rotRoot
-        newRoot.parent = rotRoot.parent
-        if rotRoot.isRoot():
-            self.root = newRoot
-        else:
-            if rotRoot.isLeftChild():
-                rotRoot.parent.leftChild = newRoot
-            else:
-                rotRoot.parent.rightChild = newRoot
-        newRoot.leftChild = rotRoot
-        rotRoot.parent = newRoot
-        rotRoot.balanceFactor = rotRoot.balanceFactor + 1\
-                                - min(newRoot.balanceFactor, 0)
-        newRoot.balanceFactor = newRoot.balanceFactor + 1\
-                                + max(rotRoot.balanceFactor, 0)
-```
+图4 树型之 LL 型与 LR 型（数字代表平衡因子）
 
 
 
-第16～19行需要特别解释一下。这几行更新了旧根节点和新根节点的平衡因子。
+补充说明，除了☆、★、◇、◆均为空树的情况以外，其他任何情况均满足在插入前底层两棵子树的高度比另外两棵子树的高度小 1，且插入操作一定发生在底层两棵子树上。例如对LL型来说，插入前子树的高度满足☆ = ★ = ◆-1 = ◇-1，而在☆或★中插入一个结点后导致☆或★的高度加 1，使得结点A不平衡。(辅助理解，不需要记住)现在考虑怎样调整这两种树型，才能使树平衡。
 
-显然，只有在从根结点到该插入结点的路径上的结点才可能发生平衡因子变化，因此只需对这条路径上失衡的结点进行调整。可以证明，**只要把最靠近插入结点的失衡结点调整到正常，路径上的所有结点就都平衡**。
+先考虑 LL 型，可以把以 C 为根结点的子树看作一个整体，然后以结点 A 作为 root 进行右旋，便可以达到平衡，如图5 所示。
 
-但在没有完整地重新计算新子树高度的情况下，怎么能更新平衡因子呢？下面的推导过程能证明，这些代码是对的。
-图6-30展示了左旋结果。B和D是关键节点，A、C、E是它们的子树。针对根节点为x的子树，将其高度记为hx。由定义可知：
-
-![../_images/bfderive.png](https://raw.githubusercontent.com/GMyhf/img/main/img/bfderive.png)
-
-图6-30 左旋
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403221936655.png" alt="image-20240322193648365" style="zoom:50%;" />
 
 
 
-$\begin{split}newBal(B) = h_A - h_C \\
-oldBal(B) = h_A - h_D\end{split}$​
-
-D的旧高度也可以定义为$1 + max(h_C,h_E)$，即D的高度等于两棵子树的高度的大值加一。因为$h_c$与$h_E$不变，所以代入第2个等式，得到
-
-$oldBal(B) = h_A - (1 + max(h_C,h_E))$
-
-然后，将两个等式相减，并运用代数知识简化$newBal(B)$的等式。
-
-$$
-\begin{split}newBal(B) - oldBal(B) = h_A - h_C - (h_A - (1 + max(h_C,h_E))) \\
-newBal(B) - oldBal(B) = h_A - h_C - h_A + (1 + max(h_C,h_E)) \\
-newBal(B) - oldBal(B) = h_A  - h_A + 1 + max(h_C,h_E) - h_C  \\
-newBal(B) - oldBal(B) =  1 + max(h_C,h_E) - h_C\end{split}
-$$
-下面将$oldBal(B)$移到等式右边，并利用性质$max(a,b)-c = max(a-c, b-c)$得到：
-$\begin{split}newBal(B) = oldBal(B) + 1 + max(h_C - h_C ,h_E - h_C) \\\end{split}$
-由于$h_E - h_C$就等于$-oldBal(D)$，因此可以利用另一个性质$max(-a, -b)=-min(a, b)$​。最后几步推导如下：
-$$
-\begin{split}newBal(B) = oldBal(B) + 1 + max(0 , -oldBal(D)) \\
-newBal(B) = oldBal(B) + 1 - min(0 , oldBal(D)) \\\end{split}
-$$
-
-至此，我们已经做好所有准备了。如果还记得B是rotRoot而D是newRoot，那么就能看到以上等式对应于代码清单6-38中的第16行：
-
-```
-rotRoot.balanceFactor = rotRoot.balanceFactor + 1 - min(0,newRoot.balanceFactor)
-```
-
-通过类似的推导，可以得到节点D的等式，以及右旋后的平衡因子。这个推导过程留作练习。
-现在你可能认为大功告成了。我们已经知道如何左旋和右旋，也知道应该在什么时候旋转，但请看看图6-31。节点A的平衡因子为-2，应该做一次左旋。但是，围绕节点A左旋后会怎样呢？
-
-![../_images/hardunbalanced.png](https://raw.githubusercontent.com/GMyhf/img/main/img/hardunbalanced.png)
-图6-31 更难平衡的树
-
-左旋后得到另一棵失衡的树，如图6-32所示。如果在此基础上做一次右旋，就回到了图6-31的状态。
-
-![../_images/badrotate.png](https://raw.githubusercontent.com/GMyhf/img/main/img/badrotate.png)
-
-图6-32 左旋后，树朝另一个方向失衡
-
-要解决这种问题，必须遵循以下规则。
-❏ 如果子树需要左旋，首先检查右子树的平衡因子。如果右子树左倾，就对右子树做一次右旋，再围绕原节点做一次左旋。
-❏ 如果子树需要右旋，首先检查左子树的平衡因子。如果左子树右倾，就对左子树做一次左旋，再围绕原节点做一次右旋。
-图6-33展示了如何通过以上规则解决图6-31和图6-32中的困境。围绕节点C做一次右旋，再围绕节点A做一次左旋，就能让子树恢复平衡。
+图5 LL 型调整示意图（数字代表平衡因子）
 
 
 
-![../_images/rotatelr.png](https://raw.githubusercontent.com/GMyhf/img/main/img/rotatelr.png)
+然后考虑 LR 型，可以先忽略结点 A，以结点 C 为root 进行左旋，就可以把情况转化为 LL 型，然后按上面 LL 型的做法进行一次右旋即可，如图6 所示。
 
 
-图6-33 先右旋，再左旋
 
-rebalance方法实现了上述规则，如代码清单6-39所示。第2行的if语句实现了规则1，第8行的elif语句实现了规则2。
-在6.11节中，你将尝试通过先左旋再右旋的方式恢复一棵树的平衡，还会试着为一些更复杂的树恢复平衡。
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403221938907.png" alt="image-20240322193842032" style="zoom:50%;" />
 
-代码清单6-39 实现再平衡
+图6 LR型调整示意图（数字代表平衡因子）
 
-```python
-def rebalance(self, node):
-    if node.balanceFactor < 0:
-        if node.rightChild.balanceFactor > 0:
-            self.rotateRight(node.rightChild)
-            self.rotateLeft(node)
-        else:
-            self.rotateLeft(node)
-    elif node.balanceFactor > 0:
-        if node.leftChild.balanceFactor < 0:
-            self.rotateLeft(node.leftChild)
-            self.rotateRight(node)
-        else:
-            self.rotateRight(node)
-```
+
+
+至此,结点 A 的平衡因子是 2 的情况已经讨论清楚,下面简要说明平衡因子是 -2 的情况，显然两种情况是完全对称的。
+由于结点 A 的平衡因子为 -2，因此右子树的高度比左子树大 2，于是以结点A为根结点的子树一定是图7 的两种形态 RR 型与 RL 型之一。注意，由于和上面讨论的 LL 型和 LR 型对称，此处结点 A、B、C 的权值满足A < B < C。可以发现，**当结点 A 的右孩子的平衡因子是 -1 时为 RR 型，是1时为 RL 型**。
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403221944039.png" alt="image-20240322194434170" style="zoom:50%;" />
+
+图7 树型之 RR型与RL型（数字代表平衡因子）
+
+对 RR 型来说，可以把以 C 为根结点的子树看作一个整体，然后以结点 A 作为 root 进行左旋，便可以达到平衡，如图8 所示。
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403221946985.png" alt="image-20240322194646407" style="zoom:50%;" />
+
+图8 RR 型调整示意图（数字代表平衡因子）
+
+
+
+对 RL 型来说，可以先忽略结点 A，以结点 C 为 root 进行右旋，就可以把情况转化为 RR 然后按上面 RR 型的做法进行一次左旋即可，如图9 所示。
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403221948008.png" alt="image-20240322194851060" style="zoom:50%;" />
+
+图9 RL型调整示意图（数字代表平衡因子）
+
+至此，对LL 型、LR 型、RR 型、RL型的调整方法都已经讨论清楚。
 
 通过维持树的平衡，可以保证get方法的时间复杂度为$O(log_2(n))$。但这会给put操作的性能带来多大影响呢？我们来看看put操作。因为新节点作为叶子节点插入，所以更新所有父节点的平衡因子最多需要$log_2(n)$次操作——每一层一次。如果树失衡了，恢复平衡最多需要旋转两次。每次旋转的时间复杂度是O(1)，所以put操作的时间复杂度仍然是$O(log_2(n))$​。
-至此，我们已经实现了一棵可用的AVL树，不过还没有实现删除节点的功能。我们将删除节点及后续的更新和再平衡的实现留作练习。
+
+至此，我们已经实现了一棵可用的AVL树。了解旋转的基本原理之后，来看编程题目。
+
+
+
+### 6.2.1 编程题目
+
+#### 1 平衡二叉树的建立
+
+https://sunnywhy.com/sfbj/9/5/359
+
+将 n 个互不相同的正整数先后插入到一棵空的AVL树中，求最后生成的AVL树的先序序列。
+
+**输入**
+
+第一行一个整数 $n (1 \le n \le 50)$，表示AVL树的结点个数；
+
+第二行 n 个整数$a_i (1 \le a_i \le 100)$，表示表示插入序列。
+
+**输出**
+
+输出 n 个整数，表示先序遍历序列，中间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+5
+5 2 3 6 8
+```
+
+输出
+
+```
+3 2 6 5 8
+```
+
+解释
+
+插入的过程如下图所示。
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403210041932.png" alt="平衡二叉树的建立.png" style="zoom:67%;" />
+
+
+
+To solve this problem, you can follow these steps:
+
+1. Read the input sequence.
+2. Insert the values into an AVL tree. An AVL tree is a self-balancing binary search tree, and the heights of the two child subtrees of any node differ by at most one.
+3. Perform a preorder traversal of the AVL tree and print the result.
+
+Here is the Python code that implements this plan:
+
+```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+        self.height = 1
+
+class AVL:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, value):
+        if not self.root:
+            self.root = Node(value)
+        else:
+            self.root = self._insert(value, self.root)
+
+    def _insert(self, value, node):
+        if not node:
+            return Node(value)
+        elif value < node.value:
+            node.left = self._insert(value, node.left)
+        else:
+            node.right = self._insert(value, node.right)
+
+        node.height = 1 + max(self._get_height(node.left), self._get_height(node.right))
+
+        balance = self._get_balance(node)
+
+        if balance > 1:
+            if value < node.left.value:	# 树形是 LL
+                return self._rotate_right(node)
+            else:	# 树形是 LR
+                node.left = self._rotate_left(node.left)
+                return self._rotate_right(node)
+
+        if balance < -1:
+            if value > node.right.value:	# 树形是 RR
+                return self._rotate_left(node)
+            else:	# 树形是 RL
+                node.right = self._rotate_right(node.right)
+                return self._rotate_left(node)
+
+        return node
+
+    def _get_height(self, node):
+        if not node:
+            return 0
+        return node.height
+
+    def _get_balance(self, node):
+        if not node:
+            return 0
+        return self._get_height(node.left) - self._get_height(node.right)
+
+    def _rotate_left(self, z):
+        y = z.right
+        T2 = y.left
+        y.left = z
+        z.right = T2
+        z.height = 1 + max(self._get_height(z.left), self._get_height(z.right))
+        y.height = 1 + max(self._get_height(y.left), self._get_height(y.right))
+        return y
+
+    def _rotate_right(self, y):
+        x = y.left
+        T2 = x.right
+        x.right = y
+        y.left = T2
+        y.height = 1 + max(self._get_height(y.left), self._get_height(y.right))
+        x.height = 1 + max(self._get_height(x.left), self._get_height(x.right))
+        return x
+
+    def preorder(self):
+        return self._preorder(self.root)
+
+    def _preorder(self, node):
+        if not node:
+            return []
+        return [node.value] + self._preorder(node.left) + self._preorder(node.right)
+
+n = int(input().strip())
+sequence = list(map(int, input().strip().split()))
+
+avl = AVL()
+for value in sequence:
+    avl.insert(value)
+
+print(' '.join(map(str, avl.preorder())))
+```
+
+This code reads the sequence from the input, inserts its values into an AVL tree, performs a preorder traversal of the AVL tree, and then prints the result.
+
+
+
+
 
 
 
