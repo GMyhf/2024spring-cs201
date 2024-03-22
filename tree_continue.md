@@ -1,6 +1,6 @@
 # 树的编程题目 continue
 
-Updated 0026 GMT+8 March 22, 2024
+Updated 2022 GMT+8 March 22, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3186,6 +3186,8 @@ https://sunnywhy.com/sfbj/9/7
 
 
 
+解法1:
+
 ```python
 class BinHeap:
     def __init__(self):
@@ -3253,6 +3255,8 @@ print(*ans)
 ```
 
 
+
+解法2:
 
 To solve this problem, you can use the concept of a binary heap. A binary heap is a complete binary tree where each node is either greater than or equal to its children (in a max heap) or less than or equal to its children (in a min heap). In this case, you are asked to create a max heap.
 
@@ -3412,6 +3416,8 @@ https://sunnywhy.com/sfbj/9/7/367
 
 
 
+解法1:
+
 ```python
 class BinHeap:
     def __init__(self):
@@ -3482,6 +3488,8 @@ print(*ans)
 ```
 
 
+
+解法2:
 
 To solve this problem, you can use the concept of a binary heap. A binary heap is a complete binary tree where each node is either greater than or equal to its children (in a max heap) or less than or equal to its children (in a min heap). In this case, you are asked to create a max heap, delete the root, and then adjust the heap.
 
@@ -3565,6 +3573,8 @@ https://sunnywhy.com/sfbj/9/7/368
 
 
 
+解法1:
+
 ```python
 class BinHeap:
     def __init__(self):
@@ -3634,6 +3644,8 @@ print(*ans)
 ```
 
 
+
+解法2:
 
 To solve this problem, you can use the heap sort algorithm. Heap sort is a comparison-based sorting algorithm that uses a binary heap data structure. It works by building a max heap from the input data, then iteratively removing the maximum element from the heap and inserting it at the end of the sorted section of the array.
 
@@ -4053,6 +4065,8 @@ ABBC
 
 
 
+解法1:
+
 使用一种基于哈夫曼编码的方法。哈夫曼编码是一种用于无损数据压缩的最优前缀编码方法。简单来说，它通过创建一棵二叉树，其中每个叶节点代表一个字符，每个节点的路径长度（从根到叶）代表该字符编码的长度，来生成最短的编码。字符出现的频率越高，其在树中的路径就越短，这样可以保证整个编码的总长度最小。
 
 首先需要统计输入字符串中每个字符的出现频率。然后，根据这些频率构建哈夫曼树。构建完成后，遍历这棵树以确定每个字符的编码长度。最后，将所有字符的编码长度乘以其出现次数，累加起来，就得到了编码后的字符串的最小长度。
@@ -4112,6 +4126,8 @@ print(min_encoding_length(s))
 
 
 
+
+解法2:
 
 To solve this problem, you can use Huffman coding, which is a common algorithm for constructing prefix codes. Huffman coding is a greedy algorithm that uses a priority queue where the node with the lowest probability is given the highest priority.
 
