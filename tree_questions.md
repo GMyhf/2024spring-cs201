@@ -6,6 +6,23 @@ Updated 1609 GMT+8 March 21, 2024
 
 
 
+> Log:
+>
+> 2024/3/22 并查集从附录移到正文，因为简单、易懂。
+>
+> 2024/3/20 明确了 高度、深度，都是数边的个数，与节点个数无关。
+>
+> 2024/3/19 书上内容缺失，week5 课前，重构课件，增加了多叉树、Huffman algorithm. 
+>
+> 2024/3/21AVL部分需要重构，尽量简单易懂。插入结点造成失衡时候，有四种树形：LL、LR、RR、RL，很有规律，正常调整即可。
+>
+> - 《Python数据结构与算法分析（第2版） 》的 平衡二叉树 部分讲复杂了，平衡因子不用保存，需要时候利用height计算就可以。因为不用保存，书上大段推导平衡因子计算也是多余的，可以当作原理理解。
+> - 显然，只有在从根结点到该插入结点的路径上的结点才可能发生平衡因子变化，因此只需对这条路径上失衡的结点进行调整。可以证明，只要把最靠近插入结点的失衡结点调整到正常，路径上的所有结点就都平衡。
+> - AVL本身就是BST，不用从BST继承，书上弄的复杂了
+> - 有时候代码比文字表达能力强，文字不容易说清楚的事情，代码有时候是逻辑清晰、简短。
+
+
+
 说明：树相关内容准备在 Week4 ~6 讲。中间考虑穿插递归、dfs等内容。
 
 **预计 Week4 覆盖 一 中的 1～3.1**，Week5覆盖 一中 的 3.2~5, Week6覆盖 一 中6，及附录内容
@@ -2778,6 +2795,19 @@ def insert(self,k):
 
 正确定义insert方法后，就可以编写delMin方法。既然堆的结构性质要求根节点是树的最小元素，那么查找最小值就很简单。delMin方法的难点在于，如何在移除根节点之后重获堆的结构性质和有序性。可以分两步重建堆。第一步，取出列表中的最后一个元素，将其移到根节点的位置。移动最后一个元素保证了堆的结构性质，但可能会破坏二叉堆的有序性。第二步，将新的根节点沿着树推到正确的位置，以重获堆的有序性。图4展示了将新的根节点移动到正确位置所需的一系列交换操作。
 
+> 二叉堆BinHeap，明显可以排序Heapsort，树的特点，时间复杂度与归并排序Mergesort一致。取最小元素后，为了恢复有序性，堆顶与列表最后一个元素交换，这种远距离的交换，自然是 不稳定NoStable 的排序。
+>
+> 
+>
+> |    Name    |  Best   | Average |  Worst  | Memory | Stable |  Method   |                         Other notes                          |
+> | :--------: | :-----: | :-----: | :-----: | :----: | :----: | :-------: | :----------------------------------------------------------: |
+> |  Heapsort  | $nlogn$ | $nlogn$ | $nlogn$ |   1    |   No   | Selection |                                                              |
+> | Merge sort | $nlogn$ | $nlogn$ | $nlogn$ |  *n*   |  Yes   |  Merging  | Highly parallelizable (up to *O*(log *n*) using the Three Hungarian's Algorithm) |
+>
+> 
+
+
+
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/percDown.png" alt="image" style="zoom:67%;" />
 
 
@@ -3476,6 +3506,8 @@ $balance Factor = height (left SubTree) - height(right SubTree)$
 
 $N_h = 1 + N_{h-1} + N_{h-2}$​
 
+你或许觉得这个公式很眼熟，因为它与斐波那契数列很相似。
+
 
 
 ### 编程题目
@@ -3710,7 +3742,11 @@ h = 1.44 \log{N_h}\end{split}$​​​​
 
 ## 6.2 AVL树的实现
 
-我们已经证明，保持AVL树的平衡会带来很大的性能优势，现在看看如何往树中插入一个键。所有新键都是以叶子节点插入的，因为新叶子节点的平衡因子是零，所以新插节点没有什么限制条件。但插入新节点后，必须更新父节点的平衡因子。新的叶子节点对其父节点平衡因子的影响取决于它是左子节点还是右子节点。如果是右子节点，父节点的平衡因子减一。如果是左子节点，则父节点的平衡因子加一。这个关系可以递归地应用到每个祖先，直到根节点。既然更新平衡因子是递归过程，就来检查以下两种基本情况：
+我们已经证明，保持AVL树的平衡会带来很大的性能优势，现在看看如何往树中插入一个键。所有新键都是以叶子节点插入的，因为新叶子节点的平衡因子是零，所以新插节点没有什么限制条件。但插入新节点后，必须更新父节点的平衡因子。新的叶子节点对其父节点平衡因子的影响取决于它是左子节点还是右子节点。如果是右子节点，父节点的平衡因子减一。如果是左子节点，则父节点的平衡因子加一。
+
+
+
+这个关系可以递归地应用到每个祖先，直到根节点。既然更新平衡因子是递归过程，就来检查以下两种基本情况：
 
 ❏ 递归调用抵达根节点；
 ❏ 父节点的平衡因子调整为零；可以确信，如果子树的平衡因子为零，那么祖先节点的平衡因子将不会有变化。
@@ -3989,6 +4025,1003 @@ def rebalance(self, node):
 
 
 
+## 7 并查集（Disjoint Set）
+
+> 通常情况下，使用邻接表来表示并查集（Disjoint Set）和前缀树（Trie Tree）是比较常见的做法。
+>
+> 1. **并查集（Disjoint Set）**：在并查集中，每个元素都属于一个集合，并且这些集合之间是不相交的。为了高效地实现并查集操作，通常会使用树形结构来表示集合之间的关系。每个集合可以用一个树表示，其中树的根节点是集合的代表元素。使用邻接表来表示这种树形结构是一种常见的做法，其中每个节点存储其父节点的指针。
+>
+> 2. **前缀树（Trie Tree）**：前缀树是一种用于存储字符串集合的数据结构，通常用于快速地进行字符串匹配和搜索。在前缀树中，每个节点代表一个字符，从根节点到叶子节点的路径表示一个字符串。为了表示字符串的结构，通常会使用邻接表来表示前缀树，其中每个节点存储一个字符以及指向子节点的指针列表。
+>
+> 使用邻接表表示并查集和前缀树可以高效地支持各种操作，如并查集的合并和查找操作，以及前缀树的插入、搜索和删除操作。同时，邻接表也能够比较直观地表示数据结构之间的关系，便于理解和实现。
+
+
+
+Disjoint Set (Union-Find Algorithm)
+
+https://www.geeksforgeeks.org/introduction-to-disjoint-set-data-structure-or-union-find-algorithm/
+
+**What is a Disjoint set data structure?**
+
+> Two sets are called **disjoint sets** if they don’t have any element in common, the intersection of sets is a null set.
+
+A data structure that stores non overlapping or disjoint subset of elements is called disjoint set data structure. The disjoint set data structure supports following operations:
+
+- Adding new sets to the disjoint set.
+- Merging disjoint sets to a single disjoint set using **Union** operation.
+- Finding representative of a disjoint set using **Find** operation.
+- Check if two sets are disjoint or not. 
+
+Consider a situation with a number of persons and the following tasks to be performed on them:
+
+- Add a **new friendship relation**, i.e. a person x becomes the friend of another person y i.e adding new element to a set.
+- Find whether individual **x is a friend of individual y** (direct or indirect friend)
+
+**Examples:** 
+
+> We are given 10 individuals say, a, b, c, d, e, f, g, h, i, j
+>
+> Following are relationships to be added:
+> a <-> b  
+> b <-> d
+> c <-> f
+> c <-> i
+> j <-> e
+> g <-> j
+>
+> Given queries like whether a is a friend of d or not. We basically need to create following 4 groups and maintain a quickly accessible connection among group items:
+> G1 = {a, b, d}
+> G2 = {c, f, i}
+> G3 = {e, g, j}
+> G4 = {h}
+
+
+
+**Find whether x and y belong to the same group or not, i.e. to find if x and y are direct/indirect friends.**
+
+Partitioning the individuals into different sets according to the groups in which they fall. This method is known as a **Disjoint set Union** which maintains a collection of **Disjoint sets** and each set is represented by one of its members.
+
+**To answer the above question two key points to be considered are:**
+
+- **How to Resolve sets?** Initially, all elements belong to different sets. After working on the given relations, we select a member as a **representative**. There can be many ways to select a representative, a simple one is to select with the biggest index.
+- **Check if 2 persons are in the same group?** If representatives of two individuals are the same, then they’ll become friends.
+
+
+
+**Data Structures used are:** 
+
+**Array:** An array of integers is called **Parent[]**. If we are dealing with **N** items, i’th element of the array represents the i’th item. More precisely, the i’th element of the Parent[] array is the parent of the i’th item. These relationships create one or more virtual trees.
+
+**Tree:** It is a **Disjoint set**. If two elements are in the same tree, then they are in the same **Disjoint set**. The root node (or the topmost node) of each tree is called the **representative** of the set. There is always a single **unique representative** of each set. A simple rule to identify a representative is if ‘i’ is the representative of a set, then **Parent[i] = i**. If i is not the representative of his set, then it can be found by traveling up the tree until we find the representative.
+
+
+
+### 7.1 Operations on Disjoint Set
+
+操作包括 Find 和 Union。
+
+#### 7.1.1 Find
+
+Can be implemented by recursively traversing the parent array until we hit a node that is the parent of itself.
+
+
+
+```python
+# Finds the representative of the set
+# that i is an element of
+
+def find(i):
+
+	# If i is the parent of itself
+	if (parent[i] == i):
+
+		# Then i is the representative of
+		# this set
+		return i
+	else:
+
+		# Else if i is not the parent of
+		# itself, then i is not the
+		# representative of his set. So we
+		# recursively call Find on its parent
+		return find(parent[i])
+
+# The code is contributed by Nidhi goel
+
+```
+
+
+
+**Time complexity**: This approach is inefficient and can take O(n) time in worst case.
+
+
+
+#### 7.1.2 Union 
+
+It takes **two elements** as input and finds the representatives of their sets using the **Find** operation, and finally puts either one of the trees (representing the set) under the root node of the other tree.
+
+```python
+# Unites the set that includes i
+# and the set that includes j
+
+def union(parent, rank, i, j):
+	# Find the representatives
+	# (or the root nodes) for the set
+	# that includes i
+	irep = find(parent, i)
+	
+	# And do the same for the set
+	# that includes j
+	jrep = find(parent, j)
+	
+	# Make the parent of i’s representative
+	# be j’s representative effectively
+	# moving all of i’s set into j’s set)
+	
+	parent[irep] = jrep
+
+```
+
+**Time complexity**: This approach is inefficient and could lead to tree of length O(n) in worst case.
+
+
+
+### 7.2 Optimizations (Union by Rank/Size and Path Compression)
+
+The efficiency depends heavily on which tree get attached to the other. There are 2 ways in which it can be done. First is Union by Rank, which considers height of the tree as the factor and Second is Union by Size, which considers size of the tree as the factor while attaching one tree to the other . This method along with Path Compression gives complexity of nearly constant time.
+
+
+
+#### 7.2.1 Path Compression
+
+Modifications to Find()):
+
+It speeds up the data structure by **compressing the height** of the trees. It can be achieved by inserting a small caching mechanism into the **Find** operation. Take a look at the code for more details:
+
+```python
+# Finds the representative of the set that i
+# is an element of.
+
+
+def find(i):
+
+	# If i is the parent of itself
+	if Parent[i] == i:
+
+		# Then i is the representative 
+		return i
+	else:
+
+		# Recursively find the representative.
+		result = find(Parent[i])
+
+		# We cache the result by moving i’s node 
+		# directly under the representative of this
+		# set
+		Parent[i] = result
+	
+		# And then we return the result
+		return result
+
+# The code is contributed by Arushi Jindal. 
+
+```
+
+
+
+**Time Complexity**: O(log n) on average per call.
+
+
+
+#### 7.2.2 Union by Rank
+
+First of all, we need a new array of integers called **rank[]**. The size of this array is the same as the parent array **Parent[]**. If i is a representative of a set, **rank[i]** is the height of the tree representing the set. 
+Now recall that in the Union operation, it doesn’t matter which of the two trees is moved under the other. Now what we want to do is minimize the height of the resulting tree. If we are uniting two trees (or sets), let’s call them left and right, then it all depends on the **rank of left** and the **rank of right**. 
+
+- If the rank of **left** is less than the rank of **right**, then it’s best to move **left under right**, because that won’t change the rank of right (while moving right under left would increase the height). In the same way, if the rank of right is less than the rank of left, then we should move right under left.
+- If the ranks are equal, it doesn’t matter which tree goes under the other, but the rank of the result will always be one greater than the rank of the trees.
+
+
+
+#### 7.2.3 Path compression and union by rank
+
+Below is the complete implementation of disjoint set with path compression and union by rank.
+
+```python
+class DisjSet:
+	def __init__(self, n):
+		# Constructor to create and initialize sets of n items
+		self.rank = [1] * n
+		self.parent = [i for i in range(n)]
+
+
+	# Finds set of given item x
+	def find(self, x):
+		
+		# Finds the representative of the set that x is an element of
+		if (self.parent[x] != x):
+			
+			# if x is not the parent of itself
+			# Then x is not the representative of its set
+			self.parent[x] = self.find(self.parent[x])
+			
+			# so we recursively call Find on its parent
+			# and move i's node directly under the
+			# representative of this set
+
+		return self.parent[x]
+
+
+	# Do union of two sets represented by x and y.
+	def Union(self, x, y):
+		
+		# Find current sets of x and y
+		xset = self.find(x)
+		yset = self.find(y)
+
+		# If they are already in same set
+		if xset == yset:
+			return
+
+		# Put smaller ranked item under
+		# bigger ranked item if ranks are different
+		if self.rank[xset] < self.rank[yset]:
+			self.parent[xset] = yset
+
+		elif self.rank[xset] > self.rank[yset]:
+			self.parent[yset] = xset
+
+		# If ranks are same, then move y under x (doesn't matter
+    # which one goes where) and increment rank of x's tree
+		else:
+			self.parent[yset] = xset
+			self.rank[xset] = self.rank[xset] + 1
+
+# Driver code
+obj = DisjSet(5)
+obj.Union(0, 2)
+obj.Union(4, 2)
+obj.Union(3, 1)
+if obj.find(4) == obj.find(0):
+	print('Yes')
+else:
+	print('No')
+if obj.find(1) == obj.find(0):
+	print('Yes')
+else:
+	print('No')
+
+
+"""
+Yes
+No
+"""
+```
+
+
+
+**Time complexity**: O(n) for creating n single item sets . The two techniques -path compression with the union by rank/size, the time complexity will reach nearly constant time. It turns out, that the final[ amortized time complexity](https://www.geeksforgeeks.org/introduction-to-amortized-analysis/) is O(α(n)), where α(n) is the inverse Ackermann function, which grows very steadily (it does not even exceed for $n<10^{600}$  approximately).
+
+**Space complexity:** O(n) because we need to store n elements in the Disjoint Set Data Structure.
+
+
+
+#### 7.2.4 Union by Size
+
+Again, we need a new array of integers called **size[]**. The size of this array is the same as the parent array **Parent[]**. If i is a representative of a set, **size[i]** is the number of the elements in the tree representing the set. 
+Now we are uniting two trees (or sets), let’s call them left and right, then in this case it all depends on the **size of left** and the **size of right** tree (or set).
+
+- If the size of **left** is less than the size of **right**, then it’s best to move **left under right** and increase size of right by size of left. In the same way, if the size of right is less than the size of left, then we should move right under left. and increase size of left by size of right.
+- If the sizes are equal, it doesn’t matter which tree goes under the other.
+
+```python
+class UnionFind:
+	def __init__(self, n):
+		self.Parent = list(range(n))
+		self.Size = [1] * n
+
+	# Function to find the representative (or the root node) for the set that includes i
+	def find(self, i):
+		if self.Parent[i] != i:
+			# Path compression: Make the parent of i the root of the set
+			self.Parent[i] = self.find(self.Parent[i])
+		return self.Parent[i]
+
+	# Unites the set that includes i and the set that includes j by size
+	def unionBySize(self, i, j):
+		# Find the representatives (or the root nodes) for the set that includes i
+		irep = self.find(i)
+
+		# And do the same for the set that includes j
+		jrep = self.find(j)
+
+		# Elements are in the same set, no need to unite anything.
+		if irep == jrep:
+			return
+
+		# Get the size of i’s tree
+		isize = self.Size[irep]
+
+		# Get the size of j’s tree
+		jsize = self.Size[jrep]
+
+		# If i’s size is less than j’s size
+		if isize < jsize:
+			# Then move i under j
+			self.Parent[irep] = jrep
+
+			# Increment j's size by i's size
+			self.Size[jrep] += self.Size[irep]
+		# Else if j’s size is less than i’s size
+		else:
+			# Then move j under i
+			self.Parent[jrep] = irep
+
+			# Increment i's size by j's size
+			self.Size[irep] += self.Size[jrep]
+
+# Example usage
+n = 5
+unionFind = UnionFind(n)
+
+# Perform union operations
+unionFind.unionBySize(0, 1)
+unionFind.unionBySize(2, 3)
+unionFind.unionBySize(0, 4)
+
+# Print the representative of each element after unions
+for i in range(n):
+	print("Element {}: Representative = {}".format(i, unionFind.find(i)))
+
+# This code is contributed by Susobhan Akhuli
+
+"""
+Element 0: Representative = 0
+Element 1: Representative = 0
+Element 2: Representative = 2
+Element 3: Representative = 2
+Element 4: Representative = 0
+"""
+```
+
+
+
+**Time complexity**: O(log n) without Path Compression.
+
+
+
+
+
+### 7.3 编程题目
+
+#### 1 学校的班级个数（1）
+
+https://sunnywhy.com/sfbj/9/6/360
+
+现有一个学校，学校中有若干个班级，每个班级中有若干个学生，每个学生只会存在于一个班级中。如果学生`A`和学生`B`处于一个班级，学生`B`和学生`C`处于一个班级，那么我们称学生`A`和学生`C`也处于一个班级。
+
+现已知学校中共 n 个学生（编号为从`1`到`n`），并给出 m 组学生关系（指定两个学生处于一个班级），问总共有多少个班级。
+
+**输入**
+
+第一行两个整数 $m、n (1 \le n \le 100, 1 \le m \le 100)$，分别表示学生个数、学生关系个数；
+
+接下来 m 行，每行两个整数 a 和 b $ (1 \le a \le n, 1 \le b \le n, a \ne b)$，表示编号为`a`的学生和编号为`b`的学生处于一个班级。
+
+**输出**
+
+输出一个整数，表示班级个数。
+
+样例1
+
+输入
+
+```
+5 3
+4 2
+1 3
+2 5
+```
+
+输出
+
+```
+2
+```
+
+解释
+
+编号`2`、`4`、`5`的学生在同一个班级，编号`1`、`3`的学生在同一个班级，因此共有两个班级。
+
+
+
+To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each student is initially in their own set (or class). When a relationship between two students is given, you unite their sets. The number of disjoint sets at the end will be the number of classes.
+
+Here is a step-by-step plan:
+
+1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each student is in their own class.
+2. For each student relationship, unite their sets using the union operation.
+3. Count the number of unique parents. This will be the number of classes.
+
+Here is the Python code that implements this plan:
+
+```python
+def find(x):
+    if parent[x] != x: # 如果不是根结点，继续循环
+        parent[x] = find(parent[x])
+    return parent[x]
+
+def union(x, y):
+    parent[find(x)] = find(y)
+
+n, m = map(int, input().split())
+parent = list(range(n + 1))	# parent[i] == i，则说明元素i是该集合的根结点
+
+for _ in range(m):
+    a, b = map(int, input().split())
+    union(a, b)
+
+classes = set(find(x) for x in range(1, n + 1))
+print(len(classes))
+```
+
+This code reads the number of students and relationships from the input, initializes each student to be in their own class, unites the classes of each pair of students that have a relationship, and then counts and prints the number of unique classes.
+
+
+
+
+
+#### 2 学校的班级人数（2）
+
+https://sunnywhy.com/sfbj/9/6/361
+
+现有一个学校，学校中有若干个班级，每个班级中有若干个学生，每个学生只会存在于一个班级中。如果学生`A`和学生`B`处于一个班级，学生`B`和学生`C`处于一个班级，那么我们称学生`A`和学生`C`也处于一个班级。
+
+现已知学校中共 n 个学生（编号为从`1`到`n`），并给出 m 组学生关系（指定两个学生处于一个班级），问总共有多少个班级，并按降序给出每个班级的人数。
+
+输入
+
+第一行两个整数 $m、n (1 \le n \le 100, 1 \le m \le 100)$，分别表示学生个数、学生关系个数；
+
+接下来 m 行，每行两个整数 a 和 b $ (1 \le a \le n, 1 \le b \le n, a \ne b)$，表示编号为`a`的学生和编号为`b`的学生处于一个班级。
+
+输出
+
+第一行输出一个整数，表示班级个数；
+
+第二行若干个整数，按降序给出每个班级的人数。整数之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+5 3
+4 2
+1 3
+2 5
+```
+
+输出
+
+```
+2
+3 2
+```
+
+解释
+
+编号`2`、`4`、`5`的学生在同一个班级，编号`1`、`3`的学生在同一个班级，因此共有两个班级，人数分别是`3`和`2`。
+
+
+
+
+
+To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each student is initially in their own set (or class). When a relationship between two students is given, you unite their sets. The number of disjoint sets at the end will be the number of classes. You can also maintain a count of the number of students in each class.
+
+Here is a step-by-step plan:
+
+1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each student is in their own class.
+2. Initialize an array `size` of size `n+1` where `size[i]` is initially `1`. This means each class initially has one student.
+3. For each student relationship, unite their sets using the union operation and update the size of the new set.
+4. Count the number of unique parents. This will be the number of classes.
+5. Print the sizes of the classes in descending order.
+
+Here is the Python code that implements this plan:
+
+```python
+def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])
+    return parent[x]
+
+def union(x, y):
+    root_x = find(x)
+    root_y = find(y)
+    if root_x != root_y:
+        parent[root_x] = root_y
+        size[root_y] += size[root_x]
+
+n, m = map(int, input().split())
+parent = list(range(n + 1))
+size = [1] * (n + 1)
+
+for _ in range(m):
+    a, b = map(int, input().split())
+    union(a, b)
+
+#classes = [size[find(x)] for x in range(1, n + 1) if x == parent[x]]
+classes = [size[x] for x in range(1, n + 1) if x == parent[x]]
+print(len(classes))
+print(' '.join(map(str, sorted(classes, reverse=True))))
+```
+
+This code reads the number of students and relationships from the input, initializes each student to be in their own class, unites the classes of each pair of students that have a relationship, counts and prints the number of unique classes, and prints the sizes of the classes in descending order.
+
+
+
+
+
+#### 3 是否相同班级
+
+https://sunnywhy.com/sfbj/9/6/362
+
+现有一个学校，学校中有若干个班级，每个班级中有若干个学生，每个学生只会存在于一个班级中。如果学生`A`和学生`B`处于一个班级，学生`B`和学生`C`处于一个班级，那么我们称学生`A`和学生`C`也处于一个班级。
+
+现已知学校中共 n 个学生（编号为从`1`到`n`），并给出 m 组学生关系（指定两个学生处于一个班级）。然后给出 k 个查询，每个查询询问两个学生是否在同一个班级。
+
+**输入**
+
+第一行两个整数 $n、m (1 \le n \le 10^5, 1 \le m \le 10^5)$，分别表示学生个数、学生关系个数；
+
+接下来 m 行，每行两个整数 a 和 b $ (1 \le a \le n, 1 \le b \le n, a \ne b)$，表示编号为`a`的学生和编号为`b`的学生处于一个班级。
+
+然后一个整数 $k (1 \le k \le 10^3)$，表示查询个数；
+
+接下来 k 行，每行两个整数 a 和 b $ (1 \le a \le n, 1 \le b \le n)$，表示询问编号为`a`的学生和编号为`b`的学生是否在同一个班级。
+
+**输出**
+
+每个查询输出一行，如果在同一个班级，那么输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+5 3
+4 2
+1 3
+2 5
+2
+4 5
+1 2
+```
+
+输出
+
+```
+Yes
+No
+```
+
+解释
+
+编号`2`、`4`、`5`的学生在同一个班级，编号`1`、`3`的学生在同一个班级，因此编号`4`和`5`的学生在同一个班级，编号`1`和`2`的学生不在同一个班级。
+
+
+
+
+
+To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each student is initially in their own set (or class). When a relationship between two students is given, you unite their sets. For each query, you check if the two students are in the same set.
+
+Here is a step-by-step plan:
+
+1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each student is in their own class.
+2. For each student relationship, unite their sets using the union operation.
+3. For each query, check if the two students are in the same set using the find operation.
+
+Here is the Python code that implements this plan:
+
+```python
+def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])
+    return parent[x]
+
+def union(x, y):
+    parent[find(x)] = find(y)
+
+n, m = map(int, input().split())
+parent = list(range(n + 1))
+
+for _ in range(m):
+    a, b = map(int, input().split())
+    union(a, b)
+
+k = int(input())
+for _ in range(k):
+    a, b = map(int, input().split())
+    if find(a) == find(b):
+        print('Yes')
+    else:
+        print('No')
+```
+
+This code reads the number of students and relationships from the input, initializes each student to be in their own class, unites the classes of each pair of students that have a relationship, and then for each query, checks and prints whether the two students are in the same class.
+
+
+
+#### 4 迷宫连通性
+
+https://sunnywhy.com/sfbj/9/6/363
+
+现有一个迷宫，迷宫中有 n 个房间（编号为从`1`到`n`），房间与房间之间可能连通。如果房间`A`和房间`B`连通，房间`B`和房间`C`连通，那么我们称房间`A`和房间`C`也连通。给定 m 组连通关系（指定两个房间连通），问迷宫中的所有房间是否连通。
+
+**输入**
+
+第一行两个整数$n、m (1 \le n \le 100, 1 \le m \le 100)$，分别表示房间个数、连通关系个数；
+
+接下来行，每行两个整数 a 和 b $ (1 \le a \le n, 1 \le b \le n)$，表示编号为`a`的房间和编号为`b`的房间是连通的。
+
+**输出**
+
+如果所有房间连通，那么输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+5 4
+4 2
+1 3
+2 5
+1 5
+```
+
+输出
+
+```
+Yes
+```
+
+解释
+
+所有房间都连通，因此输出`Yes`。
+
+样例2
+
+输入
+
+```
+5 3
+4 2
+1 3
+2 5
+```
+
+输出
+
+```
+No
+```
+
+解释
+
+编号`2`、`4`、`5`的房间互相连通，编号`1`、`3`的房间互相连通，因此没有全部互相连通，输出`No`。
+
+
+
+To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each room is initially in its own set. When a connection between two rooms is given, you unite their sets. If at the end there is only one set, then all rooms are connected.
+
+Here is a step-by-step plan:
+
+1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each room is in its own set.
+2. For each connection, unite their sets using the union operation.
+3. Check if all rooms are in the same set.
+
+Here is the Python code that implements this plan:
+
+```python
+def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])
+    return parent[x]
+
+def union(x, y):
+    parent[find(x)] = find(y)
+
+n, m = map(int, input().split())
+parent = list(range(n + 1))
+
+for _ in range(m):
+    a, b = map(int, input().split())
+    union(a, b)
+
+sets = set(find(x) for x in range(1, n + 1))
+if len(sets) == 1:
+    print('Yes')
+else:
+    print('No')
+```
+
+This code reads the number of rooms and connections from the input, initializes each room to be in its own set, unites the sets of each pair of rooms that have a connection, and then checks and prints whether all rooms are in the same set.
+
+
+
+
+
+#### 5 班级最高分
+
+https://sunnywhy.com/sfbj/9/6/364
+
+现有一个学校，学校中有若干个班级，每个班级中有若干个学生，每个学生只会存在于一个班级中。如果学生`A`和学生`B`处于一个班级，学生`B`和学生`C`处于一个班级，那么我们称学生`A`和学生`C`也处于一个班级。
+
+现已知学校中共 n 个学生（编号为从`1`到`n`），每个学生有一个考试分数，再给出 m 组学生关系（指定两个学生处于一个班级），问总共有多少个班级，并按降序给出每个班级的最高考试分数。
+
+**输入**
+
+第一行两个整数 $n、m (1 \le n \le 100, 1 \le m \le 100)$，分别表示学生个数、学生关系个数；
+
+第二行为用空格隔开的 n 个整数（$0 \le 每个整数 \le 100$），表示个学生的考试分数；
+
+接下来 m 行，每行两个整数 a 和 b $ (1 \le a \le n, 1 \le b \le n)$，表示编号为`a`的学生和编号为`b`的学生处于一个班级。
+
+**输出**
+
+第一行输出一个整数，表示班级个数；
+
+第二行若干个整数，按降序给出每个班级的最高考试分数。整数之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+
+
+```
+5 3
+88 90 86 92 95
+4 2
+1 3
+2 5
+```
+
+输出
+
+```
+2
+95 88
+```
+
+解释
+
+编号`2`、`4`、`5`的学生在同一个班级，编号`1`、`3`的学生在同一个班级，因此共有两个班级，最高分数分别是编号`1`的学生的`88`分、编号`5`的学生的`95`分。
+
+
+
+To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each student is initially in their own set (or class). When a relationship between two students is given, you unite their sets. The number of disjoint sets at the end will be the number of classes. You can also maintain a list of scores for each class and find the maximum score for each class.
+
+Here is a step-by-step plan:
+
+1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each student is in their own class.
+2. Initialize an array `scores` of size `n+1` to store the scores of each student.
+3. For each student relationship, unite their sets using the union operation.
+4. For each class, find the maximum score.
+5. Count the number of unique parents. This will be the number of classes.
+6. Print the maximum scores of the classes in descending order.
+
+Here is the Python code that implements this plan:
+
+```python
+def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])
+    return parent[x]
+
+def union(x, y):
+    root_x = find(x)
+    root_y = find(y)
+    if root_x != root_y:
+        parent[root_x] = root_y
+        scores[root_y] = max(scores[root_y], scores[root_x])
+
+n, m = map(int, input().split())
+parent = list(range(n + 1))
+scores = list(map(int, input().split()))
+scores.insert(0, 0)  # to make the scores 1-indexed
+
+for _ in range(m):
+    a, b = map(int, input().split())
+    union(a, b)
+
+classes_scores = [scores[find(x)] for x in range(1, n + 1) if x == parent[x]]
+print(len(classes_scores))
+print(' '.join(map(str, sorted(classes_scores, reverse=True))))
+```
+
+This code reads the number of students and relationships from the input, initializes each student to be in their own class, unites the classes of each pair of students that have a relationship, finds the maximum score for each class, counts and prints the number of unique classes, and prints the maximum scores of the classes in descending order.
+
+
+
+
+
+#### 01182: 食物链
+
+并查集, http://cs101.openjudge.cn/practice/01182
+
+动物王国中有三类动物A,B,C，这三类动物的食物链构成了有趣的环形。A吃B， B吃C，C吃A。
+现有N个动物，以1－N编号。每个动物都是A,B,C中的一种，但是我们并不知道它到底是哪一种。
+有人用两种说法对这N个动物所构成的食物链关系进行描述：
+第一种说法是"1 X Y"，表示X和Y是同类。
+第二种说法是"2 X Y"，表示X吃Y。
+此人对N个动物，用上述两种说法，一句接一句地说出K句话，这K句话有的是真的，有的是假的。当一句话满足下列三条之一时，这句话就是假话，否则就是真话。
+1） 当前的话与前面的某些真的话冲突，就是假话；
+2） 当前的话中X或Y比N大，就是假话；
+3） 当前的话表示X吃X，就是假话。
+你的任务是根据给定的N（1 <= N <= 50,000）和K句话（0 <= K <= 100,000），输出假话的总数。
+
+**输入**
+
+第一行是两个整数N和K，以一个空格分隔。
+以下K行每行是三个正整数 D，X，Y，两数之间用一个空格隔开，其中D表示说法的种类。
+若D=1，则表示X和Y是同类。
+若D=2，则表示X吃Y。
+
+**输出**
+
+只有一个整数，表示假话的数目。
+
+样例输入
+
+```
+100 7
+1 101 1 
+2 1 2
+2 2 3 
+2 3 3 
+1 1 3 
+2 3 1 
+1 5 5
+```
+
+样例输出
+
+```
+3
+```
+
+来源: Noi 01
+
+
+
+```python
+class DisjointSet:
+    def __init__(self, n):
+        #设[1,n] 区间表示同类，[n+1,2*n]表示x吃的动物，[2*n+1,3*n]表示吃x的动物。
+        self.parent = [i for i in range(3 * n + 1)] # 每个动物有三种可能的类型，用 3 * n 来表示每种类型的并查集
+        self.rank = [0] * (3 * n + 1)
+
+    def find(self, u):
+        if self.parent[u] != u:
+            self.parent[u] = self.find(self.parent[u])
+        return self.parent[u]
+
+    def union(self, u, v):
+        pu, pv = self.find(u), self.find(v)
+        if pu == pv:
+            return False
+        if self.rank[pu] > self.rank[pv]:
+            self.parent[pv] = pu
+        elif self.rank[pu] < self.rank[pv]:
+            self.parent[pu] = pv
+        else:
+            self.parent[pv] = pu
+            self.rank[pu] += 1
+        return True
+
+
+def is_valid(n, k, statements):
+    dsu = DisjointSet(n)
+
+    def find_disjoint_set(x):
+        if x > n:
+            return False
+        return True
+
+    false_count = 0
+    for d, x, y in statements:
+        if not find_disjoint_set(x) or not find_disjoint_set(y):
+            false_count += 1
+            continue
+        if d == 1:  # X and Y are of the same type
+            if dsu.find(x) == dsu.find(y + n) or dsu.find(x) == dsu.find(y + 2 * n):
+                false_count += 1
+            else:
+                dsu.union(x, y)
+                dsu.union(x + n, y + n)
+                dsu.union(x + 2 * n, y + 2 * n)
+        else:  # X eats Y
+            if dsu.find(x) == dsu.find(y) or dsu.find(x + 2*n) == dsu.find(y):
+                false_count += 1
+            else: #[1,n] 区间表示同类，[n+1,2*n]表示x吃的动物，[2*n+1,3*n]表示吃x的动物
+                dsu.union(x + n, y)
+                dsu.union(x, y + 2 * n)
+                dsu.union(x + 2 * n, y + n)
+
+    return false_count
+
+
+if __name__ == "__main__":
+    N, K = map(int, input().split())
+    statements = []
+    for _ in range(K):
+        D, X, Y = map(int, input().split())
+        statements.append((D, X, Y))
+    result = is_valid(N, K, statements)
+    print(result)
+
+```
+
+
+
+《挑战程序设计竞赛（第2版）》的2.4.4并查集，也有讲到。
+
+```python
+# 并查集，https://zhuanlan.zhihu.com/p/93647900/
+'''
+我们设[0,n)区间表示同类，[n,2*n)区间表示x吃的动物，[2*n,3*n)表示吃x的动物。
+
+如果是关系1：
+　　将y和x合并。将y吃的与x吃的合并。将吃y的和吃x的合并。
+如果是关系2：
+　　将y和x吃的合并。将吃y的与x合并。将y吃的与吃x的合并。
+原文链接：https://blog.csdn.net/qq_34594236/article/details/72587829
+'''
+# p = [0]*150001
+
+def find(x):	# 并查集查询
+    if p[x] == x:
+        return x
+    else:
+        p[x] = find(p[x])	# 父节点设为根节点。目的是路径压缩。
+        return p[x]
+
+n,k = map(int, input().split())
+
+p = [0]*(3*n + 1)
+for i in range(3*n+1):	#并查集初始化
+    p[i] = i
+
+ans = 0
+for _ in range(k):
+    a,x,y = map(int, input().split())
+    if x>n or y>n:
+        ans += 1; continue
+    
+    if a==1:
+        if find(x+n)==find(y) or find(y+n)==find(x):
+            ans += 1; continue
+        
+        # 合并
+        p[find(x)] = find(y)				
+        p[find(x+n)] = find(y+n)
+        p[find(x+2*n)] = find(y+2*n)
+    else:
+        if find(x)==find(y) or find(y+n)==find(x):
+            ans += 1; continue
+        p[find(x+n)] = find(y)
+        p[find(y+2*n)] = find(x)
+        p[find(x+2*n)] = find(y+n)
+
+print(ans)
+```
+
+
+
+
+
 
 
 # 二、笔试题目
@@ -4259,564 +5292,11 @@ brew install Graphviz
 
 
 
-## B 并查集（Disjoint Set）
 
-是的，通常情况下，使用邻接表来表示并查集（Disjoint Set）和前缀树（Trie Tree）是比较常见的做法。
 
-1. **并查集（Disjoint Set）**：在并查集中，每个元素都属于一个集合，并且这些集合之间是不相交的。为了高效地实现并查集操作，通常会使用树形结构来表示集合之间的关系。每个集合可以用一个树表示，其中树的根节点是集合的代表元素。使用邻接表来表示这种树形结构是一种常见的做法，其中每个节点存储其父节点的指针。
 
-2. **前缀树（Trie Tree）**：前缀树是一种用于存储字符串集合的数据结构，通常用于快速地进行字符串匹配和搜索。在前缀树中，每个节点代表一个字符，从根节点到叶子节点的路径表示一个字符串。为了表示字符串的结构，通常会使用邻接表来表示前缀树，其中每个节点存储一个字符以及指向子节点的指针列表。
 
-使用邻接表表示并查集和前缀树可以高效地支持各种操作，如并查集的合并和查找操作，以及前缀树的插入、搜索和删除操作。同时，邻接表也能够比较直观地表示数据结构之间的关系，便于理解和实现。
-
-
-
-Disjoint Set (Union-Find Algorithm)
-
-https://www.geeksforgeeks.org/introduction-to-disjoint-set-data-structure-or-union-find-algorithm/
-
-**What is a Disjoint set data structure?**
-
-> Two sets are called **disjoint sets** if they don’t have any element in common, the intersection of sets is a null set.
-
-A data structure that stores non overlapping or disjoint subset of elements is called disjoint set data structure. The disjoint set data structure supports following operations:
-
-- Adding new sets to the disjoint set.
-- Merging disjoint sets to a single disjoint set using **Union** operation.
-- Finding representative of a disjoint set using **Find** operation.
-- Check if two sets are disjoint or not. 
-
-Consider a situation with a number of persons and the following tasks to be performed on them:
-
-- Add a **new friendship relation**, i.e. a person x becomes the friend of another person y i.e adding new element to a set.
-- Find whether individual **x is a friend of individual y** (direct or indirect friend)
-
-**Examples:** 
-
-> We are given 10 individuals say, a, b, c, d, e, f, g, h, i, j
->
-> Following are relationships to be added:
-> a <-> b  
-> b <-> d
-> c <-> f
-> c <-> i
-> j <-> e
-> g <-> j
->
-> Given queries like whether a is a friend of d or not. We basically need to create following 4 groups and maintain a quickly accessible connection among group items:
-> G1 = {a, b, d}
-> G2 = {c, f, i}
-> G3 = {e, g, j}
-> G4 = {h}
-
-
-
-**Find whether x and y belong to the same group or not, i.e. to find if x and y are direct/indirect friends.**
-
-Partitioning the individuals into different sets according to the groups in which they fall. This method is known as a **Disjoint set Union** which maintains a collection of **Disjoint sets** and each set is represented by one of its members.
-
-**To answer the above question two key points to be considered are:**
-
-- **How to Resolve sets?** Initially, all elements belong to different sets. After working on the given relations, we select a member as a **representative**. There can be many ways to select a representative, a simple one is to select with the biggest index.
-- **Check if 2 persons are in the same group?** If representatives of two individuals are the same, then they’ll become friends.
-
-
-
-**Data Structures used are:** 
-
-**Array:** An array of integers is called **Parent[]**. If we are dealing with **N** items, i’th element of the array represents the i’th item. More precisely, the i’th element of the Parent[] array is the parent of the i’th item. These relationships create one or more virtual trees.
-
-**Tree:** It is a **Disjoint set**. If two elements are in the same tree, then they are in the same **Disjoint set**. The root node (or the topmost node) of each tree is called the **representative** of the set. There is always a single **unique representative** of each set. A simple rule to identify a representative is if ‘i’ is the representative of a set, then **Parent[i] = i**. If i is not the representative of his set, then it can be found by traveling up the tree until we find the representative.
-
-
-
-### B.1 Operations on Disjoint Set
-
-操作包括 Find 和 Union。
-
-#### B.1.1 Find
-
-Can be implemented by recursively traversing the parent array until we hit a node that is the parent of itself.
-
-
-
-```python
-# Finds the representative of the set
-# that i is an element of
-
-def find(i):
-
-	# If i is the parent of itself
-	if (parent[i] == i):
-
-		# Then i is the representative of
-		# this set
-		return i
-	else:
-
-		# Else if i is not the parent of
-		# itself, then i is not the
-		# representative of his set. So we
-		# recursively call Find on its parent
-		return find(parent[i])
-
-# The code is contributed by Nidhi goel
-
-```
-
-
-
-**Time complexity**: This approach is inefficient and can take O(n) time in worst case.
-
-
-
-#### B.1.2 Union 
-
-It takes **two elements** as input and finds the representatives of their sets using the **Find** operation, and finally puts either one of the trees (representing the set) under the root node of the other tree.
-
-```python
-# Unites the set that includes i
-# and the set that includes j
-
-def union(parent, rank, i, j):
-	# Find the representatives
-	# (or the root nodes) for the set
-	# that includes i
-	irep = find(parent, i)
-	
-	# And do the same for the set
-	# that includes j
-	jrep = find(parent, j)
-	
-	# Make the parent of i’s representative
-	# be j’s representative effectively
-	# moving all of i’s set into j’s set)
-	
-	parent[irep] = jrep
-
-```
-
-**Time complexity**: This approach is inefficient and could lead to tree of length O(n) in worst case.
-
-
-
-### B.2 Optimizations (Union by Rank/Size and Path Compression)
-
-The efficiency depends heavily on which tree get attached to the other. There are 2 ways in which it can be done. First is Union by Rank, which considers height of the tree as the factor and Second is Union by Size, which considers size of the tree as the factor while attaching one tree to the other . This method along with Path Compression gives complexity of nearly constant time.
-
-
-
-#### B.2.1 Path Compression
-
-Modifications to Find()):
-
-It speeds up the data structure by **compressing the height** of the trees. It can be achieved by inserting a small caching mechanism into the **Find** operation. Take a look at the code for more details:
-
-```python
-# Finds the representative of the set that i
-# is an element of.
-
-
-def find(i):
-
-	# If i is the parent of itself
-	if Parent[i] == i:
-
-		# Then i is the representative 
-		return i
-	else:
-
-		# Recursively find the representative.
-		result = find(Parent[i])
-
-		# We cache the result by moving i’s node 
-		# directly under the representative of this
-		# set
-		Parent[i] = result
-	
-		# And then we return the result
-		return result
-
-# The code is contributed by Arushi Jindal. 
-
-```
-
-
-
-**Time Complexity**: O(log n) on average per call.
-
-
-
-#### B.2.2 Union by Rank
-
-First of all, we need a new array of integers called **rank[]**. The size of this array is the same as the parent array **Parent[]**. If i is a representative of a set, **rank[i]** is the height of the tree representing the set. 
-Now recall that in the Union operation, it doesn’t matter which of the two trees is moved under the other. Now what we want to do is minimize the height of the resulting tree. If we are uniting two trees (or sets), let’s call them left and right, then it all depends on the **rank of left** and the **rank of right**. 
-
-- If the rank of **left** is less than the rank of **right**, then it’s best to move **left under right**, because that won’t change the rank of right (while moving right under left would increase the height). In the same way, if the rank of right is less than the rank of left, then we should move right under left.
-- If the ranks are equal, it doesn’t matter which tree goes under the other, but the rank of the result will always be one greater than the rank of the trees.
-
-
-
-#### B.2.3 Path compression and union by rank
-
-Below is the complete implementation of disjoint set with path compression and union by rank.
-
-```python
-# Python3 program to implement Disjoint Set Data Structure.
-
-class DisjSet:
-	def __init__(self, n):
-		# Constructor to create and
-		# initialize sets of n items
-		self.rank = [1] * n
-		self.parent = [i for i in range(n)]
-
-
-	# Finds set of given item x
-	def find(self, x):
-		
-		# Finds the representative of the set
-		# that x is an element of
-		if (self.parent[x] != x):
-			
-			# if x is not the parent of itself
-			# Then x is not the representative of
-			# its set,
-			self.parent[x] = self.find(self.parent[x])
-			
-			# so we recursively call Find on its parent
-			# and move i's node directly under the
-			# representative of this set
-
-		return self.parent[x]
-
-
-	# Do union of two sets represented
-	# by x and y.
-	def Union(self, x, y):
-		
-		# Find current sets of x and y
-		xset = self.find(x)
-		yset = self.find(y)
-
-		# If they are already in same set
-		if xset == yset:
-			return
-
-		# Put smaller ranked item under
-		# bigger ranked item if ranks are
-		# different
-		if self.rank[xset] < self.rank[yset]:
-			self.parent[xset] = yset
-
-		elif self.rank[xset] > self.rank[yset]:
-			self.parent[yset] = xset
-
-		# If ranks are same, then move y under
-		# x (doesn't matter which one goes where)
-		# and increment rank of x's tree
-		else:
-			self.parent[yset] = xset
-			self.rank[xset] = self.rank[xset] + 1
-
-# Driver code
-obj = DisjSet(5)
-obj.Union(0, 2)
-obj.Union(4, 2)
-obj.Union(3, 1)
-if obj.find(4) == obj.find(0):
-	print('Yes')
-else:
-	print('No')
-if obj.find(1) == obj.find(0):
-	print('Yes')
-else:
-	print('No')
-
-# This code is contributed by ng24_7.
-
-"""
-Yes
-No
-"""
-```
-
-
-
-**Time complexity**: O(n) for creating n single item sets . The two techniques -path compression with the union by rank/size, the time complexity will reach nearly constant time. It turns out, that the final[ amortized time complexity](https://www.geeksforgeeks.org/introduction-to-amortized-analysis/) is O(α(n)), where α(n) is the inverse Ackermann function, which grows very steadily (it does not even exceed for $n<10^{600}$  approximately).
-
-**Space complexity:** O(n) because we need to store n elements in the Disjoint Set Data Structure.
-
-
-
-#### B.2.4 Union by Size
-
-Again, we need a new array of integers called **size[]**. The size of this array is the same as the parent array **Parent[]**. If i is a representative of a set, **size[i]** is the number of the elements in the tree representing the set. 
-Now we are uniting two trees (or sets), let’s call them left and right, then in this case it all depends on the **size of left** and the **size of right** tree (or set).
-
-- If the size of **left** is less than the size of **right**, then it’s best to move **left under right** and increase size of right by size of left. In the same way, if the size of right is less than the size of left, then we should move right under left. and increase size of left by size of right.
-- If the sizes are equal, it doesn’t matter which tree goes under the other.
-
-```python
-# Python program for the above approach
-class UnionFind:
-	def __init__(self, n):
-		# Initialize Parent array
-		self.Parent = list(range(n))
-
-		# Initialize Size array with 1s
-		self.Size = [1] * n
-
-	# Function to find the representative (or the root node) for the set that includes i
-	def find(self, i):
-		if self.Parent[i] != i:
-			# Path compression: Make the parent of i the root of the set
-			self.Parent[i] = self.find(self.Parent[i])
-		return self.Parent[i]
-
-	# Unites the set that includes i and the set that includes j by size
-	def unionBySize(self, i, j):
-		# Find the representatives (or the root nodes) for the set that includes i
-		irep = self.find(i)
-
-		# And do the same for the set that includes j
-		jrep = self.find(j)
-
-		# Elements are in the same set, no need to unite anything.
-		if irep == jrep:
-			return
-
-		# Get the size of i’s tree
-		isize = self.Size[irep]
-
-		# Get the size of j’s tree
-		jsize = self.Size[jrep]
-
-		# If i’s size is less than j’s size
-		if isize < jsize:
-			# Then move i under j
-			self.Parent[irep] = jrep
-
-			# Increment j's size by i's size
-			self.Size[jrep] += self.Size[irep]
-		# Else if j’s size is less than i’s size
-		else:
-			# Then move j under i
-			self.Parent[jrep] = irep
-
-			# Increment i's size by j's size
-			self.Size[irep] += self.Size[jrep]
-
-# Example usage
-n = 5
-unionFind = UnionFind(n)
-
-# Perform union operations
-unionFind.unionBySize(0, 1)
-unionFind.unionBySize(2, 3)
-unionFind.unionBySize(0, 4)
-
-# Print the representative of each element after unions
-for i in range(n):
-	print("Element {}: Representative = {}".format(i, unionFind.find(i)))
-
-# This code is contributed by Susobhan Akhuli
-
-"""
-Element 0: Representative = 0
-Element 1: Representative = 0
-Element 2: Representative = 2
-Element 3: Representative = 2
-Element 4: Representative = 0
-"""
-```
-
-
-
-**Time complexity**: O(log n) without Path Compression.
-
-
-
-
-
-### B.3 01182: 食物链
-
-并查集, http://cs101.openjudge.cn/practice/01182
-
-动物王国中有三类动物A,B,C，这三类动物的食物链构成了有趣的环形。A吃B， B吃C，C吃A。
-现有N个动物，以1－N编号。每个动物都是A,B,C中的一种，但是我们并不知道它到底是哪一种。
-有人用两种说法对这N个动物所构成的食物链关系进行描述：
-第一种说法是"1 X Y"，表示X和Y是同类。
-第二种说法是"2 X Y"，表示X吃Y。
-此人对N个动物，用上述两种说法，一句接一句地说出K句话，这K句话有的是真的，有的是假的。当一句话满足下列三条之一时，这句话就是假话，否则就是真话。
-1） 当前的话与前面的某些真的话冲突，就是假话；
-2） 当前的话中X或Y比N大，就是假话；
-3） 当前的话表示X吃X，就是假话。
-你的任务是根据给定的N（1 <= N <= 50,000）和K句话（0 <= K <= 100,000），输出假话的总数。
-
-**输入**
-
-第一行是两个整数N和K，以一个空格分隔。
-以下K行每行是三个正整数 D，X，Y，两数之间用一个空格隔开，其中D表示说法的种类。
-若D=1，则表示X和Y是同类。
-若D=2，则表示X吃Y。
-
-**输出**
-
-只有一个整数，表示假话的数目。
-
-样例输入
-
-```
-100 7
-1 101 1 
-2 1 2
-2 2 3 
-2 3 3 
-1 1 3 
-2 3 1 
-1 5 5
-```
-
-样例输出
-
-```
-3
-```
-
-来源: Noi 01
-
-
-
-```python
-class DisjointSet:
-    def __init__(self, n):
-        #设[1,n] 区间表示同类，[n+1,2*n]表示x吃的动物，[2*n+1,3*n]表示吃x的动物。
-        self.parent = [i for i in range(3 * n + 1)] # 每个动物有三种可能的类型，用 3 * n 来表示每种类型的并查集
-        self.rank = [0] * (3 * n + 1)
-
-    def find(self, u):
-        if self.parent[u] != u:
-            self.parent[u] = self.find(self.parent[u])
-        return self.parent[u]
-
-    def union(self, u, v):
-        pu, pv = self.find(u), self.find(v)
-        if pu == pv:
-            return False
-        if self.rank[pu] > self.rank[pv]:
-            self.parent[pv] = pu
-        elif self.rank[pu] < self.rank[pv]:
-            self.parent[pu] = pv
-        else:
-            self.parent[pv] = pu
-            self.rank[pu] += 1
-        return True
-
-
-def is_valid(n, k, statements):
-    dsu = DisjointSet(n)
-
-    def find_disjoint_set(x):
-        if x > n:
-            return False
-        return True
-
-    false_count = 0
-    for d, x, y in statements:
-        if not find_disjoint_set(x) or not find_disjoint_set(y):
-            false_count += 1
-            continue
-        if d == 1:  # X and Y are of the same type
-            if dsu.find(x) == dsu.find(y + n) or dsu.find(x) == dsu.find(y + 2 * n):
-                false_count += 1
-            else:
-                dsu.union(x, y)
-                dsu.union(x + n, y + n)
-                dsu.union(x + 2 * n, y + 2 * n)
-        else:  # X eats Y
-            if dsu.find(x) == dsu.find(y) or dsu.find(x + 2*n) == dsu.find(y):
-                false_count += 1
-            else: #[1,n] 区间表示同类，[n+1,2*n]表示x吃的动物，[2*n+1,3*n]表示吃x的动物
-                dsu.union(x + n, y)
-                dsu.union(x, y + 2 * n)
-                dsu.union(x + 2 * n, y + n)
-
-    return false_count
-
-
-if __name__ == "__main__":
-    N, K = map(int, input().split())
-    statements = []
-    for _ in range(K):
-        D, X, Y = map(int, input().split())
-        statements.append((D, X, Y))
-    result = is_valid(N, K, statements)
-    print(result)
-
-```
-
-
-
-《挑战程序设计竞赛（第2版）》的2.4.4并查集，也有讲到。
-
-```python
-# 并查集，https://zhuanlan.zhihu.com/p/93647900/
-'''
-我们设[0,n)区间表示同类，[n,2*n)区间表示x吃的动物，[2*n,3*n)表示吃x的动物。
-
-如果是关系1：
-　　将y和x合并。将y吃的与x吃的合并。将吃y的和吃x的合并。
-如果是关系2：
-　　将y和x吃的合并。将吃y的与x合并。将y吃的与吃x的合并。
-原文链接：https://blog.csdn.net/qq_34594236/article/details/72587829
-'''
-# p = [0]*150001
-
-def find(x):	# 并查集查询
-    if p[x] == x:
-        return x
-    else:
-        p[x] = find(p[x])	# 父节点设为根节点。目的是路径压缩。
-        return p[x]
-
-n,k = map(int, input().split())
-
-p = [0]*(3*n + 1)
-for i in range(3*n+1):	#并查集初始化
-    p[i] = i
-
-ans = 0
-for _ in range(k):
-    a,x,y = map(int, input().split())
-    if x>n or y>n:
-        ans += 1; continue
-    
-    if a==1:
-        if find(x+n)==find(y) or find(y+n)==find(x):
-            ans += 1; continue
-        
-        # 合并
-        p[find(x)] = find(y)				
-        p[find(x+n)] = find(y+n)
-        p[find(x+2*n)] = find(y+2*n)
-    else:
-        if find(x)==find(y) or find(y+n)==find(x):
-            ans += 1; continue
-        p[find(x+n)] = find(y)
-        p[find(y+2*n)] = find(x)
-        p[find(x+2*n)] = find(y+n)
-
-print(ans)
-```
-
-
-
-
-
-
-
-## C 前缀树（Trie Tree）
+## B 前缀树（Trie Tree）
 
 Trie – Data Structure and Algorithm Tutorials
 
@@ -5401,7 +5881,7 @@ Our discussion so far has led us to the conclusion that the Trie data structure 
 
 
 
-## D 线段树（Segment Tree）
+## C 线段树（Segment Tree）
 
 请参照 https://github.com/GMyhf/2023fall-cs101
 
@@ -5409,7 +5889,7 @@ Our discussion so far has led us to the conclusion that the Trie data structure 
 
 
 
-## E 树形结构学习方法
+## D 树形结构学习方法
 
 2024年3月16日，说明：在计算机科学领域内，树形结构是最为关键同时也是掌握难度较高的概念之一。不同于计算机概论，数据结构与算法的学习不仅需要借助面向对象编程的抽象和复用理念，还要通过使用链表来表达树结构，并采用递归的方法进行树的遍历。在这一过程中，经典算法和编程技巧的应用至关重要，而对于时间复杂度的优化技巧也是必不可少的。
 即便是参加过计算机概论提高班的学生，也可能会发现树结构的学习颇具挑战。一些学生可能会通过类比和综合的方式来促进理解，比如通过深度优先搜索（DFS）来深入理解树的前序遍历和后序遍历；有的学生可能会通过吟诵诗歌来激励自己；还有的学生则投入大量时间复现经典算法，或在集成开发环境（IDE）中探索如何调试递归程序。
