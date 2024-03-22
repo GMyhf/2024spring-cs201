@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 1609 GMT+8 March 21, 2024
+Updated 1722 GMT+8 March 21, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4025,7 +4025,7 @@ def rebalance(self, node):
 
 
 
-## 7 并查集（Disjoint Set）
+# 7 并查集（Disjoint Set）
 
 > 通常情况下，使用邻接表来表示并查集（Disjoint Set）和前缀树（Trie Tree）是比较常见的做法。
 >
@@ -4096,11 +4096,11 @@ Partitioning the individuals into different sets according to the groups in whic
 
 
 
-### 7.1 Operations on Disjoint Set
+## 7.1 Operations on Disjoint Set
 
 操作包括 Find 和 Union。
 
-#### 7.1.1 Find
+### 7.1.1 Find
 
 Can be implemented by recursively traversing the parent array until we hit a node that is the parent of itself.
 
@@ -4136,7 +4136,7 @@ def find(i):
 
 
 
-#### 7.1.2 Union 
+### 7.1.2 Union 
 
 It takes **two elements** as input and finds the representatives of their sets using the **Find** operation, and finally puts either one of the trees (representing the set) under the root node of the other tree.
 
@@ -4166,13 +4166,13 @@ def union(parent, rank, i, j):
 
 
 
-### 7.2 Optimizations (Union by Rank/Size and Path Compression)
+## 7.2 Optimizations (Union by Rank/Size and Path Compression)
 
 The efficiency depends heavily on which tree get attached to the other. There are 2 ways in which it can be done. First is Union by Rank, which considers height of the tree as the factor and Second is Union by Size, which considers size of the tree as the factor while attaching one tree to the other . This method along with Path Compression gives complexity of nearly constant time.
 
 
 
-#### 7.2.1 Path Compression
+### 7.2.1 Path Compression
 
 Modifications to Find()):
 
@@ -4213,7 +4213,7 @@ def find(i):
 
 
 
-#### 7.2.2 Union by Rank
+### 7.2.2 Union by Rank
 
 First of all, we need a new array of integers called **rank[]**. The size of this array is the same as the parent array **Parent[]**. If i is a representative of a set, **rank[i]** is the height of the tree representing the set. 
 Now recall that in the Union operation, it doesn’t matter which of the two trees is moved under the other. Now what we want to do is minimize the height of the resulting tree. If we are uniting two trees (or sets), let’s call them left and right, then it all depends on the **rank of left** and the **rank of right**. 
@@ -4223,7 +4223,7 @@ Now recall that in the Union operation, it doesn’t matter which of the two tre
 
 
 
-#### 7.2.3 Path compression and union by rank
+### 7.2.3 Path compression and union by rank
 
 Below is the complete implementation of disjoint set with path compression and union by rank.
 
@@ -4306,7 +4306,7 @@ No
 
 
 
-#### 7.2.4 Union by Size
+### 7.2.4 Union by Size
 
 Again, we need a new array of integers called **size[]**. The size of this array is the same as the parent array **Parent[]**. If i is a representative of a set, **size[i]** is the number of the elements in the tree representing the set. 
 Now we are uniting two trees (or sets), let’s call them left and right, then in this case it all depends on the **size of left** and the **size of right** tree (or set).
@@ -4392,9 +4392,9 @@ Element 4: Representative = 0
 
 
 
-### 7.3 编程题目
+## 7.3 编程题目
 
-#### 1 学校的班级个数（1）
+### 1 学校的班级个数（1）
 
 https://sunnywhy.com/sfbj/9/6/360
 
@@ -4471,7 +4471,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-#### 2 学校的班级人数（2）
+### 2 学校的班级人数（2）
 
 https://sunnywhy.com/sfbj/9/6/361
 
@@ -4562,7 +4562,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-#### 3 是否相同班级
+### 3 是否相同班级
 
 https://sunnywhy.com/sfbj/9/6/362
 
@@ -4652,7 +4652,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-#### 4 迷宫连通性
+### 4 迷宫连通性
 
 https://sunnywhy.com/sfbj/9/6/363
 
@@ -4752,7 +4752,7 @@ This code reads the number of rooms and connections from the input, initializes 
 
 
 
-#### 5 班级最高分
+### 5 班级最高分
 
 https://sunnywhy.com/sfbj/9/6/364
 
@@ -4847,7 +4847,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-#### 01182: 食物链
+### 01182: 食物链
 
 并查集, http://cs101.openjudge.cn/practice/01182
 
