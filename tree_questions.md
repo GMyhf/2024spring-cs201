@@ -14,12 +14,12 @@ Updated 1722 GMT+8 March 21, 2024
 >
 > 2024/3/19 书上内容缺失，week5 课前，重构课件，增加了多叉树、Huffman algorithm. 
 >
-> 2024/3/21AVL部分需要重构，尽量简单易懂。插入结点造成失衡时候，有四种树形：LL、LR、RR、RL，很有规律，正常调整即可。
+> 2024/3/21重构6平衡二叉搜索树，AVL讲解尽量简单易懂。插入结点造成失衡时候，有四种树形：LL、LR、RR、RL，很有规律，正常调整即可。
 >
-> - 《Python数据结构与算法分析（第2版） 》的 平衡二叉树 部分讲复杂了，平衡因子不用保存，需要时候利用height计算就可以。因为不用保存，书上大段推导平衡因子计算也是多余的，可以当作原理理解。
+> - 《Python数据结构与算法分析（第2版） 》的 AVL 讲复杂了，平衡因子不用保存，需要时候利用 height 计算就可以。因为不用保存，书上大段推导平衡因子计算也是多余的，可以当作原理理解。
 > - 显然，只有在从根结点到该插入结点的路径上的结点才可能发生平衡因子变化，因此只需对这条路径上失衡的结点进行调整。可以证明，只要把最靠近插入结点的失衡结点调整到正常，路径上的所有结点就都平衡。
-> - AVL本身就是BST，不用从BST继承，书上弄的复杂了
-> - 有时候代码比文字表达能力强，文字不容易说清楚的事情，代码有时候是逻辑清晰、简短。
+> - AVL本身就是BST，不用从BST继承，书上弄的复杂了。
+> - 有时候代码比文字表达能力强，文字不容易说清楚的事情，代码有时候是逻辑清晰、简短。例如：AVL 四种树型的旋转，代码清晰、简洁、易懂。
 
 
 
@@ -27,7 +27,7 @@ Updated 1722 GMT+8 March 21, 2024
 
 1）树相关内容准备在 Week4 ~6 讲。
 
-2）**预计 Week4 覆盖 一 中的 1～3.1**，Week5覆盖 一中 的 3.2~3.3, Week6覆盖 一 中4～7，及附录内容。
+2）预计 Week4 覆盖 一 中的 1～3.1，Week5覆盖 一中 的 3.2~3.3，Week6覆盖 一 中4～7，及附录内容。
 
 3）此md文件有目录，思路是原理学习+编程题目实际
 
@@ -3597,8 +3597,8 @@ $N_h = 1 + N_{h-1} + N_{h-2}$​
 
 ### 6.1.1 编程题目
 
-> ### 27625: AVL树至少有几个结点
->
+#### 27625: AVL树至少有几个结点
+
 > http://cs101.openjudge.cn/practice/27625/
 >
 > 输入n (0<n<50), 输出一个n层的AVL树至少有多少个结点。
@@ -3668,8 +3668,8 @@ $N_h = 1 + N_{h-1} + N_{h-2}$​
 
 
 
-> ## 27626: AVL树最多有几层
->
+#### 27626: AVL树最多有几层
+
 > http://cs101.openjudge.cn/practice/27626/
 >
 > n个结点的AVL树最多有多少层？
@@ -3687,15 +3687,15 @@ $N_h = 1 + N_{h-1} + N_{h-2}$​
 > ```
 >20
 > ```
-> 
-> 样例输出
 >
+> 样例输出
+> 
 > ```
 >6
 > ```
-> 
-> 来源：Guo Wei
 >
+> 来源：Guo Wei
+> 
 > 
 >
 > AVL树是一种自平衡的二叉搜索树，其中每个节点的左右子树的高度最多相差1。为了确定具有`n`个节点的AVL树的最大高度，我们可以使用一个递归关系，该关系描述了给定高度的AVL树所能包含的最少节点数。
@@ -3705,38 +3705,38 @@ $N_h = 1 + N_{h-1} + N_{h-2}$​
 > ```
 >N(h) = N(h-1) + N(h-2) + 1
 > ```
-> 
-> 这里，`N(h-1)`是较高子树的最少节点数，`N(h-2)`是较矮子树的最少节点数，`+1`是根节点自身。
 >
+> 这里，`N(h-1)`是较高子树的最少节点数，`N(h-2)`是较矮子树的最少节点数，`+1`是根节点自身。
+> 
 > 基本情况是：
 >
 > ```
 >N(1) = 1  （单个节点的树）
 > N(0) = 0  （空树）
-> ```
+>```
 > 
 > 可以使用这个递归关系来计算任何高度的AVL树的最少节点数。然后，我们可以通过递增高度，直到计算出的节点数超过输入的`n`，来找出具有`n`个节点的AVL树的最大高度。
->
+> 
 > 用于计算具有`n`个节点的AVL树的最大高度：
 >
 > ```python
 >from functools import lru_cache
 > 
-> @lru_cache(maxsize=None)
+>@lru_cache(maxsize=None)
 > def min_nodes(h):
 >  if h == 0: return 0
 >  if h == 1: return 1
->     return min_nodes(h-1) + min_nodes(h-2) + 1
->    
+>  return min_nodes(h-1) + min_nodes(h-2) + 1
+> 
 >    def max_height(n):
->  h = 0
->  while min_nodes(h) <= n:
->         h += 1
->     return h - 1
+>     h = 0
+>     while min_nodes(h) <= n:
+>      h += 1
+>  return h - 1
 >    
 >    n = int(input())
-> print(max_height(n))
-> ```
+>    print(max_height(n))
+>    ```
 > 
 
 
@@ -5252,117 +5252,11 @@ DGBAECF
 
 # 附录
 
-## A 树这章程序对应类图
-
-### A.1 生成类图
-
-https://github.com/Yuqiu-Yang/problem_solving_with_algorithms_and_data_structures_using_python
-
-下载后，到ch6目录，生成类图。
-
-
-
-> https://stackoverflow.com/questions/260165/whats-the-best-way-to-generate-a-uml-diagram-from-python-source-code
->
-> You may have heard of [Pylint](http://www.pylint.org/) that helps statically checking Python code. Few people know that it comes with a tool named [Pyreverse](https://pylint.pycqa.org/en/latest/pyreverse.html) that draws UML diagrams from the Python code it reads. Pyreverse uses Graphviz as a backend.
->
-> It is used like this:
->
-> ```none
-> pyreverse -o png -p yourpackage .
-> ```
->
-> where the `.` can also be a single file.
-
-
-
-Generating UML Diagrams
-
-https://www.bhavaniravi.com/python/generate-uml-diagrams-from-python-code
-
-brew install pylint
-
-brew install Graphviz 
-
-
-
-在 ch6目录下运行
-
-% pyreverse -o png *.py                     
-
-> Format png is not supported natively. Pyreverse will try to generate it using Graphviz...
->
-> Analysed 12 modules with a total of 6 imports
-
-产生俩文件
-
-![image-20240204154709659](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240204154709659.png)
-
-图 packages.png
 
 
 
 
-
-![image-20240204154437448](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240204154437448.png)
-
-图 classes.png
-
-
-
-### A.2 在UML类图中，常见的连线和符号
-
-
-
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/891cfde691e54661923699d89c198373.png" alt="在这里插入图片描述" style="zoom: 67%;" />
-
-
-
-在UML（统一建模语言）类图中，常见的连线和符号包括以下这些：
-
-1. 关联(Association)
-
-   - 普通关联：用一条直线表示两个类之间的关系，通常在关联的两端可以有箭头，箭头指向被关联的类，表示导航方向。
-
-   - 双向关联：一条简单的线，表示两个类相互知道对方。
-
-   - 聚合关系(Aggregation)：用一个空心的菱形加一条线来表示，空心菱形位于整体的一端。表示一个类是另一个类的部分，但它们之间没有强耦合关系，部分可以存在独立于整体的情况。菱形指向整体类。例如：
-
-     <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/381dc758d91249208d20709e4fd67a8e.png" alt="在这里插入图片描述" style="zoom: 67%;" />
-
-   - 组合关系(Composition)：用一个实心的菱形加一条线来表示，实心菱形位于整体的一端。表示一个类是另一个类的整体部分，它们具有生命周期上的整体关系。菱形指向整体类。例如：
-
-     <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/338de2b8eaf2425cbf060ade0f38a0f6.png" alt="在这里插入图片描述" style="zoom:67%;" />
-
-2. 泛化(Generalization)
-
-   - 用一条带有空心箭头的直线表示，箭头指向父类，表示子类继承自父类。表示继承关系，一个类是另一个类的子类，继承了父类的属性和方法。例如：
-
-     <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/7b6c62e666e44a56987f1e222c498b6f.png" alt="在这里插入图片描述" style="zoom:67%;" />
-
-3. 实现(Implementation)
-
-   - 用一条带有空心箭头的虚线表示，箭头指向接口，表示类实现了接口。
-
-4. 依赖(Dependency)
-
-   - 用一条带有箭头的虚线表示，箭头指向被依赖的类。
-
-在类图中，类通常用带有三个部分的矩形来表示：
-
-- 顶部部分：显示类名，如果是抽象类，则用斜体表示。
-- 中间部分：显示类的属性或字段。
-- 底部部分：显示类的方法或操作。
-
-还有一些其他的符号和约定，比如表示多重性的数字（例如，1…* 表示一个到多个），以及用来表示接口、抽象类等的特殊图标。在类图中，你也可以使用注释框（用一条虚线连接的矩形框）来添加对关系或类的额外说明。
-
-
-
-
-
-
-
-## B 前缀树（Trie Tree）
+## A 前缀树（Trie Tree）
 
 Trie – Data Structure and Algorithm Tutorials
 
@@ -5947,7 +5841,7 @@ Our discussion so far has led us to the conclusion that the Trie data structure 
 
 
 
-## C 线段树（Segment Tree）
+## B 线段树（Segment Tree）
 
 请参照 https://github.com/GMyhf/2023fall-cs101
 
@@ -5955,7 +5849,7 @@ Our discussion so far has led us to the conclusion that the Trie data structure 
 
 
 
-## D 树形结构学习方法
+## C 树形结构学习方法
 
 2024年3月16日，说明：在计算机科学领域内，树形结构是最为关键同时也是掌握难度较高的概念之一。不同于计算机概论，数据结构与算法的学习不仅需要借助面向对象编程的抽象和复用理念，还要通过使用链表来表达树结构，并采用递归的方法进行树的遍历。在这一过程中，经典算法和编程技巧的应用至关重要，而对于时间复杂度的优化技巧也是必不可少的。
 即便是参加过计算机概论提高班的学生，也可能会发现树结构的学习颇具挑战。一些学生可能会通过类比和综合的方式来促进理解，比如通过深度优先搜索（DFS）来深入理解树的前序遍历和后序遍历；有的学生可能会通过吟诵诗歌来激励自己；还有的学生则投入大量时间复现经典算法，或在集成开发环境（IDE）中探索如何调试递归程序。
@@ -6003,6 +5897,114 @@ Our discussion so far has led us to the conclusion that the Trie data structure 
 > 刚上路
 > 刻苦
 > 赴 
+
+
+
+## D 树这章程序对应类图
+
+### D.1 生成类图
+
+https://github.com/Yuqiu-Yang/problem_solving_with_algorithms_and_data_structures_using_python
+
+下载后，到ch6目录，生成类图。
+
+
+
+> https://stackoverflow.com/questions/260165/whats-the-best-way-to-generate-a-uml-diagram-from-python-source-code
+>
+> You may have heard of [Pylint](http://www.pylint.org/) that helps statically checking Python code. Few people know that it comes with a tool named [Pyreverse](https://pylint.pycqa.org/en/latest/pyreverse.html) that draws UML diagrams from the Python code it reads. Pyreverse uses Graphviz as a backend.
+>
+> It is used like this:
+>
+> ```none
+> pyreverse -o png -p yourpackage .
+> ```
+>
+> where the `.` can also be a single file.
+
+
+
+Generating UML Diagrams
+
+https://www.bhavaniravi.com/python/generate-uml-diagrams-from-python-code
+
+brew install pylint
+
+brew install Graphviz 
+
+
+
+在 ch6目录下运行
+
+% pyreverse -o png *.py                     
+
+> Format png is not supported natively. Pyreverse will try to generate it using Graphviz...
+>
+> Analysed 12 modules with a total of 6 imports
+
+产生俩文件
+
+![image-20240204154709659](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240204154709659.png)
+
+图 packages.png
+
+
+
+
+
+![image-20240204154437448](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240204154437448.png)
+
+图 classes.png
+
+
+
+### D.2 在UML类图中，常见的连线和符号
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/891cfde691e54661923699d89c198373.png" alt="在这里插入图片描述" style="zoom: 67%;" />
+
+
+
+在UML（统一建模语言）类图中，常见的连线和符号包括以下这些：
+
+1. 关联(Association)
+
+   - 普通关联：用一条直线表示两个类之间的关系，通常在关联的两端可以有箭头，箭头指向被关联的类，表示导航方向。
+
+   - 双向关联：一条简单的线，表示两个类相互知道对方。
+
+   - 聚合关系(Aggregation)：用一个空心的菱形加一条线来表示，空心菱形位于整体的一端。表示一个类是另一个类的部分，但它们之间没有强耦合关系，部分可以存在独立于整体的情况。菱形指向整体类。例如：
+
+     <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/381dc758d91249208d20709e4fd67a8e.png" alt="在这里插入图片描述" style="zoom: 67%;" />
+
+   - 组合关系(Composition)：用一个实心的菱形加一条线来表示，实心菱形位于整体的一端。表示一个类是另一个类的整体部分，它们具有生命周期上的整体关系。菱形指向整体类。例如：
+
+     <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/338de2b8eaf2425cbf060ade0f38a0f6.png" alt="在这里插入图片描述" style="zoom:67%;" />
+
+2. 泛化(Generalization)
+
+   - 用一条带有空心箭头的直线表示，箭头指向父类，表示子类继承自父类。表示继承关系，一个类是另一个类的子类，继承了父类的属性和方法。例如：
+
+     <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/7b6c62e666e44a56987f1e222c498b6f.png" alt="在这里插入图片描述" style="zoom:67%;" />
+
+3. 实现(Implementation)
+
+   - 用一条带有空心箭头的虚线表示，箭头指向接口，表示类实现了接口。
+
+4. 依赖(Dependency)
+
+   - 用一条带有箭头的虚线表示，箭头指向被依赖的类。
+
+在类图中，类通常用带有三个部分的矩形来表示：
+
+- 顶部部分：显示类名，如果是抽象类，则用斜体表示。
+- 中间部分：显示类的属性或字段。
+- 底部部分：显示类的方法或操作。
+
+还有一些其他的符号和约定，比如表示多重性的数字（例如，1…* 表示一个到多个），以及用来表示接口、抽象类等的特殊图标。在类图中，你也可以使用注释框（用一条虚线连接的矩形框）来添加对关系或类的额外说明。
+
+
 
 
 
