@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 1549 GMT+8 March 22, 2024
+Updated 1013 GMT+8 March 23, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3448,6 +3448,127 @@ if __name__ == "__main__":
     result = count_stack_sequences(n)
     print(result)
 ```
+
+
+
+### 04078: 实现堆结构
+
+http://cs101.openjudge.cn/2024sp_routine/04078/
+
+定义一个数组，初始化为空。在数组上执行两种操作：
+
+1、增添1个元素，把1个新的元素放入数组。
+
+2、输出并删除数组中最小的数。
+
+使用堆结构实现上述功能的高效算法。
+
+**输入**
+
+第一行输入一个整数n，代表操作的次数。
+每次操作首先输入一个整数type。
+当type=1，增添操作，接着输入一个整数u，代表要插入的元素。
+当type=2，输出删除操作，输出并删除数组中最小的元素。
+1<=n<=100000。
+
+**输出**
+
+每次删除操作输出被删除的数字。
+
+样例输入
+
+```
+4
+1 5
+1 1
+1 7
+2
+```
+
+样例输出
+
+```
+1
+```
+
+提示
+
+每组测试数据的复杂度为O(nlogn)的算法才能通过本次，否则会返回TLE(超时)
+需要使用最小堆结构来实现本题的算法
+
+
+
+这题目本意是练习自己写个BinHeap。当然机考时候，如果遇到这样题目，直接import heapq。
+
+手搓栈、队列、堆、AVL等，考试前需要搓个遍。
+
+```python
+class BinHeap:
+    def __init__(self):
+        self.heapList = [0]
+        self.currentSize = 0
+
+    def percUp(self, i):
+        while i // 2 > 0:
+            if self.heapList[i] < self.heapList[i // 2]:
+                tmp = self.heapList[i // 2]
+                self.heapList[i // 2] = self.heapList[i]
+                self.heapList[i] = tmp
+            i = i // 2
+
+    def insert(self, k):
+        self.heapList.append(k)
+        self.currentSize = self.currentSize + 1
+        self.percUp(self.currentSize)
+
+    def percDown(self, i):
+        while (i * 2) <= self.currentSize:
+            mc = self.minChild(i)
+            if self.heapList[i] > self.heapList[mc]:
+                tmp = self.heapList[i]
+                self.heapList[i] = self.heapList[mc]
+                self.heapList[mc] = tmp
+            i = mc
+
+    def minChild(self, i):
+        if i * 2 + 1 > self.currentSize:
+            return i * 2
+        else:
+            if self.heapList[i * 2] < self.heapList[i * 2 + 1]:
+                return i * 2
+            else:
+                return i * 2 + 1
+
+    def delMin(self):
+        retval = self.heapList[1]
+        self.heapList[1] = self.heapList[self.currentSize]
+        self.currentSize = self.currentSize - 1
+        self.heapList.pop()
+        self.percDown(1)
+        return retval
+
+    def buildHeap(self, alist):
+        i = len(alist) // 2
+        self.currentSize = len(alist)
+        self.heapList = [0] + alist[:]
+        while (i > 0):
+            #print(f'i = {i}, {self.heapList}')
+            self.percDown(i)
+            i = i - 1
+        #print(f'i = {i}, {self.heapList}')
+
+
+n = int(input().strip())
+bh = BinHeap()
+for _ in range(n):
+    inp = input().strip()
+    if inp[0] == '1':
+        bh.insert(int(inp.split()[1]))
+    else:
+        print(bh.delMin())
+```
+
+
 
 
 
