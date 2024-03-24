@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 0852 GMT+8 March 24, 2024
+Updated 1230 GMT+8 March 24, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9708,6 +9708,12 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+
+
+可以利用这幅图，理解下面代码。图源自这里：https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal/solutions/426738/cong-zhong-xu-yu-hou-xu-bian-li-xu-lie-gou-zao-14/
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240324122940268.png" alt="image-20240324122940268" style="zoom: 50%;" />
 
 
 
