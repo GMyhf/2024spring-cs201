@@ -2930,9 +2930,55 @@ file2
 
 
 
+洪亮 物理学院
+
+思路：把目录看成节点，每个目录节点设置子目录节点列表和子文件列表。输出格式：当前目录，遍历子目录，遍历子文件。
+
+```python
+class Node:
+    def __init__(self,name):
+        self.name=name
+        self.dirs=[]
+        self.files=[]
+
+def print_(root,m):
+    pre='|     '*m
+    print(pre+root.name)
+    for Dir in root.dirs:
+        print_(Dir,m+1)
+    for file in sorted(root.files):
+        print(pre+file)
+        
+tests,test=[],[]
+while True:
+    s=input()
+    if s=='#':
+        break
+    elif s=='*':
+        tests.append(test)
+        test=[]
+    else:
+        test.append(s)
+for n,test in enumerate(tests,1):
+    root=Node('ROOT')
+    stack=[root]
+    print(f'DATA SET {n}:')
+    for i in test:
+        if i[0]=='d':
+            Dir=Node(i)
+            stack[-1].dirs.append(Dir)
+            stack.append(Dir)
+        elif i[0]=='f':
+            stack[-1].files.append(i)
+        else:
+            stack.pop()
+    print_(root,0)
+    print()
+```
+
+
+
 考虑递归，对于输入文件 f 开头则存起来，d 开头则多记一个缩进递归，] 结尾则将存贮的files排序输出并结束该字典。
-
-
 
 ```python
 # 夏天明，元培学院
