@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 1230 GMT+8 March 24, 2024
+Updated 2205 GMT+8 March 24, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -871,26 +871,51 @@ Dhaka 2002
 
 
 
+可以通过BFS（广度优先搜索）解决。思路是从最小的满足条件的数开始搜索，即1，然后通过不断添加0或1在数的末尾来生成新的数字，直到找到一个数字既是n的倍数又只包含数字0和1。
+
+由于直接操作数字可能会很快超出整数范围，特别是当n很大时，我们可以在BFS过程中仅保存数字的模n值以及该数字的十进制表示。每次从队列中取出一个元素，计算加0或加1后的模n值，如果新模n值为0，则找到了解；否则，如果这个模n值是首次访问，则将其加入队列继续搜索。
+
+下面是Python代码实现：
+
 ```python
-#23n2300011072(X)
 from collections import deque
-while 1:
-    n=int(input())
-    if n==0:
-        break
-    q=deque([(1,'1')])
-    vis={1}
+
+def find_multiple(n):
+    # 使用队列实现BFS
+    q = deque()
+    # 初始化队列，存储的是(模n值, 对应的数字字符串)
+    q.append((1 % n, "1"))
+    visited = set([1 % n])  # 用于记录访问过的模n值，避免重复搜索
+
     while q:
-        remainder,num=q.popleft()
-        if remainder==0:
-            print(num)
+        mod, num_str = q.popleft()
+
+        # 检查当前模n值是否为0，是则找到答案
+        if mod == 0:
+            return num_str
+
+        # 尝试在当前数字后加0或加1，生成新的数字，并计算模n值
+        for digit in ["0", "1"]:
+            new_num_str = num_str + digit
+            new_mod = (mod * 10 + int(digit)) % n
+
+            # 如果新模n值未访问过，则加入队列继续搜索
+            if new_mod not in visited:
+                q.append((new_mod, new_num_str))
+                visited.add(new_mod)
+
+def main():
+    while True:
+        n = int(input())
+        if n == 0:
             break
-        for digit in [0,1]:
-            new_remainder=(remainder*10+digit)%n
-            if new_remainder not in vis:
-                vis.add(new_remainder)
-                q.append((new_remainder,num+str(digit)))
+        print(find_multiple(n))
+
+if __name__ == "__main__":
+    main()
 ```
+
+这段代码首先读取输入的n值，然后调用`find_multiple`函数来找到满足条件的最小的由0和1组成的n的倍数。`find_multiple`函数通过广度优先搜索实现，搜索过程中仅记录和处理模n值，这样可以有效避免处理过大的数字。当找到一个模n值为0的数字时，即找到了一个满足条件的倍数，函数返回该数字的字符串表示。
 
 
 
@@ -3573,6 +3598,121 @@ for _ in range(n):
 ```
 
 
+
+##  04078: 实现堆结构
+
+http://cs101.openjudge.cn/practice/04078/
+
+定义一个数组，初始化为空。在数组上执行两种操作：
+
+1、增添1个元素，把1个新的元素放入数组。
+
+2、输出并删除数组中最小的数。
+
+使用堆结构实现上述功能的高效算法。
+
+**输入**
+
+第一行输入一个整数n，代表操作的次数。
+每次操作首先输入一个整数type。
+当type=1，增添操作，接着输入一个整数u，代表要插入的元素。
+当type=2，输出删除操作，输出并删除数组中最小的元素。
+1<=n<=100000。
+
+**输出**
+
+每次删除操作输出被删除的数字。
+
+样例输入
+
+```
+4
+1 5
+1 1
+1 7
+2
+```
+
+样例输出
+
+```
+1
+```
+
+提示
+
+每组测试数据的复杂度为O(nlogn)的算法才能通过本次，否则会返回TLE(超时)
+需要使用最小堆结构来实现本题的算法
+
+
+
+练习自己写个BinHeap。当然机考时候，如果遇到这样题目，直接import heapq。手搓栈、队列、堆、AVL等，考试前需要搓个遍。
+
+```python
+class BinHeap:
+    def __init__(self):
+        self.heapList = [0]
+        self.currentSize = 0
+
+    def percUp(self, i):
+        while i // 2 > 0:
+            if self.heapList[i] < self.heapList[i // 2]:
+                tmp = self.heapList[i // 2]
+                self.heapList[i // 2] = self.heapList[i]
+                self.heapList[i] = tmp
+            i = i // 2
+
+    def insert(self, k):
+        self.heapList.append(k)
+        self.currentSize = self.currentSize + 1
+        self.percUp(self.currentSize)
+
+    def percDown(self, i):
+        while (i * 2) <= self.currentSize:
+            mc = self.minChild(i)
+            if self.heapList[i] > self.heapList[mc]:
+                tmp = self.heapList[i]
+                self.heapList[i] = self.heapList[mc]
+                self.heapList[mc] = tmp
+            i = mc
+
+    def minChild(self, i):
+        if i * 2 + 1 > self.currentSize:
+            return i * 2
+        else:
+            if self.heapList[i * 2] < self.heapList[i * 2 + 1]:
+                return i * 2
+            else:
+                return i * 2 + 1
+
+    def delMin(self):
+        retval = self.heapList[1]
+        self.heapList[1] = self.heapList[self.currentSize]
+        self.currentSize = self.currentSize - 1
+        self.heapList.pop()
+        self.percDown(1)
+        return retval
+
+    def buildHeap(self, alist):
+        i = len(alist) // 2
+        self.currentSize = len(alist)
+        self.heapList = [0] + alist[:]
+        while (i > 0):
+            #print(f'i = {i}, {self.heapList}')
+            self.percDown(i)
+            i = i - 1
+        #print(f'i = {i}, {self.heapList}')
+
+
+n = int(input().strip())
+bh = BinHeap()
+for _ in range(n):
+    inp = input().strip()
+    if inp[0] == '1':
+        bh.insert(int(inp.split()[1]))
+    else:
+        print(bh.delMin())
+```
 
 
 
