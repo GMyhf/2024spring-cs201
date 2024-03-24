@@ -1,6 +1,6 @@
 # 编程题目
 
-Updated 2251 GMT+8 March 10, 2024
+Updated 2219 GMT+8 March 24, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -38,9 +38,19 @@ http://cs101.openjudge.cn/practice/22067/
 
 http://cs101.openjudge.cn/dsapre/08581/
 
-22275: 二叉搜索树的遍历
+01426/428:Find The Multiple
 
-http://cs101.openjudge.cn/practice/22275/
+http://cs101.openjudge.cn/practice/01426/
+
+
+
+Assignment #6: "树"算：Huffman,BinHeap,BST,AVL,DisjointSet
+
+​	22275: 二叉搜索树的遍历, 05455: 二叉搜索树的层次遍历
+
+​	04078:实现堆结构, 22161: 哈夫曼编码树
+
+​	晴问9.5: 平衡二叉树的建立, 02524/1526: 宗教信仰
 
 
 
