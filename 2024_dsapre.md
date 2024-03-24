@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 1013 GMT+8 March 23, 2024
+Updated 0852 GMT+8 March 24, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9521,9 +9521,11 @@ EBFGCIHDA
 
 
 
-看清楚题目里面的树是不是二叉树。
+下面两个代码。先给出用类表示node。
 
-下面两个代码。先给出用类表示node
+思路：对于括号嵌套树，使用stack记录进行操作中的父节点，node记录正在操作的节点。每当遇见一个字母，将其设为node，并存入stack父节点中；遇到'('，即对当前node准备添加子节点，将其append入stack中，node重新设为None；遇到')'，stack父节点操作完毕，将其弹出并作为操作中的节点node，不断重复建立树，同时最后返出的父节点为树的根root。
+
+前序遍历和后序遍历只要弄清楚意思，用递归很好写，注意这道题并不是二叉树，需要遍历解析树。
 
 ```python
 class TreeNode:
