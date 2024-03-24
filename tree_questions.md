@@ -2549,6 +2549,8 @@ dc
 
 
 
+
+
 ```python
 import heapq
 
@@ -5762,7 +5764,7 @@ Below are some important properties of the Trie data structure:
 - There is one root node in each Trie.
 - Each node of a Trie represents a string and each edge represents a character.
 - Every node consists of hashmaps or **an array of pointers**, with each index representing a character and a flag to indicate if any string ends at the current node.
-- Trie data structure can contain any number of characters including **alphabets**, **numbers**, and **special characters**. But for this article, we will discuss strings with characters a-z. Therefore, only 26 pointers need for every node, where the ***\*0th\**** index represents **‘a’** and the **25th** index represents **‘z’** characters.
+- Trie data structure can contain any number of characters including **alphabets**, **numbers**, and **special characters**. But for this article, we will discuss strings with characters a-z. Therefore, only 26 pointers need for every node, where the **0th** index represents **‘a’** and the **25th** index represents **‘z’** characters.
 - Each path from the root to any node represents a word or string.
 
 Below is a simple example of Trie data structure.
@@ -5777,7 +5779,7 @@ Trie Data Structure
 
 We already know that the Trie data structure can contain any number of characters including **alphabets**, **numbers**, and **special characters**. But for this article, we will discuss strings with characters **a-z**. Therefore, only 26 pointers need for every node, where the **0th** index represents **‘a’** and the **25th** index represents **‘z’** characters.
 
-Any lowercase English word can start with **a-z**, then the next letter of the word could be **a-z,** the third letter of the word again could be **a-z**, and so on. So for storing a word, we need to take an array (container) of size ***\*26\**** and initially, all the characters are empty as there are no words and it will look as shown below.
+Any lowercase English word can start with **a-z**, then the next letter of the word could be **a-z,** the third letter of the word again could be **a-z**, and so on. So for storing a word, we need to take an array (container) of size **26** and initially, all the characters are empty as there are no words and it will look as shown below.
 
 ![An array of pointers inside every Trie node](https://raw.githubusercontent.com/GMyhf/img/main/img/nodeintrie.png)
 
