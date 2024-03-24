@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 1013 GMT+8 March 23, 2024
+Updated 1919 GMT+8 March 24, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -27,7 +27,7 @@ Updated 1013 GMT+8 March 23, 2024
 
 1）树相关内容准备在 Week4 ~6 讲。
 
-2）预计 Week4 覆盖 一 中的 1～3.1，Week5覆盖 一中 的 3.2~3.3，Week6覆盖 一 中4～7，及附录内容。
+2）预计 Week4 讲树的相关概念、表示方法，Week5讲树的构建/解析、遍历、哈夫曼算法，Week6讲堆实现、AVL实现、并查集。
 
 3）此md文件有目录，思路是原理学习+编程题目实际
 
@@ -4579,7 +4579,7 @@ Element 4: Representative = 0
 
 ## 7.3 编程题目
 
-### 1 学校的班级个数（1）
+### 晴问9.6.1 学校的班级个数（1）
 
 https://sunnywhy.com/sfbj/9/6/360
 
@@ -4656,7 +4656,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-### 2 学校的班级人数（2）
+### 晴问9.6.2 学校的班级人数（2）
 
 https://sunnywhy.com/sfbj/9/6/361
 
@@ -4747,7 +4747,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-### 3 是否相同班级
+### 晴问9.6.3 是否相同班级
 
 https://sunnywhy.com/sfbj/9/6/362
 
@@ -4837,7 +4837,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-### 4 迷宫连通性
+### 晴问9.6.4 迷宫连通性
 
 https://sunnywhy.com/sfbj/9/6/363
 
@@ -4937,7 +4937,7 @@ This code reads the number of rooms and connections from the input, initializes 
 
 
 
-### 5 班级最高分
+### 晴问9.6.5 班级最高分
 
 https://sunnywhy.com/sfbj/9/6/364
 
@@ -5371,11 +5371,361 @@ DGBAECF
 
 # 附录
 
+## A 线段树（Segment Tree）
+
+Segment tree | Efficient implementation
+
+https://www.geeksforgeeks.org/segment-tree-efficient-implementation/
+
+
+
+Let us consider the following problem to understand Segment Trees without recursion.
+We have an array $arr[0 . . . n-1]$. We should be able to, 
+
+1. Find the sum of elements from index `l` to `r` where $0 \leq l \leq r \leq n-1$
+2. Change the value of a specified element of the array to a new value x. We need to do $arr[i] = x$ where $0 \leq i \leq n-1$. 
+
+A **simple solution** is to run a loop from l to r and calculate the sum of elements in the given range. To update a value, simply do $arr[i] = x$. The first operation takes **O(n)** time and the second operation takes **O(1)** time.
+
+**Another solution** is to create another array and store the sum from start to i at the ith index in this array. The sum of a given range can now be calculated in O(1) time, but the update operation takes O(n) time now. This works well if the number of query operations is large and there are very few updates.
+What if the number of queries and updates are equal? Can we perform both the operations in O(log n) time once given the array? We can use a [Segment Tree](https://www.geeksforgeeks.org/segment-tree-set-1-sum-of-given-range/) to do both operations in O(Logn) time. We have discussed the complete implementation of segment trees in our [previous](https://www.geeksforgeeks.org/segment-tree-set-1-sum-of-given-range/) post. In this post, we will discuss the easier and yet efficient implementation of segment trees than in the previous post.
+Consider the array and segment tree as shown below:  叶子是数组值，非叶是和
+
+![img](https://media.geeksforgeeks.org/wp-content/uploads/excl.png)
+
+
+
+You can see from the above image that the original array is at the bottom and is 0-indexed with 16 elements. The tree contains a total of 31 nodes where the leaf nodes or the elements of the original array start from node 16. So, we can easily construct a segment tree for this array using a `2*N` sized array where `N` is the number of elements in the original array. The leaf nodes will start from index `N` in this array and will go up to index (2*N – 1). Therefore, the element at index i in the original array will be at index (i + N) in the segment tree array. Now to calculate the parents, we will start from the index (N – 1) and move upward. 根节点下标从1开始，For index i , the left child will be at (2 * i) and the right child will be at (2*i + 1) index. So the values at nodes at (2 * i) and (2*i + 1) are combined at i-th node to construct the tree. 
+As you can see in the above figure, we can query in this tree in an interval [L,R) with left index(L) included and right (R) excluded.
+We will implement all of these multiplication and addition operations using bitwise operators.
+Let us have a look at the complete implementation: 
+
+```python
+# Python3 Code Addition 
+
+# limit for array size 
+N = 100000; 
+
+# Max size of tree 
+tree = [0] * (2 * N); 
+
+# function to build the tree 
+def build(arr) : 
+
+	# insert leaf nodes in tree 
+	for i in range(n) : 
+		tree[n + i] = arr[i]; 
+	
+	# build the tree by calculating parents 
+	for i in range(n - 1, 0, -1) : 
+    # tree[i] = tree[2*i] + tree[2*i+1]
+		tree[i] = tree[i << 1] + tree[i << 1 | 1]; 	
+
+# function to update a tree node 
+def updateTreeNode(p, value) : 
+	
+	# set value at position p 
+	tree[p + n] = value; 
+	p = p + n; 
+	
+	# move upward and update parents 
+	i = p; 
+	
+	while i > 1 : 
+		
+		tree[i >> 1] = tree[i] + tree[i ^ 1]; 
+		i >>= 1; 
+
+# function to get sum on interval [l, r) 
+def query(l, r) : 
+
+	res = 0; 
+	
+	# loop to find the sum in the range 
+	l += n; 
+	r += n; 
+	
+	while l < r : 
+	
+		if (l & 1) : 
+			res += tree[l]; 
+			l += 1
+	
+		if (r & 1) : 
+			r -= 1; 
+			res += tree[r]; 
+			
+		l >>= 1; 
+		r >>= 1
+	
+	return res; 
+
+if __name__ == "__main__" : 
+
+	a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; 
+
+	n = len(a); 
+	
+	build(a); 
+	
+	# print the sum in range(1,2) index-based 
+	print(query(1, 3)); 
+	
+	# modify element at 2nd index 
+	updateTreeNode(2, 1); 
+	
+	# print the sum in range(1,2) index-based 
+	print(query(1, 3)); 
+
+```
+
+
+
+**Output:** 
+
+```
+5
+3
+```
+
+Yes! That is all. The complete implementation of the segment tree includes the query and update functions. Let us now understand how each of the functions works: 
+
+
+1. The picture makes it clear that the leaf nodes are stored at i+n, so we can clearly insert all leaf nodes directly.
+2. The next step is to build the tree and it takes O(n) time. The parent always has its less index than its children, so we just process all the nodes in decreasing order, calculating the value of the parent node. If the code inside the build function to calculate parents seems confusing, then you can see this code. It is equivalent to that inside the build function. 
+
+```python
+tree[i] = tree[2*i] + tree[2*i+1]
+```
+
+ 
+
+3. Updating a value at any position is also simple and the time taken will be proportional to the height （“高度”这个概念，其实就是从下往上度量，树这种数据结构的高度是从最底层开始计数，并且计数的起点是0） of the tree. We only update values in the parents of the given node which is being changed. So to get the parent, we just go up to the parent node, which is p/2 or p>>1, for node p. p^1 turns (2\*i) to (2\*i + 1) and vice versa to get the second child of p.
+4. Computing the sum also works in $O(Logn)$ time. If we work through an interval of [3,11), we need to calculate only for nodes 19,26,12, and 5 in that order.  要演示这个索引上行的求和过程，前面程序数组是12个元素，图示是16个元素，需要稍作修改。增加了print输出，便于调试。
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202310312148391.png" alt="image-20231031214814445" style="zoom:50%;" />
+
+
+
+The idea behind the query function is whether we should include an element in the sum or whether we should include its parent. Let’s look at the image once again for proper understanding. 
+
+![img](https://media.geeksforgeeks.org/wp-content/uploads/excl.png)
+
+Consider that L is the left border of an interval and R is the right border of the interval [L,R). It is clear from the image that if L is odd, then it means that it is the right child of its parent and our interval includes only L and not the parent. So we will simply include this node to sum and move to the parent of its next node by doing L = (L+1)/2. Now, if L is even, then it is the left child of its parent and the interval includes its parent also unless the right borders interfere. Similar conditions are applied to the right border also for faster computation. We will stop this iteration once the left and right borders meet.
+The theoretical time complexities of both previous implementation and this implementation is the same, but practically, it is found to be much more efficient as there are no recursive calls. We simply iterate over the elements that we need. Also, this is very easy to implement.
+
+> The algorithm re-evaluates the sum variable only if the idex from and to are odd. Why is that? It's because if the index is even, then it's the left child node. We don't need to bother reading it, since we'll get another chance at doing it on the next level up. Of course, the same logic applies on the next level up, and the decision about even index nodes could always be postponed. Given that the length of the tree array is always twice the size of the input array, which is a constant multiplier. And that on each iteration of the loop, the from and to variables are halved, the loop iterates at most log base two of two multiply by n. Which is a order log n running time complexity. Another way of saying this is, since the algorithm works up the tree and the height of the tree is equal to log n, its running time is order log n.
+>
+> 为什么在索引 from 和 to 是奇数时，算法才重新计算和更新 sum 变量。原因是，如果索引是偶数，那么它对应的节点是左子节点。我们不需要读取它，因为我们在下一层级中会有另一次机会进行读取。当然，相同的逻辑也适用于上一层级，对偶数索引节点的决定总是可以推迟的。考虑到树数组的长度始终是输入数组大小的两倍，这是一个恒定的乘数。而且在循环的每次迭代中，from 和 to 变量都会减半，因此循环的最大迭代次数是以log 2n。这是一个对数复杂度的运行时间。换句话说，由于算法是沿着树向上运行的，而树的高度等于 log n，因此其运行时间是对数复杂度的。
+
+
+
+**Time Complexities:**
+
+- Tree Construction: O( n )
+- Query in Range: O( Log n )
+- Updating an element: O( Log n ).
+
+**Auxiliary Space:** O(2*N)
+
+
+
+### 1364A: A. XXXXX
+
+brute force/data structures/number theory/two pointers, 1200, https://codeforces.com/problemset/problem/1364/A
+
+Ehab loves number theory, but for some reason he hates the number 𝑥. Given an array 𝑎, find the length of its longest subarray such that the sum of its elements **isn't** divisible by 𝑥, or determine that such subarray doesn't exist.
+
+An array 𝑎 is a subarray of an array 𝑏 if 𝑎 can be obtained from 𝑏 by deletion of several (possibly, zero or all) elements from the beginning and several (possibly, zero or all) elements from the end.
+
+**Input**
+
+The first line contains an integer 𝑡 (1≤𝑡≤5) — the number of test cases you need to solve. The description of the test cases follows.
+
+The first line of each test case contains 2 integers 𝑛 and 𝑥 (1≤𝑛≤10^5^, 1≤𝑥≤10^4^) — the number of elements in the array 𝑎 and the number that Ehab hates.
+
+The second line contains 𝑛 space-separated integers $𝑎_1, 𝑎_2, ……, 𝑎_𝑛 (0≤𝑎_𝑖≤10^4)$ — the elements of the array 𝑎.
+
+**Output**
+
+For each testcase, print the length of the longest subarray whose sum isn't divisible by 𝑥. If there's no such subarray, print −1.
+
+Example
+
+input
+
+```
+3
+3 3
+1 2 3
+3 4
+1 2 3
+2 2
+0 6
+```
+
+output
+
+```
+2
+3
+-1
+```
+
+Note
+
+In the first test case, the subarray \[2,3\] has sum of elements 5, which isn't divisible by 3.
+
+In the second test case, the sum of elements of the whole array is 6, which isn't divisible by 4.
+
+In the third test case, all subarrays have an even sum, so the answer is −1.
+
+
+
+Pypy3 可以AC。使用tree segment，时间复杂度是O(n*logn)
+
+```python
+# CF 1364A
+ 
+# def prefix_sum(nums):
+#     prefix = []
+#     total = 0
+#     for num in nums:
+#         total += num
+#         prefix.append(total)
+#     return prefix
+ 
+# def suffix_sum(nums):
+#     suffix = []
+#     total = 0
+#     # 首先将列表反转
+#     reversed_nums = nums[::-1]
+#     for num in reversed_nums:
+#         total += num
+#         suffix.append(total)
+#     # 将结果反转回来
+#     suffix.reverse()
+#     return suffix
+ 
+ 
+t = int(input())
+ans = []
+for _ in range(t):
+    n, x = map(int, input().split())
+    a = [int(i) for i in input().split()]
+
+
+# Segment tree | Efficient implementation
+# https://www.geeksforgeeks.org/segment-tree-efficient-implementation/
+
+    # Max size of tree 
+    tree = [0] * (2 * n); 
+
+    def build(arr) : 
+
+        # insert leaf nodes in tree 
+        for i in range(n) : 
+            tree[n + i] = arr[i]; 
+        
+        # build the tree by calculating parents 
+        for i in range(n - 1, 0, -1) : 
+            tree[i] = tree[i << 1] + tree[i << 1 | 1]; 
+
+    # function to update a tree node 
+    def updateTreeNode(p, value) : 
+        
+        # set value at position p 
+        tree[p + n] = value; 
+        p = p + n; 
+        
+        # move upward and update parents 
+        i = p; 
+        
+        while i > 1 : 
+            
+            tree[i >> 1] = tree[i] + tree[i ^ 1]; 
+            i >>= 1; 
+
+    # function to get sum on interval [l, r) 
+    def query(l, r) : 
+
+        res = 0; 
+        
+        # loop to find the sum in the range 
+        l += n; 
+        r += n; 
+        
+        while l < r : 
+        
+            if (l & 1) : 
+                res += tree[l]; 
+                l += 1
+        
+            if (r & 1) : 
+                r -= 1; 
+                res += tree[r]; 
+                
+            l >>= 1; 
+            r >>= 1
+        
+        return res; 
+    #aprefix_sum = prefix_sum(a)
+    #asuffix_sum = suffix_sum(a)
+ 
+    build([i%x for i in a]);
+    
+    left = 0
+    right = n - 1
+    if right == 0:
+        if a[0] % x !=0:
+            print(1)
+        else:
+            print(-1)
+        continue
+ 
+    leftmax = 0
+    rightmax = 0
+    while left != right:
+        #total = asuffix_sum[left]
+        total = query(left, right+1)
+        if total % x != 0:
+            leftmax = right - left + 1
+            break
+        else:
+            left += 1
+ 
+    left = 0
+    right = n - 1
+    while left != right:
+        #total = aprefix_sum[right]
+        total = query(left, right+1)
+        if total % x != 0:
+            rightmax = right - left + 1
+            break
+        else:
+            right -= 1
+    
+    if leftmax == 0 and rightmax == 0:
+        #print(-1)
+        ans.append(-1)
+    else:
+        #print(max(leftmax, rightmax))
+        ans.append(max(leftmax, rightmax))
+
+print('\n'.join(map(str,ans)))
+```
+
+
+
+如果用sum求和，O(n^2)，pypy3也会在test3 超时。
 
 
 
 
-## A 前缀树（Trie Tree）
+
+## B 前缀树（Trie Tree）
 
 Trie – Data Structure and Algorithm Tutorials
 
@@ -5960,11 +6310,7 @@ Our discussion so far has led us to the conclusion that the Trie data structure 
 
 
 
-## B 线段树（Segment Tree）
 
-请参照 https://github.com/GMyhf/2023fall-cs101
-
-中 20231031_SegmentTree_BIT.md
 
 
 
