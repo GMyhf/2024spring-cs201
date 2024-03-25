@@ -2578,9 +2578,8 @@ def build_huffman_tree(characters):
     while len(heap) > 1:
         left = heapq.heappop(heap)
         right = heapq.heappop(heap)
-        merged = Node(left.weight + right.weight) #note: 合并后，char 字段默认值是空
-        #merged = Node(left.weight + right.weight, min(left.char, right.char))
-        #改了下提交RE，不知道影响了哪里？59行有个 if node.char: ，不知道是否原因。
+        #merged = Node(left.weight + right.weight) #note: 合并后，char 字段默认值是空
+        merged = Node(left.weight + right.weight, min(left.char, right.char))
         merged.left = left
         merged.right = right
         heapq.heappush(heap, merged)
@@ -2591,7 +2590,8 @@ def encode_huffman_tree(root):
     codes = {}
 
     def traverse(node, code):
-        if node.char:
+        #if node.char:
+        if node.left is None and node.right is None:
             codes[node.char] = code
         else:
             traverse(node.left, code + '0')
@@ -2615,7 +2615,8 @@ def huffman_decoding(root, encoded_string):
         else:
             node = node.right
 
-        if node.char:
+        #if node.char:
+        if node.left is None and node.right is None:
             decoded += node.char
             node = root
     return decoded
