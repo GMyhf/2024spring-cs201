@@ -1,6 +1,6 @@
 # 20240312-Week4-植树节（Arbor day）
 
-Updated 1919 GMT+8 March 24, 2024
+Updated 1604 GMT+8 March 25, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2978,7 +2978,7 @@ for _ in range(bh.currentSize):
 
 ### 04078: 实现堆结构
 
-http://cs101.openjudge.cn/2024sp_routine/04078/
+http://cs101.openjudge.cn/practice/04078/
 
 定义一个数组，初始化为空。在数组上执行两种操作：
 
@@ -3505,6 +3505,56 @@ http://cs101.openjudge.cn/practice/22275/
   2  5 
  / \  
  1  3  
+
+
+
+```python
+"""
+王昊 光华管理学院。思路：
+建树思路：数组第一个元素是根节点，紧跟着是小于根节点值的节点，在根节点左侧，直至遇到大于根节点值的节点，
+后续节点都在根节点右侧，按照这个思路递归即可
+"""
+class Node():
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+
+def buildTree(preorder):
+    if len(preorder) == 0:
+        return None
+
+    node = Node(preorder[0])
+
+    idx = len(preorder)
+    for i in range(1, len(preorder)):
+        if preorder[i] > preorder[0]:
+            idx = i
+            break
+    node.left = buildTree(preorder[1:idx])
+    node.right = buildTree(preorder[idx:])
+
+    return node
+
+
+def postorder(node):
+    if node is None:
+        return []
+    output = []
+    output.extend(postorder(node.left))
+    output.extend(postorder(node.right))
+    output.append(str(node.val))
+
+    return output
+
+
+n = int(input())
+preorder = list(map(int, input().split()))
+print(' '.join(postorder(buildTree(preorder))))
+```
+
+
 
 ```python
 def post_order(pre_order):
