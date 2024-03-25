@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 1610 GMT+8 March 25, 2024
+Updated 1832 GMT+8 March 25, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8157,6 +8157,49 @@ def postorder(node):
 n = int(input())
 preorder = list(map(int, input().split()))
 print(' '.join(postorder(buildTree(preorder))))
+```
+
+
+
+```python
+# 管骏杰 生命科学学院
+# 中序遍历就是顺序排列，进而通过上次作业的思路根据前序中序推出后序
+class Node:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+
+def build(preorder, inorder):
+    if not preorder or not inorder:
+        return None
+    root_val = preorder[0]
+    root = Node(root_val)
+    root_index = inorder.index(root_val)
+    root.left = build(preorder[1:root_index + 1], inorder[:root_index])
+    root.right = build(preorder[root_index + 1:], inorder[root_index + 1:])
+    return root
+
+
+def postorder(root):
+    if not root:
+        return []
+    if root.left is None and root.right is None:
+        return [root.val]
+    result = []
+    result += postorder(root.left)
+    result += postorder(root.right)
+    result += [root.val]
+    return result
+
+
+input()
+preorder = list(map(int, input().split()))
+inorder = sorted(preorder)
+root = build(preorder, inorder)
+result = postorder(root)
+print(' '.join(map(str, result)))
 ```
 
 
