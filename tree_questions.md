@@ -1,6 +1,6 @@
-# 20240312\~19\~26-Week4~6-植树节（Arbor day）
+# 20240312\~26-Week4~6-植树节（Arbor day）
 
-Updated 1624 GMT+8 March 25, 2024
+Updated 1826 GMT+8 March 25, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -35,7 +35,7 @@ Updated 1624 GMT+8 March 25, 2024
 
 # 一、（Week4）树的概念和表示方法
 
-# Recap 用类写程序
+## Recap 用类写程序
 
 接下来开始学习树，大量程序会给出类的实现代码。复习一个类写法的小程序，可以debug模式运行，或者 https://pythontutor.com 可视化运行，辅助理解。类实现程序，补充缺失行代码。是笔试中必考的题目。
 
@@ -91,7 +91,7 @@ print(B.parent)  # 输出: [0, 1, 2, 3, 4]
 
 
 
-# 1 术语及定义
+## 1 术语及定义
 
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240305220241219.png" alt="image-20240305220241219" style="zoom: 50%;" />
 
@@ -318,7 +318,7 @@ mindmap
 
 
 
-## 1.1 n阶多叉树 (N-ary Trees)
+### 1.1 n阶多叉树 (N-ary Trees)
 
 https://www.geeksforgeeks.org/generic-treesn-array-trees/?ref=outind
 
@@ -390,7 +390,7 @@ class Node:
 
 
 
-### Efficient Approach
+#### Efficient Approach
 
 First child / Next sibling representation
 
@@ -440,9 +440,9 @@ class Node:
 
 
 
-## 1.2 编程题目
+### 1.2 编程题目
 
-### 06646: 二叉树的深度
+#### 06646: 二叉树的深度
 
 http://cs101.openjudge.cn/practice/06646/
 
@@ -537,7 +537,7 @@ print(ans)
 
 
 
-### 27638: 求二叉树的高度和叶子数目
+#### 27638: 求二叉树的高度和叶子数目
 
 http://cs101.openjudge.cn/practice/27638/
 
@@ -613,7 +613,7 @@ print(f"{height} {leaves}")
 
 
 
-### Height of a generic tree from parent array
+#### Height of a generic tree from parent array
 
 https://www.geeksforgeeks.org/height-generic-tree-parent-array/
 
@@ -766,7 +766,7 @@ if __name__ == '__main__':
 
 
 
-### General Tree Level Order Traversal
+#### General Tree Level Order Traversal
 
 https://www.geeksforgeeks.org/generic-tree-level-order-traversal/
 
@@ -884,7 +884,7 @@ Auxiliary Space: O(n)
 
 
 
-# 2 树的表示方法
+## 2 树的表示方法
 
 https://blog.csdn.net/qq_41891805/article/details/104473065
 
@@ -1044,9 +1044,9 @@ G: []
 
 
 
-## 2.1 编程题目
+### 2.1 编程题目
 
-### 24729: 括号嵌套树
+#### 24729: 括号嵌套树
 
 http://cs101.openjudge.cn/practice/24729/
 
@@ -1199,7 +1199,7 @@ if __name__ == "__main__":
 
 
 
-### 02775: 文件结构“图”
+#### 02775: 文件结构“图”
 
 http://cs101.openjudge.cn/practice/02775/
 
@@ -1329,9 +1329,9 @@ while True:
 
 # 二、（Week5）树的基本操作、Huffman
 
-# 3 二叉树的应用
+## 3 二叉树的应用
 
-## 3.1 解析树
+### 3.1 解析树
 
 现在来看看如何用树解决一些实际问题。本节介绍解析树，可以用它来表示现实世界中像句子（如图1所示）或数学表达式这样的构造。
 
@@ -1408,7 +1408,7 @@ while True:
 
 利用前面描述的规则以及`Stack`和`BinaryTree`，就可以编写创建解析树的Python函数。
 
-### 实现：解析树构建器
+#### 实现：解析树构建器
 
 
 
@@ -1597,7 +1597,7 @@ print(printexp(pt))
 
 
 
-### 实现：计算二叉解析树的递归函数
+#### 实现：计算二叉解析树的递归函数
 
 代码清单6-10。
 
@@ -1627,9 +1627,9 @@ def evaluate(parseTree):
 
 
 
-### 编程题目
+#### 编程题目
 
-#### 25140: 根据后序表达式建立队列表达式
+##### 25140: 根据后序表达式建立队列表达式
 
 http://cs101.openjudge.cn/practice/25140/
 
@@ -1723,7 +1723,7 @@ for _ in range(n):
 
 
 
-## 3.2 树的遍历
+### 3.2 树的遍历
 
 我们已经了解了树的基本功能，现在是时候看看一些附加的使用模式了。这些使用模式可以按节点的访问方式分为3种。我们将对所有节点的访问称为“遍历”，共有3种遍历方式，分别为前序遍历、中序遍历和后序遍历。接下来，我们先仔细地定义这3种遍历方式，然后通过一些例子看看它们的用法。
 
@@ -1791,7 +1791,7 @@ def postorder(tree):
 
 我们已经见识过后序遍历的一个常见用途，那就是计算解析树。<u>回顾代码清单6-10，我们所做的就是先计算左子树，再计算右子树，最后通过根节点运算符的函数调用将两个结果结合起来。</u>假设二叉树只存储一个表达式的数据。让我们来重写计算函数，使之更接近于代码清单6-13中的后序遍历函数。
 
-### 代码清单6-14 后序求值
+#### 代码清单6-14 后序求值
 
 ```python
 def postordereval(tree):
@@ -1824,7 +1824,7 @@ def inorder(tree):
 
 <u>通过中序遍历解析树，可以还原不带括号的表达式。</u>接下来修改中序遍历算法，以得到完全括号表达式。唯一要做的修改是：在递归调用左子树前打印一个左括号，在递归调用右子树后打印一个右括号。代码清单6-16是修改后的函数。
 
-### 代码清单6-16 中序还原完全括号表达式
+#### 代码清单6-16 中序还原完全括号表达式
 
 ```python
 def printexp(tree):
@@ -1845,13 +1845,13 @@ print(printexp(pt))
 
 
 
-### 编程题目
+#### 编程题目
 
 打*的题目，可以跳过。比如：20576，输出部分逻辑复杂，不容易看懂。
 
 
 
-#### *20576: printExp（逆波兰表达式建树）
+##### *20576: printExp（逆波兰表达式建树）
 
 http://cs101.openjudge.cn/dsapre/20576/
 
@@ -1983,7 +1983,7 @@ main()
 
 
 
-#### 24750: 根据二叉树中后序序列建树
+##### 24750: 根据二叉树中后序序列建树
 
 http://cs101.openjudge.cn/practice/24750/
 
@@ -2110,7 +2110,7 @@ print(''.join(preorderTraversal(root)))
 
 
 
-#### 22158: 根据二叉树前中序序列建树
+##### 22158: 根据二叉树前中序序列建树
 
 http://cs101.openjudge.cn/practice/22158/
 
@@ -2194,7 +2194,7 @@ while True:
 
 
 
-#### 25145: 猜二叉树（按层次遍历）
+##### 25145: 猜二叉树（按层次遍历）
 
 http://cs101.openjudge.cn/practice/25145/
 
@@ -2275,7 +2275,7 @@ for _ in range(n):
 
 
 
-#### 27637: 括号嵌套二叉树
+##### 27637: 括号嵌套二叉树
 
 http://cs101.openjudge.cn/practice/27637/
 
@@ -2390,7 +2390,7 @@ for _ in range(n):
 
 
 
-## 3.3 Huffman 算法
+### 3.3 Huffman 算法
 
 > 2013-book-Data Structures And Algorithms In Python
 
@@ -2410,7 +2410,7 @@ Figure 13.9: An illustration of an example Huffman code for the input string X =
 
 
 
-### 3.3.1 The Huffman Coding Algorithm
+#### 3.3.1 The Huffman Coding Algorithm
 
 The Huffman coding algorithm begins with each of the d distinct characters of the string X to encode being the root node of a single-node binary tree. The algorithm proceeds in a series of rounds. In each round, the algorithm takes the two binary
 trees with the smallest frequencies and merges them into a single binary tree. It repeats this process until only one tree is left. 
@@ -2422,7 +2422,7 @@ optimal code can be converted into an optimal code in which the code-words for t
 
 
 
-### 3.3.2 The Greedy Method
+#### 3.3.2 The Greedy Method
 
 Huffman’s algorithm for building an optimal encoding is an example application of an algorithmic design pattern called the greedy method. This design pattern is applied to optimization problems, where we are trying to construct some structure
 while minimizing or maximizing some property of that structure. 
@@ -2433,7 +2433,7 @@ But there are several problems that it does work for, and such problems are said
 
 
 
-### 3.3.3 哈夫曼编码实现
+#### 3.3.3 哈夫曼编码实现
 
 要构建一个最优的哈夫曼编码树，首先需要对给定的字符及其权值进行排序。然后，通过重复合并权值最小的两个节点（或子树），直到所有节点都合并为一棵树为止。
 
@@ -2493,9 +2493,9 @@ if __name__ == "__main__":
 
 
 
-### 编程题目
+#### 编程题目
 
-#### 22161: 哈夫曼编码树
+##### 22161: 哈夫曼编码树
 
 http://cs101.openjudge.cn/practice/22161/
 
@@ -2663,7 +2663,7 @@ for result in results:
 
 
 
-### 笔试题目
+#### 笔试题目
 
 **Q:** 用 Huffman 算法构造一个最优二叉编码树，待编码的字符权值分别为{3，4，5，6，8，9，11，12}，请问该最优二叉编码树的带权外部路径长度为（ B ）。（补充说明：树的带权外部路径长度定义为树中所有叶子结点的带权路径长度之和；其中，结点的带权路径长度定义为该结点到树根之间的路径长度与该结点权值的乘积）
 A：58	B：169	C：72	D：18
@@ -2733,7 +2733,7 @@ WPL = 12 + 16 + 20 + 24 + 27 + 24 + 22 + 24 = 169
 
 # 三、（Week6）BinHeap, BST, AVL, Disjoint Set
 
-# 4 利用二叉堆实现优先级队列
+## 4 利用二叉堆实现优先级队列
 
 我们学习过队列这一先进先出的数据结构。队列有一个重要的变体，叫作优先级队列。和队列一样，优先级队列从头部移除元素，不过元素的逻辑顺序是由优先级决定的。优先级最高的元素在最前，优先级最低的元素在最后。因此，当一个元素入队时，它可能直接被移到优先级队列的头部。后续学习图相关内容时会看到，<u>对于一些图算法来说，优先级队列是一个有用的数据结构</u>。
 
@@ -2741,7 +2741,7 @@ WPL = 12 + 16 + 20 + 24 + 27 + 24 + 22 + 24 = 169
 
 二叉堆学起来很有意思，它画出来很像一棵树，但实现时只用一个列表作为内部表示。我们将实现最小堆（最小的元素一直在队首）。
 
-## 4.1 二叉堆的实现
+### 4.1 二叉堆的实现
 
 1. 结构性
 
@@ -2980,9 +2980,9 @@ for _ in range(bh.currentSize):
 
 
 
-## 4.2 编程题目
+### 4.2 编程题目
 
-### 04078: 实现堆结构
+#### 04078: 实现堆结构
 
 http://cs101.openjudge.cn/practice/04078/
 
@@ -3101,7 +3101,7 @@ for _ in range(n):
 
 
 
-### 晴问9.7: 向下调整构建大顶堆
+#### 晴问9.7: 向下调整构建大顶堆
 
 https://sunnywhy.com/sfbj/9/7
 
@@ -3210,7 +3210,7 @@ print(*ans)
 
 
 
-### 18164: 剪绳子
+#### 18164: 剪绳子
 
 greedy/huffman, http://cs101.openjudge.cn/practice/18164/
 
@@ -3279,13 +3279,7 @@ print(ans)
 
 
 
-
-
-
-
-
-
-## 4.3 笔试题目
+### 4.3 笔试题目
 
 **Q**: 下图是一棵完全二叉树:
 1)请根据初始建堆算法对该完全二叉树建堆，请画出构建的小根堆(2分);
@@ -3464,7 +3458,7 @@ GPT3.5:
 
 
 
-# 5 二叉搜索树
+## 5 二叉搜索树
 
 二叉搜索树（Binary Search Tree，BST），它是映射的另一种实现。我们感兴趣的不是元素在树中的确切位置，而是如何利用二叉树结构提供高效的搜索。
 
@@ -3472,9 +3466,9 @@ GPT3.5:
 
 
 
-## 5.1 编程题目
+#### 5.1 编程题目
 
-### 22275: 二叉搜索树的遍历
+#### 22275: 二叉搜索树的遍历
 
 http://cs101.openjudge.cn/practice/22275/
 
@@ -3563,6 +3557,49 @@ print(' '.join(postorder(buildTree(preorder))))
 
 
 ```python
+# 管骏杰 生命科学学院
+# 中序遍历就是顺序排列，进而通过上次作业的思路根据前序中序推出后序
+class Node:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+
+def build(preorder, inorder):
+    if not preorder or not inorder:
+        return None
+    root_val = preorder[0]
+    root = Node(root_val)
+    root_index = inorder.index(root_val)
+    root.left = build(preorder[1:root_index + 1], inorder[:root_index])
+    root.right = build(preorder[root_index + 1:], inorder[root_index + 1:])
+    return root
+
+
+def postorder(root):
+    if not root:
+        return []
+    if root.left is None and root.right is None:
+        return [root.val]
+    result = []
+    result += postorder(root.left)
+    result += postorder(root.right)
+    result += [root.val]
+    return result
+
+
+input()
+preorder = list(map(int, input().split()))
+inorder = sorted(preorder)
+root = build(preorder, inorder)
+result = postorder(root)
+print(' '.join(map(str, result)))
+```
+
+
+
+```python
 def post_order(pre_order):
     if not pre_order:
         return []
@@ -3578,7 +3615,7 @@ print(' '.join(map(str, post_order(pre_order))))
 
 
 
-### 05455: 二叉搜索树的层次遍历
+#### 05455: 二叉搜索树的层次遍历
 
 http://cs101.openjudge.cn/practice/05455/
 
@@ -3669,7 +3706,7 @@ This code reads the sequence of numbers from the input, removes duplicates, cons
 
 
 
-## 5.2 二叉搜索树实现快排
+### 5.2 二叉搜索树实现快排
 
 快速排序是一种基于分治法的排序算法，它通过选择一个元素作为基准（pivot），将数组分割为两个子数组，其中一个子数组的元素都小于基准，另一个子数组的元素都大于基准。然后，对两个子数组递归地应用相同的排序过程，直到排序完成。
 
@@ -3732,7 +3769,7 @@ print(sorted_nums)
 
 
 
-# 6 平衡二叉搜索树
+## 6 平衡二叉搜索树
 
 当二叉搜索树不平衡时，get和put等操作的性能可能降到O(n)。本节将介绍一种特殊的二叉搜索树，它能自动维持平衡。这种树叫作 AVL树，以其发明者G. M. Adelson-Velskii和E. M. Landis的姓氏命名。
 
@@ -3754,7 +3791,7 @@ $balance Factor = height (left SubTree) - height(right SubTree)$
 
 图1 带平衡因子的右倾树
 
-## 6.1 AVL树的性能
+### 6.1 AVL树的性能
 
 我们先看看限定平衡因子带来的结果。我们认为，保证树的平衡因子为-1、0或1，可以使关键操作获得更好的大 O 性能。首先考虑平衡因子如何改善最坏情况。有左倾与右倾这两种可能性。如果考虑高度为0、1、2和3的树，图2展示了应用新规则后最不平衡的左倾树。
 
@@ -3772,9 +3809,9 @@ $N_h = 1 + N_{h-1} + N_{h-2}$​
 
 
 
-### 6.1.1 编程题目
+#### 6.1.1 编程题目
 
-#### 27625: AVL树至少有几个结点
+##### 27625: AVL树至少有几个结点
 
 > http://cs101.openjudge.cn/practice/27625/
 >
@@ -3845,7 +3882,7 @@ $N_h = 1 + N_{h-1} + N_{h-2}$​
 
 
 
-#### 27626: AVL树最多有几层
+##### 27626: AVL树最多有几层
 
 > http://cs101.openjudge.cn/practice/27626/
 >
@@ -3999,7 +4036,7 @@ h = 1.44 \log{N_h}\end{split}$​​​​
 
 
 
-## 6.2 AVL树的实现
+### 6.2 AVL树的实现
 
 我们已经证明，保持AVL树的平衡会带来很大的性能优势，现在看看如何往树中插入一个键。所有新键都是以叶子节点插入的，因为新叶子节点的平衡因子是零，所以新插节点没有什么限制条件。但插入新节点后，必须更新父节点的平衡因子。新的叶子节点对其父节点平衡因子的影响取决于它是左子节点还是右子节点。如果是右子节点，父节点的平衡因子减一。如果是左子节点，则父节点的平衡因子加一。
 
@@ -4102,9 +4139,9 @@ h = 1.44 \log{N_h}\end{split}$​​​​
 
 
 
-### 6.2.1 编程题目
+#### 6.2.1 编程题目
 
-#### 晴问9.5: 平衡二叉树的建立
+##### 晴问9.5: 平衡二叉树的建立
 
 https://sunnywhy.com/sfbj/9/5/359
 
@@ -4251,7 +4288,7 @@ This code reads the sequence from the input, inserts its values into an AVL tree
 
 
 
-## 6.3 映射实现总结
+### 6.3 映射实现总结
 
 用来实现映射这一抽象数据类型的多种数据结构，包括有序列表、散列表、二叉搜索树以及AVL树。表6-1总结了每个数据结构的性能。
 
@@ -4268,7 +4305,7 @@ This code reads the sequence from the input, inserts its values into an AVL tree
 
 
 
-# 7 并查集（Disjoint Set）
+## 7 并查集（Disjoint Set）
 
 > 通常情况下，使用邻接表来表示并查集（Disjoint Set）和前缀树（Trie Tree）是比较常见的做法。
 >
@@ -4339,11 +4376,11 @@ Partitioning the individuals into different sets according to the groups in whic
 
 
 
-## 7.1 Operations on Disjoint Set
+### 7.1 Operations on Disjoint Set
 
 操作包括 Find 和 Union。
 
-### 7.1.1 Find
+#### 7.1.1 Find
 
 Can be implemented by recursively traversing the parent array until we hit a node that is the parent of itself.
 
@@ -4379,7 +4416,7 @@ def find(i):
 
 
 
-### 7.1.2 Union 
+#### 7.1.2 Union 
 
 It takes **two elements** as input and finds the representatives of their sets using the **Find** operation, and finally puts either one of the trees (representing the set) under the root node of the other tree.
 
@@ -4409,13 +4446,13 @@ def union(parent, rank, i, j):
 
 
 
-## 7.2 Optimizations (Union by Rank/Size and Path Compression)
+### 7.2 Optimizations (Union by Rank/Size and Path Compression)
 
 The efficiency depends heavily on which tree get attached to the other. There are 2 ways in which it can be done. First is Union by Rank, which considers height of the tree as the factor and Second is Union by Size, which considers size of the tree as the factor while attaching one tree to the other . This method along with Path Compression gives complexity of nearly constant time.
 
 
 
-### 7.2.1 Path Compression
+#### 7.2.1 Path Compression
 
 Modifications to Find()):
 
@@ -4456,7 +4493,7 @@ def find(i):
 
 
 
-### 7.2.2 Union by Rank
+#### 7.2.2 Union by Rank
 
 First of all, we need a new array of integers called **rank[]**. The size of this array is the same as the parent array **Parent[]**. If i is a representative of a set, **rank[i]** is the height of the tree representing the set. 
 Now recall that in the Union operation, it doesn’t matter which of the two trees is moved under the other. Now what we want to do is minimize the height of the resulting tree. If we are uniting two trees (or sets), let’s call them left and right, then it all depends on the **rank of left** and the **rank of right**. 
@@ -4466,7 +4503,7 @@ Now recall that in the Union operation, it doesn’t matter which of the two tre
 
 
 
-### 7.2.3 Path compression and union by rank
+#### 7.2.3 Path compression and union by rank
 
 Below is the complete implementation of disjoint set with path compression and union by rank.
 
@@ -4549,7 +4586,7 @@ No
 
 
 
-### 7.2.4 Union by Size
+#### 7.2.4 Union by Size
 
 Again, we need a new array of integers called **size[]**. The size of this array is the same as the parent array **Parent[]**. If i is a representative of a set, **size[i]** is the number of the elements in the tree representing the set. 
 Now we are uniting two trees (or sets), let’s call them left and right, then in this case it all depends on the **size of left** and the **size of right** tree (or set).
@@ -4635,9 +4672,9 @@ Element 4: Representative = 0
 
 
 
-## 7.3 编程题目
+### 7.3 编程题目
 
-### 晴问9.6.1 学校的班级个数（1）
+#### 晴问9.6.1 学校的班级个数（1）
 
 https://sunnywhy.com/sfbj/9/6/360
 
@@ -4714,7 +4751,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-### 晴问9.6.2 学校的班级人数（2）
+#### 晴问9.6.2 学校的班级人数（2）
 
 https://sunnywhy.com/sfbj/9/6/361
 
@@ -4805,7 +4842,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-### 晴问9.6.3 是否相同班级
+#### 晴问9.6.3 是否相同班级
 
 https://sunnywhy.com/sfbj/9/6/362
 
@@ -4895,7 +4932,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-### 晴问9.6.4 迷宫连通性
+#### 晴问9.6.4 迷宫连通性
 
 https://sunnywhy.com/sfbj/9/6/363
 
@@ -4995,7 +5032,7 @@ This code reads the number of rooms and connections from the input, initializes 
 
 
 
-### 晴问9.6.5 班级最高分
+#### 晴问9.6.5 班级最高分
 
 https://sunnywhy.com/sfbj/9/6/364
 
@@ -5090,7 +5127,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-### 01182: 食物链
+#### 01182: 食物链
 
 并查集, http://cs101.openjudge.cn/practice/01182
 
