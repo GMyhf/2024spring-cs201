@@ -1,6 +1,6 @@
 # 20240312\~26-Week4~6-植树节（Arbor day）
 
-Updated 1826 GMT+8 March 25, 2024
+Updated 1826 GMT+8 March 26, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3471,7 +3471,7 @@ GPT3.5:
 
 #### 5.1 编程题目
 
-#### 22275: 二叉搜索树的遍历
+##### 22275: 二叉搜索树的遍历
 
 http://cs101.openjudge.cn/practice/22275/
 
@@ -3618,7 +3618,7 @@ print(' '.join(map(str, post_order(pre_order))))
 
 
 
-#### 05455: 二叉搜索树的层次遍历
+##### 05455: 二叉搜索树的层次遍历
 
 http://cs101.openjudge.cn/practice/05455/
 
@@ -3709,7 +3709,7 @@ This code reads the sequence of numbers from the input, removes duplicates, cons
 
 
 
-### 5.2 二叉搜索树实现快排
+#### 5.2 二叉搜索树实现快排
 
 快速排序是一种基于分治法的排序算法，它通过选择一个元素作为基准（pivot），将数组分割为两个子数组，其中一个子数组的元素都小于基准，另一个子数组的元素都大于基准。然后，对两个子数组递归地应用相同的排序过程，直到排序完成。
 
