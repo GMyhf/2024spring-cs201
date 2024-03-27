@@ -21,7 +21,7 @@ mindmap
     		Deque
     	Generic Tree
     		Adjacency List
-    		*Disjoint Set
+    		Disjoint Set
     		*Trie
     	Binary Tree(Binary Tree)
     		Priority Queues with Binary Heaps
