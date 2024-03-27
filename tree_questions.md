@@ -4361,7 +4361,41 @@ class AVL:
 
 这段代码中的 `_delete` 方法用于删除节点。它首先检查树中是否存在要删除的节点，然后根据节点的左右子树情况执行相应的操作，以保持AVL树的平衡。
 
+在 AVL 树中，删除节点时，当被删除的节点有两个子节点时，需要一些额外的步骤来保持树的平衡性。让我们详细讲解 `else` 分支中的情况：
 
+```python
+else:
+    if not node.left:
+        temp = node.right
+        node = None
+        return temp
+    elif not node.right:
+        temp = node.left
+        node = None
+        return temp
+
+    temp = self._min_value_node(node.right)
+    node.value = temp.value
+    node.right = self._delete(temp.value, node.right)
+```
+
+1. 如果要删除的节点 `node` 没有左子节点，那么我们只需返回其右子节点。这是因为右子节点（如果存在）将占据 `node` 的位置，而不会影响树的平衡性。所以我们将 `node` 设置为 `None`，然后返回其右子节点即可。
+
+2. 如果要删除的节点 `node` 没有右子节点，那么我们只需返回其左子节点。这与上述情况类似。
+
+3. 如果要删除的节点 `node` 既有左子节点又有右子节点，那么我们需要找到 `node` 的右子树中的最小值节点，并将其值替换到 `node` 中，然后在右子树中删除这个最小值节点。这是因为右子树中的最小值节点是大于左子树中所有节点值且小于右子树中所有节点值的节点，它在替代被删除节点后能够保持树的平衡性。
+
+函数 `_min_value_node` 用于找到树中的最小值节点，其实现如下：
+
+```python
+def _min_value_node(self, node):
+    current = node
+    while current.left:
+        current = current.left
+    return current
+```
+
+这样，当我们删除带有两个子节点的节点时，我们选择将右子树中的最小值节点的值替换到要删除的节点中，然后递归地在右子树中删除这个最小值节点。
 
 
 
