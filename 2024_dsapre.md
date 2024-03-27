@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 1832 GMT+8 March 25, 2024
+Updated 1111 GMT+8 March 27, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3112,6 +3112,97 @@ for data in datas:
         print()
     dataset+=1
 ```
+
+
+
+罗熙佑思路：根据树的递归定义操作。这题之前拿 C++ 做过，当时几乎不会树，靠递归手搓，代码又臭又长，写起来也容易错，当时de了很久bug;现在系统学了树就感觉蛮简单了，可以用`map`+`lambda`函数来处理了缩进，其他地方模版性比较强；代码写了详细注释，可供参考。
+
+```Python
+# 罗熙佑
+from typing import List
+class Node:
+    def __init__(self, v) -> None:
+        self.v = v # value
+        self.c = [] # children
+
+def build_tree(s: List[str]) -> Node:
+    '''
+    从s中读取数据并建树，返回root；
+    s是一组输入数据的列表，原输入的每一行是一个列表一个元素
+    s: sequence
+    '''
+    # base case 1: s读完，说明本组数据结束
+    if not s:
+        return None
+    
+    t = s.pop() # token
+
+    # base case 2: 读到]代表目录结束，读到f代表叶节点
+    if t == ']':
+        return None
+    if t[0] == 'f':
+        return Node(t)
+
+    # step1: build root
+    root = Node(t)
+
+    # step2: build subtree and connect
+    while nd := build_tree(s): # 如果建出None就不加，用海牛让代码更简洁
+        root.c.append(nd)
+
+    # step3: sort
+    dire = [n for n in root.c if n.v[0] == 'd']
+    file = [n for n in root.c if n.v[0] == 'f']
+    file.sort(key=lambda u: u.v) # 把文件按字典序排序
+    root.c = dire + file
+
+    #step 4: return
+    return root
+
+def traversal(root: Node) -> List[str]:
+    '''把以root为根的树的待打印内容放到sq列表，每一行内容作为一个元素；并返回sq'''
+    sq = [] # sequence
+
+    # step1: add root
+    sq.append(root.v)
+
+    # step2: add subtree, from left to right
+    for n in root.c: # node
+        # 2.1: if node is leaf, i.e. file
+        if n.v[0] == 'f':
+            sq.append(n.v)
+        # 2.2: 
+        else: # if node is dir, add indentation for every node of the subtree whose root is the 'dir'
+            sq.extend(map(lambda x: "|     " + x, traversal(n)))
+
+    # step3: return
+    return sq
+            
+def main() -> None:
+    # read input data
+    s = ['ROOT']
+    idx = []
+    cnt = 0
+    while True:
+        t = input()
+        if t == '#':
+            break
+        s.append(t)
+        cnt += 1
+        if t == '*':
+            idx.append(cnt)
+            s[-1] = 'ROOT'
+
+    for i in range(1, len(idx) + 1):
+        print(f"DATA SET {i}:")
+        root = build_tree(s[idx[i - 1] - 1: idx[i - 2] - 1 if i > 1 else None: -1])
+        print('\n'.join(traversal(root)), end='\n\n')
+
+if __name__ == "__main__":
+    main()
+```
+
+
 
 
 
