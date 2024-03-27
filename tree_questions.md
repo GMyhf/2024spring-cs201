@@ -1,6 +1,6 @@
 # 20240312\~26-Week4~6-植树节（Arbor day）
 
-Updated 1826 GMT+8 March 26, 2024
+Updated 1802 GMT+8 March 27, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4045,6 +4045,8 @@ h = 1.44 \log{N_h}\end{split}$​​​​
 
 假设现在已有一棵平衡二叉树，那么可以预见到，在往其中插入一个结点时，一定会有结点的平衡因子发生变化，此时可能会有结点的平衡因子的绝对值大于 1（这些平衡因子只可能是 2 或者 -2)，这样以该结点为根结点的子树就是失衡的，需要进行调整。显然，只有在从根结点到该插入结点的路径上的结点才可能发生平衡因子变化，因此只需对这条路径上失衡的结点进行调整。可以证明，**只要把最靠近插入结点的失衡结点调整到正常，路径上的所有结点就都会平衡**。
 
+当平衡的二叉排序树因插入结点而失去平衡时，仅需对最小不平衡子树进行平衡旋转处理即可。因为经过旋转处理之后的子树深度和插入之前相同，因而不影响插入路径上所有祖先结点的平衡度。
+
 
 
 > 如果需要进行再平衡，该怎么做呢？高效的再平衡是让AVL树发挥作用同时不损性能的关键。为了让AVL树恢复平衡，需要在树上进行一次或多次旋转。
@@ -4112,15 +4114,17 @@ h = 1.44 \log{N_h}\end{split}$​​​​
 
 
 
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403221944039.png" alt="image-20240322194434170" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240327180845393.png" alt="image-20240327180845393" style="zoom: 25%;" />
 
 图7 树型之 RR型与RL型（数字代表平衡因子）
+
+
 
 对 RR 型来说，可以把以 C 为根结点的子树看作一个整体，然后以结点 A 作为 root 进行左旋，便可以达到平衡，如图8 所示。
 
 
 
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403221946985.png" alt="image-20240322194646407" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240327181005318.png" alt="image-20240327181005318" style="zoom:25%;" />
 
 图8 RR 型调整示意图（数字代表平衡因子）
 
@@ -4130,9 +4134,11 @@ h = 1.44 \log{N_h}\end{split}$​​​​
 
 
 
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403221948008.png" alt="image-20240322194851060" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240327181120393.png" alt="image-20240327181120393" style="zoom:25%;" />
 
 图9 RL型调整示意图（数字代表平衡因子）
+
+
 
 至此，对LL 型、LR 型、RR 型、RL型的调整方法都已经讨论清楚。
 
@@ -4286,6 +4292,74 @@ print(' '.join(map(str, avl.preorder())))
 This code reads the sequence from the input, inserts its values into an AVL tree, performs a preorder traversal of the AVL tree, and then prints the result.
 
 
+
+要实现从AVL树中删除节点，需要添加一个删除方法，并确保在删除节点后重新平衡树。
+
+下面是更新后的代码，包括删除方法 `_delete`：
+
+```python
+class AVL:
+    # Existing code...
+    
+    def delete(self, value):
+        self.root = self._delete(value, self.root)
+
+    def _delete(self, value, node):
+        if not node:
+            return node
+
+        if value < node.value:
+            node.left = self._delete(value, node.left)
+        elif value > node.value:
+            node.right = self._delete(value, node.right)
+        else:
+            if not node.left:
+                temp = node.right
+                node = None
+                return temp
+            elif not node.right:
+                temp = node.left
+                node = None
+                return temp
+
+            temp = self._min_value_node(node.right)
+            node.value = temp.value
+            node.right = self._delete(temp.value, node.right)
+
+        if not node:
+            return node
+
+        node.height = 1 + max(self._get_height(node.left), self._get_height(node.right))
+
+        balance = self._get_balance(node)
+
+        # Rebalance the tree
+        if balance > 1:
+            if self._get_balance(node.left) >= 0:
+                return self._rotate_right(node)
+            else:
+                node.left = self._rotate_left(node.left)
+                return self._rotate_right(node)
+
+        if balance < -1:
+            if self._get_balance(node.right) <= 0:
+                return self._rotate_left(node)
+            else:
+                node.right = self._rotate_right(node.right)
+                return self._rotate_left(node)
+
+        return node
+
+    def _min_value_node(self, node):
+        current = node
+        while current.left:
+            current = current.left
+        return current
+
+    # Existing code...
+```
+
+这段代码中的 `_delete` 方法用于删除节点。它首先检查树中是否存在要删除的节点，然后根据节点的左右子树情况执行相应的操作，以保持AVL树的平衡。
 
 
 
