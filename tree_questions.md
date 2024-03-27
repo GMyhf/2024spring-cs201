@@ -1,6 +1,6 @@
 # 20240312\~26-Week4~6-植树节（Arbor day）
 
-Updated 1802 GMT+8 March 27, 2024
+Updated 1834 GMT+8 March 27, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4292,6 +4292,8 @@ print(' '.join(map(str, avl.preorder())))
 This code reads the sequence from the input, inserts its values into an AVL tree, performs a preorder traversal of the AVL tree, and then prints the result.
 
 
+
+#### 6.2.2 AVL树中删除节点
 
 要实现从AVL树中删除节点，需要添加一个删除方法，并确保在删除节点后重新平衡树。
 
