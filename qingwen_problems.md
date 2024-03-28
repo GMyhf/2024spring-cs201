@@ -1290,13 +1290,147 @@ In this program, we define a `Node` class to represent a node in the linked list
 
 
 
-### 3.5 链表反转
+### 3.5 链表反转 中等
+
+现有个结点（编号为从`1`到`n`），以及链表的第一个结点的编号，请将链表反转（结点顺序颠倒），然后依次输出新链表上每个结点的信息。
+
+输入
+
+第一行两个整数n、first（1<=first<=n<=100），分别表示结点的个数、链表第一个结点的编号；
+
+接下来n行，每行给出一个结点的信息：
+
+```text
+id data next
+```
+
+其中整数id（1 <=id <= n）表示结点的编号（每个id只出现一次，顺序不定），整数data（1 <= data <= 1000）表示结点的数据域，整数next（1 <= next <= n或 next = -1）表示当前结点指向的结点编号（其中next = -1表示`NULL`）。
+
+输出
+
+按链表结点的顺序，每行输出链表中一个结点的`id`、`data`、`next`，中间用空格隔开。
+
+样例1
+
+输入
+
+```
+5 2
+1 10 3
+2 35 5
+3 12 -1
+4 23 3
+5 58 1
+```
+
+输出
+
+```
+3 12 1
+1 10 5
+5 58 2
+2 35 -1
+```
+
+解释
+
+第一个结点编号为`2`，因此整条链表为：`2(35)->5(58)->1(10)->3(12)->NULL`，结点`4`是多余的。
+
+将链表反转后可以得到新链表：`3(12)->1(10)->5(58)->2(35)->NULL`
 
 
 
+ 首先，我们需要创建一个Node类来存储节点的信息，包括id、data和next。然后，使用字典来存储所有的节点。接着，我们需要根据输入的链表第一个节点的编号，找到链表的头节点，然后遍历链表，将链表中的节点按照顺序添加到一个新的列表中。反转新列表。最后，我们需要更新每个节点的next属性，使其指向新列表中的下一个节点，然后按照新的顺序输出每个节点的信息。
+
+以下是实现这个过程的Python代码：
+
+```python
+class Node:
+    def __init__(self, id, data, next):
+        self.id = id
+        self.data = data
+        self.next = next
+
+n, first = map(int, input().split())
+nodes = {}
+for _ in range(n):
+    id, data, next = map(int, input().split())
+    nodes[id] = Node(id, data, next)
+
+# Reverse the linked list
+reversed_nodes = []
+current = nodes[first]
+while current is not None:
+    reversed_nodes.append(current)
+    if current.next != -1:
+        current = nodes[current.next]
+    else:
+        current = None
+
+reversed_nodes.reverse()
+
+# Update the next attribute of each node
+for i in range(len(reversed_nodes) - 1):
+    reversed_nodes[i].next = reversed_nodes[i + 1].id
+reversed_nodes[-1].next = -1
+
+# Output the reversed linked list
+for node in reversed_nodes:
+    print(node.id, node.data, node.next)
+```
+
+这段代码首先读取输入，然后创建一个Node类的实例来存储每个节点的信息。然后，它遍历链表，将链表中的节点按照顺序添加到一个新的列表中。反转新列表。然后，它更新每个节点的next属性，使其指向新列表中的下一个节点。最后，它按照新的顺序输出每个节点的信息。
 
 
-### 3.6 链表去除重复元素
+
+### 3.6 链表去除重复元素 中等
+
+现有个结点（编号为从`1`到`n`），以及链表的第一个结点的编号，请去掉链表上所有数据域重复的结点（只保留第一个），然后依次输出新链表上每个结点的信息。
+
+输入
+
+第一行两个整数n、first（1<=first<=n<=100），分别表示结点的个数、链表第一个结点的编号；
+
+接下来行，每行给出一个结点的信息：
+
+```text
+id data next
+```
+
+其中整数id（1 <=id <= n）表示结点的编号（每个id只出现一次，顺序不定），整数data（1 <= data <= 1000）表示结点的数据域，整数next（1 <= next <= n或 next = -1）表示当前结点指向的结点编号（其中next = -1表示`NULL`）。
+
+输出
+
+按链表结点的顺序，每行输出链表中一个结点的`id`、`data`、`next`，中间用空格隔开。
+
+样例1
+
+输入
+
+```
+5 2
+1 10 3
+2 35 5
+3 58 -1
+4 23 3
+5 58 1
+```
+
+输出
+
+```
+2 35 5
+5 58 1
+1 10 -1
+```
+
+解释
+
+第一个结点编号为`2`，因此整条链表为：`2(35)->5(58)->1(10)->3(58)->NULL`，结点`4`是多余的。
+
+由于结点`3`和结点`5`的数据域是`58`，但结点`5`先出现，因此删除结点`3`，可以得到新链表：`2(35)->5(58)->1(10)->NULL`
+
+
 
 
 
