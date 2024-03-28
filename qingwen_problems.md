@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 0750 GMT+8 March 28, 2024
+Updated 1042 GMT+8 March 28, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9,6 +9,1322 @@ Updated 0750 GMT+8 March 28, 2024
 
 
 题目练习网址，https://sunnywhy.com/sfbj
+
+
+
+# 栈和队列
+
+## 1 栈的应用 7题
+
+### 1.1 栈的操作序列 简单
+
+现有一个空栈s，按顺序执行n个操作序列，每个操作是下面的两种之一：
+
+1. 往s中压入一个正整数k
+2. 弹出的栈顶元素，同时将其输出
+
+输入
+
+第一行一个整数 n（1<=n<=100），表示操作序列的个数；
+
+接下来行，每行一个操作序列，格式为以下两种之一，分别对应入栈和出栈的操作，其中`push k`表示需要将整数k（1<=k<=100）压入栈，而`pop`表示需要弹出栈顶元素：
+
+1. `push k`
+2. `pop`
+
+输出
+
+输出多行，每次弹出时输出一行，表示弹出的栈顶元素。如果无法弹出栈顶元素，那么输出`-1`。
+
+样例1
+
+输入
+
+```
+8
+push 2
+pop
+pop
+push 5
+push 3
+push 6
+pop
+pop
+```
+
+输出
+
+```
+2
+-1
+6
+3
+```
+
+解释
+
+初始时栈为空，即`[]`。接下来进行以下`8`个操作：
+
+1. `push 2`：将`2`入栈，此时栈为`[2]`；
+2. `pop`：栈顶元素为`2`，因此输出`2`，弹出后栈为`[]`；
+3. `pop`：由于栈空，无法弹出元素，因此输出`-1`；
+4. `push 5`：将`5`入栈，此时栈为`[5]`；
+5. `push 3`：将`3`入栈，此时栈为`[5,3]`；
+6. `push 6`：将`6`入栈，此时栈为`[5,3,6]`；
+7. `pop`：栈顶元素为`6`，因此输出`6`，弹出后栈为`[5,3]`；
+8. `pop`：栈顶元素为`3`，因此输出`3`，弹出后栈为`[5]`。
+
+
+
+The user is asking for a Python program that simulates a stack with push and pop operations. The program should read a sequence of operations from the input, perform these operations on the stack, and print the result of each pop operation. If a pop operation is attempted on an empty stack, the program should print `-1`.
+
+Here is a Python program that accomplishes this:
+
+```python
+class Stack:
+    def __init__(self):
+        self.stack = []
+
+    def push(self, x):
+        self.stack.append(x)
+
+    def pop(self):
+        return self.stack.pop() if self.stack else -1
+
+def main():
+    n = int(input().strip())
+    stack = Stack()
+    for _ in range(n):
+        operation = input().strip().split()
+        if operation[0] == 'push':
+            stack.push(int(operation[1]))
+        elif operation[0] == 'pop':
+            print(stack.pop())
+
+if __name__ == "__main__":
+    main()
+```
+
+In this program, we define a `Stack` class with `push` and `pop` methods. The `push` method appends an element to the end of the stack, and the `pop` method removes and returns the last element of the stack, or `-1` if the stack is empty. In the `main` function, we read the number of operations from the input, create a `Stack` object, and perform the operations on the stack. If the operation is a `pop`, we print the result.
+
+
+
+### 1.2 合法的出栈序列 简单
+
+现有一个空栈s和一个正整数n，将1,2,3,...,n依次入栈，期间任意时刻出栈。然后给定一个出栈序列，问其是否是一个合法的出栈序列。
+
+**输入**
+
+第一行一个整数n（1<=n<=100），表示需要入栈的整数个数；
+
+第二行为[1,n]的一个排列，表示一个出栈序列，整数间用空格隔开。
+
+**输出**
+
+如果出栈序列合法，那么输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+4
+3 2 4 1
+```
+
+输出
+
+```
+Yes
+```
+
+解释
+
+初始时栈为空，即`[]`。接下来按下面的顺序执行即可得到出栈序列`3 2 4 1`：
+
+1. `1`入栈，此时栈为`[1]`；
+2. `2`入栈，此时栈为`[1,2]`；
+3. `3`入栈，此时栈为`[1,2,3]`；
+4. `3`出栈，此时栈为`[1,2]`；
+5. `2`出栈，此时栈为`[1]`；
+6. `4`入栈，此时栈为`[1,4]`；
+7. `4`出栈，此时栈为`[1]`；
+8. `1`出栈，此时栈为`[]`。
+
+样例2
+
+输入
+
+```
+4
+3 4 1 2
+```
+
+输出
+
+```
+No
+```
+
+解释
+
+无法达成出栈序列`3 4 1 2`
+
+
+
+The user is asking for a Python program that checks if a given sequence of numbers can be a valid sequence of popped elements from a stack. The stack initially contains a sequence of integers from 1 to n, and the program should simulate pushing these integers onto the stack and popping them off in the order given by the input sequence. If it's possible to pop off the integers in the given order, the program should print `Yes`, otherwise it should print `No`.
+
+Here is a Python program that accomplishes this:
+
+```python
+def is_valid_sequence(n, sequence):
+    stack = []
+    j = 0
+
+    for i in range(1, n + 1):
+        stack.append(i)
+        while stack and stack[-1] == sequence[j]:
+            stack.pop()
+            j += 1
+
+    return 'Yes' if not stack else 'No'
+
+def main():
+    n = int(input().strip())
+    sequence = list(map(int, input().strip().split()))
+    print(is_valid_sequence(n, sequence))
+
+if __name__ == "__main__":
+    main()
+```
+
+In this program, we define a function `is_valid_sequence` that simulates pushing integers onto a stack and popping them off in the order given by the input sequence. If it's possible to pop off the integers in the given order, the function returns `Yes`, otherwise it returns `No`. In the `main` function, we read the number of integers and the sequence from the input, and print the result of `is_valid_sequence`.
+
+
+
+### 1.3 可能的出栈序列 中等
+
+现有一个空栈s和一个正整数n，将1,2,3,...,n依次入栈，期间任意时刻出栈。求所有可能的出栈序列。
+
+输入
+
+一个整数n（1<=n<=8），表示需要入栈的整数个数。
+
+输出
+
+按字典序从小到大的顺序，每行输出一组可能的出栈序列，整数之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+3
+```
+
+输出
+
+```
+1 2 3
+1 3 2
+2 1 3
+2 3 1
+3 2 1
+```
+
+解释
+
+`3 1 2`是无法达成的，因为第一个出栈的是`3`，但此时栈顶为`2`，不可能把`1`出栈。
+
+
+
+The user is asking for a Python program that generates all possible sequences of popped elements from a stack. The stack initially contains a sequence of integers from 1 to n, and the program should simulate pushing these integers onto the stack and popping them off in any order. The program should print all possible sequences of popped elements, sorted in lexicographical order.
+
+Here is a Python program that accomplishes this:
+
+```python
+def generate_sequences(stack, in_stack, out_stack, output):
+    if len(in_stack) == 0 and len(stack) == 0:
+        output.append(out_stack)
+    if len(in_stack) > 0:
+        generate_sequences(stack + [in_stack[0]], in_stack[1:], out_stack, output)
+    if len(stack) > 0:
+        generate_sequences(stack[:-1], in_stack, out_stack + [stack[-1]], output)
+
+def main():
+    n = int(input().strip())
+    in_stack = list(range(1, n + 1))
+    output = []
+    generate_sequences([], in_stack, [], output)
+    output.sort()
+    for sequence in output:
+        print(' '.join(map(str, sequence)))
+
+if __name__ == "__main__":
+    main()
+```
+
+In this program, we define a function `generate_sequences` that recursively simulates pushing integers onto a stack and popping them off in any order, and adds the resulting sequences to the `output` list. The function is called with an empty stack, the sequence of integers to be pushed onto the stack, an empty output sequence, and an empty `output` list. In the `main` function, we read the number of integers from the input, generate all possible sequences of popped elements, sort them in lexicographical order, and print them.
+
+
+
+### 1.4 后缀表达式-无优先级 简单
+
+给定一个仅由+、-、整数、空格组成的计算式（中缀表达式），将其转换为对应的后缀表达式（即逆波兰表达式）。
+
+**输入**
+
+一个长度不超过`100`的字符串，仅由+、-、整数（不小于`1`且不大于`9`）、空格组成，其中操作符和操作数之间用空格分隔。数据保证表达式一定合法。
+
+**输出**
+
+输出对应的后缀表达式，其中操作数和操作符之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+3 + 4 - 5
+```
+
+输出
+
+```
+3 4 + 5 -
+```
+
+解释
+
+`3 + 4`转换为后缀表达式为`3 4 +`，记为`P`；
+
+`P - 5`转换为后缀表达式为`P 5 -`，展开后即为`3 4 + 5 -`
+
+
+
+The user is asking for a Python program that converts an infix expression to a postfix (Reverse Polish Notation) expression. The program should read an infix expression from the input, convert it to a postfix expression, and print the result.
+
+Here is a Python program that accomplishes this:
+
+```python
+def infix_to_postfix(infix):
+    precedence = {'+': 1, '-': 1}
+    stack = []
+    postfix = []
+
+    for token in infix:
+        if token.isdigit():
+            postfix.append(token)
+        else:
+            while stack and precedence[stack[-1]] >= precedence[token]:
+                postfix.append(stack.pop())
+            stack.append(token)
+
+    while stack:
+        postfix.append(stack.pop())
+
+    return ' '.join(postfix)
+
+def main():
+    infix = input().strip().split()
+    print(infix_to_postfix(infix))
+
+if __name__ == "__main__":
+    main()
+```
+
+In this program, we define a function `infix_to_postfix` that converts an infix expression to a postfix expression. The function uses a stack to hold operators and a list to hold the postfix expression. For each token in the infix expression, if the token is a digit, it is added to the postfix expression. If the token is an operator, operators are popped from the stack and added to the postfix expression until the stack is empty or the operator at the top of the stack has lower precedence than the current operator. Then the current operator is pushed onto the stack. After all tokens have been processed, any remaining operators are popped from the stack and added to the postfix expression. In the `main` function, we read the infix expression from the input, convert it to a postfix expression, and print the result.
+
+
+
+### 1.5 后缀表达式-有优先级 中等
+
+给定一个仅由+、-、*、/、整数、空格组成的计算式（中缀表达式），将其转换为对应的后缀表达式（即逆波兰表达式）。
+
+**输入**
+
+一个长度不超过`100`的字符串，仅由+、-、*、/、整数（不小于`1`且不大于`9`）、空格组成，其中操作符和操作数之间用空格分隔。数据保证表达式一定合法。
+
+**输出**
+
+输出对应的后缀表达式，其中操作数和操作符之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+3 + 4 * 5
+```
+
+输出
+
+```
+3 4 5 * +
+```
+
+解释
+
+由于乘法的优先级比加法高，因此需要先处理乘号：
+
+`4 * 5`转换为后缀表达式为`4 5 *`，记为`P`；
+
+`3 + P`转换为后缀表达式为`3 P +`，展开后即为`3 4 5 * +`
+
+
+
+The user is asking for a Python program that converts an infix expression to a postfix (Reverse Polish Notation) expression. The program should read an infix expression from the input, convert it to a postfix expression, and print the result. The infix expression can now include multiplication and division operators.
+
+Here is a Python program that accomplishes this:
+
+```python
+def infix_to_postfix(infix):
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2}
+    stack = []
+    postfix = []
+
+    for token in infix:
+        if token.isdigit():
+            postfix.append(token)
+        else:
+            while stack and precedence[stack[-1]] >= precedence[token]:
+                postfix.append(stack.pop())
+            stack.append(token)
+
+    while stack:
+        postfix.append(stack.pop())
+
+    return ' '.join(postfix)
+
+def main():
+    infix = input().strip().split()
+    print(infix_to_postfix(infix))
+
+if __name__ == "__main__":
+    main()
+```
+
+In this program, we define a function `infix_to_postfix` that converts an infix expression to a postfix expression. The function uses a stack to hold operators and a list to hold the postfix expression. For each token in the infix expression, if the token is a digit, it is added to the postfix expression. If the token is an operator, operators are popped from the stack and added to the postfix expression until the stack is empty or the operator at the top of the stack has lower precedence than the current operator. Then the current operator is pushed onto the stack. After all tokens have been processed, any remaining operators are popped from the stack and added to the postfix expression. In the `main` function, we read the infix expression from the input, convert it to a postfix expression, and print the result.
+
+
+
+### 1.6 后缀表达式-求值 中等
+
+给定一个仅由+、-、*、/、整数组成的计算式（后缀表达式），计算它的值。
+
+**输入**
+
+一个长度不超过`100`的字符串，其中操作符和操作数仅由+、-、*、/、整数（不小于`1`且不大于`9`）构成，且操作符和操作数之间用空格分隔。数据确保表达式一定合法，且计算过程的所有结果不会超过。
+
+**输出**
+
+输出求值结果（保留两位小数精度）。
+
+样例1
+
+输入
+
+```
+3 4 5 * +
+```
+
+输出
+
+```
+23.00
+```
+
+解释
+
+先计算`4 5 *`，得到`20`；然后计算`3 20 +`，得到`23`
+
+
+
+The user is asking for a Python program that evaluates a postfix (Reverse Polish Notation) expression. The program should read a postfix expression from the input, evaluate it, and print the result. The postfix expression can include addition, subtraction, multiplication, and division operators.
+
+Here is a Python program that accomplishes this:
+
+```python
+def evaluate_postfix(postfix):
+    stack = []
+
+    for token in postfix:
+        if token.isdigit():
+            stack.append(int(token))
+        else:
+            b = stack.pop()
+            a = stack.pop()
+            if token == '+':
+                stack.append(a + b)
+            elif token == '-':
+                stack.append(a - b)
+            elif token == '*':
+                stack.append(a * b)
+            elif token == '/':
+                stack.append(a / b)
+
+    return round(stack[0], 2)
+
+def main():
+    postfix = input().strip().split()
+    print("{:.2f}".format(evaluate_postfix(postfix)))
+
+if __name__ == "__main__":
+    main()
+```
+
+In this program, we define a function `evaluate_postfix` that evaluates a postfix expression. The function uses a stack to hold operands. For each token in the postfix expression, if the token is a digit, it is pushed onto the stack. If the token is an operator, two operands are popped from the stack, the operation is performed, and the result is pushed back onto the stack. After all tokens have been processed, the result of the expression is the only element left on the stack. In the `main` function, we read the postfix expression from the input, evaluate it, and print the result.
+
+
+
+### 1.7 简单计算器 困难
+
+给定一个仅由+、-、*、/、整数组成的计算式（中缀表达式），计算它的值。
+
+**输入**
+
+一个长度不超过`100`的字符串，其中操作符和操作数仅由+、-、*、/、整数（不小于`1`且不大于`9`）构成，且操作符和操作数之间用空格分隔。数据确保表达式一定合法，且计算过程的所有结果不会超过。
+
+**输出**
+
+输出求值结果（保留两位小数精度）。
+
+样例1
+
+输入
+
+```
+3 + 4 * 5
+```
+
+输出
+
+```
+23.00
+```
+
+解释
+
+3 + 4 * 5 = 3 + 20 = 23
+
+
+
+The user is asking for a Python program that evaluates an infix expression. The program should read an infix expression from the input, convert it to a postfix expression, evaluate it, and print the result. The infix expression can include addition, subtraction, multiplication, and division operators.
+
+Here is a Python program that accomplishes this:
+
+```python
+def infix_to_postfix(infix):
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2}
+    stack = []
+    postfix = []
+
+    for token in infix:
+        if token.isdigit():
+            postfix.append(token)
+        else:
+            while stack and precedence[stack[-1]] >= precedence[token]:
+                postfix.append(stack.pop())
+            stack.append(token)
+
+    while stack:
+        postfix.append(stack.pop())
+
+    return postfix
+
+def evaluate_postfix(postfix):
+    stack = []
+
+    for token in postfix:
+        if token.isdigit():
+            stack.append(int(token))
+        else:
+            b = stack.pop()
+            a = stack.pop()
+            if token == '+':
+                stack.append(a + b)
+            elif token == '-':
+                stack.append(a - b)
+            elif token == '*':
+                stack.append(a * b)
+            elif token == '/':
+                stack.append(a / b)
+
+    return round(stack[0], 2)
+
+def main():
+    infix = input().strip().split()
+    postfix = infix_to_postfix(infix)
+    print("{:.2f}".format(evaluate_postfix(postfix)))
+
+if __name__ == "__main__":
+    main()
+```
+
+In this program, we first convert the infix expression to a postfix expression using the `infix_to_postfix` function. Then we evaluate the postfix expression using the `evaluate_postfix` function. The `main` function reads the infix expression from the input, converts it to a postfix expression, evaluates it, and prints the result.
+
+
+
+## 2 队列的应用 4题
+
+### 2.1 队列的操作序列 简单
+
+现有一个空队列q，按顺序执行n个操作序列，每个操作是下面的两种之一：
+
+1. 让一个正整数k入队
+2. 让队首元素出队，同时将其输出
+
+输入
+
+第一行一个整数n（1<=n<=100），表示操作序列的个数；
+
+接下来n行，每行一个操作序列，格式为以下两种之一，分别对应入队和出队的操作，其中`push k`表示需要将整数k（1<=k<=）入队，而`pop`表示需要将队首元素出队：
+
+1. `push k`
+2. `pop`
+
+输出
+
+输出多行，每次出队时输出一行，表示出队的队首元素。如果无法出队，那么输出`-1`。
+
+样例1
+
+输入
+
+```
+8
+push 2
+pop
+pop
+push 5
+push 3
+push 6
+pop
+pop
+```
+
+输出
+
+```
+2
+-1
+5
+3
+```
+
+解释
+
+初始时队列为空，即`[]`。接下来进行以下`8`个操作：
+
+1. `push 2`：将`2`入栈，此时队列为`[2]`；
+2. `pop`：队首元素为`2`，因此输出`2`，出队后队列为`[]`；
+3. `pop`：由于队列为空，无法出队，因此输出`-1`；
+4. `push 5`：将`5`入队，此时队列为`[5]`；
+5. `push 3`：将`3`入队，此时队列为`[5,3]`；
+6. `push 6`：将`6`入队，此时队列为`[5,3,6]`；
+7. `pop`：队首元素为`5`，因此输出`5`，出队后队列为`[3,6]`；
+8. `pop`：队首元素为`3`，因此输出`3`，出队后队列为`[6]`。
+
+
+
+The user is asking for a Python program that simulates a queue. The program should read a sequence of operations from the input, perform the operations on the queue, and print the result of each "pop" operation. If a "pop" operation is performed on an empty queue, the program should print "-1".
+
+Here is a Python program that accomplishes this:
+
+```python
+from collections import deque
+
+def main():
+    n = int(input().strip())
+    queue = deque()
+
+    for _ in range(n):
+        operation = input().strip().split()
+        if operation[0] == 'push':
+            queue.append(int(operation[1]))
+        elif operation[0] == 'pop':
+            if queue:
+                print(queue.popleft())
+            else:
+                print(-1)
+
+if __name__ == "__main__":
+    main()
+```
+
+In this program, we use a deque from the collections module to simulate a queue. The `main` function reads the number of operations from the input, then reads each operation. If the operation is "push", the program appends the number to the right end of the queue. If the operation is "pop", the program removes and prints the number from the left end of the queue. If the queue is empty when a "pop" operation is performed, the program prints "-1".
+
+
+
+### 2.2 求和队列 简单
+
+现有一个空队列q，按顺序将n个正整数a1、a2、...、an入队，接着反复执行操作：将队首的两个元素求和，并将结果入队。最后队列中将只剩下一个整数，将这个整数输出。
+
+输入
+
+第一行一个整数n（1<=n<=100），表示正整数的个数；
+
+第二行为空格隔开的n个正整数a1、a2、...、an（1<=ai<=100）。
+
+输出
+
+输出一个整数，表示队列中剩下的整数。
+
+样例1
+
+输入
+
+```
+5
+2 5 4 1 6
+```
+
+输出
+
+```
+18
+```
+
+解释
+
+初始时队列为`[2 5 4 1 6]`。接下来进行以下操作：
+
+1. 计算`2+5=7`，并将`7`入队，当前队列为`4 1 6 7`；
+2. 计算`4+1=5`，并将`5`入队，当前队列为`6 7 5`；
+3. 计算`6+7=13`，并将`13`入队，当前队列为`5 13`；
+4. 计算`5+13=18`，并将`18`入队，当前队列为`18`，因此输出`18`；
+
+
+
+The user is asking for a Python program that simulates a queue. The program should read a sequence of integers from the input, perform the operations on the queue (sum the first two elements and enqueue the result), and print the final result when only one element is left in the queue.
+
+Here is a Python program that accomplishes this:
+
+```python
+from collections import deque
+
+def main():
+    n = int(input().strip())
+    numbers = list(map(int, input().strip().split()))
+    queue = deque(numbers)
+
+    while len(queue) > 1:
+        a = queue.popleft()
+        b = queue.popleft()
+        queue.append(a + b)
+
+    print(queue[0])
+
+if __name__ == "__main__":
+    main()
+```
+
+In this program, we use a deque from the collections module to simulate a queue. The `main` function reads the number of integers and the integers themselves from the input, then enqueues each integer. While there is more than one integer in the queue, the program removes and sums the first two integers, then enqueues the result. When only one integer is left in the queue, the program prints it.
+
+
+
+### 2.3 约瑟夫环-队列 简单
+
+**约瑟夫环**：假设n个人按编号顺时针从小到大排成一圈（编号为从1到n）。接着约定一个正整数，从编号为1的人开始顺时针报数（编号为1的人报数1，编号为2的人报数2……），报到的人离开圈子，然后他的下一个人继续从1开始报数，以此类推，直到圈子里只剩下一个人。
+
+请用队列模拟约瑟夫环的报数过程，并按先后顺序输出离开圈子的人最开始的编号。为了统一起见，圈子里的最后一个人也需要离开圈子。
+
+输入
+
+两个整数n、k（1<=n<100,1<=k<=100），含义如题意所示。
+
+输出
+
+输出n个整数，按先后顺序表示离开圈子的的人最开始的编号。整数之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+6 3
+```
+
+输出
+
+```
+3 6 4 2 5 1
+```
+
+解释
+
+一开始有`6`个人：`1 2 3 4 5 6`，从`1`号开始报数，报到`3`的人离开圈子。
+
+第一轮：报号顺序为`1->2->3`，`3`号离开圈子，还剩下`1 2 4 5 6`，从`4`号开始报数；
+
+第二轮：报号顺序为`4->5->6`，`6`号离开圈子，还剩下`1 2 4 5`，从`1`号开始报数；
+
+第三轮：报号顺序为`1->2->4`，`4`号离开圈子，还剩下`1 2 5`，从`5`号开始报数；
+
+第四轮：报号顺序为`5->1->2`，`2`号离开圈子，还剩下`1 5`，从`5`号开始报数；
+
+第五轮：报号顺序为`5->1->5`，`5`号离开圈子，还剩下`1`，从`1`号开始报数；
+
+第六轮：报号顺序为`1->1->1`，`1`号离开圈子，过程结束。
+
+
+
+The user is asking for a Python program that simulates the Josephus problem using a queue. The program should read two integers n and k from the input, perform the operations on the queue (count k-1 people and remove the kth person), and print the original positions of the people in the order they are removed.
+
+Here is a Python program that accomplishes this:
+
+```python
+from collections import deque
+
+def main():
+    n, k = map(int, input().strip().split())
+    queue = deque(range(1, n+1))
+
+    while queue:
+        queue.rotate(-(k-1))
+        print(queue.popleft(), end=' ' if len(queue) != 0 else '\n')
+
+if __name__ == "__main__":
+    main()
+```
+
+Help on method_descriptor:
+
+rotate(...)
+    Rotate the deque n steps to the right (default n=1).  If n is negative, rotates left.
+
+In this program, we use a deque from the collections module to simulate a queue. The `main` function reads the number of people and the count from the input, then enqueues each person's position. While there are still people in the queue, the program rotates the queue k-1 positions to the left, then removes and prints the person at the front of the queue. The rotation operation effectively moves the kth person to the front of the queue.
+
+
+
+### 2.4 匹配队列 简单
+
+现有两个队列q1、q2，假设q1、q2初始状态下均有个n元素，每个元素为`1`和`2`之一，且q1中元素`1`的个数与q2中元素`1`的个数相同、q1中元素`2`的个数与q2中元素`2`的个数也相同。
+
+接下来循环执行下面的操作，直到两个队列均为空：
+
+1. 如果q1、q2的队首元素相同，那么将两个队列的队首元素出队；
+2. 否则，将q2的队首元素移至队尾。
+
+问需要执行多少轮操作，才能达成停止条件。
+
+输入
+
+第一行一个整数n（1<=n<=100），表示正整数的个数；
+
+第二行为空格隔开的n个正整数`1`或`2`，表示q1中从队首到队尾的所有元素；
+
+第三行为空格隔开的n个正整数`1`或`2`，表示q2中从队首到队尾的所有元素。
+
+输出
+
+输出一个整数，表示需要执行的操作轮数。
+
+样例1
+
+输入
+
+```
+4
+1 2 2 1
+2 1 1 2
+```
+
+输出
+
+```
+6
+```
+
+解释
+
+初始状态下：
+
+：`1 2 2 1` ：`2 1 1 2`
+
+第一轮：
+
+q1的队首元素为`1`，q2的队首元素为`2`，不相同，因此把q2的队首元素移至队尾，得到：
+
+q1：`1 2 2 1` q2：`1 1 2 2`
+
+第二轮：
+
+q1的队首元素为`1`，q2的队首元素为`1`，相同，因此把队首元素出队，得到：
+
+q1：`2 2 1` q2：`1 2 2`
+
+第三轮：
+
+q1的队首元素为`2`，q2的队首元素为`1`，不相同，因此把的队首元素移至队尾，得到：
+
+q1：`2 2 1` q2：`2 2 1`
+
+第四轮：
+
+q1的队首元素为`2`，q2的队首元素为`2`，相同，因此把队首元素出队，得到：
+
+q1：`2 1` q2：`2 1`
+
+第五轮：
+
+的队首元素为`2`，的队首元素为`2`，相同，因此把队首元素出队，得到：
+
+：`1` ：`1`
+
+第六轮：
+
+q1的队首元素为`1`，q2的队首元素为`1`，相同，因此把队首元素出队，得到：
+
+q1：空 q2：空
+
+因此共需要`6`轮操作。
+
+
+
+The user is asking for a Python program that simulates two queues. The program should read two sequences of integers from the input, perform the operations on the queues (if the first elements of the two queues are the same, dequeue them; otherwise, move the first element of the second queue to its end), and print the number of operations until both queues are empty.
+
+Here is a Python program that accomplishes this:
+
+```python
+from collections import deque
+
+def main():
+    n = int(input().strip())
+    q1 = deque(map(int, input().strip().split()))
+    q2 = deque(map(int, input().strip().split()))
+
+    count = 0
+    while q1 and q2:
+        if q1[0] == q2[0]:
+            q1.popleft()
+            q2.popleft()
+        else:
+            q2.append(q2.popleft())
+        count += 1
+
+    print(count)
+
+if __name__ == "__main__":
+    main()
+```
+
+In this program, we use a deque from the collections module to simulate a queue. The `main` function reads the number of integers and the integers themselves from the input, then enqueues each integer into the corresponding queue. While there are still integers in both queues, the program checks the first integer of each queue. If they are the same, the program removes them; otherwise, the program moves the first integer of the second queue to its end. The program counts the number of operations and prints it when both queues are empty.
+
+
+
+## 3 链表处理 9题
+
+### 3.1 链表遍历 简单
+
+现有n个结点（编号为从`1`到`n`），以及链表的第一个结点的编号，请依次输出这条链表上每个结点的信息。
+
+输入
+
+第一行两个整数n、first（1 <= first <= 100），分别表示结点的个数、链表第一个结点的编号；
+
+接下来n行，每行给出一个结点的信息：
+
+```text
+id data next
+```
+
+其中整数id（1 <= id <= n）表示结点的编号（每个id只出现一次，顺序不定），整数data（1 <= data < 10^3^）表示结点的数据域，整数next（1 <= next <= n或 next = -1）表示当前结点指向的结点编号（其中next = -1表示`NULL`）。
+
+输出
+
+按链表结点的顺序，每行输出链表中一个结点的`id`、`data`、`next`，中间用空格隔开。
+
+样例1
+
+输入
+
+```
+5 2
+1 10 3
+2 35 5
+3 12 -1
+4 23 3
+5 58 1
+```
+
+输出
+
+```
+2 35 5
+5 58 1
+1 10 3
+3 12 -1
+```
+
+解释
+
+第一个结点编号为`2`，因此整条链表为：`2(35)->5(58)->1(10)->3(12)->NULL`，结点`4`是多余的。
+
+
+
+The user is asking for a Python program that simulates a linked list. The program should read a sequence of nodes from the input, build the linked list, and print the nodes in the order they appear in the linked list.
+
+Here is a Python program that accomplishes this:
+
+```python
+class Node:
+    def __init__(self, id, data, next):
+        self.id = id
+        self.data = data
+        self.next = next
+
+def main():
+    n, first = map(int, input().strip().split())
+    nodes = {}
+
+    for _ in range(n):
+        id, data, next = map(int, input().strip().split())
+        nodes[id] = Node(id, data, next)
+
+    current = nodes[first]
+    while current:
+        print(f"{current.id} {current.data} {current.next}")
+        if current.next in nodes:
+            current = nodes[current.next]
+        else:
+            break
+
+if __name__ == "__main__":
+    main()
+```
+
+In this program, we define a `Node` class to represent a node in the linked list. The `main` function reads the number of nodes and the id of the first node from the input, then reads each node's id, data, and next id, and stores them in a dictionary. The program then starts from the first node and follows the `next` pointers to print each node in the order they appear in the linked list.
+
+
+
+### 3.2 链表的结点个数 简单
+
+现有n个结点（编号为从`1`到`n`），以及链表的第一个结点的编号，求这条链表上的结点个数。
+
+输入
+
+第一行两个整数n、first（1 <= first <= 100），分别表示结点的个数、链表第一个结点的编号；
+
+接下来n行，每行给出一个结点的信息：
+
+```text
+id data next
+```
+
+其中整数id（1 <=id <= n）表示结点的编号（每个id只出现一次，顺序不定），整数data（1 <= data <= 10^3^）表示结点的数据域，整数next（1 <= next <= n或 next = -1）表示当前结点指向的结点编号（其中next = -1表示`NULL`）。
+
+输出
+
+输出一个整数，表示链表上的结点个数。
+
+样例1
+
+输入
+
+```
+5 2
+1 10 3
+2 35 5
+3 12 -1
+4 23 3
+5 58 1
+```
+
+输出
+
+```
+4
+```
+
+解释
+
+第一个结点编号为`2`，因此整条链表为：`2(35)->5(58)->1(10)->3(12)->NULL`。因此总共有`4`个结点。
+
+
+
+The user is asking for a Python program that simulates a linked list. The program should read a sequence of nodes from the input, build the linked list, and print the number of nodes in the linked list.
+
+Here is a Python program that accomplishes this:
+
+```python
+class Node:
+    def __init__(self, id, data, next):
+        self.id = id
+        self.data = data
+        self.next = next
+
+def main():
+    n, first = map(int, input().strip().split())
+    nodes = {}
+
+    for _ in range(n):
+        id, data, next = map(int, input().strip().split())
+        nodes[id] = Node(id, data, next)
+
+    current = nodes[first]
+    count = 0
+    while current:
+        count += 1
+        if current.next in nodes:
+            current = nodes[current.next]
+        else:
+            break
+
+    print(count)
+
+if __name__ == "__main__":
+    main()
+```
+
+In this program, we define a `Node` class to represent a node in the linked list. The `main` function reads the number of nodes and the id of the first node from the input, then reads each node's id, data, and next id, and stores them in a dictionary. The program then starts from the first node and follows the `next` pointers to count each node in the order they appear in the linked list. The program prints the count when it reaches a node with no next node.
+
+
+
+### 3.3 链表头插法 简单
+
+现有n个结点（编号为从`1`到`n`），以及链表的第一个结点的编号，使用头插法在链表头部依次插入个结点，然后依次输出新链表上每个结点的信息。
+
+输入
+
+第一行两个整数n、first（1 <= first <= 100），分别表示结点的个数、链表第一个结点的编号；
+
+接下来n行，每行给出一个结点的信息：
+
+```text
+id data next
+```
+
+其中整数id（1 <=id <= n）表示结点的编号（每个id只出现一次，顺序不定），整数data（1 <= data <= 1000）表示结点的数据域，整数next（1 <= next <= n或 next = -1）表示当前结点指向的结点编号（其中next = -1表示`NULL`）。
+
+接着在一行中给出一个整数m（1 <= m <=1000），表示待插入的结点个数。
+
+接下来m行，每行给出一个待插入的结点信息：
+
+```text
+id data
+```
+
+其中整数id（1 <=id <= n）表示结点的编号（每个id只出现一次，顺序不定），整数data（1 <= data <= 10^3^）表示待插入的结点的数据域。
+
+输出
+
+按链表结点的顺序，每行输出链表中一个结点的`id`、`data`、`next`，中间用空格隔开。
+
+样例1
+
+输入
+
+```
+5 2
+1 10 3
+2 35 5
+3 12 -1
+4 23 3
+5 58 1
+2
+6 21
+7 18
+```
+
+输出
+
+```
+7 18 6
+6 21 2
+2 35 5
+5 58 1
+1 10 3
+3 12 -1
+```
+
+解释
+
+第一个结点编号为`2`，因此整条链表为：`2(35)->5(58)->1(10)->3(12)->NULL`，结点`4`是多余的。
+
+接着在头部插入结点`6(21)`，链表变为：`6(21)->2(35)->5(58)->1(10)->3(12)->NULL`；
+
+最后在头部插入结点`7(18)`，链表变为：`7(18)->6(21)->2(35)->5(58)->1(10)->3(12)->NULL`。
+
+
+
+The user is asking for a Python program that simulates a linked list. The program should read a sequence of nodes from the input, build the linked list, insert new nodes at the head of the list, and print the nodes in the order they appear in the linked list.
+
+Here is a Python program that accomplishes this:
+
+```python
+class Node:
+    def __init__(self, id, data, next):
+        self.id = id
+        self.data = data
+        self.next = next
+
+def main():
+    n, first = map(int, input().strip().split())
+    nodes = {}
+    for _ in range(n):
+        id, data, next = map(int, input().strip().split())
+        nodes[id] = Node(id, data, next)
+
+    head = nodes[first]
+    m = int(input().strip())
+    for _ in range(m):
+        id, data = map(int, input().strip().split())
+        new_node = Node(id, data, head.id)
+        nodes[id] = new_node
+        head = new_node
+
+    current = head
+    while current:
+        print(f"{current.id} {current.data} {current.next}")
+        if current.next in nodes:
+            current = nodes[current.next]
+        else:
+            break
+
+if __name__ == "__main__":
+    main()
+```
+
+In this program, we define a `Node` class to represent a node in the linked list. The `main` function reads the number of nodes and the id of the first node from the input, then reads each node's id, data, and next id, and stores them in a dictionary. The program then reads the number of new nodes and their id and data, creates a new node with the current head as its next node, and updates the head to the new node. The program then starts from the new head and follows the `next` pointers to print each node in the order they appear in the linked list.
+
+
+
+### 3.4 链表删除元素 中等
+
+现有n个结点（编号为从`1`到`n`），以及链表的第一个结点的编号，请删去链表上所有数据域等于整数的结点，然后依次输出新链表上每个结点的信息。
+
+输入
+
+第一行三个整数n、first、k（1<=first<=n<=100,1<=k<=1000），分别表示结点的个数、链表第一个结点的编号、待删除结点的数据域；
+
+接下来行，每行给出一个结点的信息：
+
+```text
+id data next
+```
+
+其中整数id（1 <=id <= n）表示结点的编号（每个id只出现一次，顺序不定），整数data（1 <= data <= 1000）表示结点的数据域，整数next（1 <= next <= n或 next = -1）表示当前结点指向的结点编号（其中next = -1表示`NULL`）。
+
+数据保证至少有一个结点的数据域不为。
+
+输出
+
+按链表结点的顺序，每行输出链表中一个结点的`id`、`data`、`next`，中间用空格隔开。
+
+样例1
+
+输入
+
+```
+5 2 58
+1 10 3
+2 35 5
+3 58 -1
+4 23 3
+5 58 1
+```
+
+输出
+
+```
+2 35 1
+1 10 -1
+```
+
+解释
+
+第一个结点编号为`2`，因此整条链表为：`2(35)->5(58)->1(10)->3(58)->NULL`，结点`4`是多余的。
+
+由于结点`3`和结点`5`的数据域是`58`，因此删除结点`3`和结点`5`，得到新链表为：`2(35)->1(10)->NULL`
+
+
+
+The user is asking for a Python program that simulates a linked list. The program should read a sequence of nodes from the input, build the linked list, delete nodes with a specific data value, and print the nodes in the order they appear in the linked list.
+
+Here is a Python program that accomplishes this:
+
+```python
+class Node:
+    def __init__(self, id, data, next):
+        self.id = id
+        self.data = data
+        self.next = next
+
+def main():
+    n, first, k = map(int, input().strip().split())
+    nodes = {}
+
+    for _ in range(n):
+        id, data, next = map(int, input().strip().split())
+        nodes[id] = Node(id, data, next)
+
+    head = nodes[first]
+    prev = None
+    current = head
+    while current:
+        if current.data == k:
+            if prev is None:
+                head = nodes[current.next] if current.next in nodes else None
+            else:
+                prev.next = current.next
+                if prev.next in nodes:
+                    prev.next = nodes[prev.next]
+        else:
+            prev = current
+        current = nodes[current.next] if current.next in nodes else None
+
+    current = head
+    while current:
+        print(f"{current.id} {current.data} {current.next}")
+        if current.next in nodes:
+            current = nodes[current.next]
+        else:
+            break
+
+if __name__ == "__main__":
+    main()
+```
+
+In this program, we define a `Node` class to represent a node in the linked list. The `main` function reads the number of nodes, the id of the first node, and the data value to delete from the input, then reads each node's id, data, and next id, and stores them in a dictionary. The program then starts from the first node and follows the `next` pointers to delete each node with the specified data value. The program prints the remaining nodes in the order they appear in the linked list.
+
+
+
+### 3.5 链表反转
+
+
+
+
+
+### 3.6 链表去除重复元素
+
+
+
+
+
+### 3.7 升序链表中位数
+
+
+
+
+
+### 3.8 链表倒数第k个结点
+
+
+
+
+
+### 3.9 回文链表
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -6596,4 +7912,38 @@ print(huffman_encoding(s))
 ```
 
 This code reads a string from the input, counts the frequency of each character, creates a priority queue with single node trees, while there is more than one node in the queue, dequeues the two nodes with the highest priority (lowest frequency), creates a new node with these two nodes as children and with frequency equal to the sum of the two nodes' frequencies, enqueues the new node, the remaining node is the root of the Huffman tree, traverses the Huffman tree and assigns a binary code to each character, replaces each character in the string with its binary code, and then prints the length of the resulting string.
+
+
+
+# 图专题
+
+
+
+## 1 图的定义和相关术语 2题
+
+
+
+## 2 图的存储 4题
+
+
+
+## 3 图的遍历 6题
+
+
+
+## 4 最短路径 10题
+
+
+
+## 5 最小生成树
+
+
+
+## 6 拓扑排序 3题
+
+
+
+## 7 关键路径 3题
+
+
 
