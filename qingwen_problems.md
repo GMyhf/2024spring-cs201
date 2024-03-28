@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 2022 GMT+8 March 22, 2024
+Updated 0750 GMT+8 March 28, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -12,9 +12,2428 @@ Updated 2022 GMT+8 March 22, 2024
 
 
 
-# 树与二叉树 1题
+# 搜索专题
 
-## 1 树的判定
+## 1 深度优先搜索（DFS）5题
+
+设想我们现在以第一视角身处一个巨大的迷宫当中，没有上帝视角，没有通信设施，更没有热血动漫里的奇迹，有的只是四周长得一样的墙壁。于是，我们只能自己想办法走出去。如果迷失了内心，随便乱走，那么很可能被四周完全相同的景色绕晕在其中，这时只能放弃所谓的侥幸，而去采取下面这种看上去很盲目但实际上会很有效的方法。
+
+以当前所在位置为起点，沿着一条路向前走，当碰到岔道口时，选择其中一个岔路前进如果选择的这个岔路前方是一条死路，就退回到这个岔道口，选择另一个岔路前进。如果岔路中存在新的岔道口，那么仍然按上面的方法枚举新岔道口的每一条岔路。这样，只要迷宫存在出口，那么这个方法一定能够找到它。可能有读者会问，如果在第一个岔道口处选择了一条没有出路的分支，而这个分支比较深，并且路上多次出现新的岔道口，那么当发现这个分支是个死分支之后，如何退回到最初的这个岔道口?其实方法很简单，只要让右手始终贴着右边的墙壁一路往前走，那么自动会执行上面这个走法，并且最终一定能找到出口。图 8-1 即为使用这个方法走一个简单迷宫的示例。
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20231126163735204.png" alt="image-20231126163735204" style="zoom:50%;" />
+
+
+
+从图 8-1 可知，从起点开始前进，当碰到岔道口时，总是选择其中一条岔路前进(例如图中总是先选择最右手边的岔路)，在岔路上如果又遇到新的岔道口，仍然选择新岔道口的其中一条岔路前进，直到碰到死胡同才回退到最近的岔道口选择另一条岔路。也就是说，当碰到岔道口时，总是以“**深度**”作为前进的关键词，不碰到死胡同就不回头，因此把这种搜索的方式称为**深度优先搜索**(Depth First Search，**DFS**)。
+从迷宫的例子还应该注意到，深度优先搜索会走遍所有路径，并且每次走到死胡同就代表一条完整路径的形成。这就是说，**深度优先搜索是一种枚举所有完整路径以遍历所有情况的搜索方法**。
+
+
+
+深度优先搜索 (DFS)可以使用栈来实现。但是实现起来却并不轻松，有没有既容易理解又容易实现的方法呢?有的——递归。现在从 DFS 的角度来看当初求解 Fibonacci 数列的过程。
+回顾一下 Fibonacci数列的定义: $F(0)=1,F(1)=1,F(n)=F(n-1)+F(n-2)(n≥2)$。可以从这个定义中挖掘到，每当将 F(n)分为两部分 F(n-1)与 F(n-2)时，就可以把 F(n)看作迷宫的岔道口，由它可以到达两个新的关键结点 F(n-1)与 F(n-2)。而之后计算 F(n-1)时，又可以把 F(n-1)当作在岔道口 F(n)之下的岔道口。
+既然有岔道口，那么一定有死胡同。很容易想象，当访问到 F(0)和 F(1)时，就无法再向下递归下去，因此 F(0)和 F(1)就是死胡同。这样说来，==递归中的递归式就是岔道口，而递归边界就是死胡同==，这样就可以把如何用递归实现深度优先搜索的过程理解得很清楚。为了使上面的过程更清晰，可以直接来分析递归图 (见图 4-3)：可以在递归图中看到，只要n > 1，F(n)就有两个分支，即把 F(n)当作岔道口；而当n为1或0时，F(1)与F(0)就是迷宫的死胡同，在此处程序就需要返回结果。这样当遍历完所有路径（从顶端的 F(4)到底层的所有 F(1)与 F(0)）后，就可以得到 F(4)的值。
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20231126164549437.png" alt="image-20231126164549437" style="zoom: 50%;" />
+
+因此，使用递归可以很好地实现深度优先搜索。这个说法并不是说深度优先搜索就是递归，只能说递归是深度优先搜索的一种实现方式，因为使用非递归也是可以实现 DFS 的思想的，但是一般情况下会比递归麻烦。不过，使用递归时，系统会调用一个叫系统栈的东西来存放递归中每一层的状态，因此使用递归来实现 DFS 的本质其实还是栈。
+
+
+
+### 1.1 迷宫可行路径数
+
+https://sunnywhy.com/sfbj/8/1/313
+
+现有一个 n*m 大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。每次移动只能向上下左右移动一格（不允许移动到曾经经过的位置），且只能移动到平地上。求从迷宫左上角到右下角的所有可行路径的条数。
+
+**输入**
+
+第一行两个整数 $n、m \hspace{1em} (2 \le n \le5, 2 \le m \le 5)$，分别表示迷宫的行数和列数；
+
+接下来 n 行，每行 m 个整数（值为`0`或`1`），表示迷宫。
+
+**输出**
+
+一个整数，表示可行路径的条数。
+
+样例1
+
+输入
+
+```
+3 3
+0 0 0
+0 1 0
+0 0 0
+```
+
+输出
+
+```
+2
+```
+
+解释
+
+假设左上角坐标是(1,1)，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
+
+可以得到从左上角到右下角有两条路径：
+
+1. (1,1)=>(1,2)=>(1,3)=>(2,3)=>(3,3)
+2. (1,1)=>(2,1)=>(3,1)=>(3,2)=>(3,3)
+
+
+
+#### 加保护圈，原地修改
+
+```python
+dx = [-1, 0, 1, 0]
+dy = [ 0, 1, 0, -1]
+
+def dfs(maze, x, y):
+    global cnt
+    
+    for i in range(4):
+        nx = x + dx[i]
+        ny = y + dy[i]
+            
+        if maze[nx][ny] == 'e':
+            cnt += 1
+            continue
+            
+        if maze[nx][ny] == 0:
+            maze[x][y] = 1
+            dfs(maze, nx, ny)
+            maze[x][y] = 0
+    
+    return
+            
+n, m = map(int, input().split())
+maze = []
+maze.append( [-1 for x in range(m+2)] )
+for _ in range(n):
+    maze.append([-1] + [int(_) for _ in input().split()] + [-1])
+maze.append( [-1 for x in range(m+2)] )
+
+maze[1][1] = 's'
+maze[n][m] = 'e'
+
+cnt = 0
+dfs(maze, 1, 1)
+print(cnt)
+```
+
+
+
+#### 辅助visited空间
+
+```python
+# gpt translated version of the C++ code
+MAXN = 5
+n, m = map(int, input().split())
+maze = []
+for _ in range(n):
+    row = list(map(int, input().split()))
+    maze.append(row)
+
+visited = [[False for _ in range(m)] for _ in range(n)]
+counter = 0
+
+MAXD = 4
+dx = [0, 0, 1, -1]
+dy = [1, -1, 0, 0]
+
+def is_valid(x, y):
+    return 0 <= x < n and 0 <= y < m and maze[x][y] == 0 and not visited[x][y]
+
+def DFS(x, y):
+    global counter
+    if x == n - 1 and y == m - 1:
+        counter += 1
+        return
+    visited[x][y] = True
+    for i in range(MAXD):
+        nextX = x + dx[i]
+        nextY = y + dy[i]
+        if is_valid(nextX, nextY):
+            DFS(nextX, nextY)
+    visited[x][y] = False
+
+DFS(0, 0)
+print(counter)
+
+```
+
+
+
+#### C++
+
+```c++
+#include <cstdio>
+
+const int MAXN = 5;
+int n, m, maze[MAXN][MAXN];
+bool visited[MAXN][MAXN] = {false};
+int counter = 0;
+
+const int MAXD = 4;
+int dx[MAXD] = {0, 0, 1, -1};
+int dy[MAXD] = {1, -1, 0, 0};
+
+bool isValid(int x, int y) {
+    return x >= 0 && x < n && y >= 0 && y < m && maze[x][y] == 0 && !visited[x][y];
+}
+
+void DFS(int x, int y) {
+    if (x == n - 1 && y == m - 1) {
+        counter++;
+        return;
+    }
+    visited[x][y] = true;
+    for (int i = 0; i < MAXD; i++) {
+        int nextX = x + dx[i];
+        int nextY = y + dy[i];
+        if (isValid(nextX, nextY)) {
+            DFS(nextX, nextY);
+        }
+    }
+    visited[x][y] = false;
+}
+
+int main() {
+    scanf("%d%d", &n, &m);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &maze[i][j]);
+        }
+    }
+    DFS(0, 0);
+    printf("%d", counter);
+    return 0;
+}
+```
+
+
+
+### 1.2 指定步数的迷宫问题
+
+https://sunnywhy.com/sfbj/8/1/314
+
+现有一个 n*m 大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。每次移动只能向上下左右移动一格（不允许移动到曾经经过的位置），且只能移动到平地上。现从迷宫左上角出发，问能否在恰好第步时到达右下角。
+
+**输入**
+
+第一行三个整数$n、m、k \hspace{1em} (2 \le n \le5, 2 \le m \le 5, 2 \le k \le n*m)$，分别表示迷宫的行数、列数、移动的步数；
+
+接下来行，每行个整数（值为`0`或`1`），表示迷宫。
+
+**输出**
+
+如果可行，那么输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+3 3 4
+0 1 0
+0 0 0
+0 1 0
+```
+
+输出
+
+```
+Yes
+```
+
+解释
+
+假设左上角坐标是(1,1)，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
+
+可以得到从左上角到右下角的步数为`4`的路径为：(1,1)=>(2,1)=>(2,2)=>(2,3)=>(3,3)。
+
+样例2
+
+输入
+
+```
+3 3 6
+0 1 0
+0 0 0
+0 1 0
+```
+
+输出
+
+```
+No
+```
+
+解释
+
+由于不能移动到曾经经过的位置，因此无法在恰好第`6`步时到达右下角。
+
+
+
+#### 加保护圈，原地修改
+
+```python
+dx = [-1, 0, 1, 0]
+dy = [ 0, 1, 0, -1]
+
+canReach = False
+def dfs(maze, x, y, step):
+    global canReach
+    if canReach:
+        return
+    
+    for i in range(4):
+        nx = x + dx[i]
+        ny = y + dy[i]
+        if maze[nx][ny] == 'e':
+            if step==k-1:
+                canReach = True
+                return
+            
+            continue
+            
+        if maze[nx][ny] == 0:
+            if step < k:
+                maze[x][y] = -1
+                dfs(maze, nx, ny, step+1)
+                maze[x][y] = 0
+    
+
+n, m, k = map(int, input().split())
+maze = []
+maze.append( [-1 for x in range(m+2)] )
+for _ in range(n):
+    maze.append([-1] + [int(_) for _ in input().split()] + [-1])
+maze.append( [-1 for x in range(m+2)] )
+
+maze[1][1] = 's'
+maze[n][m] = 'e'
+
+dfs(maze, 1, 1, 0)
+print("Yes" if canReach else "No")
+```
+
+
+
+#### 辅助visited空间
+
+```python
+# gpt translated version of the C++ code
+MAXN = 5
+n, m, k = map(int, input().split())
+maze = []
+for _ in range(n):
+    row = list(map(int, input().split()))
+    maze.append(row)
+
+visited = [[False for _ in range(m)] for _ in range(n)]
+canReach = False
+
+MAXD = 4
+dx = [0, 0, 1, -1]
+dy = [1, -1, 0, 0]
+
+def is_valid(x, y):
+    return 0 <= x < n and 0 <= y < m and maze[x][y] == 0 and not visited[x][y]
+
+def DFS(x, y, step):
+    global canReach
+    if canReach:
+        return
+    if x == n - 1 and y == m - 1:
+        if step == k:
+            canReach = True
+        return
+    visited[x][y] = True
+    for i in range(MAXD):
+        nextX = x + dx[i]
+        nextY = y + dy[i]
+        if step < k and is_valid(nextX, nextY):
+            DFS(nextX, nextY, step + 1)
+    visited[x][y] = False
+
+DFS(0, 0, 0)
+print("Yes" if canReach else "No")
+
+```
+
+
+
+#### C++
+
+```c++
+#include <cstdio>
+
+const int MAXN = 5;
+int n, m, k, maze[MAXN][MAXN];
+bool visited[MAXN][MAXN] = {false};
+bool canReach = false;
+
+const int MAXD = 4;
+int dx[MAXD] = {0, 0, 1, -1};
+int dy[MAXD] = {1, -1, 0, 0};
+
+bool isValid(int x, int y) {
+    return x >= 0 && x < n && y >= 0 && y < m && maze[x][y] == 0 && !visited[x][y];
+}
+
+void DFS(int x, int y, int step) {
+    if (canReach) {
+        return;
+    }
+    if (x == n - 1 && y == m - 1) {
+        if (step == k) {
+            canReach = true;
+        }
+        return;
+    }
+    visited[x][y] = true;
+    for (int i = 0; i < MAXD; i++) {
+        int nextX = x + dx[i];
+        int nextY = y + dy[i];
+        if (step < k && isValid(nextX, nextY)) {
+            DFS(nextX, nextY, step + 1);
+        }
+    }
+    visited[x][y] = false;
+}
+
+int main() {
+    scanf("%d%d%d", &n, &m, &k);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &maze[i][j]);
+        }
+    }
+    DFS(0, 0, 0);
+    printf(canReach ? "Yes" : "No");
+    return 0;
+}
+```
+
+
+
+### 1.3 矩阵最大权值
+
+https://sunnywhy.com/sfbj/8/1/315
+
+现有一个 n*m 大小的矩阵，矩阵中的每个元素表示该位置的权值。现需要从矩阵左上角出发到达右下角，每次移动只能向上下左右移动一格（不允许移动到曾经经过的位置）。求最后到达右下角时路径上所有位置的权值之和的最大值。
+
+**输入**
+
+第一行两个整数 $n、m \hspace{1em} (2 \le n \le5, 2 \le m \le 5)$，分别表示矩阵的行数和列数；
+
+接下来 n 行，每行 m 个整数（$-100 \le 整数 \le 100$），表示矩阵每个位置的权值。
+
+**输出**
+
+一个整数，表示权值之和的最大值。
+
+样例1
+
+输入
+
+```
+2 2
+1 2
+3 4
+```
+
+输出
+
+```
+8
+```
+
+解释
+
+从左上角到右下角的最大权值之和为。
+
+
+
+#### 加保护圈，原地修改
+
+```python
+dx = [-1, 0, 1, 0]
+dy = [ 0, 1, 0, -1]
+
+maxValue = float("-inf")
+def dfs(maze, x, y, nowValue):
+    global maxValue
+    if x==n and y==m:
+        if nowValue > maxValue:
+            maxValue = nowValue
+        
+        return
+  
+    for i in range(4):
+        nx = x + dx[i]
+        ny = y + dy[i]
+  
+        if maze[nx][ny] != -9999:
+            tmp = maze[x][y]
+            maze[x][y] = -9999
+            nextValue = nowValue + maze[nx][ny]
+            dfs(maze, nx, ny, nextValue)
+            maze[x][y] = tmp
+    
+
+n, m = map(int, input().split())
+maze = []
+maze.append( [-9999 for x in range(m+2)] )
+for _ in range(n):
+    maze.append([-9999] + [int(_) for _ in input().split()] + [-9999])
+maze.append( [-9999 for x in range(m+2)] )
+
+
+dfs(maze, 1, 1, maze[1][1])
+print(maxValue)
+```
+
+
+
+#### 辅助visited空间
+
+```python
+# gpt translated version of the C++ code
+MAXN = 5
+INF = float('inf')
+n, m = map(int, input().split())
+maze = []
+for _ in range(n):
+    row = list(map(int, input().split()))
+    maze.append(row)
+
+visited = [[False for _ in range(m)] for _ in range(n)]
+maxValue = -INF
+
+MAXD = 4
+dx = [0, 0, 1, -1]
+dy = [1, -1, 0, 0]
+
+def is_valid(x, y):
+    return 0 <= x < n and 0 <= y < m and not visited[x][y]
+
+def DFS(x, y, nowValue):
+    global maxValue
+    if x == n - 1 and y == m - 1:
+        if nowValue > maxValue:
+            maxValue = nowValue
+        return
+    visited[x][y] = True
+    for i in range(MAXD):
+        nextX = x + dx[i]
+        nextY = y + dy[i]
+        if is_valid(nextX, nextY):
+            nextValue = nowValue + maze[nextX][nextY]
+            DFS(nextX, nextY, nextValue)
+    visited[x][y] = False
+
+DFS(0, 0, maze[0][0])
+print(maxValue)
+
+```
+
+
+
+#### C++
+
+```c++
+#include <cstdio>
+
+const int MAXN = 5;
+const int INF = 0x3f;
+int n, m, maze[MAXN][MAXN];
+bool visited[MAXN][MAXN] = {false};
+int maxValue = -INF;
+
+const int MAXD = 4;
+int dx[MAXD] = {0, 0, 1, -1};
+int dy[MAXD] = {1, -1, 0, 0};
+
+bool isValid(int x, int y) {
+    return x >= 0 && x < n && y >= 0 && y < m && !visited[x][y];
+}
+
+void DFS(int x, int y, int nowValue) {
+    if (x == n - 1 && y == m - 1) {
+        if (nowValue > maxValue) {
+            maxValue = nowValue;
+        }
+        return;
+    }
+    visited[x][y] = true;
+    for (int i = 0; i < MAXD; i++) {
+        int nextX = x + dx[i];
+        int nextY = y + dy[i];
+        if (isValid(nextX, nextY)) {
+            int nextValue = nowValue + maze[nextX][nextY];
+            DFS(nextX, nextY, nextValue);
+        }
+    }
+    visited[x][y] = false;
+}
+
+int main() {
+    scanf("%d%d", &n, &m);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &maze[i][j]);
+        }
+    }
+    DFS(0, 0, maze[0][0]);
+    printf("%d", maxValue);
+    return 0;
+}
+```
+
+
+
+### 1.4 矩阵最大权值路径
+
+https://sunnywhy.com/sfbj/8/1/316
+
+现有一个 n*m 大小的矩阵，矩阵中的每个元素表示该位置的权值。现需要从矩阵左上角出发到达右下角，每次移动只能向上下左右移动一格（不允许移动到曾经经过的位置）。假设左上角坐标是(1,1)，行数增加的方向为增长的方向，列数增加的方向为增长的方向。求最后到达右下角时路径上所有位置的权值之和最大的路径。
+
+**输入**
+
+第一行两个整数 $n、m \hspace{1em} (2 \le n \le5, 2 \le m \le 5)$，分别表示矩阵的行数和列数；
+
+接下来 n 行，每行 m 个整数（$-100 \le 整数 \le 100$），表示矩阵每个位置的权值。
+
+**输出**
+
+从左上角的坐标开始，输出若干行（每行两个整数，表示一个坐标），直到右下角的坐标。
+
+数据保证权值之和最大的路径存在且唯一。
+
+样例1
+
+输入
+
+```
+2 2
+1 2
+3 4
+```
+
+输出
+
+```
+1 1
+2 1
+2 2
+```
+
+解释
+
+显然当路径是(1,1)=>(2,1)=>(2,2)时，权值之和最大，即 1+3+4 = 8。
+
+
+
+#### 辅助visited空间
+
+```python
+# gpt translated version of the C++ code
+MAXN = 5
+INF = float('inf')
+n, m = map(int, input().split())
+maze = []
+for _ in range(n):
+    row = list(map(int, input().split()))
+    maze.append(row)
+
+visited = [[False for _ in range(m)] for _ in range(n)]
+maxValue = -INF
+tempPath, optPath = [], []
+
+MAXD = 4
+dx = [0, 0, 1, -1]
+dy = [1, -1, 0, 0]
+
+def is_valid(x, y):
+    return 0 <= x < n and 0 <= y < m and not visited[x][y]
+
+def DFS(x, y, nowValue):
+    global maxValue, tempPath, optPath
+    if x == n - 1 and y == m - 1:
+        if nowValue > maxValue:
+            maxValue = nowValue
+            optPath = list(tempPath)
+        return
+    visited[x][y] = True
+    for i in range(MAXD):
+        nextX = x + dx[i]
+        nextY = y + dy[i]
+        if is_valid(nextX, nextY):
+            nextValue = nowValue + maze[nextX][nextY]
+            tempPath.append((nextX, nextY))
+            DFS(nextX, nextY, nextValue)
+            tempPath.pop()
+    visited[x][y] = False
+
+tempPath.append((0, 0))
+DFS(0, 0, maze[0][0])
+for pos in optPath:
+    print(pos[0] + 1, pos[1] + 1)
+```
+
+
+
+#### C++
+
+```c++
+#include <cstdio>
+#include <vector>
+#include <utility>
+using namespace std;
+
+typedef pair<int, int> Position;
+
+const int MAXN = 5;
+const int INF = 0x3f;
+int n, m, maze[MAXN][MAXN];
+bool visited[MAXN][MAXN] = {false};
+int maxValue = -INF;
+vector<Position> tempPath, optPath;
+
+const int MAXD = 4;
+int dx[MAXD] = {0, 0, 1, -1};
+int dy[MAXD] = {1, -1, 0, 0};
+
+bool isValid(int x, int y) {
+    return x >= 0 && x < n && y >= 0 && y < m && !visited[x][y];
+}
+
+void DFS(int x, int y, int nowValue) {
+    if (x == n - 1 && y == m - 1) {
+        if (nowValue > maxValue) {
+            maxValue = nowValue;
+            optPath = tempPath;
+        }
+        return;
+    }
+    visited[x][y] = true;
+    for (int i = 0; i < MAXD; i++) {
+        int nextX = x + dx[i];
+        int nextY = y + dy[i];
+        if (isValid(nextX, nextY)) {
+            int nextValue = nowValue + maze[nextX][nextY];
+            tempPath.push_back(Position(nextX, nextY));
+            DFS(nextX, nextY, nextValue);
+            tempPath.pop_back();
+        }
+    }
+    visited[x][y] = false;
+}
+
+int main() {
+    scanf("%d%d", &n, &m);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &maze[i][j]);
+        }
+    }
+    tempPath.push_back(Position(0, 0));
+    DFS(0, 0, maze[0][0]);
+    for (int i = 0; i < optPath.size(); i++) {
+        printf("%d %d\n", optPath[i].first + 1, optPath[i].second + 1);
+    }
+    return 0;
+}
+```
+
+
+
+### 1.5 迷宫最大权值
+
+https://sunnywhy.com/sfbj/8/1/317
+
+题目描述
+
+现有一个大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。现需要从迷宫左上角出发到达右下角，每次移动只能向上下左右移动一格（不允许移动到曾经经过的位置），且只能移动到平地上。假设迷宫中每个位置都有权值，求最后到达右下角时路径上所有位置的权值之和的最大值。
+
+**输入**
+
+第一行两个整数$n、m \hspace{1em} (2 \le n \le5, 2 \le m \le 5)$，分别表示矩阵的行数和列数；
+
+接下来 n 行，每行个 m 整数（值为`0`或`1`），表示迷宫。
+
+再接下来行，每行个整数（$-100 \le 整数 \le 100$），表示迷宫每个位置的权值。
+
+**输出**
+
+一个整数，表示权值之和的最大值。
+
+样例1
+
+输入
+
+```
+3 3
+0 0 0
+0 1 0
+0 0 0
+1 2 3
+4 5 6
+7 8 9
+```
+
+输出
+
+```
+29
+```
+
+解释：从左上角到右下角的最大权值之和为 1+4+7+8+9 = 29。
+
+
+
+#### 加保护圈，原地修改
+
+```python
+dx = [-1, 0, 1, 0]
+dy = [ 0, 1, 0, -1]
+
+maxValue = float("-inf")
+def dfs(maze, x, y, nowValue):
+    global maxValue
+    if x==n and y==m:
+        if nowValue > maxValue:
+            maxValue = nowValue
+        
+        return
+  
+    for i in range(4):
+        nx = x + dx[i]
+        ny = y + dy[i]
+  
+        if maze[nx][ny] == 0:
+            maze[nx][ny] = -1
+            tmp = w[x][y]
+            w[x][y] = -9999
+            nextValue = nowValue + w[nx][ny]
+            dfs(maze, nx, ny, nextValue)
+            maze[nx][ny] = 0
+            w[x][y] = tmp
+    
+
+n, m = map(int, input().split())
+maze = []
+maze.append( [-1 for x in range(m+2)] )
+for _ in range(n):
+    maze.append([-1] + [int(_) for _ in input().split()] + [-1])
+maze.append( [-1 for x in range(m+2)] )
+
+w = []
+w.append( [-9999 for x in range(m+2)] )
+for _ in range(n):
+    w.append([-9999] + [int(_) for _ in input().split()] + [-9999])
+w.append( [-9999 for x in range(m+2)] )
+
+
+dfs(maze, 1, 1, w[1][1])
+print(maxValue)
+```
+
+
+
+#### 辅助visited空间
+
+```python
+# gpt translated version of the C++ code
+MAXN = 5
+INF = float('inf')
+n, m = map(int, input().split())
+maze = [list(map(int, input().split())) for _ in range(n)]
+w = [list(map(int, input().split())) for _ in range(n)]
+visited = [[False] * m for _ in range(n)]
+maxValue = -INF
+
+MAXD = 4
+dx = [0, 0, 1, -1]
+dy = [1, -1, 0, 0]
+
+def is_valid(x, y):
+    return 0 <= x < n and 0 <= y < m and not maze[x][y] and not visited[x][y]
+
+def dfs(x, y, nowValue):
+    global maxValue
+    if x == n - 1 and y == m - 1:
+        if nowValue > maxValue:
+            maxValue = nowValue
+        return
+    visited[x][y] = True
+    for i in range(MAXD):
+        nextX = x + dx[i]
+        nextY = y + dy[i]
+        if is_valid(nextX, nextY):
+            nextValue = nowValue + w[nextX][nextY]
+            dfs(nextX, nextY, nextValue)
+    visited[x][y] = False
+
+dfs(0, 0, w[0][0])
+print(maxValue)
+
+```
+
+
+
+#### C++
+
+```c++
+#include <cstdio>
+
+const int MAXN = 5;
+const int INF = 0x3f;
+int n, m, maze[MAXN][MAXN], isWall[MAXN][MAXN];
+bool visited[MAXN][MAXN] = {false};
+int maxValue = -INF;
+
+const int MAXD = 4;
+int dx[MAXD] = {0, 0, 1, -1};
+int dy[MAXD] = {1, -1, 0, 0};
+
+bool isValid(int x, int y) {
+    return x >= 0 && x < n && y >= 0 && y < m && !isWall[x][y] && !visited[x][y];
+}
+
+void DFS(int x, int y, int nowValue) {
+    if (x == n - 1 && y == m - 1) {
+        if (nowValue > maxValue) {
+            maxValue = nowValue;
+        }
+        return;
+    }
+    visited[x][y] = true;
+    for (int i = 0; i < MAXD; i++) {
+        int nextX = x + dx[i];
+        int nextY = y + dy[i];
+        if (isValid(nextX, nextY)) {
+            int nextValue = nowValue + maze[nextX][nextY];
+            DFS(nextX, nextY, nextValue);
+        }
+    }
+    visited[x][y] = false;
+}
+
+int main() {
+    scanf("%d%d", &n, &m);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &isWall[i][j]);
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &maze[i][j]);
+        }
+    }
+    DFS(0, 0, maze[0][0]);
+    printf("%d", maxValue);
+    return 0;
+}
+```
+
+
+
+
+
+## 2 广度优先搜索（BFS）10题
+
+前面介绍了深度优先搜索，可知 DFS 是以深度作为第一关键词的，即当碰到岔道口时总是先选择其中的一条岔路前进,而不管其他岔路,直到碰到死胡同时才返回岔道口并选择其他岔路。接下来将介绍的**广度优先搜索** (Breadth FirstSearch,**BFS**)则是以广度为第一关键词，当碰到岔道口时,总是先依次访问从该岔道口能直接到达的所有结点,然后再按这些结点被访问的顺序去依次访问它们能直接到达的所有结点，以此类推,直到所有结点都被访问为止。这就跟平静的水面中投入一颗小石子一样,水花总是以石子落水处为中心,并以同心圆的方式向外扩散至整个水面(见图 8-2),从这点来看和 DFS 那种沿着一条线前进的思路是完全不同的。
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202311262216546.png" alt="image-20231126221551540" style="zoom:50%;" />
+
+广度优先搜索 (BFS)一般由队列实现,且总是按层次的顺序进行遍历，其基本写法如下(可作模板用):
+
+```python
+from collections import deque
+  
+def bfs(s, e):
+    vis = set()
+    vis.add(s)
+      
+    q = deque()
+    q.append((0, s))
+
+    while q:
+        now, top = q.popleft() # 取出队首元素
+        if top == e:
+            return now # 返回需要的结果，如：步长、路径等信息
+
+        # 将 top 的下一层结点中未曾入队的结点全部入队q，并加入集合vis设置为已入队
+  
+```
+
+
+
+下面是对该模板中每一个步骤的说明,请结合代码一起看: 
+
+① 定义队列 q，并将起点(0, s)入队，0表示步长目前是0。
+② 写一个 while 循环，循环条件是队列q非空。
+③ 在 while 循环中，先取出队首元素 top。
+④ 将top 的下一层结点中所有**未曾入队**的结点入队，并标记它们的层号为 now 的层号加1，并加入集合vis设置为已入队。
+⑤ 返回 ② 继续循环。
+
+
+
+再强调一点,在BFS 中设置的 inq 数组的含义是判断结点是否已入过队，而不是**结点是否已被访问**。区别在于:如果设置成是否已被访问，有可能在某个结点正在队列中(但还未访问)时由于其他结点可以到达它而将这个结点再次入队，导致很多结点反复入队，计算量大大增加。因此BFS 中让每个结点只入队一次，故需要设置 inq 数组的含义为**结点是否已入过队**而非结点是否已被访问。
+
+
+
+### 2.1 数字操作（一维BFS）
+
+https://sunnywhy.com/sfbj/8/2/318
+
+从整数`1`开始，每轮操作可以选择将上轮结果加`1`或乘`2`。问至少需要多少轮操作才能达到指定整数。
+
+输入描述
+
+一个整数 $n \hspace{1em} (2 \le n \le 10^5)$，表示需要达到的整数。
+
+输出描述
+
+输出一个整数，表示至少需要的操作轮数。
+
+样例1
+
+输入
+
+```
+7
+```
+
+输出
+
+```
+4
+```
+
+解释
+
+第`1`轮：1 + 1 = 2
+
+第`2`轮：2 + 1 =3
+
+第`3`轮：3 * 2 = 6
+
+第`4`轮：6 + 1 = 7
+
+因此至少需要操作`4`轮。
+
+
+
+#### 数学思维
+
+```python
+'''
+2023TA-陈威宇，思路：是n的二进制表示 里面 1的个数+1的个数+0的个数-2。
+如果我们将 n 的二进制表示的每一位数从左到右依次编号为 0、1、2、...，那么：
+
+1 的个数表示需要进行加 1 的操作次数；
+0 的个数表示需要进行乘 2 的操作次数；
+len(l) - 2 表示操作的总次数减去初始状态的操作次数 1，即剩余的操作次数；
+sum(l) + len(l) - 2 表示所有操作次数之和。
+'''
+n = int(input())
+s = bin(n)
+l = [int(i) for i in s[2:]]
+print(sum(l) + len(l) - 2)
+```
+
+
+
+#### 计算机思维
+
+##### Python
+
+```python
+from collections import deque
+
+def bfs(n):
+
+    vis = set()
+    vis.add(1)
+    q = deque()
+    q.append((1, 0))
+    while q:
+        front, step = q.popleft()
+        if front == n:
+            return step
+
+        if front * 2 <= n and front * 2 not in vis:
+            vis.add(front *2)
+            q.append((front * 2, step+1))
+        if front + 1 <= n and front + 1 not in vis:
+            vis.add(front + 1)
+            q.append((front + 1, step+1))
+
+
+n = int(input())
+print(bfs(n))
+
+```
+
+
+
+```python
+# gpt translated version of the C++ code
+from collections import deque
+
+MAXN = 100000
+in_queue = [False] * (MAXN + 1)
+
+def get_step(n):
+    step = 0
+    q = deque()
+    q.append(1)
+    while True:
+        cnt = len(q)
+        for _ in range(cnt):
+            front = q.popleft()
+            if front == n:
+                return step
+            in_queue[front] = True
+            if front * 2 <= n and not in_queue[front * 2]:
+                q.append(front * 2)
+            if front + 1 <= n and not in_queue[front + 1]:
+                q.append(front + 1)
+        step += 1
+
+if __name__ == "__main__":
+    n = int(input())
+    print(get_step(n))
+```
+
+
+
+##### C++
+
+```c++
+#include <cstdio>
+#include <queue>
+using namespace std;
+
+const int MAXN = 100000;
+bool inQueue[MAXN + 1] = {false};
+
+int getStep(int n) {
+    int step = 0;
+    queue<int> q;
+    q.push(1);
+    while (true) {
+        int cnt = q.size();
+        for (int i = 0; i < cnt; i++) {
+            int front = q.front();
+            q.pop();
+            if (front == n) {
+                return step;
+            }
+            inQueue[front] = true;
+            if (front * 2 <= n && !inQueue[front * 2]) {
+                q.push(front * 2);
+            }
+            if (front + 1 <= n && !inQueue[front + 1]) {
+                q.push(front + 1);
+            }
+        }
+        step++;
+    }
+}
+
+int main() {
+    int n, step = 0;
+    scanf("%d", &n);
+    printf("%d", getStep(n));
+    return 0;
+}
+```
+
+
+
+### 2.2 矩阵中的块
+
+https://sunnywhy.com/sfbj/8/2/319
+
+题目描述
+
+现有一个 n*m 的矩阵，矩阵中的元素为`0`或`1`。然后进行如下定义：
+
+1. 位置(x,y)与其上下左右四个位置 $(x,y + 1)、(x,y - 1)、(x + 1,y)、(x-1,y)$ 是相邻的；
+2. 如果位置 (x1,y1) 与位置 (x2,y2) 相邻，且位置 (x2,y2) 与位置 (x3,y3) 相邻，那么称位置(x1,y1)与位置(x3,y3)也相邻；
+3. 称个数尽可能多的相邻的`1`构成一个“块”。
+
+求给定的矩阵中“块”的个数。
+
+**输入**
+
+第一行两个整数 n、m（$2 \le n \le 100, 2 \le m \le 100$），分别表示矩阵的行数和列数；
+
+接下来 n 行，每行 m 个`0`或`1`（用空格隔开），表示矩阵中的所有元素。
+
+**输出**
+
+输出一个整数，表示矩阵中“块”的个数。
+
+样例1
+
+输入
+
+```
+6 7
+0 1 1 1 0 0 1
+0 0 1 0 0 0 0
+0 0 0 0 1 0 0
+0 0 0 1 1 1 0
+1 1 1 0 1 0 0
+1 1 1 1 0 0 0
+```
+
+输出
+
+```
+4
+```
+
+解释
+
+矩阵中的`1`共有`4`块，如下图所示。
+
+![矩阵中的块_样例.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202311262246785.png)
+
+
+
+#### 加保护圈，inq_set集合判断是否入过队
+
+```python
+from collections import deque
+
+# Constants
+MAXD = 4
+dx = [0, 0, 1, -1]
+dy = [1, -1, 0, 0]
+
+def bfs(x, y):
+    q = deque([(x, y)])
+    inq_set.add((x,y))
+    while q:
+        front = q.popleft()
+        for i in range(MAXD):
+            next_x = front[0] + dx[i]
+            next_y = front[1] + dy[i]
+            if matrix[next_x][next_y] == 1 and (next_x,next_y) not in inq_set:
+                inq_set.add((next_x, next_y))
+                q.append((next_x, next_y))
+
+# Input
+n, m = map(int, input().split())
+matrix=[[-1]*(m+2)]+[[-1]+list(map(int,input().split()))+[-1] for i in range(n)]+[[-1]*(m+2)]
+inq_set = set()
+
+# Main process
+counter = 0
+for i in range(1,n+1):
+    for j in range(1,m+1):
+        if matrix[i][j] == 1 and (i,j) not in inq_set:
+            bfs(i, j)
+            counter += 1
+
+# Output
+print(counter)
+```
+
+
+
+#### inq 数组，结点是否已入过队
+
+```python
+# gpt translated version of the C++ code
+from collections import deque
+
+# Constants
+MAXN = 100
+MAXD = 4
+dx = [0, 0, 1, -1]
+dy = [1, -1, 0, 0]
+
+# Functions
+def can_visit(x, y):
+    return 0 <= x < n and 0 <= y < m and matrix[x][y] == 1 and not in_queue[x][y]
+
+def bfs(x, y):
+    q = deque([(x, y)])
+    in_queue[x][y] = True
+    while q:
+        front = q.popleft()
+        for i in range(MAXD):
+            next_x = front[0] + dx[i]
+            next_y = front[1] + dy[i]
+            if can_visit(next_x, next_y):
+                in_queue[next_x][next_y] = True
+                q.append((next_x, next_y))
+
+# Input
+n, m = map(int, input().split())
+matrix = [list(map(int, input().split())) for _ in range(n)]
+in_queue = [[False] * MAXN for _ in range(MAXN)]
+
+# Main process
+counter = 0
+for i in range(n):
+    for j in range(m):
+        if matrix[i][j] == 1 and not in_queue[i][j]:
+            bfs(i, j)
+            counter += 1
+
+# Output
+print(counter)
+
+```
+
+
+
+#### C++
+
+```c++
+#include <cstdio>
+#include <queue>
+#include <utility>
+using namespace std;
+
+typedef pair<int, int> Position;
+
+const int MAXN = 100;
+int n, m, matrix[MAXN][MAXN];
+bool inQueue[MAXN][MAXN] = {false};
+
+const int MAXD = 4;
+int dx[MAXD] = {0, 0, 1, -1};
+int dy[MAXD] = {1, -1, 0, 0};
+
+bool canVisit(int x, int y) {
+    return x >= 0 && x < n && y >= 0 && y < m && matrix[x][y] == 1 && !inQueue[x][y];
+}
+
+void BFS(int x, int y) {
+    queue<Position> q;
+    q.push(Position(x, y));
+    inQueue[x][y] = true;
+    while (!q.empty()) {
+        Position front = q.front();
+        q.pop();
+        for (int i = 0; i < MAXD; i++) {
+            int nextX = front.first + dx[i];
+            int nextY = front.second + dy[i];
+            if (canVisit(nextX, nextY)) {
+                inQueue[nextX][nextY] = true;
+                q.push(Position(nextX, nextY));
+            }
+        }
+    }
+}
+
+int main() {
+    scanf("%d%d", &n, &m);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &matrix[i][j]);
+        }
+    }
+    int counter = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (matrix[i][j] == 1 && !inQueue[i][j]) {
+                BFS(i, j);
+                counter++;
+            }
+        }
+    }
+    printf("%d", counter);
+    return 0;
+}
+```
+
+
+
+### 2.3 迷宫问题
+
+https://sunnywhy.com/sfbj/8/2/320
+
+现有一个 n*m 大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。每次移动只能向上下左右移动一格，且只能移动到平地上。求从迷宫左上角到右下角的最小步数。
+
+**输入**
+
+第一行两个整数 $n、m \hspace{1em} (2 \le n \le 100, 2 \le m \le 100)$，分别表示迷宫的行数和列数；
+
+接下来 n 行，每行 m 个整数（值为`0`或`1`），表示迷宫。
+
+**输出**
+
+输出一个整数，表示最小步数。如果无法到达，那么输出`-1`。
+
+样例1
+
+输入
+
+```
+3 3
+0 1 0
+0 0 0
+0 1 0
+```
+
+输出
+
+```
+4
+```
+
+解释: 假设左上角坐标是(1,1)，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
+
+可以得到从左上角到右下角的前进路线：(1,1)=>(2,1)=>(2,2)=>(2,3)=>(3,3)。
+
+因此最少需要`4`步。
+
+样例2
+
+输入
+
+```
+3 3
+0 1 0
+0 1 0
+0 1 0
+```
+
+输出
+
+```
+-1
+```
+
+解释: 显然从左上角无法到达右下角。
+
+
+
+#### 加保护圈，inq_set集合判断是否入过队
+
+```python
+from collections import deque
+
+# 声明方向变化的数组，代表上下左右移动
+dx = [0, 0, 1, -1]
+dy = [1, -1, 0, 0]
+
+def bfs(x, y):
+    q = deque()
+    q.append((x, y))
+    inq_set.add((x, y))
+    step = 0
+    while q:
+        for _ in range(len(q)):
+            cur_x, cur_y = q.popleft()
+            if cur_x == n and cur_y == m:
+                return step
+            for direction in range(4):
+                next_x = cur_x + dx[direction]
+                next_y = cur_y + dy[direction]
+                if maze[next_x][next_y] == 0 and (next_x,next_y) not in inq_set:
+                    inq_set.add((next_x, next_y))
+                    q.append((next_x, next_y))
+        step += 1
+    return -1
+
+if __name__ == '__main__':
+
+    n, m = map(int, input().split())
+    maze = [[-1] * (m + 2)] + [[-1] + list(map(int, input().split())) + [-1] for i in range(n)] + [[-1] * (m + 2)]
+    inq_set = set()
+
+    step = bfs(1, 1)
+    print(step)
+
+```
+
+
+
+#### inq 数组，结点是否已入过队
+
+```python
+# gpt translated version of the C++ code
+from collections import deque
+
+# 声明方向变化的数组，代表上下左右移动
+dx = [0, 0, 1, -1]
+dy = [1, -1, 0, 0]
+
+# 检查是否可以访问位置 (x, y)
+def can_visit(x, y):
+    return 0 <= x < n and 0 <= y < m and maze[x][y] == 0 and not in_queue[x][y]
+
+# BFS函数 实现广度优先搜索
+def bfs(x, y):
+    q = deque()
+    q.append((x, y))
+    in_queue[x][y] = True
+    step = 0
+    while q:
+        for _ in range(len(q)):
+            cur_x, cur_y = q.popleft()
+            if cur_x == n - 1 and cur_y == m - 1:
+                return step
+            for direction in range(4):
+                next_x = cur_x + dx[direction]
+                next_y = cur_y + dy[direction]
+                if can_visit(next_x, next_y):
+                    in_queue[next_x][next_y] = True
+                    q.append((next_x, next_y))
+        step += 1
+    return -1
+
+# 主函数
+if __name__ == '__main__':
+    # 读取 n 和 m
+    n, m = map(int, input().split())
+    maze = []
+    in_queue = [[False] * m for _ in range(n)]
+
+    # 填充迷宫和访问状态数组
+    for i in range(n):
+        maze.append(list(map(int, input().split())))
+
+    # 执行BFS并输出步数
+    step = bfs(0, 0)
+    print(step)
+
+```
+
+
+
+#### C++
+
+```c++
+#include <cstdio>
+#include <queue>
+#include <utility>
+using namespace std;
+
+typedef pair<int, int> Position;
+
+const int MAXN = 100;
+int n, m, maze[MAXN][MAXN];
+bool inQueue[MAXN][MAXN] = {false};
+
+const int MAXD = 4;
+int dx[MAXD] = {0, 0, 1, -1};
+int dy[MAXD] = {1, -1, 0, 0};
+
+bool canVisit(int x, int y) {
+    return x >= 0 && x < n && y >= 0 && y < m && maze[x][y] == 0 && !inQueue[x][y];
+}
+
+int BFS(int x, int y) {
+    queue<Position> q;
+    q.push(Position(x, y));
+    inQueue[x][y] = true;
+    int step = 0;
+    while (!q.empty()) {
+        int cnt = q.size();
+        while (cnt--) {
+            Position front = q.front();
+            q.pop();
+            if (front.first == n - 1 && front.second == m - 1) {
+                return step;
+            }
+            for (int i = 0; i < MAXD; i++) {
+                int nextX = front.first + dx[i];
+                int nextY = front.second + dy[i];
+                if (canVisit(nextX, nextY)) {
+                    inQueue[nextX][nextY] = true;
+                    q.push(Position(nextX, nextY));
+                }
+            }
+        }
+        step++;
+    }
+    return -1;
+}
+
+int main() {
+    scanf("%d%d", &n, &m);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &maze[i][j]);
+        }
+    }
+    int step = BFS(0, 0);
+    printf("%d", step);
+    return 0;
+}
+```
+
+
+
+### 2.4 迷宫最短路径
+
+https://sunnywhy.com/sfbj/8/2/321
+
+现有一个 n*m 大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。每次移动只能向上下左右移动一格，且只能移动到平地上。假设左上角坐标是(1,1)，行数增加的方向为增长的方向，列数增加的方向为增长的方向，求从迷宫左上角到右下角的最少步数的路径。
+
+**输入**
+
+第一行两个整数$n、m \hspace{1em} (2 \le n \le 100, 2 \le m \le 100)$，分别表示迷宫的行数和列数；
+
+接下来 n 行，每行 m 个整数（值为`0`或`1`），表示迷宫。
+
+**输出**
+
+从左上角的坐标开始，输出若干行（每行两个整数，表示一个坐标），直到右下角的坐标。
+
+数据保证最少步数的路径存在且唯一。
+
+样例1
+
+输入
+
+```
+3 3
+0 1 0
+0 0 0
+0 1 0
+```
+
+输出
+
+```
+1 1
+2 1
+2 2
+2 3
+3 3
+```
+
+解释
+
+假设左上角坐标是(1,)，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
+
+可以得到从左上角到右下角的最少步数的路径为：(1,1)=>(2,1)=>(2,2)=>(2,3)=>(3,3)。
+
+
+
+#### inq 数组，结点是否已入过队
+
+```python
+# gpt translated version of the C++ code
+from queue import Queue
+
+MAXN = 100
+MAXD = 4
+dx = [0, 0, 1, -1]
+dy = [1, -1, 0, 0]
+
+def canVisit(x, y):
+    return x >= 0 and x < n and y >= 0 and y < m and maze[x][y] == 0 and not inQueue[x][y]
+
+def BFS(x, y):
+    q = Queue()
+    q.put((x, y))
+    inQueue[x][y] = True
+    while not q.empty():
+        front = q.get()
+        if front[0] == n - 1 and front[1] == m - 1:
+            return
+        for i in range(MAXD):
+            nextX = front[0] + dx[i]
+            nextY = front[1] + dy[i]
+            if canVisit(nextX, nextY):
+                pre[nextX][nextY] = (front[0], front[1])
+                inQueue[nextX][nextY] = True
+                q.put((nextX, nextY))
+
+def printPath(p):
+    prePosition = pre[p[0]][p[1]]
+    if prePosition == (-1, -1):
+        print(p[0] + 1, p[1] + 1)
+        return
+    printPath(prePosition)
+    print(p[0] + 1, p[1] + 1)
+
+n, m = map(int, input().split())
+maze = []
+for _ in range(n):
+    row = list(map(int, input().split()))
+    maze.append(row)
+
+inQueue = [[False] * m for _ in range(n)]
+pre = [[(-1, -1)] * m for _ in range(n)]
+
+BFS(0, 0)
+printPath((n - 1, m - 1))
+```
+
+
+
+#### C++
+
+```python
+#include <cstdio>
+#include <queue>
+#include <utility>
+#include <algorithm>
+using namespace std;
+
+typedef pair<int, int> Position;
+
+const int MAXN = 100;
+int n, m, maze[MAXN][MAXN];
+bool inQueue[MAXN][MAXN] = {false};
+Position pre[MAXN][MAXN];
+
+const int MAXD = 4;
+int dx[MAXD] = {0, 0, 1, -1};
+int dy[MAXD] = {1, -1, 0, 0};
+
+bool canVisit(int x, int y) {
+    return x >= 0 && x < n && y >= 0 && y < m && maze[x][y] == 0 && !inQueue[x][y];
+}
+
+void BFS(int x, int y) {
+    queue<Position> q;
+    q.push(Position(x, y));
+    inQueue[x][y] = true;
+    while (!q.empty()) {
+        Position front = q.front();
+        q.pop();
+        if (front.first == n - 1 && front.second == m - 1) {
+            return;
+        }
+        for (int i = 0; i < MAXD; i++) {
+            int nextX = front.first + dx[i];
+            int nextY = front.second + dy[i];
+            if (canVisit(nextX, nextY)) {
+                pre[nextX][nextY] = Position(front.first, front.second);
+                inQueue[nextX][nextY] = true;
+                q.push(Position(nextX, nextY));
+            }
+        }
+    }
+}
+
+void printPath(Position p) {
+    Position prePosition = pre[p.first][p.second];
+    if (prePosition == Position(-1, -1)) {
+        printf("%d %d\n", p.first + 1, p.second + 1);
+        return;
+    }
+    printPath(prePosition);
+    printf("%d %d\n", p.first + 1, p.second + 1);
+}
+
+int main() {
+    scanf("%d%d", &n, &m);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &maze[i][j]);
+        }
+    }
+    fill(pre[0], pre[0] + n * m, Position(-1, -1));
+    BFS(0, 0);
+    printPath(Position(n - 1, m - 1));
+    return 0;
+}
+```
+
+
+
+### 2.5 跨步迷宫
+
+https://sunnywhy.com/sfbj/8/2/322
+
+现有一个n*m大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。每次移动只能向上下左右移动一格或两格（两格为同向），且只能移动到平地上（不允许跨越墙壁）。求从迷宫左上角到右下角的最小步数（假设移动两格时算作一步）。
+
+**输入**
+
+第一行两个整数 $n、m \hspace{1em} (2 \le n \le 100, 2 \le m \le 100)$，分别表示迷宫的行数和列数；
+
+接下来n行，每行m个整数（值为`0`或`1`），表示迷宫。
+
+**输出**
+
+输出一个整数，表示最小步数。如果无法到达，那么输出`-1`。
+
+样例1
+
+输入
+
+```
+3 3
+0 1 0
+0 0 0
+0 1 0
+```
+
+输出
+
+```
+3
+```
+
+解释
+
+假设左上角坐标是，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
+
+可以得到从左上角到右下角的前进路线：=>=>=>。
+
+因此最少需要`3`步。
+
+样例2
+
+输入
+
+```
+3 3
+0 1 0
+0 1 0
+0 1 0
+```
+
+输出
+
+```
+-1
+```
+
+解释
+
+显然从左上角无法到达右下角。
+
+
+
+```python
+from queue import Queue
+
+MAXN = 100
+MAXD = 8
+
+dx = [0, 0, 0, 0, 1, -1, 2, -2]
+dy = [1, -1, 2, -2, 0, 0, 0, 0]
+
+def canVisit(x, y):
+    return x >= 0 and x < n and y >= 0 and y < m and maze[x][y] == 0 and not inQueue[x][y]
+
+def BFS(x, y):
+    q = Queue()
+    q.put((x, y))
+    inQueue[x][y] = True
+    step = 0
+    while not q.empty():
+        cnt = q.qsize()
+        while cnt > 0:
+            front = q.get()
+            cnt -= 1
+            if front[0] == n - 1 and front[1] == m - 1:
+                return step
+            for i in range(MAXD):
+                nextX = front[0] + dx[i]
+                nextY = front[1] + dy[i]
+                nextHalfX = front[0] + dx[i] // 2
+                nextHalfY = front[1] + dy[i] // 2
+                if canVisit(nextX, nextY) and maze[nextHalfX][nextHalfY] == 0:
+                    inQueue[nextX][nextY] = True
+                    q.put((nextX, nextY))
+        step += 1
+    return -1
+
+n, m = map(int, input().split())
+maze = []
+inQueue = [[False] * m for _ in range(n)]
+for _ in range(n):
+    maze.append(list(map(int, input().split())))
+
+step = BFS(0, 0)
+print(step)
+```
+
+
+
+### 2.6 字符迷宫
+
+现有一个n*m大小的迷宫，其中`*`表示不可通过的墙壁，`.`表示平地。每次移动只能向上下左右移动一格，且只能移动到平地上。求从起点`S`到终点`T`的最小步数。
+
+**输入**
+
+第一行两个整数 $n、m \hspace{1em} (2 \le n \le 100, 2 \le m \le 100)$，分别表示迷宫的行数和列数；
+
+接下来n行，每行一个长度为m的字符串，表示迷宫。
+
+**输出**
+
+输出一个整数，表示最小步数。如果无法从`S`到达`T`，那么输出`-1`。
+
+样例1
+
+输入
+
+```
+5 5
+.....
+.*.*.
+.*S*.
+.***.
+...T*
+```
+
+输出
+
+```
+11
+```
+
+解释
+
+假设左上角坐标是，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
+
+起点的坐标为，终点的坐标为。
+
+可以得到从`S`到`T`的前进路线：=>=>=>=>=>=>=>=>=>=>=>。
+
+样例2
+
+输入
+
+复制
+
+```
+5 5
+.....
+.*.*.
+.*S*.
+.***.
+..*T*
+```
+
+输出
+
+```
+-1
+```
+
+解释
+
+显然终点`T`被墙壁包围，无法到达。
+
+
+
+
+
+```python
+from queue import Queue
+
+MAXN = 100
+MAXD = 4
+
+dx = [0, 0, 1, -1]
+dy = [1, -1, 0, 0]
+
+def canVisit(x, y):
+    return x >= 0 and x < n and y >= 0 and y < m and maze[x][y] == 0 and not inQueue[x][y]
+
+def BFS(start, target):
+    q = Queue()
+    q.put(start)
+    inQueue[start[0]][start[1]] = True
+    step = 0
+    while not q.empty():
+        cnt = q.qsize()
+        while cnt > 0:
+            front = q.get()
+            cnt -= 1
+            if front == target:
+                return step
+            for i in range(MAXD):
+                nextX = front[0] + dx[i]
+                nextY = front[1] + dy[i]
+                if canVisit(nextX, nextY):
+                    inQueue[nextX][nextY] = True
+                    q.put((nextX, nextY))
+        step += 1
+    return -1
+
+n, m = map(int, input().split())
+maze = []
+inQueue = [[False] * m for _ in range(n)]
+start, target = None, None
+
+for i in range(n):
+    row = input()
+    maze_row = []
+    for j in range(m):
+        if row[j] == '.':
+            maze_row.append(0)
+        elif row[j] == '*':
+            maze_row.append(1)
+        elif row[j] == 'S':
+            start = (i, j)
+            maze_row.append(0)
+        elif row[j] == 'T':
+            target = (i, j)
+            maze_row.append(0)
+    maze.append(maze_row)
+
+step = BFS(start, target)
+print(step)
+```
+
+
+
+### 2.7 多终点迷宫问题
+
+现有一个 n*m 大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。每次移动只能向上下左右移动一格，且只能移动到平地上。求从迷宫左上角到迷宫中每个位置的最小步数。
+
+**输入**
+
+第一行两个整数  $n、m \hspace{1em} (2 \le n \le 100, 2 \le m \le 100)$，分别表示迷宫的行数和列数；
+
+接下来n行，每行m个整数（值为`0`或`1`），表示迷宫。
+
+**输出**
+
+输出n行m列个整数，表示从左上角到迷宫中每个位置需要的最小步数。如果无法到达，那么输出`-1`。注意，整数之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+3 3
+0 0 0
+1 0 0
+0 1 0
+```
+
+输出
+
+```
+0 1 2
+-1 2 3
+-1 -1 4
+```
+
+解释
+
+假设左上角坐标是，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
+
+可以得到从左上角到所有点的前进路线：=>=>或=>=>。
+
+左下角的三个位置无法到达。
+
+
+
+```python
+from queue import Queue
+import sys
+
+INF = sys.maxsize
+MAXN = 100
+MAXD = 4
+
+dx = [0, 0, 1, -1]
+dy = [1, -1, 0, 0]
+
+def canVisit(x, y):
+    return x >= 0 and x < n and y >= 0 and y < m and maze[x][y] == 0 and not inQueue[x][y]
+
+def BFS(x, y):
+    minStep = [[-1] * m for _ in range(n)]
+    q = Queue()
+    q.put((x, y))
+    inQueue[x][y] = True
+    minStep[x][y] = 0
+    step = 0
+    while not q.empty():
+        cnt = q.qsize()
+        while cnt > 0:
+            front = q.get()
+            cnt -= 1
+            for i in range(MAXD):
+                nextX = front[0] + dx[i]
+                nextY = front[1] + dy[i]
+                if canVisit(nextX, nextY):
+                    inQueue[nextX][nextY] = True
+                    minStep[nextX][nextY] = step + 1
+                    q.put((nextX, nextY))
+        step += 1
+    return minStep
+
+n, m = map(int, input().split())
+maze = []
+inQueue = [[False] * m for _ in range(n)]
+
+for _ in range(n):
+    maze.append(list(map(int, input().split())))
+
+minStep = BFS(0, 0)
+for i in range(n):
+    #for j in range(m):
+    print(' '.join(map(str, minStep[i])))
+#        print(minStep[i][j], end='')
+#        if j < m - 1:
+#            print(' ', end='')
+#    print()
+```
+
+
+
+### 2.8 迷宫问题-传送点
+
+现有一个n*m大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地，`2`表示传送点。每次移动只能向上下左右移动一格，且只能移动到平地或传送点上。当位于传送点时，可以选择传送到另一个`2`处（传送不计入步数），也可以选择不传送。求从迷宫左上角到右下角的最小步数。
+
+**输入**
+
+第一行两个整数$n、m \hspace{1em} (2 \le n \le 100, 2 \le m \le 100)$，分别表示迷宫的行数和列数；
+
+接下来n行，每行m个整数（值为`0`或`1`或`2`），表示迷宫。数据保证有且只有两个`2`，且传送点不会在起始点出现。
+
+**输出**
+
+输出一个整数，表示最小步数。如果无法到达，那么输出`-1`。
+
+样例1
+
+输入
+
+复制
+
+```
+3 3
+0 1 2
+0 1 0
+2 1 0
+```
+
+输出
+
+```
+4
+```
+
+解释
+
+假设左上角坐标是，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
+
+可以得到从左上角到右下角的前进路线：=>=>=>=>=>，其中=>属于传送，不计入步数。
+
+因此最少需要`4`步。
+
+样例2
+
+输入
+
+```
+3 3
+0 1 0
+2 1 0
+2 1 0
+```
+
+输出
+
+```
+-1
+```
+
+解释
+
+显然从左上角无法到达右下角。
+
+
+
+将 transVector 中的第一个位置映射到第二个位置，并将第二个位置映射到第一个位置。这样，就建立了传送门的双向映射关系。
+
+在 BFS 函数中，当遇到传送门时，通过映射表 transMap 找到传送门的另一侧位置，并将其加入队列，以便继续进行搜索。
+
+```python
+from queue import Queue
+
+MAXN = 100
+MAXD = 4
+
+dx = [0, 0, 1, -1]
+dy = [1, -1, 0, 0]
+
+def canVisit(x, y):
+    return x >= 0 and x < n and y >= 0 and y < m and (maze[x][y] == 0 or maze[x][y] == 2) and not inQueue[x][y]
+
+def BFS(x, y):
+    q = Queue()
+    q.put((x, y))
+    inQueue[x][y] = True
+    step = 0
+    while not q.empty():
+        cnt = q.qsize()
+        while cnt > 0:
+            front = q.get()
+            cnt -= 1
+            if front[0] == n - 1 and front[1] == m - 1:
+                return step
+            for i in range(MAXD):
+                nextX = front[0] + dx[i]
+                nextY = front[1] + dy[i]
+                if canVisit(nextX, nextY):
+                    inQueue[nextX][nextY] = True
+                    q.put((nextX, nextY))
+                    if maze[nextX][nextY] == 2:
+                        transPosition = transMap[(nextX, nextY)]
+                        inQueue[transPosition[0]][transPosition[1]] = True
+                        q.put(transPosition)
+        step += 1
+    return -1
+
+n, m = map(int, input().split())
+maze = []
+inQueue = [[False] * m for _ in range(n)]
+transMap = {}
+transVector = []
+for i in range(n):
+    row = list(map(int, input().split()))
+    maze.append(row)
+
+    if 2 in row:
+        #transVector.append( (i, j) for j, val in enumerate(row) if val == 2)
+        for j, val in enumerate(row):
+            if val == 2:
+                transVector.append((i,j))
+
+        if len(transVector) == 2:
+            transMap[transVector[0]] = transVector[1]
+            transMap[transVector[1]] = transVector[0]
+
+    #print(transMap)
+step = BFS(0, 0)
+print(step)
+```
+
+
+
+### 2.9 中国象棋-马-无障碍
+
+ 
+
+现有一个n*m大小的棋盘，在棋盘的第行第列的位置放置了一个棋子，其他位置都未放置棋子。棋子的走位参照中国象棋的“马”。求该棋子到棋盘上每个位置的最小步数。
+
+注：中国象棋中“马”的走位为“日”字形，如下图所示。
+
+![image-20231213160152455](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20231213160152455.png)
+
+**输入**
+
+四个整数$n、m、x、y \hspace{1em} (2 \le n \le 100, 2 \le m \le 100, 1 \le x \le n, 1\le y \le m)$，分别表示棋盘的行数和列数、棋子的所在位置。
+
+**输出**
+
+输出行列个整数，表示从棋子到棋盘上每个位置需要的最小步数。如果无法到达，那么输出`-1`。注意，整数之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+3 3 2 1
+```
+
+输出
+
+```
+3 2 1
+0 -1 4
+3 2 1
+```
+
+解释
+
+共`3`行`3`列，“马”在第`2`行第`1`列的位置，由此可得“马”能够前进的路线如下图所示。
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20231213160421486.png" alt="image-20231213160421486" style="zoom:67%;" />
+
+
+
+
+
+```python
+from collections import deque
+
+MAXN = 100
+MAXD = 8
+
+dx = [-2, -1, 1, 2, -2, -1, 1, 2]
+dy = [1, 2, 2, 1, -1, -2, -2, -1]
+
+def canVisit(x, y):
+    return 0 <= x < n and 0 <= y < m and not inQueue[x][y]
+
+def BFS(x, y):
+    minStep = [[-1] * m for _ in range(n)]
+    queue = deque()
+    queue.append((x, y))
+    inQueue[x][y] = True
+    minStep[x][y] = 0
+    step = 0
+    while queue:
+        cnt = len(queue)
+        while cnt > 0:
+            front = queue.popleft()
+            cnt -= 1
+            for i in range(MAXD):
+                nextX = front[0] + dx[i]
+                nextY = front[1] + dy[i]
+                if canVisit(nextX, nextY):
+                    inQueue[nextX][nextY] = True
+                    minStep[nextX][nextY] = step + 1
+                    queue.append((nextX, nextY))
+        step += 1
+    return minStep
+
+
+n, m, x, y = map(int, input().split())
+inQueue = [[False] * m for _ in range(n)]
+minStep = BFS(x - 1, y - 1)
+for row in minStep:
+    print(' '.join(map(str, row)))
+```
+
+
+
+### 2.10 中国象棋-马-有障碍
+
+https://sunnywhy.com/sfbj/8/2/327
+
+现有一个大小的棋盘，在棋盘的第行第列的位置放置了一个棋子，其他位置中的一部分放置了障碍棋子。棋子的走位参照中国象棋的“马”（障碍棋子将成为“马脚”）。求该棋子到棋盘上每个位置的最小步数。
+
+注`1`：中国象棋中“马”的走位为“日”字形，如下图所示。
+
+![中国象棋-马-有障碍_题目描述1.png](https://raw.githubusercontent.com/GMyhf/img/main/img/405270a4-8a80-4837-891a-d0d05cc5577c.png)
+
+注`2`：与“马”**直接相邻**的棋子会成为“马脚”，“马”不能往以“马”=>“马脚”为**长边**的方向前进，如下图所示。
+
+![中国象棋-马-有障碍_题目描述2.png](https://raw.githubusercontent.com/GMyhf/img/main/img/0b79f8a0-7b3e-4675-899c-b44e86ee5e40.png)
+
+**输入**
+
+第一行四个整数$n、m、x、y \hspace{1em} (2 \le n \le 100, 2 \le m \le 100, 1 \le x \le n, 1\le y \le m)$，分别表示棋盘的行数和列数、棋子的所在位置；
+
+第二行一个整数$k（1 \le k \le 10）$，表示障碍棋子的个数；
+
+接下来k行，每行两个整数$x_i、y_i（1 \le x_i \le n, 1 \le y_i \le m）$，表示第i个障碍棋子的所在位置。数据保证不存在相同位置的障碍棋子。
+
+**输出**
+
+输出n行m列个整数，表示从棋子到棋盘上每个位置需要的最小步数。如果无法到达，那么输出`-1`。注意，整数之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+复制
+
+```
+3 3 2 1
+1
+1 2
+```
+
+输出
+
+复制
+
+```
+3 -1 1
+0 -1 -1
+-1 2 1
+```
+
+解释
+
+共`3`行`3`列，“马”在第`2`行第`1`列的位置，障碍棋子在第`1`行第`2`列的位置，由此可得“马”能够前进的路线如下图所示。
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/f005a3c6-b042-471b-b10f-26daf7ff97fb.png" alt="中国象棋-马-有障碍_样例.png" style="zoom:67%;" />
+
+
+
+```python
+from collections import deque
+
+MAXD = 8
+dx = [-2, -1, 1, 2, -2, -1, 1, 2]
+dy = [1, 2, 2, 1, -1, -2, -2, -1]
+
+
+def canVisit(x, y):
+    return x >= 0 and x < n and y >= 0 and y < m and not isBlock.get((x, y), False) and not inQueue[x][y]
+
+
+def BFS(x, y):
+    minStep = [[-1] * m for _ in range(n)]
+    queue = deque()
+    queue.append((x, y))
+    inQueue[x][y] = True
+    minStep[x][y] = 0
+    step = 0
+    while queue:
+        cnt = len(queue)
+        for _ in range(cnt):
+            front = queue.popleft()
+            for i in range(MAXD):
+                nextX = front[0] + dx[i]
+                nextY = front[1] + dy[i]
+                if dx[i] == -1 and dy[i] == -1: #如果dx=-1，-1//2=-1，期望得到0
+                    footX, footY = front[0], front[1]
+                elif dx[i] == -1 and dy[i] != -1:
+                    footX, footY = front[0], front[1] + dy[i] // 2
+                elif dx[i] != -1 and dy[i] == -1:
+                    footX, footY = front[0] + dx[i] // 2, front[1]
+                else:
+                    footX, footY = front[0] + dx[i] // 2, front[1] + dy[i] // 2
+
+                if canVisit(nextX, nextY) and not isBlock.get((footX, footY), False):
+                    inQueue[nextX][nextY] = True
+                    minStep[nextX][nextY] = step + 1
+                    queue.append((nextX, nextY))
+
+
+        step += 1
+    return minStep
+
+n, m, x, y = map(int, input().split())
+inQueue = [[False] * m for _ in range(n)]
+isBlock = {}
+
+k = int(input())
+for _ in range(k):
+    blockX, blockY = map(int, input().split())
+    isBlock[(blockX - 1, blockY - 1)] = True
+
+minStep = BFS(x - 1, y - 1)
+
+for row in minStep:
+    print(' '.join(map(str, row)))
+```
+
+
+
+
+
+# 树专题
+
+## 1 树与二叉树 1题
+
+### 1.1 树的判定
 
 https://sunnywhy.com/sfbj/9/1
 
@@ -88,9 +2507,9 @@ if __name__ == "__main__":
 
 
 
-# 二叉树的遍历 16题
+## 2 二叉树的遍历 16题
 
-## 1 二叉树的先序遍历
+### 2.1 二叉树的先序遍历
 
 https://sunnywhy.com/sfbj/9/2
 
@@ -202,7 +2621,7 @@ print(*result)
 
 
 
-## 2 二叉树的中序遍历
+### 2.2 二叉树的中序遍历
 
 
 
@@ -210,7 +2629,7 @@ mode = "preorder"
 
 
 
-## 3 二叉树的后序遍历
+### 2.3 二叉树的后序遍历
 
 
 
@@ -218,7 +2637,7 @@ mode = "postorder"
 
 
 
-## 4 二叉树的层次遍历
+### 2.4 二叉树的层次遍历
 
 
 
@@ -232,7 +2651,7 @@ mode = "levelorder"
 
 
 
-## 5 二叉树的高度
+### 2.5 二叉树的高度
 
 层级 Level：从根节点开始到达一个节点的路径，所包含的边的数量，称为这个节点的层级。根节点的层级为 0。
 
@@ -328,7 +2747,7 @@ print(root.height())
 
 
 
-## 6 二叉树的结点层号
+### 2.6 二叉树的结点层号
 
 https://sunnywhy.com/sfbj/9/2/334
 
@@ -398,7 +2817,7 @@ print(*node_levels(n, nodes))
 
 
 
-## 7 翻转二叉树
+### 2.7 翻转二叉树
 
 https://sunnywhy.com/sfbj/9/2/335
 
@@ -484,7 +2903,7 @@ print(*inorder_traversal(nodes[0]))
 
 
 
-## 8 先序中序还原二叉树
+### 2.8 先序中序还原二叉树
 
 https://sunnywhy.com/sfbj/9/2/336
 
@@ -556,7 +2975,7 @@ print(*postorder_traversal(root))
 
 
 
-## 9 后序中序还原二叉树
+### 2.9 后序中序还原二叉树
 
 https://sunnywhy.com/sfbj/9/2/337
 
@@ -626,7 +3045,7 @@ print(*preorder_traversal(root))
 
 
 
-## 10 层序中序还原二叉树
+### 2.10 层序中序还原二叉树
 
 https://sunnywhy.com/sfbj/9/2/338
 
@@ -701,7 +3120,7 @@ print(*preorder_traversal(root))
 
 
 
-## 11 二叉树的最近公共祖先
+### 2.11 二叉树的最近公共祖先
 
 https://sunnywhy.com/sfbj/9/2/339
 
@@ -790,7 +3209,7 @@ print(find_LCA(nodes[0], n1, n2))
 
 
 
-## 12 二叉树的路径和
+### 2.12 二叉树的路径和
 
 https://sunnywhy.com/sfbj/9/2/340
 
@@ -870,7 +3289,7 @@ print(path_sum(nodes[0]))
 
 
 
-## 13 二叉树的带权路径长度
+### 2.13 二叉树的带权路径长度
 
 https://sunnywhy.com/sfbj/9/2/341
 
@@ -964,7 +3383,7 @@ print(weighted_path_length(root))
 
 
 
-## 14 二叉树的左视图序列
+### 2.14 二叉树的左视图序列
 
 https://sunnywhy.com/sfbj/9/2/342
 
@@ -1044,7 +3463,7 @@ print(*left_view(nodes[0]))
 
 
 
-## 15 满二叉树的判定
+### 2.15 满二叉树的判定
 
 https://sunnywhy.com/sfbj/9/2/343
 
@@ -1117,7 +3536,7 @@ print("Yes" if is_full(nodes[0]) else "No")
 
 
 
-## 16 完全二叉树的判定
+### 2.16 完全二叉树的判定
 
 https://sunnywhy.com/sfbj/9/2/344
 
@@ -1205,9 +3624,9 @@ print("Yes" if is_complete(nodes[0]) else "No")
 
 
 
-# 树的遍历 7题
+## 3 树的遍历 7题
 
-## 1 树的先根遍历
+### 3.1 树的先根遍历
 
 https://sunnywhy.com/sfbj/9/3
 
@@ -1285,7 +3704,7 @@ print(*pre_order(nodes[0]))
 
 
 
-## 2 树的后根遍历
+### 3.2 树的后根遍历
 
 https://sunnywhy.com/sfbj/9/3/346
 
@@ -1362,7 +3781,7 @@ print(*post_order(nodes[0]))
 
 
 
-## 3 树的层序遍历
+### 3.3 树的层序遍历
 
 https://sunnywhy.com/sfbj/9/3/347
 
@@ -1441,7 +3860,7 @@ print(*level_order(nodes[0]))
 
 
 
-## 4 树的高度
+### 3.4 树的高度
 
 https://sunnywhy.com/sfbj/9/3/348
 
@@ -1516,7 +3935,7 @@ print(height(nodes[0]))
 
 
 
-## 5 树的结点层号
+### 3.5 树的结点层号
 
 https://sunnywhy.com/sfbj/9/3/349
 
@@ -1629,7 +4048,7 @@ tree.print_levels()
 
 
 
-## 6 树的路径和
+### 3.6 树的路径和
 
 https://sunnywhy.com/sfbj/9/3/350
 
@@ -1713,7 +4132,7 @@ print(result)
 
 
 
-## 7 树的带权路径长度
+### 3.7 树的带权路径长度
 
 https://sunnywhy.com/sfbj/9/3/351
 
@@ -1826,9 +4245,9 @@ print(weighted_path_length(n, weights, edges))
 
 
 
-# 二叉查找树（BST）5题
+## 4 二叉查找树（BST）5题
 
-## 1 二叉查找树的建立
+### 4.1 二叉查找树的建立
 
 https://sunnywhy.com/sfbj/9/4
 
@@ -1918,7 +4337,7 @@ print(' '.join(map(str, bst.preorder())))
 
 
 
-## 2 二叉查找树的判定
+### 4.2 二叉查找树的判定
 
 https://sunnywhy.com/sfbj/9/4/353
 
@@ -1994,7 +4413,7 @@ else:
 
 
 
-## 3 还原二叉查找树
+### 4.3 还原二叉查找树
 
 https://sunnywhy.com/sfbj/9/4/354
 
@@ -2076,7 +4495,7 @@ print(' '.join(map(str, bst.postorder())))
 
 
 
-## 4 相同的二叉查找树
+### 4.4 相同的二叉查找树
 
 https://sunnywhy.com/sfbj/9/4/355
 
@@ -2192,7 +4611,7 @@ else:
 
 
 
-## 5 填充二叉查找树
+### 4.5 填充二叉查找树
 
 https://sunnywhy.com/sfbj/9/4/356
 
@@ -2299,9 +4718,9 @@ This code reads the input values and the structure of the binary tree from the i
 
 
 
-# 平衡二叉树（AVL树）3题
+## 5 平衡二叉树（AVL树）3题
 
-## 1 二叉查找树的平衡因子
+### 5.1 二叉查找树的平衡因子
 
 https://sunnywhy.com/sfbj/9/5
 
@@ -2410,7 +4829,7 @@ This code reads the sequence from the input, inserts its values into a BST, calc
 
 
 
-## 2 平衡二叉树的判定
+### 5.2 平衡二叉树的判定
 
 https://sunnywhy.com/sfbj/9/5/358
 
@@ -2543,7 +4962,7 @@ This code reads the sequence from the input, inserts its values into a BST, chec
 
 
 
-## 3 平衡二叉树的建立
+### 5.3 平衡二叉树的建立
 
 https://sunnywhy.com/sfbj/9/5/359
 
@@ -2690,9 +5109,9 @@ This code reads the sequence from the input, inserts its values into an AVL tree
 
 
 
-# 并查集 5题
+## 6 并查集 5题
 
-## 1 学校的班级个数（1）
+### 6.1 学校的班级个数（1）
 
 https://sunnywhy.com/sfbj/9/6/360
 
@@ -2769,7 +5188,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-## 2 学校的班级人数（2）
+### 6.2 学校的班级人数（2）
 
 https://sunnywhy.com/sfbj/9/6/361
 
@@ -2860,7 +5279,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-## 3 是否相同班级
+### 6.3 是否相同班级
 
 https://sunnywhy.com/sfbj/9/6/362
 
@@ -2950,7 +5369,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-## 4 迷宫连通性
+### 6.4 迷宫连通性
 
 https://sunnywhy.com/sfbj/9/6/363
 
@@ -3050,7 +5469,7 @@ This code reads the number of rooms and connections from the input, initializes 
 
 
 
-## 5 班级最高分
+### 6.5 班级最高分
 
 https://sunnywhy.com/sfbj/9/6/364
 
@@ -3145,9 +5564,9 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-# 堆 6题
+## 7 堆 6题
 
-## 1 向下调整构建大顶堆
+### 7.1 向下调整构建大顶堆
 
 https://sunnywhy.com/sfbj/9/7
 
@@ -3298,7 +5717,7 @@ This code reads the number of elements and the elements themselves from the inpu
 
 
 
-## 2 向上调整构建大顶堆
+### 7.2 向上调整构建大顶堆
 
 https://sunnywhy.com/sfbj/9/7/366
 
@@ -3377,7 +5796,7 @@ This code reads the number of elements and the elements themselves from the inpu
 
 
 
-## 3 删除堆顶元素
+### 7.3 删除堆顶元素
 
 https://sunnywhy.com/sfbj/9/7/367
 
@@ -3536,7 +5955,7 @@ This code reads the number of elements and the elements themselves from the inpu
 
 
 
-## 4 堆排序
+### 7.4 堆排序
 
 https://sunnywhy.com/sfbj/9/7/368
 
@@ -3692,7 +6111,7 @@ This code reads the number of elements and the elements themselves from the inpu
 
 
 
-## 5 数据流第K大元素
+### 7.5 数据流第K大元素
 
 https://sunnywhy.com/sfbj/9/7/369
 
@@ -3785,7 +6204,7 @@ This code reads the number of operations and the value of `k` from the input, th
 
 
 
-## 6 数据流中位数
+### 7.6 数据流中位数
 
 https://sunnywhy.com/sfbj/9/7/370
 
@@ -3879,9 +6298,9 @@ This code reads the number of operations from the input, then for each operation
 
 
 
-# 哈夫曼树 3题
+## 8 哈夫曼树 3题
 
-## 1 合并果子
+### 8.1 合并果子
 
 https://sunnywhy.com/sfbj/9/8
 
@@ -3954,7 +6373,7 @@ This code reads the number of piles of fruits and the weights of the piles from 
 
 
 
-## 2 树的最小带权路径长度
+### 8.2 树的最小带权路径长度
 
 https://sunnywhy.com/sfbj/9/8/372
 
@@ -4031,7 +6450,7 @@ This code reads the number of weights from the input, inserts each weight into t
 
 
 
-## 3 最小前缀编码长度
+### 8.3 最小前缀编码长度
 
 https://sunnywhy.com/sfbj/9/8/373
 
