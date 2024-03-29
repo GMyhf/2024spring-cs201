@@ -1,13 +1,17 @@
 # 数算B各班进度
 
-Updated 1020 GMT+8 March 29, 2024
+Updated 2342 GMT+8 March 29, 2024
 2024 spring, Complied by Hongfei Yan
 
 
 
 **Logs:**
 
-2024/3/29 这两个班题目难度上来了
+2024/3/29 
+
+有三个班到树了：Guow, Yanhf, Zhaohy
+
+这两个班题目难度上来了
 Huw（6班）: http://forhuwei.openjudge.cn
 Zhangsl: http://ssbzsl.openjudge.cn
 
@@ -27,7 +31,7 @@ Huw（6班）: http://forhuwei.openjudge.cn 2nd practice 栈, BFS
 Wangz（2班）: http://sydsb.openjudge.cn 
 ​	practice5.Supplementary，greedy, 字符串, practice5 栈、队列、递归
 
-Zhaohy（9班）：http://dsaex.openjudge.cn hw4 像计概, hw3 队列，
+Zhaohy（9班）：http://dsaex.openjudge.cn hw5 树，hw4 像计概, hw3 队列，
 Zhangsl: http://ssbzsl.openjudge.cn week5 dp，week4 bfs, 栈
 Zouyz: http://hxsjjg.openjudge.cn hw3 栈、队列
 
