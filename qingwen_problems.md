@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 2307 GMT+8 March 29, 2024
+Updated 0100 GMT+8 March 30, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -10,7 +10,7 @@ Updated 2307 GMT+8 March 29, 2024
 
 
 
-# 栈和队列
+# 栈和队列（20题）
 
 ## 1 栈的应用 7题
 
@@ -23,9 +23,9 @@ Updated 2307 GMT+8 March 29, 2024
 
 **输入**
 
-第一行一个整数 n（1<=n<=100），表示操作序列的个数；
+第一行一个整数 n（$1 \le n \le 100$），表示操作序列的个数；
 
-接下来行，每行一个操作序列，格式为以下两种之一，分别对应入栈和出栈的操作，其中`push k`表示需要将整数k（1<=k<=100）压入栈，而`pop`表示需要弹出栈顶元素：
+接下来行，每行一个操作序列，格式为以下两种之一，分别对应入栈和出栈的操作，其中`push k`表示需要将整数k（$1 \le k \le 100$）压入栈，而`pop`表示需要弹出栈顶元素：
 
 1. `push k`
 2. `pop`
@@ -113,7 +113,7 @@ In this program, we define a `Stack` class with `push` and `pop` methods. The `p
 
 **输入**
 
-第一行一个整数n（1<=n<=100），表示需要入栈的整数个数；
+第一行一个整数n（$1 \le n \le 100$），表示需要入栈的整数个数；
 
 第二行为[1,n]的一个排列，表示一个出栈序列，整数间用空格隔开。
 
@@ -206,7 +206,7 @@ In this program, we define a function `is_valid_sequence` that simulates pushing
 
 **输入**
 
-一个整数n（1<=n<=8），表示需要入栈的整数个数。
+一个整数n（$1 \le n \le 8$），表示需要入栈的整数个数。
 
 **输出**
 
@@ -574,9 +574,9 @@ In this program, we first convert the infix expression to a postfix expression u
 
 **输入**
 
-第一行一个整数n（1<=n<=100），表示操作序列的个数；
+第一行一个整数n（$1 \le n \le 100$），表示操作序列的个数；
 
-接下来n行，每行一个操作序列，格式为以下两种之一，分别对应入队和出队的操作，其中`push k`表示需要将整数k（1<=k<=）入队，而`pop`表示需要将队首元素出队：
+接下来n行，每行一个操作序列，格式为以下两种之一，分别对应入队和出队的操作，其中`push k`表示需要将整数k（$1 \le k \le 100$）入队，而`pop`表示需要将队首元素出队：
 
 1. `push k`
 2. `pop`
@@ -660,9 +660,9 @@ In this program, we use a deque from the collections module to simulate a queue.
 
 **输入**
 
-第一行一个整数n（1<=n<=100），表示正整数的个数；
+第一行一个整数n（$1 \le n \le 100$），表示正整数的个数；
 
-第二行为空格隔开的n个正整数a1、a2、...、an（1<=ai<=100）。
+第二行为空格隔开的n个正整数a1、a2、...、an（$1 \le a_i \le 100$）。
 
 **输出**
 
@@ -729,7 +729,7 @@ In this program, we use a deque from the collections module to simulate a queue.
 
 **输入**
 
-两个整数n、k（1<=n<100,1<=k<=100），含义如题意所示。
+两个整数n、k（$1 \le n \le 100, 1 \le k \le 100$），含义如题意所示。
 
 **输出**
 
@@ -808,7 +808,7 @@ In this program, we use a deque from the collections module to simulate a queue.
 
 **输入**
 
-第一行一个整数n（1<=n<=100），表示正整数的个数；
+第一行一个整数n（$1 \le n \le 100$），表示正整数的个数；
 
 第二行为空格隔开的n个正整数`1`或`2`，表示q1中从队首到队尾的所有元素；
 
@@ -919,7 +919,7 @@ In this program, we use a deque from the collections module to simulate a queue.
 
 **输入**
 
-第一行两个整数n、first（1 <= first <= 100），分别表示结点的个数、链表第一个结点的编号；
+第一行两个整数n、first（$1 \le first \le 100$），分别表示结点的个数、链表第一个结点的编号；
 
 接下来n行，每行给出一个结点的信息：
 
@@ -1002,7 +1002,7 @@ In this program, we define a `Node` class to represent a node in the linked list
 
 **输入**
 
-第一行两个整数n、first（1 <= first <= 100），分别表示结点的个数、链表第一个结点的编号；
+第一行两个整数n、first（$1 \le first \le 100$），分别表示结点的个数、链表第一个结点的编号；
 
 接下来n行，每行给出一个结点的信息：
 
@@ -1085,7 +1085,7 @@ In this program, we define a `Node` class to represent a node in the linked list
 
 **输入**
 
-第一行两个整数n、first（1 <= first <= 100），分别表示结点的个数、链表第一个结点的编号；
+第一行两个整数n、first（$1 \le first \le 100$），分别表示结点的个数、链表第一个结点的编号；
 
 接下来n行，每行给出一个结点的信息：
 
@@ -1789,7 +1789,7 @@ else:
 
 
 
-# 搜索专题
+# 搜索专题（15题）
 
 ## 1 深度优先搜索（DFS）5题
 
@@ -4204,7 +4204,7 @@ for row in minStep:
 
 
 
-# 树专题
+# 树专题（46题）
 
 ## 1 树与二叉树 1题
 
@@ -8366,7 +8366,7 @@ This code reads a string from the input, counts the frequency of each character,
 
 
 
-# 图专题
+# 图算法专题（33题）
 
 
 
@@ -10636,7 +10636,210 @@ if __name__ == "__main__":
 
 
 
-5.1
+### 5.1 最小生成树-Prim算法 简单
+
+现有一个共个顶点、条边的无向图（假设顶点编号为从`0`到`n-1`），每条边有各自的边权。在图中寻找一棵树，使得这棵树包含图上所有顶点、所有边都是图上的边，且树上所有边的边权之和最小。使用Prim算法求出这个边权之和的最小值。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2$），分别表示顶点数、边数；
+
+接下来m行，每行三个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的两个端点的编号及边权距离。数据保证不会有重边。
+
+**输出**
+
+输出一个整数，表示最小的边权之和。如果不存在这样的树，那么输出`-1`。
+
+样例1
+
+输入
+
+```
+4 5
+0 1 3
+0 2 2
+0 3 3
+2 3 1
+1 2 1
+```
+
+输出
+
+```
+4
+```
+
+解释
+
+对应的无向图如下图所示。加粗的部分即为最小生成树，其边权之和为1+1+2=4。
+
+![最小生成树-Prim算法.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403292321529.png)
+
+样例2
+
+输入
+
+```
+3 1
+0 1 1
+```
+
+输出
+
+```
+-1
+```
+
+解释
+
+由于此图不连通，因此不存在最小生成树。
+
+
+
+以下是使用 Prim 算法求解的 Python 代码：
+
+```python
+import heapq
+
+def prim(graph, n):
+    visited = [False] * n
+    min_heap = [(0, 0)]  # (weight, vertex)
+    min_spanning_tree_cost = 0
+
+    while min_heap:
+        weight, vertex = heapq.heappop(min_heap)
+
+        if visited[vertex]:
+            continue
+
+        visited[vertex] = True
+        min_spanning_tree_cost += weight
+
+        for neighbor, neighbor_weight in graph[vertex]:
+            if not visited[neighbor]:
+                heapq.heappush(min_heap, (neighbor_weight, neighbor))
+
+    return min_spanning_tree_cost if all(visited) else -1
+
+def main():
+    n, m = map(int, input().split())
+    graph = [[] for _ in range(n)]
+
+    for _ in range(m):
+        u, v, w = map(int, input().split())
+        graph[u].append((v, w))
+        graph[v].append((u, w))
+
+    min_spanning_tree_cost = prim(graph, n)
+    print(min_spanning_tree_cost)
+
+if __name__ == "__main__":
+    main()
+
+```
+
+
+
+
+
+### 5.2 最小生成树-Kruskal算法 简单
+
+现有一个共n个顶点、m条边的无向图（假设顶点编号为从`0`到`n-1`），每条边有各自的边权。在图中寻找一棵树，使得这棵树包含图上所有顶点、所有边都是图上的边，且树上所有边的边权之和最小。使用Kruskal算法求出这个边权之和的最小值。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 10^4,0 \le m \le 10^5$），分别表示顶点数、边数；
+
+接下来m行，每行三个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的两个端点的编号及边权。数据保证不会有重边。
+
+**输出**
+
+输出一个整数，表示最小的边权之和。如果不存在这样的树，那么输出`-1`。
+
+样例1
+
+输入
+
+```
+4 5
+0 1 3
+0 2 2
+0 3 3
+2 3 1
+1 2 1
+```
+
+输出
+
+```
+4
+```
+
+解释
+
+对应的无向图如下图所示。加粗的部分即为最小生成树，其边权之和为1+1+2=4。
+
+![最小生成树-Prim算法.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403292321529.png)
+
+
+
+
+
+Kruskal算法是一种用于寻找最小生成树的算法。它的基本思想是按照边的权值从小到大的顺序选择边，如果这条边连接的两个顶点在已经选择的边所构成的图中不在同一连通分量中，则选择这条边，否则放弃这条边。重复这个过程，直到图中所有的顶点都在同一连通分量中。
+
+在实现Kruskal算法时，我们需要使用并查集来维护图中的连通分量，以便于快速判断两个顶点是否在同一连通分量中。
+
+以下是Kruskal算法的Python实现：
+
+```python
+class UnionFind:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        px, py = self.find(x), self.find(y)
+        if self.rank[px] > self.rank[py]:
+            self.parent[py] = px
+        else:
+            self.parent[px] = py
+            if self.rank[px] == self.rank[py]:
+                self.rank[py] += 1
+
+def kruskal(n, edges):
+    uf = UnionFind(n)
+    edges.sort(key=lambda x: x[2])
+    res = 0
+    for u, v, w in edges:
+        if uf.find(u) != uf.find(v):
+            uf.union(u, v)
+            res += w
+    if len(set(uf.find(i) for i in range(n))) > 1:
+        return -1
+    return res
+
+n, m = map(int, input().split())
+edges = []
+for _ in range(m):
+    u, v, w = map(int, input().split())
+    edges.append((u, v, w))
+print(kruskal(n, edges))
+```
+
+这段代码首先定义了一个并查集类`UnionFind`，然后定义了`kruskal`函数来实现Kruskal算法。在`kruskal`函数中，我们首先创建一个并查集实例，然后按照边的权值对边进行排序。然后遍历每一条边，如果这条边连接的两个顶点不在同一连通分量中，就将这两个顶点合并到同一连通分量中，并将这条边的权值加到结果中。最后，如果图中的所有顶点都在同一连通分量中，就返回结果，否则返回-1。
+
+
+
+可以看到，kruskal 算法的时间复杂度主要来源于对边进行排序，因此其时间复杂度是O(ElogE)，其中E为图的边数。显然 kruskal 适合顶点数较多、边数较少的情况，这和 prim算法恰好相反。于是可以根据题目所给的数据范围来选择合适的算法，即**如果是稠密图(边多)，则用 prim 算法;如果是稀疏图(边少)，则用 kruskal 算法**。
+
+
+
+### 5.3 最小造路成本 中等
 
 
 
@@ -10644,25 +10847,9 @@ if __name__ == "__main__":
 
 
 
-5.2
 
 
-
-
-
-
-
-5.3
-
-
-
-
-
-
-
-
-
-5.4
+### 5.4 最大删除边权值 中等
 
 
 
@@ -10672,15 +10859,7 @@ if __name__ == "__main__":
 
 
 
-5.5
-
-
-
-
-
-
-
-
+### 5.5 最小连通成本 中等
 
 
 
@@ -10696,7 +10875,7 @@ if __name__ == "__main__":
 
 
 
-6.1
+### 6.1 拓扑排序 中等
 
 
 
@@ -10704,7 +10883,7 @@ if __name__ == "__main__":
 
 
 
-6.2
+### 6.2 有向无环图的判定-拓扑排序 中等
 
 
 
@@ -10712,7 +10891,7 @@ if __name__ == "__main__":
 
 
 
-6.3
+### 6.3 先导课程 中等
 
 
 
@@ -10728,7 +10907,7 @@ if __name__ == "__main__":
 
 
 
-7.1
+### 7.1 关键路径长度 中等
 
 
 
@@ -10738,7 +10917,7 @@ if __name__ == "__main__":
 
 
 
-7.2
+### 7.2 关键活动 中等
 
 
 
@@ -10748,4 +10927,4 @@ if __name__ == "__main__":
 
 
 
-7.3
+### 7.3 关键路径 中等
