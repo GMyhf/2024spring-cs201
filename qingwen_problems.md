@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1653 GMT+8 March 29, 2024
+Updated 2307 GMT+8 March 29, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9378,7 +9378,7 @@ https://sunnywhy.com/sfbj/10/4/386
 
 **输入**
 
-第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le 100$​），分别表示顶点数、边数、起始编号、终点编号；
+第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le n-1$​），分别表示顶点数、边数、起始编号、终点编号；
 
 接下来m行，每行三个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的两个端点的编号及边权距离。数据保证不会有重边。
 
@@ -9564,7 +9564,7 @@ print(min_distance)
 
 **输入**
 
-第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le 100$​），分别表示顶点数、边数、起始编号、终点编号；
+第一行三个整数n、m、s（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1$​），分别表示顶点数、边数、起始编号；
 
 接下来m行，每行三个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的两个端点的编号及边权距离。数据保证不会有重边。
 
@@ -9663,9 +9663,9 @@ print(' '.join(map(lambda x: str(x) if x != float('inf') else '-1', result)))
 
 **输入**
 
-第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le 100$​），分别表示顶点数、边数、起始编号、终点编号；
+第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le n-1$​），分别表示顶点数、边数、起始编号、终点编号；
 
-接下来m行，每行三个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的两个端点的编号及边权距离、边权花费。数据保证不会有重边。
+接下来m行，每行四个整数u、v、w1、w2（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w_1 \le 100,1 \le w_2 \le 100$），表示一条边的两个端点的编号及边权距离、边权花费。数据保证不会有重边。
 
 **输出**
 
@@ -9760,7 +9760,7 @@ print(result_distance, result_cost)
 
 **输入**
 
-第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le 100$​），分别表示顶点数、边数、起始编号、终点编号；
+第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le n-1$​），分别表示顶点数、边数、起始编号、终点编号；
 
 接下来m行，每行三个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的两个端点的编号及边权距离。数据保证不会有重边。
 
@@ -9856,9 +9856,110 @@ print(result_distance, result_count)
 
 ### 4.5 最短路径 中等
 
+现有一个共n个顶点（代表城市）、m条边（代表道路）的无向图（假设顶点编号为从`0`到`n-1`），每条边有各自的边权，代表两个城市之间的距离。求从s号城市出发到达t号城市的最短距离和最短路径。
+
+**输入**
+
+第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le n-1$​），分别表示顶点数、边数、起始编号、终点编号；
+
+接下来m行，每行三个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的两个端点的编号及边权距离。数据保证不会有重边。
+
+**输出**
+
+```text
+min_d v_1->v_2->...->v_k
+```
+
+按上面的格式输出最短距离和最短路径，其中`min_d`表示最短距离，`v_1`、`v_2`、...、`v_k`表示从起点到终点的最短路径上的顶点编号。
+
+数据保证最短路径存在且唯一。
+
+样例1
+
+输入
+
+```
+4 5 0 2
+0 1 2
+0 2 5
+0 3 1
+1 2 2
+3 2 2
+```
+
+输出
+
+```
+3 0->3->2
+```
+
+解释
+
+对应的无向图如下图所示。
+
+共有`3`条从`0`号顶点到`2`号顶点的路径：
+
+1. `0->3->2`：距离为`3`；
+2. `0->2`：距离为`5`；
+3. `0->1->2`：距离为`4`。
+
+因此最短距离为`3`，最短路径为`0->3->2`。
+
+![最短路径条数.png](https://raw.githubusercontent.com/GMyhf/img/main/img/c88685d8-84ac-45dd-8cca-d1450fac9a71.png)
 
 
 
+
+
+
+
+```python
+import heapq
+
+def dijkstra(graph, start, end):
+    n = len(graph)
+    visited = [False] * n
+    distance = [float('inf')] * n
+    prev = [-1] * n
+    distance[start] = 0
+    pq = [(0, start)]  # priority queue
+
+    while pq:
+        dist_u, u = heapq.heappop(pq)
+        if visited[u]:
+            continue
+        visited[u] = True
+
+        for v, w in graph[u]:
+            if not visited[v] and dist_u + w < distance[v]:
+                distance[v] = dist_u + w
+                prev[v] = u
+                heapq.heappush(pq, (distance[v], v))
+
+    # Reconstruct path
+    path = []
+    while end != -1:
+        path.append(end)
+        end = prev[end]
+    path.reverse()
+
+    return distance, path
+
+def main():
+    n, m, s, t = map(int, input().split())
+    graph = [[] for _ in range(n)]
+    for _ in range(m):
+        u, v, w = map(int, input().split())
+        graph[u].append((v, w))
+        graph[v].append((u, w))
+
+    distance, path = dijkstra(graph, s, t)
+    print(distance[t], '->'.join(map(str, path)))
+
+if __name__ == "__main__":
+    main()
+
+```
 
 
 
@@ -9866,9 +9967,133 @@ print(result_distance, result_count)
 
 ### 4.6 最短路径-多边权 中等
 
+现有一个共n个顶点（代表城市）、m条边（代表道路）的无向图（假设顶点编号为从`0`到`n-1`），每条边有两种边权，分别代表两个城市之间的距离和花费。求从s号城市出发到达t号城市的最短距离，并在达到最短距离的路径中计算最少花费，同时给出相应的最短路径。
+
+**输入**
+
+第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le n-1$​），分别表示顶点数、边数、起始编号、终点编号；
+
+接下来m行，每行四个整数u、v、w1、w2（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w_1 \le 100, 1 \le w_2 \le 100$），表示一条边的两个端点的编号及边权距离、边权花费。数据保证不会有重边。
+
+**输出**
+
+```text
+min_d min_c v_1->v_2->...->v_k
+```
+
+按上面的格式输出满足题意的最短距离（即`mid_d`）、达到最短路径的路径中的最少花费（即`min_c`）、相应的最短路径（`v_1`、`v_2`、...、`v_k`表示从起点到终点的最短路径上的顶点编号）。
+
+数据保证这样的路径存在且唯一。
+
+样例1
+
+输入
+
+```
+4 5 0 2
+0 1 2 1
+0 2 5 1
+0 3 1 2
+1 2 1 6
+3 2 2 3
+```
+
+输出
+
+```
+3 5 0->3->2
+```
+
+解释
+
+对应的无向图如下图所示，其中边上的第一个数字为边权距离，第二个数字为边权花费。
+
+共有`3`条从`0`号顶点到`2`号顶点的路径：
+
+1. `0->3->2`：距离为`3`，花费为`5`；
+2. `0->2`：距离为`5`，花费为`1`；
+3. `0->1->2`：距离为`3`，花费为`7`。
+
+因此最短距离为`3`，最短路径有`2`条，在这`2`条最短路径中的最少花费是`5`，对应的路径为`0->3->2`。
+
+![最短路径-多边权.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403291932945.png)
 
 
 
+
+
+你可以稍微修改 Dijkstra 算法，使其能够同时考虑最短距离和最少花费的路径。下面是一个修改后的示例代码：
+
+```python
+import heapq
+
+
+def dijkstra(graph, n, start, end):
+    # 初始化距离、花费和路径
+    dist = [float('inf')] * n
+    cost = [float('inf')] * n
+    prev = [-1] * n  # 用于重建路径
+
+    dist[start] = 0
+    cost[start] = 0
+
+    # 优先队列
+    queue = [(0, 0, start)]  # (距离，花费，顶点)
+    while queue:
+        current_dist, current_cost, u = heapq.heappop(queue)
+
+        if u == end:  # 若到达终点，则停止
+            break
+
+        # 遍历所有邻接点
+        for v, d, c in graph[u]:
+            temp_dist = current_dist + d
+            temp_cost = current_cost + c
+            # 如果找到更短的路径或花费更低的相同长度路径
+            if temp_dist < dist[v] or (temp_dist == dist[v] and temp_cost < cost[v]):
+                dist[v] = temp_dist
+                cost[v] = temp_cost
+                prev[v] = u
+                heapq.heappush(queue, (temp_dist, temp_cost, v))
+
+    # 重建路径
+    if dist[end] == float('inf'):
+        return "无法到达"
+    else:
+        path = []
+        at = end
+        while at != -1:
+            path.append(at)
+            at = prev[at]
+        path = path[::-1]  # 反转路径
+        return dist[end], cost[end], '->'.join(map(str, path))
+
+
+def solve(n, m, s, t, edges):
+    graph = [[] for _ in range(n)]
+    # 构建图
+    for u, v, w1, w2 in edges:
+        graph[u].append((v, w1, w2))
+        graph[v].append((u, w1, w2))
+
+    # 使用Dijkstra算法
+    min_distance, min_cost, shortest_path = dijkstra(graph, n, s, t)
+    return f"{min_distance} {min_cost} {shortest_path}"
+
+
+# 输入
+n, m, s, t = map(int, input().split())
+edges = []
+for _ in range(m):
+    u, v, w1, w2 = map(int, input().split())
+    edges.append((u, v, w1, w2))
+
+# 解决问题
+print(solve(n, m, s, t, edges))
+
+```
+
+这段代码首先定义了一个修改后的 `dijkstra` 函数，该函数除了记录最短距离外，还记录了达到每个城市的最少花费。然后，在 `main` 函数中，它接受输入，构建图，并调用 `dijkstra` 函数来找到最短路径和相应的最少花费，最后输出结果。
 
 
 
@@ -9876,17 +10101,296 @@ print(result_distance, result_count)
 
 ### 4.7 最短路径-多路径 中等
 
+现有一个共n个顶点（代表城市）、m条边（代表道路）的无向图（假设顶点编号为从`0`到`n-1`），每条边有各自的边权，代表两个城市之间的距离。求从s号城市出发到达t号城市的最短路径条数和最短路径（可能有多条）。
+
+**输入**
+
+第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le n-1$​），分别表示顶点数、边数、起始编号、终点编号；
+
+接下来m行，每行三个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的两个端点的编号及边权距离。数据保证不会有重边。
+
+**输出**
+
+第一行输出一个整数，表示最短路径的条数；
+
+接下来若干行，每行一条最短路径，格式如下：
+
+```text
+v_1->v_2->...->v_k
+```
+
+其中`v_1`、`v_2`、...、`v_k`表示从起点到终点的最短路径上的顶点编号。
+
+注意，路径的输出顺序满足基于整数的字典序，即如果有两条路径`a[1]->a[2]->...->a[k]->a[k+1]->...`与`b[1]->b[2]->...->b[k]->b[k+1]->...`，满足`a[1]==b[1]`、`a[2]==b[2]`、...、`a[k]==b[k]`、`a[k+1]<b[k+1]`，那么把路径`a`优先输出。
+
+样例1
+
+输入
+
+```
+4 5 0 2
+0 1 2
+0 2 5
+0 3 1
+1 2 1
+3 2 2
+```
+
+输出
+
+```
+2
+0->1->2
+0->3->2
+```
+
+解释
+
+对应的无向图如下图所示。
+
+共有`3`条从`0`号顶点到`2`号顶点的路径：
+
+1. `0->3->2`：距离为`3`；
+2. `0->2`：距离为`5`；
+3. `0->1->2`：距离为`3`。
+
+因此最短距离为`3`，最短路径为`0->3->2`和`0->1->2`。
+
+![最短路径条数.png](https://raw.githubusercontent.com/GMyhf/img/main/img/c88685d8-84ac-45dd-8cca-d1450fac9a71.png)
+
+
+
+要解决这个问题，我们可以使用一个稍微修改的Dijkstra算法来找出所有最短路径，同时记录每个节点的前驱节点列表以便于最后重建路径。这种方法可以确保我们找到所有的最短路径，并且能够在完成搜索后重构路径。此外，我们需要记录到达每个节点的最短路径数目。
+
+以下是步骤的详细说明：
+
+1. **初始化**：对于图中的每个节点，我们维护一个到达该节点的最短路径长度、到达该节点的最短路径数目，以及一个从该节点回溯到起点的前驱节点列表。
+2. **Dijkstra算法**：使用优先队列（最小堆）来选择当前未处理节点中距离起点最近的节点，进行松弛操作。不同于标准Dijkstra，当找到一条更短的路径到达某节点时，我们需要更新到达该节点的最短路径数目，并清空前驱节点列表，因为找到了一条更短的路径。如果找到的是一条等长的路径，我们则添加这条路径的最后一个节点到前驱节点列表中，并增加到达该节点的最短路径数目。
+3. **重建路径**：从目标节点开始，使用前驱节点列表回溯至起点，这样可以找到所有的最短路径。这一步需要用到递归或队列的方法来实现。
+4. **输出路径**：根据题目要求，我们需要按照特定的顺序输出所有找到的最短路径。可以通过递归回溯生成所有路径后，对路径进行排序，以满足输出要求。
+
+下面是实现这一算法的Python代码：
+
+```python
+from heapq import heappush, heappop
+from collections import defaultdict
+
+def dijkstra(graph, n, s, t):
+    dist = [float('inf')] * n
+    dist[s] = 0
+    prev = defaultdict(list)
+    queue = [(0, s)]
+    path_count = [0] * n
+    path_count[s] = 1
+
+    while queue:
+        d, u = heappop(queue)
+        if d > dist[u]:
+            continue
+        for v, w in graph[u]:
+            if dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w
+                heappush(queue, (dist[v], v))
+                prev[v] = [u]
+                path_count[v] = path_count[u]
+            elif dist[u] + w == dist[v]:
+                prev[v].append(u)
+                path_count[v] += path_count[u]
+
+    return dist, prev, path_count
+
+def find_paths(prev, t):
+    def dfs(node):
+        if node == s:
+            return [[s]]
+        paths = []
+        for pred in prev[node]:
+            for path in dfs(pred):
+                paths.append(path + [node])
+        return paths
+
+    return dfs(t)
+
+def solve(n, m, s, t, edges):
+    graph = defaultdict(list)
+    for u, v, w in edges:
+        graph[u].append((v, w))
+        graph[v].append((u, w))
+
+    dist, prev, path_count = dijkstra(graph, n, s, t)
+    paths = find_paths(prev, t)
+    sorted_paths = sorted(paths, key=lambda x: [int(i) for i in x])
+
+    print(path_count[t])
+    for path in sorted_paths:
+        print("->".join(map(str, path)))
+
+# 输入示例
+n, m, s, t = map(int, input().split())
+edges = []
+for _ in range(m):
+    edges.append(tuple(map(int, input().split())))
+
+
+solve(n, m, s, t, edges)
+
+```
+
+这段代码定义了`dijkstra`函数来执行Dijkstra算法并计算最短路径的数量，`find_paths`函数来找到所有最短路径，最后的`solve`函数来处理输入数据和格式化输出结果。请注意，这个解决方案可能需要根据实际数据的不同进行调整以确保性能。
 
 
 
 
 
+### 4.8最短距离-多起点多终点 中等
+
+现有一个共n个顶点（代表城市）、m条边（代表道路）的无向图（假设顶点编号为从`0`到`n-1`），每条边有各自的边权，代表两个城市之间的距离。求从所有城市出发到达所有城市的所有最短距离。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 50,0 \le m \le \frac{n(n-1)}2$​），分别表示顶点数、边数；
+
+接下来m行，每行三个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的两个端点的编号及边权距离。数据保证不会有重边。
+
+**输出**
+
+输出多行多列的整数，其中i号行j号列表示从号顶点到达号顶点的最短距离。如果无法到达，那么输出`-1`。整数之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+4 5
+0 1 2
+0 2 5
+0 3 1
+1 2 1
+3 2 2
+```
+
+输出
+
+```
+0 2 3 1
+2 0 1 3
+3 1 0 2
+1 3 2 0
+```
+
+解释
+
+对应的无向图如下图所示。
+
+![最短路径条数.png](https://raw.githubusercontent.com/GMyhf/img/main/img/c88685d8-84ac-45dd-8cca-d1450fac9a71.png)
 
 
 
-### 4.8最短距离-多起点多终点
+这是一个典型的多源最短路径问题，可以使用 Floyd-Warshall 算法来解决。下面是一个实现：
+
+```python
+def floyd_warshall(graph, n):
+    dist = [[float('inf')] * n for _ in range(n)]
+
+    # Initialize distances for direct edges
+    for u in range(n):
+        dist[u][u] = 0
+        for v, w in graph[u]:
+            dist[u][v] = w
+
+    # Update distances using Floyd-Warshall algorithm
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+
+    return dist
+
+def main():
+    n, m = map(int, input().split())
+    graph = [[] for _ in range(n)]
+    for _ in range(m):
+        u, v, w = map(int, input().split())
+        graph[u].append((v, w))
+        graph[v].append((u, w))
+
+    distances = floyd_warshall(graph, n)
+    
+    for row in distances:
+        print(' '.join(str(d) if d != float('inf') else '-1' for d in row))
+
+if __name__ == "__main__":
+    main()
+```
+
+这段代码首先定义了一个 `floyd_warshall` 函数来执行 Floyd-Warshall 算法。然后，在 `main` 函数中，它接受输入，构建图，并调用 `floyd_warshall` 函数来找到所有城市之间的最短距离，并输出结果。
 
 
+
+Floyd-Warshall 时间复杂度？不能用Dijkstra完成吗？
+
+Floyd-Warshall 算法的时间复杂度为 O(n^3)，其中 n 是顶点的数量。这是因为 Floyd-Warshall 算法通过三重循环来更新所有顶点之间的最短距离。
+
+虽然使用 Dijkstra 算法也可以解决多源最短路径问题，但是它需要对每个顶点运行一次单源最短路径算法，因此时间复杂度为 O(n * (n + m) * logn)，其中 m 是边的数量。在稠密图（边数量接近 n^2）的情况下，这可能比 Floyd-Warshall 算法更慢。
+
+因此，在顶点数量较小且图比较稠密时，Floyd-Warshall 算法通常更加高效，因为它的时间复杂度不依赖于边的数量。而在稀疏图或者顶点数量很大时，Dijkstra 算法可能更适合，因为它的时间复杂度相对较低。
+
+
+
+下面是一个使用 Dijkstra 算法解决多源最短路径问题的 Python 实现：
+
+```python
+import heapq
+
+
+def dijkstra(graph, start, n):
+    distances = [float('inf')] * n
+
+    for u in range(n):
+        if u == start:
+            distances[start] = 0
+            continue
+        visited = [False] * n
+        pq = [(0, start)]  # priority queue，元素为 (distance, vertex)
+
+        while pq:
+            dist_u, u = heapq.heappop(pq)
+            if visited[u]:
+                continue
+            visited[u] = True
+
+            for v, weight in graph[u]:
+                new_dist = dist_u + weight
+                if new_dist < distances[v]:
+                    distances[v] = new_dist
+                    heapq.heappush(pq, (new_dist, v))
+
+    return distances
+
+
+def main():
+    n, m = map(int, input().split())
+    graph = [[] for _ in range(n)]
+    for _ in range(m):
+        u, v, w = map(int, input().split())
+        graph[u].append((v, w))
+        graph[v].append((u, w))
+
+    all_shortest_paths = []
+    for i in range(n):
+        shortest_paths_from_i = dijkstra(graph, i, n)
+        all_shortest_paths.append(shortest_paths_from_i)
+
+    for row in all_shortest_paths:
+        print(' '.join(str(d) if d != float('inf') else '-1' for d in row))
+
+
+if __name__ == "__main__":
+    main()
+
+```
+
+这个实现首先定义了一个 `dijkstra` 函数来执行 Dijkstra 算法，计算从给定起点到所有其他顶点的最短距离。然后，在 `main` 函数中，它接受输入，构建图，并调用 `dijkstra` 函数来找到所有城市之间的最短距离，并输出结果。
 
 
 
@@ -9894,7 +10398,137 @@ print(result_distance, result_count)
 
 ### 4.9 最短路径-多边权II 中等
 
+现有一个共n个顶点（代表城市）、m条边（代表道路）的无向图（假设顶点编号为从`0`到`n-1`），每条边有各自的边权，代表两个城市之间的距离；每个顶点有各自的点权，代表城市的堵车指数。求从s号城市出发到达t号城市的最短距离与最短路径。
 
+**输入**
+
+第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le n-1$​），分别表示顶点数、边数、起始编号、终点编号；
+
+第二行为空格隔开的n个整数w1（$1 \le w_1 \le 100$），表示编号从`0`到`n-1`的城市的堵车指数；
+
+接下来m行，每行三个整数u、v、w2（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w2 \le 100$），表示一条边的两个端点的编号及边权距离。数据保证不会有重边。
+
+**输出**
+
+```text
+min_d v_1->v_2->...->v_k
+```
+
+按上面的格式输出最短距离和最短路径，其中`min_d`表示最短距离，`v_1`、`v_2`、...、`v_k`表示从起点到终点的最短路径上的顶点编号。如果最短路径存在多条，那么输出路径上所有城市的堵车指数平均值最小的路径。数据保证这样的路径存在且唯一。
+
+样例1
+
+输入
+
+```
+4 5 0 2
+2 3 2 1
+0 1 2
+0 2 5
+0 3 1
+1 2 1
+3 2 2
+```
+
+输出
+
+```
+3 0->3->2
+```
+
+解释
+
+对应的无向图如下图所示，其中边上的数字为边权距离，顶点旁的数字为点权堵车指数。
+
+共有`3`条从`0`号顶点到`2`号顶点的路径：
+
+1. `0->3->2`：距离为`3`，堵车指数平均值为$\frac{2+1+2}3=\frac53$；
+2. `0->2`：距离为`5`，堵车指数平均值为$\frac{2+2}2=2$；
+3. `0->1->2`：距离为`3`，堵车指数平均值为$\frac{2+3+2}3=\frac73$。
+
+因此最短距离为`3`，最小堵车指数平均值的最短路径为`0->3->2`。
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403292212947.png" alt="image-20240329221157501" style="zoom:50%;" />
+
+
+
+
+
+这里是一个Dijkstra算法加DFS（深度优先搜索）来解决最短路径问题，并在路径长度相同的情况下优先选择平均堵车指数最小的路径。主要逻辑是先使用Dijkstra算法找出所有最短路径，然后通过DFS在这些路径中找到平均堵车指数最小的路径。
+
+```python
+from collections import defaultdict
+
+INF = float('inf')
+
+class Edge:
+    def __init__(self, v, dis):
+        self.v = v
+        self.dis = dis
+
+def dijkstra(n, s, G, weight):
+    d = [INF] * n
+    vis = [False] * n
+    pre = [[] for _ in range(n)]
+    d[s] = 0
+
+    for _ in range(n):
+        u, minDis = -1, INF
+        for j in range(n):
+            if not vis[j] and d[j] < minDis:
+                u, minDis = j, d[j]
+        if u == -1:
+            break
+        vis[u] = True
+        for edge in G[u]:
+            v, dis = edge.v, edge.dis
+            if not vis[v]:
+                if d[u] + dis < d[v]:
+                    d[v] = d[u] + dis
+                    pre[v] = [u]
+                elif d[u] + dis == d[v]:
+                    pre[v].append(u)
+    return d, pre
+
+def DFS(v, s, pre, weight, tempPath, optPath, optValue):
+    if v == s:
+        tempPath.append(v)
+        weightSum = sum(weight[node] for node in tempPath)
+        weightAvg = weightSum / len(tempPath)
+        if weightAvg < optValue[0]:
+            optValue[0] = weightAvg
+            optPath[:] = tempPath[:]
+        tempPath.pop()
+        return
+
+    tempPath.append(v)
+    for prev in pre[v]:
+        DFS(prev, s, pre, weight, tempPath, optPath, optValue)
+    tempPath.pop()
+
+def solve(n, m, s, t, weight, edges):
+    G = defaultdict(list)
+    for u, v, w in edges:
+        G[u].append(Edge(v, w))
+        G[v].append(Edge(u, w))
+
+    d, pre = dijkstra(n, s, G, weight)
+    
+    tempPath, optPath = [], []
+    optValue = [INF]
+    DFS(t, s, pre, weight, tempPath, optPath, optValue)
+    
+    optPath.reverse()
+    return d[t], '->'.join(map(str, optPath))
+
+# Example usage
+n, m, s, t = map(int, input().split())
+weight = list(map(int, input().split()))
+edges = [tuple(map(int, input().split())) for _ in range(m)]
+
+min_d, path = solve(n, m, s, t, weight, edges)
+print(f"{min_d} {path}")
+```
 
 
 
@@ -9902,7 +10536,97 @@ print(result_distance, result_count)
 
 ### 4.10 交通枢纽 中等
 
+现有一个共n个顶点（代表城市）、m条边（代表道路）的**无向连通图**（假设顶点编号为从`0`到`n-1`），每条边有各自的边权，代表两个城市之间的距离。为了促进城市间交流，需要从k个备选城市中选择其中一个城市作为交通枢纽，满足从这个交通枢纽出发到达其他所有城市的最短距离之和最小。
 
+**输入**
+
+第一行四个整数n、m、k（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le k \le min(n,10)$​），分别表示顶点数、边数、备选城市数；
+
+接下来m行，每行三个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$​），表示一条边的两个端点的编号及边权距离。数据保证不会有重边。
+
+最后一行为空格隔开的k个整数，表示备选城市编号。
+
+**输出**
+
+输出两个整数，分别表示作为交通枢纽的城市编号、从交通枢纽出发到达其他所有城市的最短距离之和，中间用空格隔开。如果有多个满足条件的交通枢纽，那么输出城市编号最小的那个。
+
+样例1
+
+输入
+
+```
+4 5 2
+0 1 1
+0 2 5
+0 3 3
+1 2 2
+2 3 4
+0 2
+```
+
+输出
+
+```
+0 7
+```
+
+解释
+
+对应的无向图如下图所示。
+
+从`0`号城市到达`1`号、`2`号、`3`号城市的最短距离分别是`1`、`3`、`3`，因此最短距离之和是`7`；
+
+从`2`号城市到达`0`号、`1`号、`3`号城市的最短距离分别是`3`、`2`、`4`，因此最短距离之和是`9`；
+
+因此应选择`0`号城市作为交通枢纽，对应的最短距离之和为`7`。
+
+![交通枢纽.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403292302533.png)
+
+
+
+您可以使用 Floyd-Warshall 算法来解决这个问题。该算法能够计算图中所有顶点对之间的最短路径。对于这个问题，我们只需要找到每个备选城市作为交通枢纽时，从该城市出发到其他所有城市的最短距离之和，然后选择最小的一个。
+
+下面是一个实现：
+
+```python
+def floyd_warshall(graph, n, candidates):
+    distances = [[float('inf')] * n for _ in range(n)]
+
+    for u in range(n):
+        distances[u][u] = 0
+
+    for u, v, w in graph:
+        distances[u][v] = w
+        distances[v][u] = w
+
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                distances[i][j] = min(distances[i][j], distances[i][k] + distances[k][j])
+
+    min_total_distance = float('inf')
+    chosen_hub = -1
+    for hub in candidates:
+        total_distance = sum(distances[hub][v] for v in range(n) if v != hub)
+        if total_distance < min_total_distance:
+            min_total_distance = total_distance
+            chosen_hub = hub
+
+    return chosen_hub, min_total_distance
+
+def main():
+    n, m, k = map(int, input().split())
+    graph = [tuple(map(int, input().split())) for _ in range(m)]
+    candidates = list(map(int, input().split()))
+
+    hub, min_total_distance = floyd_warshall(graph, n, candidates)
+    print(hub, min_total_distance)
+
+if __name__ == "__main__":
+    main()
+```
+
+您可以将您的输入和期望输出与上述代码一起运行以进行测试。
 
 
 
