@@ -9374,13 +9374,13 @@ print(count)
 
 https://sunnywhy.com/sfbj/10/4/386
 
-现有一个共n个顶点（代表城市）、m条边（代表道路）的无向图（假设顶点编号为从`0`到`n-1`），每条边有各自的边权，代表两个城市之间的距离。求从号城市出发到达号城市的最短距离。
+现有一个共n个顶点（代表城市）、m条边（代表道路）的无向图（假设顶点编号为从`0`到`n-1`），每条边有各自的边权，代表两个城市之间的距离。求从s号城市出发到达t号城市的最短距离。
 
 **输入**
 
-第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le 100$​），分别表示顶点数、边数、起始顶点编号；
+第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le 100$​），分别表示顶点数、边数、起始编号、终点编号；
 
-接下来m行，每行两个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的起点和终点的编号。数据保证不会有重边。
+接下来m行，每行三个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的两个端点的编号及边权距离。数据保证不会有重边。
 
 **输出**
 
@@ -9560,6 +9560,301 @@ print(min_distance)
 
 ### 4.2 最短距离-多终点 简单
 
+现有一个共n个顶点（代表城市）、m条边（代表道路）的无向图（假设顶点编号为从`0`到`n-1`），每条边有各自的边权，代表两个城市之间的距离。求从s号城市出发到达其他每个城市的最短距离。
+
+**输入**
+
+第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le 100$​），分别表示顶点数、边数、起始编号、终点编号；
+
+接下来m行，每行三个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的两个端点的编号及边权距离。数据保证不会有重边。
+
+**输出**
+
+在一行中输出个整数，依次表示到达编号从`0`到`n-1`的顶点的最短距离。如果无法到达，那么输出`-1`。整数之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+6 6 0
+0 1 2
+0 2 5
+0 3 1
+2 3 2
+1 2 1
+4 5 1
+```
+
+输出
+
+```
+0 2 3 1 -1 -1
+```
+
+解释
+
+对应的无向图如下图所示。最短路径：
+
+`0`号顶点：直接到达，距离为`0`；
+
+`1`号顶点：`0->1`，距离为`2`；
+
+`2`号顶点：`0->1->2`和`0->3->2`，距离为`3`；
+
+`3`号顶点：`0->3`，距离为`1`；
+
+`4`号顶点：无法到达；
+
+`5`号顶点：无法到达。
+
+![最短距离.png](https://raw.githubusercontent.com/GMyhf/img/main/img/1123ea31-976a-43fb-bc9d-11eec6ce0f26.png)
+
+
+
+
+
+```python
+import heapq
+
+def dijkstra(n, edges, s):
+    graph = [[] for _ in range(n)]
+    for u, v, w in edges:
+        graph[u].append((v, w))
+        graph[v].append((u, w))
+
+    pq = [(0, s)]  # (distance, node)
+    visited = set()
+    distances = [float('inf')] * n
+    distances[s] = 0
+
+    while pq:
+        dist, node = heapq.heappop(pq)
+        if node in visited:
+            continue
+        visited.add(node)
+        for neighbor, weight in graph[node]:
+            new_dist = dist + weight
+            if new_dist < distances[neighbor]:
+                distances[neighbor] = new_dist
+                heapq.heappush(pq, (new_dist, neighbor))
+
+    return distances
+
+# Read input
+n, m, s = map(int, input().split())
+edges = [list(map(int, input().split())) for _ in range(m)]
+
+# Solve the problem
+result = dijkstra(n, edges, s)
+
+# Output the result
+print(' '.join(map(lambda x: str(x) if x != float('inf') else '-1', result)))
+
+```
+
+
+
+
+
+### 4.3 最短距离-多边权 简单
+
+现有一个共个顶点（代表城市）、条边（代表道路）的无向图（假设顶点编号为从`0`到`n-1`），每条边有两种边权，分别代表两个城市之间的距离和花费。求从号城市出发到达号城市的最短距离，并在达到最短距离的路径中计算最少花费。
+
+**输入**
+
+第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le 100$​），分别表示顶点数、边数、起始编号、终点编号；
+
+接下来m行，每行三个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的两个端点的编号及边权距离、边权花费。数据保证不会有重边。
+
+**输出**
+
+输出两个整数，代表最短距离与最少花费。
+
+数据保证最短路径一定存在。
+
+样例1
+
+输入
+
+```
+4 5 0 2
+0 1 2 1
+0 2 5 1
+0 3 1 2
+1 2 1 6
+3 2 2 3
+```
+
+输出
+
+```
+3 5
+```
+
+解释
+
+对应的无向图如下图所示，其中边上的第一个数字为边权距离，第二个数字为边权花费。
+
+共有`3`条从`0`号顶点到`2`号顶点的路径：
+
+1. `0->3->2`：距离为`3`，花费为`5`；
+2. `0->2`：距离为`5`，花费为`1`；
+3. `0->1->2`：距离为`3`，花费为`7`。
+
+因此最短距离为`3`，最短路径有`2`条，在这`2`条最短路径中的最少花费是`5`。
+
+![最短距离-多边权.png](https://raw.githubusercontent.com/GMyhf/img/main/img/93f41b80-9756-48bf-b0af-a35bc94e9616.png)
+
+
+
+```python
+import heapq
+
+def dijkstra(n, edges, s, t):
+    graph = [[] for _ in range(n)]
+    for u, v, d, c in edges:
+        graph[u].append((v, d, c))
+        graph[v].append((u, d, c))
+
+    pq = [(0, 0, s)]  # (distance, cost, node)
+    visited = set()
+    distances = [(float('inf'), float('inf'))] * n
+    distances[s] = (0, 0)
+
+    while pq:
+        dist, cost, node = heapq.heappop(pq)
+        if node == t:
+            return dist, cost
+        if node in visited:
+            continue
+        visited.add(node)
+        for neighbor, d, c in graph[node]:
+            new_dist = dist + d
+            new_cost = cost + c
+            if new_dist < distances[neighbor][0] or (new_dist == distances[neighbor][0] and new_cost < distances[neighbor][1]):
+                distances[neighbor] = (new_dist, new_cost)
+                heapq.heappush(pq, (new_dist, new_cost, neighbor))
+
+# Read input
+n, m, s, t = map(int, input().split())
+edges = [list(map(int, input().split())) for _ in range(m)]
+
+# Solve the problem
+result_distance, result_cost = dijkstra(n, edges, s, t)
+
+# Output the result
+print(result_distance, result_cost)
+
+```
+
+
+
+
+
+
+
+### 4.4 最短路径条数 简单
+
+现有一个共个顶点（代表城市）、条边（代表道路）的无向图（假设顶点编号为从`0`到`n-1`），每条边有各自的边权，代表两个城市之间的距离。求从号城市出发到达号城市的最短距离和最短路径条数。
+
+**输入**
+
+第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le 100$​），分别表示顶点数、边数、起始编号、终点编号；
+
+接下来m行，每行三个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的两个端点的编号及边权距离。数据保证不会有重边。
+
+**输出**
+
+输出两个整数，表示最短距离和最短路径条数，中间用空格隔开。
+
+数据保证最短路径一定存在。
+
+样例1
+
+输入
+
+```
+4 5 0 2
+0 1 2
+0 2 5
+0 3 1
+1 2 1
+3 2 2
+```
+
+输出
+
+```
+3 2
+```
+
+解释
+
+对应的无向图如下图所示。
+
+共有`3`条从`0`号顶点到`2`号顶点的路径：
+
+1. `0->3->2`：距离为`3`；
+2. `0->2`：距离为`5`；
+3. `0->1->2`：距离为`3`。
+
+因此最短距离为`3`，最短路径有`2`条。
+
+![最短路径条数.png](https://raw.githubusercontent.com/GMyhf/img/main/img/c88685d8-84ac-45dd-8cca-d1450fac9a71.png)
+
+
+
+以下是使用 Dijkstra 算法解决这个问题的 Python 代码：
+
+```python
+import heapq
+
+def dijkstra(n, edges, s, t):
+    graph = [[] for _ in range(n)]
+    for u, v, d in edges:
+        graph[u].append((v, d))
+        graph[v].append((u, d))
+
+    pq = [(0, s)]  # (distance, node)
+    visited = set()
+    distances = [float('inf')] * n
+    distances[s] = 0
+    count = [0] * n
+    count[s] = 1
+
+    while pq:
+        dist, node = heapq.heappop(pq)
+        if node == t:
+            return dist, count[node]
+        if node in visited:
+            continue
+        visited.add(node)
+        for neighbor, d in graph[node]:
+            new_dist = dist + d
+            if new_dist < distances[neighbor]:
+                distances[neighbor] = new_dist
+                heapq.heappush(pq, (new_dist, neighbor))
+                count[neighbor] = count[node]
+            elif new_dist == distances[neighbor]:
+                count[neighbor] += count[node]
+
+# Read input
+n, m, s, t = map(int, input().split())
+edges = [list(map(int, input().split())) for _ in range(m)]
+
+# Solve the problem
+result_distance, result_count = dijkstra(n, edges, s, t)
+
+# Output the result
+print(result_distance, result_count)
+```
+
+这段代码首先构建了一个无向图的邻接表，并使用 Dijkstra 算法计算了从起始顶点到终点的最短距离和最短路径条数。然后将结果输出为两个整数，分别表示最短距离和最短路径条数。
+
+
+
+### 4.5 最短路径 中等
 
 
 
@@ -9568,25 +9863,8 @@ print(min_distance)
 
 
 
-### 4.3 最短距离-多边权
 
-
-
-
-
-
-
-### 4.4 最短路径条数
-
-
-
-
-
-
-
-
-
-### 4.5 最短路径
+### 4.6 最短路径-多边权 中等
 
 
 
@@ -9596,17 +9874,7 @@ print(min_distance)
 
 
 
-### 4.6 最短路径-多边权
-
-
-
-
-
-
-
-
-
-### 4.7 最短路径-多路径
+### 4.7 最短路径-多路径 中等
 
 
 
@@ -9624,7 +9892,7 @@ print(min_distance)
 
 
 
-### 4.9 最短路径-多边权II
+### 4.9 最短路径-多边权II 中等
 
 
 
@@ -9632,7 +9900,7 @@ print(min_distance)
 
 
 
-### 4.10 交通枢纽
+### 4.10 交通枢纽 中等
 
 
 
