@@ -13,7 +13,7 @@ Updated 2342 GMT+8 March 29, 2024
 
 这两个班题目难度上来了
 Huw（6班）: http://forhuwei.openjudge.cn
-Zhangsl: http://ssbzsl.openjudge.cn
+Zhangsl: http://ssbzsl.openjudge.cn	这个小组是假的？通过人数都是个位。
 
 
 
