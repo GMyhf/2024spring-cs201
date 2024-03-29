@@ -5,6 +5,14 @@ Updated 1020 GMT+8 March 29, 2024
 
 
 
+**Logs:**
+
+2024/3/29 这两个班题目难度上来了
+Huw（6班）: http://forhuwei.openjudge.cn
+Zhangsl: http://ssbzsl.openjudge.cn
+
+
+
 ## Python语言
 Guow: http://dsbpython.openjudge.cn hw5 树
 Liuyh: http://lyhdsa.openjudge.cn hw3 栈
