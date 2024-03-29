@@ -1,6 +1,6 @@
 # 2024年4月 图
 
-Updated 1910 GMT+8 March 17, 2024
+Updated 0120 GMT+8 March 30, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -28,7 +28,10 @@ mindmap
       Adjacency List
       
     Algorithm{{**ALGORITHM**}}
-    	Dijkstra
+    	Shortest Path
+    		Dijkstra
+    		Bellman-Ford, SPFA
+    		Floyd-Warshall 
     	Topological Sorting
     	MST(Minimum Spanning Tree)
     		Prim
