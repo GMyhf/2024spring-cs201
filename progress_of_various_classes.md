@@ -1,6 +1,6 @@
 # 数算B各班进度
 
-Updated 2002 GMT+8 March 28, 2024
+Updated 1020 GMT+8 March 29, 2024
 2024 spring, Complied by Hongfei Yan
 
 
@@ -15,7 +15,7 @@ Yanhf（12班）: http://cs101.openjudge.cn hw6 树
 Dly: http://xlxxsjjg.openjudge.cn 
 ​	hw3 栈、链表、递归，hw2 像计概，有dp，字符串
 
-Huw（6班）: http://forhuwei.openjudge.cn practice2 栈
+Huw（6班）: http://forhuwei.openjudge.cn 2nd practice 栈, BFS
 Wangz（2班）: http://sydsb.openjudge.cn 
 ​	practice5.Supplementary，greedy, 字符串, practice5 栈、队列、递归
 
