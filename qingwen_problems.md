@@ -1,10 +1,8 @@
 # 晴问编程题目
 
-Updated 1530 GMT+8 March 28, 2024
+Updated 1653 GMT+8 March 29, 2024
 
 2024 spring, Complied by Hongfei Yan
-
-
 
 
 
@@ -8990,19 +8988,204 @@ else:
 
 
 
-### 3.3 有向图判环
+### 3.3 有向图判环 中等
+
+现有一个共n个顶点、m条边的有向图（假设顶点编号为从`0`到`n-1`），如果从图中一个顶点出发，沿着图中的有向边前进，最后能回到这个顶点，那么就称其为图中的一个环。判断图中是否有环。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 100,0 \le m \le n(n-1)$），分别表示顶点数和边数；
+
+接下来m行，每行两个整数u、v（$0 \le u \le n-1,0 \le v \le n-1, u \ne v$），表示一条边的起点和终点的编号。数据保证不会有重边。
+
+**输出**
+
+如果图中有环，那么输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+4 4
+1 0
+0 3
+3 2
+2 1
+```
+
+输出
+
+```
+Yes
+```
+
+解释
+
+对应的有向图如下图所示，存在`0->3->2->1->0`的环。
+
+![有向图判环_样例1.png](https://raw.githubusercontent.com/GMyhf/img/main/img/c2072489-936c-40c8-8e89-7ddd87d76705.png)
+
+样例2
+
+输入
+
+```
+4 4
+1 0
+0 3
+2 3
+2 1
+```
+
+输出
+
+```
+No
+```
+
+解释
+
+对应的有向图如下图所示，图中不存在环。
+
+![有向图判环_样例2.png](https://raw.githubusercontent.com/GMyhf/img/main/img/cd48cf44-20f5-4c21-aaae-f1df3fcc3ba8.png)
 
 
 
 
 
+在这个问题中，需要检查给定的有向图是否包含一个环。可以使用深度优先搜索（DFS）来解决这个问题。在DFS中，从一个节点开始，然后访问它的每一个邻居。如果在访问过程中，遇到了一个已经在当前路径中的节点，那么就存在一个环。可以使用一个颜色数组来跟踪每个节点的状态：未访问（0），正在访问（1），已访问（2）。
+
+以下是解决这个问题的Python代码：
+
+```python
+def has_cycle(n, edges):
+    graph = [[] for _ in range(n)]
+    for u, v in edges:
+        graph[u].append(v)
+
+    color = [0] * n
+
+    def dfs(node):
+        if color[node] == 1:
+            return True
+        if color[node] == 2:
+            return False
+
+        color[node] = 1
+        for neighbor in graph[node]:
+            if dfs(neighbor):
+                return True
+        color[node] = 2
+        return False
+
+    for i in range(n):
+        if dfs(i):
+            return "Yes"
+    return "No"
+
+# 接收数据
+n, m = map(int, input().split())
+edges = []
+for _ in range(m):
+    u, v = map(int, input().split())
+    edges.append((u, v))
+
+# 调用函数
+print(has_cycle(n, edges))
+```
+
+在这个函数中，我们首先构建了一个邻接列表来表示图。然后，我们对每个节点执行深度优先搜索。如果在搜索过程中，我们遇到了一个正在访问的节点，那么就存在一个环。如果我们遍历完所有的节点都没有找到环，那么就返回"No"。
 
 
-### 3.4 最大权值连通块
+
+### 3.4 最大权值连通块 中等
+
+现有一个共个顶点、条边的无向图（假设顶点编号为从`0`到`n-1`），每个顶点有各自的权值。我们把一个连通块中所有顶点的权值之和称为这个连通块的权值。求图中所有连通块的最大权值。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2$​），分别表示顶点数和边数；
+
+第二行个用空格隔开的正整数（每个正整数不超过`100`），表示个顶点的权值。
+
+接下来m行，每行两个整数u、v（$0 \le u \le n-1,0 \le v \le n-1, u \ne v$），表示一条边的起点和终点的编号。数据保证不会有重边。
+
+**输出**
+
+输出一个整数，表示连通块的最大权值。
+
+样例1
+
+输入
+
+```
+6 5
+2 3 4 1 3 2
+0 1
+0 3
+3 5
+2 4
+1 5
+```
+
+输出
+
+```
+8
+```
+
+解释
+
+对应的无向图如下图所示，左边连通块的权值为，右边连通块的权值为，因此最大权值为`8`。
+
+![最大权值连通块.png](https://raw.githubusercontent.com/GMyhf/img/main/img/0b6c3a49-118e-4432-bc17-e8d2f72d4410.png)
 
 
 
 
+
+需要找到给定无向图中所有连通块的最大权值。使用深度优先搜索（DFS）来解决这个问题。在DFS中，从一个节点开始，然后访问它的每一个邻居。可以使用一个visited数组来跟踪每个节点是否已经被访问过。对于每个连通块，可以计算其权值之和，并更新最大权值。
+
+以下是解决这个问题的Python代码：
+
+```python
+def max_weight(n, m, weights, edges):
+    graph = [[] for _ in range(n)]
+    for u, v in edges:
+        graph[u].append(v)
+        graph[v].append(u)
+
+    visited = [False] * n
+    max_weight = 0
+
+    def dfs(node):
+        visited[node] = True
+        total_weight = weights[node]
+        for neighbor in graph[node]:
+            if not visited[neighbor]:
+                total_weight += dfs(neighbor)
+        return total_weight
+
+    for i in range(n):
+        if not visited[i]:
+            max_weight = max(max_weight, dfs(i))
+
+    return max_weight
+
+# 接收数据
+n, m = map(int, input().split())
+weights = list(map(int, input().split()))
+edges = []
+for _ in range(m):
+    u, v = map(int, input().split())
+    edges.append((u, v))
+
+# 调用函数
+print(max_weight(n, m, weights, edges))
+```
+
+在这段代码中，首先通过`input()`函数接收用户输入的顶点数`n`、边数`m`和每个顶点的权值，然后在一个循环中接收每条边的起点和终点，并将它们添加到`edges`列表中。然后，我们调用`max_weight`函数并打印结果。
 
 
 
@@ -9010,21 +9193,174 @@ else:
 
 ### 3.5 无向图的顶点层号
 
+现有一个共n个顶点、m条边的无向连通图（假设顶点编号为从`0`到`n-1`）。我们称从s号顶点出发到达其他顶点经过的最小边数称为各顶点的层号。求图中所有顶点的层号。
+
+**输入**
+
+第一行三个整数n、m、s（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1$​），分别表示顶点数、边数、起始顶点编号；
+
+接下来m行，每行两个整数u、v（$0 \le u \le n-1,0 \le v \le n-1, u \ne v$），表示一条边的起点和终点的编号。数据保证不会有重边。
+
+**输出**
+
+输出n个整数，分别为编号从`0`到`n-1`的顶点的层号。整数之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+6 6 0
+0 1
+0 3
+3 5
+2 4
+1 5
+3 4
+```
+
+输出
+
+```
+0 1 3 1 2 2
+```
+
+解释
+
+对应的无向图和顶点层号如下图所示。
+
+![无向图的顶点层号.png](https://raw.githubusercontent.com/GMyhf/img/main/img/a896296d-23e0-4420-9e70-c4e979a78e89.png)
 
 
 
 
 
+需要找到从给定的起始顶点到图中所有其他顶点的最短路径长度，这也被称为顶点的层号。可以使用广度优先搜索（BFS）来解决这个问题。在BFS中，从起始节点开始，然后访问它的所有邻居，然后再访问这些邻居的邻居，依此类推。我们可以使用一个队列来跟踪待访问的节点，并使用一个距离数组来记录从起始节点到每个节点的最短距离。
+
+以下是解决这个问题的Python代码：
+
+```python
+from collections import deque
+
+def bfs(n, m, s, edges):
+    graph = [[] for _ in range(n)]
+    for u, v in edges:
+        graph[u].append(v)
+        graph[v].append(u)
+
+    distance = [-1] * n
+    distance[s] = 0
+
+    queue = deque([s])
+    while queue:
+        node = queue.popleft()
+        for neighbor in graph[node]:
+            if distance[neighbor] == -1:
+                distance[neighbor] = distance[node] + 1
+                queue.append(neighbor)
+
+    return distance
+
+# 接收数据
+n, m, s = map(int, input().split())
+edges = []
+for _ in range(m):
+    u, v = map(int, input().split())
+    edges.append((u, v))
+
+# 调用函数
+distances = bfs(n, m, s, edges)
+print(' '.join(map(str, distances)))
+```
+
+在这段代码中，我们首先通过`input()`函数接收用户输入的顶点数`n`、边数`m`和起始顶点`s`，然后在一个循环中接收每条边的起点和终点，并将它们添加到`edges`列表中。然后，我们调用`bfs`函数并打印结果。
 
 
 
-### 3.6 受限层号的顶点数
+
+
+### 3.6 受限层号的顶点数 中等
+
+现有一个共n个顶点、m条边的有向图（假设顶点编号为从`0`到`n-1`）。我们称从s号顶点出发到达其他顶点经过的最小边数称为各顶点的层号。求层号不超过的顶点个数。
+
+**输入**
+
+第一行四个整数n、m、s、k（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le k \le 100$​），分别表示顶点数、边数、起始顶点编号；
+
+接下来m行，每行两个整数u、v（$0 \le u \le n-1,0 \le v \le n-1, u \ne v$），表示一条边的起点和终点的编号。数据保证不会有重边。
+
+**输出**
+
+输出一个整数，表示层号不超过的顶点个数。
+
+样例1
+
+输入
+
+```
+6 6 0 2
+0 1
+0 3
+3 5
+4 2
+3 4
+5 2
+```
+
+输出
+
+```
+5
+```
+
+解释
+
+对应的有向图和顶点层号如下图所示，层号不超过`2`的顶点有`5`个。
+
+![受限层号的顶点数.png](https://raw.githubusercontent.com/GMyhf/img/main/img/4f4d78cc-db0d-4a94-b195-b8fcc14e1d36.png)
 
 
 
 
 
+需要找到从给定的起始顶点到图中所有其他顶点的最短路径长度（也被称为顶点的层号），并计算层号不超过k的顶点个数。可以使用广度优先搜索（BFS）来解决这个问题。在BFS中，从起始节点开始，然后访问它的所有邻居，然后再访问这些邻居的邻居，依此类推。可以使用一个队列来跟踪待访问的节点，并使用一个距离数组来记录从起始节点到每个节点的最短距离。
 
+以下是解决这个问题的Python代码：
+
+```python
+from collections import deque
+
+def bfs(n, m, s, k, edges):
+    graph = [[] for _ in range(n)]
+    for u, v in edges:
+        graph[u].append(v)  # 只按照输入的方向添加边
+
+    distance = [-1] * n
+    distance[s] = 0
+
+    queue = deque([s])
+    while queue:
+        node = queue.popleft()
+        for neighbor in graph[node]:
+            if distance[neighbor] == -1:
+                distance[neighbor] = distance[node] + 1
+                queue.append(neighbor)
+
+    return sum(1 for d in distance if d <= k and d != -1)
+
+# 接收数据
+n, m, s, k = map(int, input().split())
+edges = []
+for _ in range(m):
+    u, v = map(int, input().split())
+    edges.append((u, v))
+
+# 调用函数
+count = bfs(n, m, s, k, edges)
+print(count)
+```
+
+在这段代码中，首先通过`input()`函数接收用户输入的顶点数`n`、边数`m`、起始顶点`s`和层号上限`k`，然后在一个循环中接收每条边的起点和终点，并将它们添加到`edges`列表中。然后，调用`bfs`函数并打印结果。
 
 
 
@@ -9034,79 +9370,197 @@ else:
 
 
 
-4.1
+### 4.1 最短距离 简单
 
+https://sunnywhy.com/sfbj/10/4/386
 
+现有一个共n个顶点（代表城市）、m条边（代表道路）的无向图（假设顶点编号为从`0`到`n-1`），每条边有各自的边权，代表两个城市之间的距离。求从号城市出发到达号城市的最短距离。
 
+**输入**
 
+第一行四个整数n、m、s、t（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le t \le 100$​），分别表示顶点数、边数、起始顶点编号；
 
-4.2
+接下来m行，每行两个整数u、v、w（$0 \le u \le n-1,0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的起点和终点的编号。数据保证不会有重边。
 
+**输出**
 
+输出一个整数，表示最短距离。如果无法到达，那么输出`-1`。
 
+样例1
 
+输入
 
+```
+6 6 0 2
+0 1 2
+0 2 5
+0 3 1
+2 3 2
+1 2 1
+4 5 1
+```
 
+输出
 
+```
+3
+```
 
+解释
 
-4.3
+对应的无向图如下图所示。
 
+共有`3`条从`0`号顶点到`2`号顶点的路径：
 
+1. `0->3->2`：距离为`3`；
+2. `0->2`：距离为`5`；
+3. `0->1->2`：距离为`3`。
 
+因此最短距离为`3`。
 
+![最短距离.png](https://raw.githubusercontent.com/GMyhf/img/main/img/1123ea31-976a-43fb-bc9d-11eec6ce0f26.png)
 
+样例2
 
+输入
 
-4.4
+```
+6 6 0 5
+0 1 2
+0 2 5
+0 3 1
+2 3 2
+1 2 1
+4 5 1
+```
 
+输出
 
+```
+-1
+```
 
+解释
 
+和第一个样例相同的图，终点换成了`5`号顶点，显然从`0`号无法到达`5`号。
 
 
 
+需要找到从给定的起始城市到目标城市的最短距离。可以使用Dijkstra算法来解决这个问题。Dijkstra算法是一种用于在图中找到最短路径的算法。它从起始节点开始，然后逐步扩展到所有可达的节点，每次选择当前最短的路径进行扩展。
 
+以下是使用 Python 实现 Dijkstra 算法来解决这个问题的示例代码：
 
-4.5
+```python
+import heapq
 
+def dijkstra(n, edges, s, t):
+    graph = [[] for _ in range(n)]
+    for u, v, w in edges:
+        graph[u].append((v, w))
+        graph[v].append((u, w))
 
+    pq = [(0, s)]  # (distance, node)
+    visited = set()
+    distances = [float('inf')] * n
+    distances[s] = 0
 
+    while pq:
+        dist, node = heapq.heappop(pq)
+        if node == t:
+            return dist
+        if node in visited:
+            continue
+        visited.add(node)
+        for neighbor, weight in graph[node]:
+            if neighbor not in visited:
+                new_dist = dist + weight
+                if new_dist < distances[neighbor]:
+                    distances[neighbor] = new_dist
+                    heapq.heappush(pq, (new_dist, neighbor))
+    return -1
 
+# Read input
+n, m, s, t = map(int, input().split())
+edges = [list(map(int, input().split())) for _ in range(m)]
 
+# Solve the problem and print the result
+result = dijkstra(n, edges, s, t)
+print(result)
+```
 
+这段代码实现了 Dijkstra 算法来求解从起点到终点的最短路径。首先构建了一个图，然后使用优先队列来选择下一个要探索的节点，并在探索过程中更新最短距离。最后返回从起点到终点的最短距离。
 
+这个版本的Dijkstra算法使用了一个集合`visited`来记录已经访问过的节点，这样可以避免对同一个节点的重复处理。当我们从优先队列中取出一个节点时，如果这个节点已经在`visited`集合中，那么我们就跳过这个节点，处理下一个节点。这样可以提高算法的效率。
 
+此外，这个版本的Dijkstra算法还在找到目标节点`t`时就立即返回结果，而不是等到遍历完所有节点。这是因为Dijkstra算法保证了每次从优先队列中取出的节点就是当前距离最短的节点，所以当我们找到目标节点`t`时，就已经找到了从起始节点`s`到`t`的最短路径，无需再继续搜索。
 
-4.6
+这个版本的Dijkstra算法的时间复杂度仍然是O((V+E)logV)，其中V是顶点数，E是边数。这是因为每个节点最多会被加入到优先队列中一次（当找到一条更短的路径时），并且每条边都会被处理一次（在遍历节点的邻居时）。优先队列的插入和删除操作的时间复杂度都是O(logV)，所以总的时间复杂度是O((V+E)logV)。
 
 
 
+Dijkstra 算法是一种经典的图算法，它综合运用了多种技术，包括邻接表、集合、优先队列（堆）、贪心算法和动态规划的思想。例题：最短距离，https://sunnywhy.com/sfbj/10/4/386
 
+- 邻接表：Dijkstra 算法通常使用邻接表来表示图的结构，这样可以高效地存储图中的节点和边。
+- 集合：在算法中需要跟踪已经访问过的节点，以避免重复访问，这一般使用集合（或哈希集合）来实现。
+- 优先队列（堆）：Dijkstra 算法中需要选择下一个要探索的节点，通常使用优先队列（堆）来维护当前候选节点的集合，并确保每次都能快速找到距离起点最近的节点。
+- 贪心算法：Dijkstra 算法每次选择距离起点最近的节点作为下一个要探索的节点，这是一种贪心策略，即每次做出局部最优的选择，期望最终能达到全局最优。
+- 动态规划：Dijkstra 算法通过不断地更新节点的最短距离来逐步得到从起点到各个节点的最短路径，这是一种动态规划的思想，即将原问题拆解成若干子问题，并以最优子结构来解决。
 
+综合运用这些技术，Dijkstra 算法能够高效地求解单源最短路径问题，对于解决许多实际问题具有重要意义。
 
 
 
 
-4.7
 
+第2种写法，没有用set记录访问过的结点。
 
+```python
+import heapq
 
+def dijkstra(n, s, t, edges):
+    graph = [[] for _ in range(n)]
+    for u, v, w in edges:
+        graph[u].append((v, w))
+        graph[v].append((u, w))
 
+    distance = [float('inf')] * n
+    distance[s] = 0
 
+    queue = [(0, s)]
+    while queue:
+        dist, node = heapq.heappop(queue)
+        if dist != distance[node]:
+            continue
+        for neighbor, weight in graph[node]:
+            if distance[node] + weight < distance[neighbor]:
+                distance[neighbor] = distance[node] + weight
+                heapq.heappush(queue, (distance[neighbor], neighbor))
 
+    return distance[t] if distance[t] != float('inf') else -1
 
+# 接收数据
+n, m, s, t = map(int, input().split())
+edges = []
+for _ in range(m):
+    u, v, w = map(int, input().split())
+    edges.append((u, v, w))
 
+# 调用函数
+min_distance = dijkstra(n, s, t, edges)
+print(min_distance)
+```
 
-4.8
+第15行的判断`if dist != distance[node]: continue`的作用是跳过已经找到更短路径的节点。
 
+在Dijkstra算法中，我们使用优先队列（在Python中是heapq）来存储待处理的节点，每次从队列中取出当前距离最短的节点进行处理。但是在处理过程中，有可能会多次将同一个节点加入到队列中，因为我们可能会通过不同的路径到达同一个节点，每次到达时都会将其加入到队列中。
 
+因此，当我们从队列中取出一个节点时，需要判断这个节点当前的最短距离是否与队列中存储的距离相同。如果不同，说明这个节点在队列中等待处理的时候，已经有了一条更短的路径，所以我们可以跳过这个节点，处理下一个节点。
 
 
 
+### 4.2 最短距离-多终点 简单
 
 
-4.9
 
 
 
@@ -9114,7 +9568,75 @@ else:
 
 
 
-4.10
+### 4.3 最短距离-多边权
+
+
+
+
+
+
+
+### 4.4 最短路径条数
+
+
+
+
+
+
+
+
+
+### 4.5 最短路径
+
+
+
+
+
+
+
+
+
+### 4.6 最短路径-多边权
+
+
+
+
+
+
+
+
+
+### 4.7 最短路径-多路径
+
+
+
+
+
+
+
+
+
+### 4.8最短距离-多起点多终点
+
+
+
+
+
+
+
+### 4.9 最短路径-多边权II
+
+
+
+
+
+
+
+### 4.10 交通枢纽
+
+
+
+
 
 
 
