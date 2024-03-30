@@ -1,6 +1,6 @@
 # 数算B各班进度
 
-Updated 2342 GMT+8 March 29, 2024
+Updated 1108 GMT+8 March 30, 2024
 2024 spring, Complied by Hongfei Yan
 
 
@@ -40,5 +40,8 @@ Zouyz: http://hxsjjg.openjudge.cn hw3 栈、队列
 
 ## 未更新小组
 http://dsb.openjudge.cn
+​	第六章 树 练习题，http://dsb.openjudge.cn/practice6/
+​	这个数算 B，怎么这么难?"发现它，抓住它"，是通过人数最多的。
+
 http://dsa.openjudge.cn
 http://dsalgo.openjudge.cn
