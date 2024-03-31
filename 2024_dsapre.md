@@ -1072,51 +1072,71 @@ In the same gang.
 
 
 
-The problem is asking to determine if two cases are committed by the same gang or not based on the information given. The information is of two types: 'D' type indicates that two cases are committed by different gangs, and 'A' type asks if two cases are committed by the same gang. The information is given in chronological order, and the answer to 'A' type information should be based on the information received so far.
+这个问题可以通过并查集（Union-Find）数据结构来有效解决。并查集是一种非常适合处理集合合并以及查询两个元素是否在同一个集合中的数据结构。
 
-We can solve this problem using the Union-Find data structure. The Union-Find data structure is a data structure that tracks a partition of a set into disjoint (non-overlapping) subsets. It provides near-constant-time operations (amortized) for adding new sets, merging existing sets, and determining whether elements are in the same set.
+对于这个问题，我们需要稍微扩展并查集的基本操作以适应犯罪团伙的判断。由于信息中只提到两个案件是否属于不同的团伙，我们可以通过将每个案件关联到两个不同的代表元素来表示这种关系：一个代表与它在同一个团伙的案件的代表元素，另一个代表与它在不同团伙的案件的代表元素。
 
-Here is the Python code that solves the problem:
+具体来说，对于每个案件，我们实际上在并查集中维护两个节点：一个代表案件本身，另一个代表其对立案件。当我们得知两起案件属于不同的团伙时，我们将一起案件的案件节点与另一起案件的对立案件节点合并，反之亦然。
+
+实现步骤如下：
+
+1. 初始化并查集，对于N起案件，我们需要2N个节点，因为每起案件有两个节点（本身和对立案件）。
+
+2. 对于每条信息：
+   - 如果是"D [a] [b]"类型，表示案件a和案件b属于不同团伙，我们将案件a与案件b的对立案件合并，案件b与案件a的对立案件合并。
+   - 如果是"A [a] [b]"类型，我们需要判断案件a和案件b是否属于同一个团伙：
+     - 如果案件a和案件b属于同一个集合，或者案件a的对立案件和案件b的对立案件属于同一个集合，输出"In the same gang."。
+     - 如果案件a和案件b的对立案件属于同一个集合，或者案件b和案件a的对立案件属于同一个集合，输出"In different gangs."。
+     - 否则，输出"Not sure yet."。
+
+以下是代码实现的核心部分：
 
 ```python
-def find(x):
-    if parent[x] != x:
-        parent[x] = find(parent[x])
-    return parent[x]
+class UnionFind:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
 
-def union(x, y):
-    x = find(x)
-    y = find(y)
-    if x != y:
-        if rank[x] > rank[y]:
-            parent[y] = x
-        else:
-            parent[x] = y
-            if rank[x] == rank[y]:
-                rank[y] += 1
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
 
-T = int(input())
-for _ in range(T):
-    N, M = map(int, input().split())
-    parent = list(range(2*N+1))
-    rank = [0] * (2*N+1)
-    for _ in range(M):
-        op, a, b = input().split()
-        a = int(a)
-        b = int(b)
-        if op == 'D':
-            union(a, b+N)
-            union(a+N, b)
-        else:
-            if find(a) == find(b):
+    def union(self, x, y):
+        rootX = self.find(x)
+        rootY = self.find(y)
+        if rootX != rootY:
+            if self.rank[rootX] > self.rank[rootY]:
+                self.parent[rootY] = rootX
+            elif self.rank[rootX] < self.rank[rootY]:
+                self.parent[rootX] = rootY
+            else:
+                self.parent[rootY] = rootX
+                self.rank[rootX] += 1
+
+def solve():
+    n, m = map(int, input().split())
+    uf = UnionFind(2 * n)  # 初始化并查集，每个案件对应两个节点
+    for _ in range(m):
+        operation, a, b = input().split()
+        a, b = int(a) - 1, int(b) - 1
+        if operation == "D":
+            uf.union(a, b + n)  # a与b的对立案件合并
+            uf.union(a + n, b)  # a的对立案件与b合并
+        else:  # "A"
+            if uf.find(a) == uf.find(b) or uf.find(a + n) == uf.find(b + n):
                 print("In the same gang.")
-            elif find(a) == find(b+N) or find(a+N) == find(b):
+            elif uf.find(a) == uf.find(b + n) or uf.find(a + n) == uf.find(b):
                 print("In different gangs.")
             else:
                 print("Not sure yet.")
+
+T = int(input())
+for _ in range(T):
+    solve()
 ```
 
-In this code, `find(x)` function finds the representative of the set that `x` belongs to, and `union(x, y)` function merges the sets that `x` and `y` belong to. For 'D' type information, we connect `a` to `b+N` and `a+N` to `b` to indicate that `a` and `b` are in different gangs. For 'A' type information, we check if `a` and `b` are in the same set or if `a` is in the same set as `b+N` or `a+N` is in the same set as `b`.
+这段代码首先读取测试用例数量 `T`，然后对每个测试用例执行 `solve` 函数，该函数首先创建一个并查集实例，然后根据输入的操作和案件编号更新并查集，并根据并查集的当前状态回答查询。
 
 
 
