@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 1134 GMT+8 March 31, 2024
+Updated 2055 GMT+8 March 31, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1020,6 +1020,105 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+
+
+## 01703: 发现它，抓住它
+
+http://cs101.openjudge.cn/practice/01703/
+
+一个城市中有两个犯罪团伙A和B，你需要帮助警察判断任意两起案件是否是同一个犯罪团伙所为，警察所获得的信息是有限的。假设现在有N起案件（N<=100000），编号为1到N，每起案件由团伙A或团伙B所为。你将按时间顺序获得M条信息（M<=100000），这些信息分为两类：
+
+1. D [a] [b]
+
+其中[a]和[b]表示两起案件的编号，这条信息表明它们属于不同的团伙所为
+
+2. A [a] [b]
+
+其中[a]和[b]表示两起案件的编号，这条信息需要你回答[a]和[b]是否是同一个团伙所为
+
+注意你获得信息的时间是有先后顺序的，在回答的时候只能根据已经接收到的信息做出判断。
+
+
+
+**输入**
+
+第一行是测试数据的数量T（1<=T<=20）。
+每组测试数据的第一行包括两个数N和M，分别表示案件的数量和信息的数量，其后M行表示按时间顺序收到的M条信息。
+
+**输出**
+
+对于每条需要回答的信息，你需要输出一行答案。如果是同一个团伙所为，回答"In the same gang."，如果不是，回答"In different gangs."，如果不确定，回答”Not sure yet."。
+
+样例输入
+
+```
+1
+5 5
+A 1 2
+D 1 2
+A 1 2
+D 2 4
+A 1 4
+```
+
+样例输出
+
+```
+Not sure yet.
+In different gangs.
+In the same gang.
+```
+
+
+
+The problem is asking to determine if two cases are committed by the same gang or not based on the information given. The information is of two types: 'D' type indicates that two cases are committed by different gangs, and 'A' type asks if two cases are committed by the same gang. The information is given in chronological order, and the answer to 'A' type information should be based on the information received so far.
+
+We can solve this problem using the Union-Find data structure. The Union-Find data structure is a data structure that tracks a partition of a set into disjoint (non-overlapping) subsets. It provides near-constant-time operations (amortized) for adding new sets, merging existing sets, and determining whether elements are in the same set.
+
+Here is the Python code that solves the problem:
+
+```python
+def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])
+    return parent[x]
+
+def union(x, y):
+    x = find(x)
+    y = find(y)
+    if x != y:
+        if rank[x] > rank[y]:
+            parent[y] = x
+        else:
+            parent[x] = y
+            if rank[x] == rank[y]:
+                rank[y] += 1
+
+T = int(input())
+for _ in range(T):
+    N, M = map(int, input().split())
+    parent = list(range(2*N+1))
+    rank = [0] * (2*N+1)
+    for _ in range(M):
+        op, a, b = input().split()
+        a = int(a)
+        b = int(b)
+        if op == 'D':
+            union(a, b+N)
+            union(a+N, b)
+        else:
+            if find(a) == find(b):
+                print("In the same gang.")
+            elif find(a) == find(b+N) or find(a+N) == find(b):
+                print("In different gangs.")
+            else:
+                print("Not sure yet.")
+```
+
+In this code, `find(x)` function finds the representative of the set that `x` belongs to, and `union(x, y)` function merges the sets that `x` and `y` belong to. For 'D' type information, we connect `a` to `b+N` and `a+N` to `b` to indicate that `a` and `b` are in different gangs. For 'A' type information, we check if `a` and `b` are in the same set or if `a` is in the same set as `b+N` or `a+N` is in the same set as `b`.
+
+
 
 
 
