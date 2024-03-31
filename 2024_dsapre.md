@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 1111 GMT+8 March 27, 2024
+Updated 1134 GMT+8 March 31, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9017,7 +9017,9 @@ http://cs101.openjudge.cn/dsapre/24375/
 
 
 
-与 Optional problems的 01011: Sticks 一样的题目，算法说明也在 01011。
+与 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+
+中 Optional problems的 01011: Sticks 一样的题目，算法说明也在 01011。
 
 
 
