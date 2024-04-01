@@ -1,6 +1,6 @@
 # 数算知识图谱
 
-Updated 0058 GMT+8 March 20, 2024
+Updated 1833 GMT+8 Apr 1, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9,8 +9,6 @@ Updated 0058 GMT+8 March 20, 2024
 数算重点是树、图、和算法。因为栈、队列编程语言已经直接支持，可以直接使用。
 
 
-
-义树及其构成。
 
 ```mermaid
 mindmap
