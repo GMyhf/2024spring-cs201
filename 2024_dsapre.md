@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 2055 GMT+8 March 31, 2024
+Updated 1636 GMT+8 April 3, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8936,7 +8936,7 @@ while True:
 
 
 
-# 23563~27862
+# 23563~27951
 
 ## 23563: 多项式时间复杂度
 
@@ -11234,6 +11234,527 @@ for _ in range(k):
     leaf[a]=(b,c)
 print(*f(1,1))
 ```
+
+
+
+
+
+## 27925: 小组队列
+
+http://cs101.openjudge.cn/practice/27925/
+
+有 n个小组要排成一个队列，每个小组中有若干人。
+当一个人来到队列时，如果队列中已经有了自己小组的成员，他就直接插队排在自己小组成员的后面，否则就站在队伍的最后面。
+请你编写一个程序，模拟这种小组队列。
+
+**输入**
+
+第一行：小组数量 t (t<100)。
+接下来 t 行，每行输入一个小组描述，表示这个小组的人的编号。
+编号是 0 到 999999 范围内的整数，一个小组最多可包含 1000 个人。
+最后，命令列表如下。 有三种不同的命令：
+1、ENQUEUE x - 将编号是 x 的人插入队列；
+2、DEQUEUE - 让整个队列的第一个人出队；
+3、STOP - 测试用例结束
+每个命令占一行，不超过50000行。
+
+**输出**
+
+对于每个 DEQUEUE 命令，输出出队的人的编号，每个编号占一行。
+
+样例输入
+
+```
+Sample1 input:
+2
+101 102 103
+201 202 203
+ENQUEUE 101
+ENQUEUE 201
+ENQUEUE 102
+ENQUEUE 202
+ENQUEUE 103
+ENQUEUE 203
+DEQUEUE
+DEQUEUE
+DEQUEUE
+DEQUEUE
+DEQUEUE
+DEQUEUE
+STOP
+
+Sample1 output:
+101
+102
+103
+201
+202
+203
+```
+
+样例输出
+
+```
+Sample2 input:
+2
+259001 259002 259003 259004 259005
+260001 260002 260003 260004 260005 260006
+ENQUEUE 259001
+ENQUEUE 260001
+ENQUEUE 259002
+ENQUEUE 259003
+ENQUEUE 259004
+ENQUEUE 259005
+DEQUEUE
+DEQUEUE
+ENQUEUE 260002
+ENQUEUE 260003
+DEQUEUE
+DEQUEUE
+DEQUEUE
+DEQUEUE
+STOP
+
+Sample2 output:
+259001
+259002
+259003
+259004
+259005
+260001
+```
+
+来源
+
+acwing 小组队列 https://www.acwing.com/problem/content/description/134/
+
+
+
+
+
+```python
+from collections import deque
+
+# Initialize groups and mapping of members to their groups
+t = int(input())
+groups = {}
+member_to_group = {}
+for _ in range(t):
+    members = list(map(int, input().split()))
+    group_id = members[0]  # Assuming the first member's ID represents the group ID
+    groups[group_id] = deque()
+    for member in members:
+        member_to_group[member] = group_id
+
+# Initialize the main queue to keep track of the group order
+queue = deque()
+# A set to quickly check if a group is already in the queue
+queue_set = set()
+
+
+while True:
+    command = input().split()
+    if command[0] == 'STOP':
+        break
+    elif command[0] == 'ENQUEUE':
+        x = int(command[1])
+        group = member_to_group.get(x, None)
+        # Create a new group if it's a new member not in the initial list
+        if group is None:
+            group = x
+            groups[group] = deque([x])
+            member_to_group[x] = group
+        else:
+            groups[group].append(x)
+        if group not in queue_set:
+            queue.append(group)
+            queue_set.add(group)
+    elif command[0] == 'DEQUEUE':
+        if queue:
+            group = queue[0]
+            x = groups[group].popleft()
+            print(x)
+            if not groups[group]:  # If the group's queue is empty, remove it from the main queue
+                queue.popleft()
+                queue_set.remove(group)
+```
+
+
+
+
+
+## 27928: 遍历树
+
+http://cs101.openjudge.cn/practice/27928/
+
+请你对输入的树做遍历。遍历的规则是：遍历到每个节点时，按照该节点和所有子节点的值从小到大进行遍历，例如：
+
+```
+        7
+    /   |   \
+  10    3     6
+```
+
+对于这个树，你应该先遍历值为3的子节点，然后是值为6的子节点，然后是父节点7，最后是值为10的子节点。
+
+本题中每个节点的值为互不相同的正整数，最大不超过9999999。
+
+**输入**
+
+第一行：节点个数n (n<500)
+
+接下来的n行：第一个数是此节点的值，之后的数分别表示它的所有子节点的值。每个数之间用空格隔开。如果没有子节点，该行便只有一个数。
+
+**输出**
+
+输出遍历结果，一行一个节点的值。
+
+样例输入
+
+```
+sample1 input:
+4
+7 10 3 6
+10
+6
+3
+
+sample1 output:
+3
+6
+7
+10
+```
+
+样例输出
+
+```
+sample2 input:
+6
+10 3 1
+7
+9 2 
+2 10
+3 7
+1
+
+sample2 output:
+2
+1
+3
+7
+10
+9
+```
+
+来源
+
+2024spring zht
+
+
+
+
+
+```python
+def dfs(node, graph, result):
+    if node not in graph:  # 如果节点没有子节点
+        result.append(node)
+        return
+    children = graph[node]
+    temp = [node] + children
+    temp.sort()
+    for child in temp:
+        if child == node:
+            result.append(node)
+        elif child in graph:  # 仅当子节点存在于图中时才进行递归
+            dfs(child, graph, result)
+
+def main():
+    n = int(input())  # 节点个数
+    graph = {}
+    all_nodes = set()
+    child_nodes = set()
+
+    for _ in range(n):
+        line = list(map(int, input().split()))
+        node = line[0]
+        all_nodes.add(node)
+        if len(line) > 1:
+            children = line[1:]
+            graph[node] = children
+            child_nodes.update(children)
+        else:
+            graph[node] = []  # 确保没有子节点的情况也在图中表示出来
+
+    # 可能不只有一个根节点，找到所有顶层节点
+    top_level_nodes = list(all_nodes - child_nodes)
+    top_level_nodes.sort()
+
+    result = []
+    for node in top_level_nodes:
+        dfs(node, graph, result)
+
+    for node in result:
+        print(node)
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+
+
+## 27932: Less or Equal
+
+http://cs101.openjudge.cn/practice/27932/
+
+给定一个长度为n和整数k的整数序列。请你打印出[1,10^9]范围内的**最小整数**x(即1≤x≤10^9)，使得给定序列中恰好有k个元素**小于或等于x**。
+
+注意，序列可以包含相等的元素。
+
+如果没有这样的x，打印"-1"(不带引号)。
+
+**输入**
+
+输入的第一行包含整数 n 和 k ( 1≤n≤2·10^5, 0≤k≤n)。
+
+输入的第二行包含n个整数 a_1,a_2，…，a_n (1≤a_i≤10^9) ——序列本身。
+
+**输出**
+
+输出最小整数 x (1≤x≤10^9)，使得给定序列中恰好有k个元素小于或等于x。
+如果没有这样的x，打印"-1"(不带引号)。
+
+样例输入
+
+```
+sample1 input:
+7 4
+3 7 5 1 10 3 20
+
+sample1 output:
+5
+```
+
+样例输出
+
+```
+sample2 input:
+7 2
+3 7 5 1 10 3 20
+
+sample2 output:
+-1
+```
+
+提示
+
+tags: sorting, *1200
+
+来源
+
+https://codeforces.com/contest/977/problem/C，略作改动
+
+
+
+```python
+n, k = map(int, input().split())
+
+a = list(map(int, input().split()))
+a.sort()
+
+# 寻找 x
+if k == 0:
+    x = 1 if a[0] > 1 else -1
+elif k == n:
+    x = a[-1]
+else:
+    # 检查第 k 个元素是否是唯一满足条件的
+    x = a[k-1] if a[k-1] < a[k] else -1
+
+print(x)
+```
+
+
+
+
+
+## 27948: FBI树
+
+http://cs101.openjudge.cn/practice/27948/
+
+我们可以把由 0 和 1 组成的字符串分为三类：全 0 串称为 B 串，全 1 串称为 I 串，既含 0 又含 1 的串则称为 F 串。
+FBI 树是一种二叉树，它的结点类型也包括 F 结点，B 结点和 I 结点三种。
+由一个长度为 2^N 的 01 串 S 可以构造出一棵 FBI 树 T，递归的构造方法如下：
+
+1. T 的根结点为 R，其类型与串 S 的类型相同；
+2. 若串 S 的长度大于 1，将串 S 从中间分开，分为等长的左右子串 S1 和 S2；由左子串 S1 构造 R 的左子树 T1，由右子串 S2 构造 R 的右子树 T2。
+
+现在给定一个长度为 2^N 的 01 串，请用上述构造方法构造出一棵 FBI 树，并输出它的后序遍历序列。
+
+**输入**
+
+第一行是一个整数 N，0<= N <= 10。
+第二行是一个长度为 2^N 的 01 串。
+
+**输出**
+
+包含一行，这一行只包含一个字符串，即 FBI 树的后序遍历序列。
+
+样例输入
+
+```
+sample1 input:
+3
+10001011
+
+sample1 output:
+IBFBBBFIBFIIIFF
+```
+
+样例输出
+
+```
+sample2 input:
+2
+0000
+
+sample2 output:
+BBBBBBB
+```
+
+提示
+
+tags: binary tree
+
+来源
+
+AcWing 419, https://www.acwing.com/problem/content/421/
+
+
+
+
+
+```python
+def construct_FBI_tree(s):
+    # 判断当前字符串的类型
+    if '0' in s and '1' in s:
+        node_type = 'F'
+    elif '1' in s:
+        node_type = 'I'
+    else:
+        node_type = 'B'
+    
+    if len(s) > 1:  # 如果字符串长度大于1，则继续分割
+        mid = len(s) // 2
+        # 递归构建左右子树，并将结果按后序遍历拼接
+        left_tree = construct_FBI_tree(s[:mid])
+        right_tree = construct_FBI_tree(s[mid:])
+        return left_tree + right_tree + node_type
+    else:  # 如果字符串长度为1，直接返回该节点类型
+        return node_type
+
+N = int(input())
+s = input()
+print(construct_FBI_tree(s))
+```
+
+
+
+
+
+## 27951: 机器翻译
+
+http://cs101.openjudge.cn/practice/27951/
+
+小晨的电脑上安装了一个机器翻译软件，他经常用这个软件来翻译英语文章。
+
+这个翻译软件的原理很简单，它只是从头到尾，依次将每个英文单词用对应的中文含义来替换。对于每个英文单词，软件会先在内存中查找这个单词的中文含义，如果内存中有，软件就会用它进行翻译；如果内存中没有，软件就会在外存中的词典内查找，查出单词的中文含义然后翻译，并将这个单词和译义放入内存，以备后续的查找和翻译。
+
+假设内存中有M个单元，每单元能存放一个单词和译义。每当软件将一个新单词存入内存前，如果当前内存中已存入的单词数不超过M−1，软件会将新单词存入一个未使用的内存单元；若内存中已存入M个单词，软件会清空最早进入内存的那个单词，腾出单元来，存放新单词。
+
+假设一篇英语文章的长度为N个单词。给定这篇待译文章，翻译软件需要去外存查找多少次词典？假设在翻译开始前，内存中没有任何单词。
+
+**输入**
+
+共2行。每行中两个数之间用一个空格隔开。
+
+第一行为两个正整数M，N，代表内存容量和文章的长度。M<=100,N<=1000
+
+第二行为N个非负整数，按照文章的顺序，每个数（大小不超过1000）代表一个英文单词。文章中两个单词是同一个单词，当且仅当它们对应的非负整数相同。
+
+**输出**
+
+一个整数，为软件需要查词典的次数。
+
+样例输入
+
+```
+sample1 input:
+3 7
+1 2 1 5 4 4 1
+
+sample1 output:
+5
+
+#整个查字典过程如下：
+每行表示一个单词的翻译，冒号前为本次翻译后的内存状况：
+
+1：查找单词 1 并调入内存。
+1 2：查找单词 2 并调入内存。
+1 2：在内存中找到单词 1。
+1 2 5：查找单词 5 并调入内存。
+2 5 4：查找单词 4 并调入内存替代单词 1。
+2 5 4：在内存中找到单词 4。
+5 4 1：查找单词 1 并调入内存替代单词 2。
+共计查了5次词典。
+```
+
+样例输出
+
+```
+sample2 input:
+3 8
+1 5 2 7 1 4 2 1
+
+sample2 output:
+7
+```
+
+提示
+
+tags: queue, implementation
+难度1100
+
+来源
+
+luogu P1540[NOIP2010]
+
+
+
+```python
+from collections import deque
+
+M, N = map(int, input().split())
+words = list(map(int, input().split()))
+
+memory = deque()
+lookups = 0
+
+for word in words:
+    if word not in memory:
+        if len(memory) == M:
+            memory.popleft()
+        memory.append(word)
+        lookups += 1
+
+print(lookups)
+```
+
+
+
+
 
 
 
