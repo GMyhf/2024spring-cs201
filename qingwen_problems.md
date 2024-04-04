@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 0100 GMT+8 March 30, 2024
+Updated 2057 GMT+8 Apr 4, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -10785,7 +10785,7 @@ if __name__ == "__main__":
 
 
 
-Kruskal算法是一种用于寻找最小生成树的算法。它的基本思想是按照边的权值从小到大的顺序选择边，如果这条边连接的两个顶点在已经选择的边所构成的图中不在同一连通分量中，则选择这条边，否则放弃这条边。重复这个过程，直到图中所有的顶点都在同一连通分量中。
+Kruskal算法是一种用于寻找最小生成树的算法。它的基本思想是按照边的权值从小到大的顺序选择边，如果这条边连接的两个顶点不在同一连通分量中，则选择这条边，否则放弃这条边。重复这个过程，直到图中所有的顶点都在同一连通分量中。
 
 在实现Kruskal算法时，我们需要使用并查集来维护图中的连通分量，以便于快速判断两个顶点是否在同一连通分量中。
 
@@ -10841,9 +10841,79 @@ print(kruskal(n, edges))
 
 ### 5.3 最小造路成本 中等
 
+现有个城市（假设城市编号为从`0`到`n-1`），需要在城市之间建造道路（道路造好后视为双向连通）。已知不同城市间造路的成本，问至少需要多少成本可以让这个城市连通（不需要直接连通，能够间接连通即可）。
+
+**输入**
+
+第一行一个整数 n（$1 \le n \le 100$），表示城市数；
+
+接下来给出 n 行 n 列的整数矩阵，其中i号行j号列表示 i 号城市和 j 号城市之间的造路成本w（当 $i=j$ 时 $w=0$，当$i \ne j$时 $1 \le w \le 100$，且 $w[i][j] == [wj][i]$）。
+
+**输出**
+
+输出一个整数，表示最小的造路成本。
+
+样例1
+
+输入
+
+```
+4
+0 3 2 3
+3 0 1 5
+2 1 0 1
+3 5 1 0
+```
+
+输出
+
+```
+4
+```
+
+解释
+
+对应的无向图如下图所示。加粗的部分即为最小成本时所建造的道路，其成本之和为。
+
+![最小造路成本.png](https://raw.githubusercontent.com/GMyhf/img/main/img/a48271f9-0963-461e-b32c-86a5f57d1405.png)
 
 
 
+
+
+这是一个经典的最小生成树问题，可以使用Prim算法或者Kruskal算法来解决。这里我们使用Prim算法来解决这个问题。
+
+Prim算法的基本思想是从一个顶点开始，每次选择一条连接已选顶点和未选顶点的最小边，直到所有的顶点都被选中。
+
+以下是使用Prim算法解决这个问题的Python代码：
+
+```python
+def minCost(n, cost):
+    visited = [False] * n
+    minCost = [float('inf')] * n
+    minCost[0] = 0
+    res = 0
+
+    while True:
+        v = -1
+        for u in range(n):
+            if not visited[u] and (v == -1 or minCost[u] < minCost[v]):
+                v = u
+        if v == -1:
+            break
+        visited[v] = True
+        res += minCost[v]
+        for u in range(n):
+            minCost[u] = min(minCost[u], cost[v][u])
+
+    return res
+
+n = int(input())
+cost = [list(map(int, input().split())) for _ in range(n)]
+print(minCost(n, cost))
+```
+
+在这段代码中，我们首先初始化所有的顶点为未访问状态，然后设置每个顶点的最小造路成本为无穷大，然后将第一个顶点的最小造路成本设置为0。然后在循环中，我们每次选择一个未访问的顶点，其造路成本最小，然后将其标记为已访问，并将其造路成本加入到总成本中，然后更新所有与该顶点相连的顶点的最小造路成本。最后，当所有的顶点都被访问后，返回总成本。
 
 
 
@@ -10851,9 +10921,110 @@ print(kruskal(n, edges))
 
 ### 5.4 最大删除边权值 中等
 
+现有一个共n个顶点、m条边的无向图（假设顶点编号为从`0`到`n-1`），每条边有各自的边权。从图中删掉一些边，但保持这个图依然连通。问能删掉的边的权值之和的最大值。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n\le 100, 0 \le m \le \frac{n(n-1)}2$），分别表示顶点数、边数；
+
+接下来m行，每行三个整数u、v、w（$0 \le u \le n-1, 0\le v \le n-1, u \ne v, 1\le w \le 100$），表示一条边的两个端点的编号及边权。数据保证不会有重边。
+
+**输出**
+
+输出一个整数，表示能删掉的边的权值之和的最大值。如果图不连通，那么输出`-1`。
+
+样例1
+
+输入
+
+```
+4 5
+0 1 3
+0 2 2
+0 3 3
+2 3 1
+1 2 1
+```
+
+输出
+
+```
+6
+```
+
+解释
+
+对应的无向图如下图所示。加粗的边是允许删去的最大边权之和的边，其边权之和为。
+
+![最小生成树-Prim算法.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202403292321529.png)
+
+样例2
+
+输入
+
+```
+3 1
+0 1 1
+```
+
+输出
+
+```
+-1
+```
+
+解释
+
+由于此图不连通，因此输出`-1`。
 
 
 
+
+
+这是一个最小生成树问题的变种。我们可以先使用Kruskal算法找出最小生成树，然后将所有边的权值之和减去最小生成树的权值之和，就得到了能删掉的边的权值之和的最大值。
+
+以下是使用Kruskal算法解决这个问题的Python代码：
+
+```python
+class UnionFind:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        px, py = self.find(x), self.find(y)
+        if px != py:
+            if self.rank[px] > self.rank[py]:
+                self.parent[py] = px
+            else:
+                self.parent[px] = py
+                if self.rank[px] == self.rank[py]:
+                    self.rank[py] += 1
+
+def maxEdgeRemoval(n, m, edges):
+    uf = UnionFind(n)
+    edges.sort(key=lambda x: x[2])
+    total_weight = sum(edge[2] for edge in edges)
+    mst_weight = 0
+    for u, v, w in edges:
+        if uf.find(u) != uf.find(v):
+            uf.union(u, v)
+            mst_weight += w
+    if len(set(uf.find(i) for i in range(n))) > 1:
+        return -1
+    return total_weight - mst_weight
+
+n, m = map(int, input().split())
+edges = [list(map(int, input().split())) for _ in range(m)]
+print(maxEdgeRemoval(n, m, edges))
+```
+
+在这段代码中，我们首先定义了一个并查集类，用于处理图中的连通性问题。然后我们将所有的边按照权值排序，然后依次添加到最小生成树中，如果添加的边不会形成环，那么就将其添加到最小生成树中。最后，我们检查最小生成树是否包含了所有的顶点，如果没有，那么返回-1，否则返回所有边的权值之和减去最小生成树的权值之和。
 
 
 
@@ -10861,11 +11032,80 @@ print(kruskal(n, edges))
 
 ### 5.5 最小连通成本 中等
 
+现有个城市（假设城市编号为从`0`到`n-1`），需要在城市之间建造道路（道路造好后视为双向连通）。已知不同城市间造路的成本，并给定若干城市编号，这些城市之间互相不需要建造新的道路就已经连通，问至少需要多少成本来建造新的道路，可以让这个城市连通（不需要直接连通，能够间接连通即可）。
+
+**输入**
+
+第一行两个整数n、k（$1 \le n \le 100, 0 \le k \le n$），分别表示总城市数、已经连通的城市数；
+
+接下来给出 n 行 n 列的整数矩阵，其中i号行j号列表示 i 号城市和 j 号城市之间的造路成本w（当 $i=j$ 时 $w=0$，当$i \ne j$时 $1 \le w \le 100$，且 $w[i][j] == [wj][i]$）。
+
+最后一行共k                                                                                                                                                                                                                                                                                                                                                                                                           个整数，表示已经连通的城市编号。
+
+**输出**
+
+输出一个整数，表示最小的连通成本。
+
+样例1
+
+输入
+
+```
+4 2
+0 3 2 3
+3 0 1 5
+2 1 0 1
+3 5 1 0
+0 1
+```
+
+输出
+
+```
+2
+```
+
+解释
+
+对应的无向图如下图所示。由于`0`号和`1`号顶点已经连通，因此只需要把加粗的边建造好，即可使四个顶点连通，且成本是最小的，其成本为。
+
+![最小连通成本.png](https://raw.githubusercontent.com/GMyhf/img/main/img/446597e3-faca-4ee2-b245-56a466c6fef3.png)
 
 
 
+这个问题可以通过修改Prim算法来解决。我们首先将已经连通的城市标记为已访问，然后在Prim算法的循环中，我们只选择未访问的城市。这样，我们就可以找到连接所有城市的最小成本。
 
+以下是修改后的Prim算法的Python代码：
 
+```python
+def minCost(n, k, cost, connected):
+    visited = [False] * n
+    minCost = [float('inf')] * n
+    for city in connected:
+        minCost[city] = 0
+    res = 0
+
+    while True:
+        v = -1
+        for u in range(n):
+            if not visited[u] and (v == -1 or minCost[u] < minCost[v]):
+                v = u
+        if v == -1:
+            break
+        visited[v] = True
+        res += minCost[v]
+        for u in range(n):
+            minCost[u] = min(minCost[u], cost[v][u])
+
+    return res
+
+n, k = map(int, input().split())
+cost = [list(map(int, input().split())) for _ in range(n)]
+connected = list(map(int, input().split()))
+print(minCost(n, k, cost, connected))
+```
+
+在这段代码中，我们首先初始化所有的城市为未访问状态，然后设置每个城市的最小造路成本为无穷大，然后将已经连通的城市的最小造路成本设置为0。然后在循环中，我们每次选择一个未访问的城市，其造路成本最小，然后将其标记为已访问，并将其造路成本加入到总成本中，然后更新所有与该城市相连的城市的最小造路成本。最后，当所有的城市都被访问后，返回总成本。
 
 
 
@@ -10877,27 +11117,306 @@ print(kruskal(n, edges))
 
 ### 6.1 拓扑排序 中等
 
+现有一个共n个顶点、m条边的有向无环图（假设顶点编号为从`0`到`n-1`）。输出该图的拓扑排序序列。
+
+注：每次有多个顶点可以选择时，总是选择编号最小的那个。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 100, 0 \le m \le n(n-1)$），分别表示顶点数、边数；
+
+接下来m行，每行两个整数u、v（$0 \le u \le n-1, 0 \le v \le n-1, u \ne v$），表示一条边的起点和终点的编号。数据保证不会有重边。
+
+**输出**
+
+输出n个整数，表示拓扑排序序列。整数之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+4 5
+0 1
+0 2
+0 3
+1 2
+3 2
+```
+
+输出
+
+```
+0 1 3 2
+```
+
+解释
+
+对应的有向无环图如下图所示。由于每次选择编号最小的顶点，因此拓扑排序序列为`0 1 3 2`。
+
+![拓扑排序.png](https://raw.githubusercontent.com/GMyhf/img/main/img/b4214671-2ee9-421c-8e1e-26c8f0de224e.png)
 
 
 
+
+
+这个问题可以使用拓扑排序算法来解决。拓扑排序是对有向无环图的顶点的一种排序，它使得如果存在一条从顶点 u 到顶点 v 的路径，那么在排序中 u 一定在 v 的前面。可以使用深度优先搜索来实现拓扑排序。
+
+以下是使用深度优先搜索实现拓扑排序的Python代码：
+
+```python
+from collections import defaultdict
+
+def topoSort(n, edges):
+    graph = defaultdict(list)
+    indegree = [0] * n
+    for u, v in edges:
+        graph[u].append(v)
+        indegree[v] += 1
+
+    queue = [i for i in range(n) if indegree[i] == 0]
+    queue.sort()
+    result = []
+
+    while queue:
+        u = queue.pop(0)
+        result.append(u)
+        for v in graph[u]:
+            indegree[v] -= 1
+            if indegree[v] == 0:
+                queue.append(v)
+        queue.sort()
+
+    return result
+
+n, m = map(int, input().split())
+edges = [list(map(int, input().split())) for _ in range(m)]
+result = topoSort(n, edges)
+print(*result)
+```
+
+在这段代码中，首先构建了一个图，并计算了每个顶点的入度。然后将所有入度为0的顶点添加到队列中，并对队列进行排序。然后在循环中，每次从队列中取出一个顶点，将其添加到结果中，然后遍历其所有的邻接顶点，将邻接顶点的入度减1，如果邻接顶点的入度变为0，那么就将其添加到队列中。最后，返回结果。
 
 
 
 ### 6.2 有向无环图的判定-拓扑排序 中等
 
+现有一个共n个顶点、m条边的有向图（假设顶点编号为从`0`到`n-1`）。使用拓扑排序判断其是否是有向无环图，即该有向图中是否有环。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 100, 0 \le m \le n(n-1)$），分别表示顶点数、边数；
+
+接下来m行，每行两个整数u、v（$0 \le u \le n-1, 0 \le v \le n-1, u \ne v$），表示一条边的起点和终点的编号。数据保证不会有重边。
+
+**输出**
+
+如果是有向无环图，那么输出`Yes`；否则输出`No`。
+
+样例1
+
+输入
+
+```
+4 5
+0 1
+0 2
+0 3
+1 2
+3 2
+```
+
+输出
+
+```
+Yes
+```
+
+解释
+
+对应的有向图如下图所示。该图是有向无环图。
+
+![拓扑排序.png](https://raw.githubusercontent.com/GMyhf/img/main/img/b4214671-2ee9-421c-8e1e-26c8f0de224e.png)
+
+样例2
+
+输入
+
+```
+4 5
+0 1
+2 0
+0 3
+1 2
+3 2
+```
+
+输出
+
+```
+No
+```
+
+解释
+
+对应的有向图如下图所示。该图不是有向无环图。
+
+![有向无环图的判定-拓扑排序_样例2.png](https://raw.githubusercontent.com/GMyhf/img/main/img/db11eb3b-d51f-4d1e-bc6f-a446060eac69.png)
 
 
 
+
+
+这个问题可以通过使用拓扑排序来解决。拓扑排序是对有向无环图的顶点的一种排序，它使得如果存在一条从顶点 u 到顶点 v 的路径，那么在排序中 u 一定在 v 的前面。如果在进行拓扑排序的过程中，发现存在没有被访问的顶点，但是已经没有入度为0的顶点，那么就说明图中存在环。
+
+以下是使用拓扑排序判断有向图是否存在环的Python代码：
+
+```python
+from collections import defaultdict
+
+def isDAG(n, edges):
+    graph = defaultdict(list)
+    indegree = [0] * n
+    for u, v in edges:
+        graph[u].append(v)
+        indegree[v] += 1
+
+    queue = [i for i in range(n) if indegree[i] == 0]
+    count = 0
+
+    while queue:
+        u = queue.pop(0)
+        count += 1
+        for v in graph[u]:
+            indegree[v] -= 1
+            if indegree[v] == 0:
+                queue.append(v)
+
+    return count == n
+
+n, m = map(int, input().split())
+edges = [list(map(int, input().split())) for _ in range(m)]
+print("Yes" if isDAG(n, edges) else "No")
+```
+
+在这段代码中，我们首先构建了一个图，并计算了每个顶点的入度。然后我们将所有入度为0的顶点添加到队列中。然后在循环中，我们每次从队列中取出一个顶点，然后遍历其所有的邻接顶点，将邻接顶点的入度减1，如果邻接顶点的入度变为0，那么就将其添加到队列中。最后，我们检查访问的顶点数是否等于总的顶点数，如果等于，那么说明图是有向无环图，否则说明图中存在环。
 
 
 
 ### 6.3 先导课程 中等
 
+现有n门课程（假设课程编号为从`0`到`n-1`），课程之间有依赖关系，即可能存在两门课程，必须学完其中一门才能学另一门。现在给出个依赖关系，问能否把所有课程都学完。
+
+注：能同时学习多门课程时总是先学习编号最小的课程。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 100, 0 \le m \le n(n-1)$），分别表示顶点数、边数；
+
+接下来m行，每行两个整数u、v（$0 \le u \le n-1, 0 \le v \le n-1, u \ne v$），表示一条边的起点和终点的编号。数据保证不会有重边。
+
+**输出**
+
+如果能学完所有课程，那么输出一行`Yes`，然后在第二行输出学习课程编号的顺序，编号之间用空格隔开，行末不允许有多余的空格；如果不能学完所有课程，那么输出一行`No`，然后在第二行输出不能学习的课程门数。
+
+样例1
+
+输入
+
+```
+4 5
+0 1
+0 2
+0 3
+1 2
+3 2
+```
+
+输出
+
+```
+Yes
+0 1 3 2
+```
+
+解释
+
+对应的依赖关系如下图所示。由于每次选择编号最小的顶点，因此学习顺序为`0 1 3 2`。
+
+![拓扑排序.png](https://raw.githubusercontent.com/GMyhf/img/main/img/b4214671-2ee9-421c-8e1e-26c8f0de224e.png)
+
+样例2
+
+输入
+
+```
+4 4
+0 1
+1 2
+2 3
+3 1
+```
+
+输出
+
+```
+No
+3
+```
+
+解释
+
+对应的依赖关系如下图所示。编号为`0`的课程可以直接学习；由于编号`1`、`2`、`3`的课程互相依赖，因此无法学习的课程数为`3`。
+
+![先导课程_样例2.png](https://raw.githubusercontent.com/GMyhf/img/main/img/9579516f-e705-451f-a6d1-6d15314b8a99.png)
 
 
 
 
 
+这个问题可以通过使用拓扑排序来解决。拓扑排序是对有向无环图的顶点的一种排序，它使得如果存在一条从顶点 u 到顶点 v 的路径，那么在排序中 u 一定在 v 的前面。如果在进行拓扑排序的过程中，发现存在没有被访问的顶点，但是已经没有入度为0的顶点，那么就说明图中存在环，也就是存在不能学习的课程。
+
+以下是使用拓扑排序判断有向图是否存在环并输出学习课程顺序的Python代码：
+
+```python
+from collections import defaultdict
+
+def courseSchedule(n, edges):
+    graph = defaultdict(list)
+    indegree = [0] * n
+    for u, v in edges:
+        graph[u].append(v)
+        indegree[v] += 1
+
+    queue = [i for i in range(n) if indegree[i] == 0]
+    queue.sort()
+    result = []
+
+    while queue:
+        u = queue.pop(0)
+        result.append(u)
+        for v in graph[u]:
+            indegree[v] -= 1
+            if indegree[v] == 0:
+                queue.append(v)
+        queue.sort()
+
+    if len(result) == n:
+        return "Yes", result
+    else:
+        return "No", n - len(result)
+
+n, m = map(int, input().split())
+edges = [list(map(int, input().split())) for _ in range(m)]
+res, courses = courseSchedule(n, edges)
+print(res)
+if res == "Yes":
+    print(*courses)
+else:
+    print(courses)
+```
+
+在这段代码中，我们首先构建了一个图，并计算了每个顶点的入度。然后我们将所有入度为0的顶点添加到队列中，并对队列进行排序。然后在循环中，我们每次从队列中取出一个顶点，将其添加到结果中，然后遍历其所有的邻接顶点，将邻接顶点的入度减1，如果邻接顶点的入度变为0，那么就将其添加到队列中。最后，我们检查访问的顶点数是否等于总的顶点数，如果等于，那么说明可以学完所有课程，否则说明存在不能学习的课程。
 
 
 
@@ -10909,9 +11428,112 @@ print(kruskal(n, edges))
 
 ### 7.1 关键路径长度 中等
 
+现有一个共n个顶点、m条边的有向图（假设顶点编号为从`0`到`n-1`）。判断该图是否是有向无环图，并把顶点视作“事件”、边视作“活动”，求关键路径长度。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 100, 0 \le m \le n(n-1)$），分别表示顶点数、边数；
+
+接下来m行，每行两个整数u、v、w（$0 \le u \le n-1, 0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的起点和终点的编号及边权。数据保证不会有重边。
+
+**输出**
+
+如果不是有向无环图，那么只输出`No`；
+
+如果是有向无环图，那么在第一行输出`Yes`，第二行输出一个整数，表示关键路径长度。
+
+样例1
+
+输入
+
+```
+6 7
+0 1 1
+0 2 2
+1 3 3
+1 4 4
+2 4 2
+3 5 2
+4 5 3
+```
+
+输出
+
+```
+Yes
+8
+```
+
+解释
+
+对应的有向无环图如下图所示，加粗的边组成了关键路径，其长度为。
+
+![关键路径长度.png](https://raw.githubusercontent.com/GMyhf/img/main/img/b355f389-786f-4795-83ea-492517c5f24c.png)
 
 
 
+
+
+要解决这个问题，我们可以分两个步骤进行：首先判断给定的有向图是否是有向无环图（DAG），如果是的话，再使用拓扑排序结合动态规划来求解关键路径的长度。
+
+**判断DAG**
+
+可以通过深度优先搜索（DFS）来检测图中是否存在环。在DFS过程中，如果遇到了正在访问的节点（即该节点在当前路径上），则表示图中存在环。
+
+**关键路径长度**
+
+关键路径可以通过以下步骤求得：
+
+1. **拓扑排序**：首先进行拓扑排序，确保每一个活动（边）只在其前驱事件（顶点）处理完成后才开始。
+2. **动态规划求解**：在拓扑排序的基础上，可以通过动态规划来求每个节点的最早开始时间。关键路径的长度即为终点的最早开始时间。
+
+下面是实现这个算法的Python代码：
+
+```python
+from collections import deque
+
+def find_critical_path(n, m, edges):
+    # 构建图
+    graph = [[] for _ in range(n)]
+    in_degree = [0] * n  # 记录每个节点的入度
+    for u, v, w in edges:
+        graph[u].append((v, w))
+        in_degree[v] += 1
+    
+    # 拓扑排序
+    queue = deque()
+    for i in range(n):
+        if in_degree[i] == 0:
+            queue.append(i)
+    order = []  # 拓扑排序的结果
+    while queue:
+        u = queue.popleft()
+        order.append(u)
+        for v, w in graph[u]:
+            in_degree[v] -= 1
+            if in_degree[v] == 0:
+                queue.append(v)
+    
+    # 如果拓扑排序的结果数量小于节点数，说明图中存在环
+    if len(order) < n:
+        return "No"
+    
+    # 动态规划求解关键路径长度
+    dp = [0] * n  # dp[i]表示从起点到达节点i的最长路径长度
+    for u in order:
+        for v, w in graph[u]:
+            dp[v] = max(dp[v], dp[u] + w)
+    
+    return "Yes\n" + str(max(dp))
+
+if __name__ == "__main__":
+    n, m = map(int, input().split())
+    edges = [tuple(map(int, input().split())) for _ in range(m)]
+    result = find_critical_path(n, m, edges)
+    print(result)
+```
+
+这段代码首先读入图的顶点数、边数以及每条边的信息，然后通过上述步骤判断图是否是DAG，并计算关键路径长度。如果图不是DAG，则输出"No"；如果是DAG，则输出"Yes"以及关键路径长度。
 
 
 
@@ -10919,12 +11541,295 @@ print(kruskal(n, edges))
 
 ### 7.2 关键活动 中等
 
+现有一个共n个顶点、m条边的有向图（假设顶点编号为从`0`到`n-1`）。判断该图是否是有向无环图，并把顶点视作“事件”、边视作“活动”，求出所有的关键活动。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 100, 0 \le m \le n(n-1)$），分别表示顶点数、边数；
+
+接下来m行，每行两个整数u、v、w（$0 \le u \le n-1, 0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的起点和终点的编号及边权。数据保证不会有重边。
+
+**输出**
+
+如果不是有向无环图，那么只输出`No`；
+
+如果是有向无环图，那么在第一行输出`Yes`，并从第二行开始，每行输出用空格隔开的两个整数，表示关键活动的起点编号和终点编号（注：总是优先输出起点编号较小的关键活动，起点编号相同时优先输出终点编号较小的关键活动）。
+
+样例1
+
+输入
+
+```
+6 7
+0 1 1
+0 2 2
+1 3 3
+1 4 4
+2 4 2
+3 5 2
+4 5 3
+```
+
+输出
+
+```
+Yes
+0 1
+1 4
+4 5
+```
+
+解释
+
+对应的有向无环图如下图所示，加粗的边即为关键活动。
+
+![关键路径长度.png](https://raw.githubusercontent.com/GMyhf/img/main/img/b355f389-786f-4795-83ea-492517c5f24c.png)
+
+样例2
+
+输入
+
+```
+2 2
+1 2 1
+2 1 1
+```
+
+输出
+
+```
+No
+```
+
+解释
+
+显然不是有向无环图。
 
 
 
 
 
+为了解决这个问题，我们可以采用以下策略：
+
+1. **判断有向无环图（DAG）**：通过拓扑排序来判断图是否为DAG。如果在拓扑排序过程中所有的顶点都被排序了，那么图是DAG；如果排序过程中存在顶点不能被排序（即存在环），则图不是DAG。
+2. **求关键活动**：
+   - 在DAG中，首先通过拓扑排序计算每个顶点的最早开始时间（`est`）。
+   - 然后，逆向遍历拓扑排序，计算每个顶点的最晚开始时间（`lst`）。
+   - 边`u -> v`是关键活动，当且仅当`est[u] + w(u, v) == lst[v]`。
+
+以下是实现上述逻辑的Python代码：
+
+```python
+from collections import deque, defaultdict
+
+def topo_sort(graph, in_degrees, n):
+    queue = deque([i for i in range(n) if in_degrees[i] == 0])
+    topo_order = []
+    while queue:
+        node = queue.popleft()
+        topo_order.append(node)
+        for adj, weight in graph[node]:
+            in_degrees[adj] -= 1
+            if in_degrees[adj] == 0:
+                queue.append(adj)
+    return topo_order if len(topo_order) == n else None
+
+def find_critical_activities(n, m, edges):
+    graph = defaultdict(list)
+    in_degrees = [0] * n
+    for u, v, w in edges:
+        graph[u].append((v, w))
+        in_degrees[v] += 1
+
+    topo_order = topo_sort(graph, in_degrees, n)
+    if topo_order is None:
+        return ["No"]
+
+    est = [0] * n
+    lst = [float('inf')] * n
+    for node in topo_order:
+        for adj, weight in graph[node]:
+            est[adj] = max(est[adj], est[node] + weight)
+    
+    lst[topo_order[-1]] = est[topo_order[-1]]
+    for node in reversed(topo_order):
+        for adj, weight in graph[node]:
+            lst[node] = min(lst[node], lst[adj] - weight)
+        if node not in graph:  # Leaf node
+            lst[node] = min(lst[node], est[node])
+
+    critical_activities = []
+    for u, v, w in edges:
+        if est[u] + w == lst[v]:
+            critical_activities.append((u, v))
+
+    critical_activities.sort()
+    return ["Yes"] + ["{} {}".format(u, v) for u, v in critical_activities]
+
+# 读取输入
+n, m = map(int, input().split())
+edges = [tuple(map(int, input().split())) for _ in range(m)]
+
+# 求解关键活动
+result = find_critical_activities(n, m, edges)
+for line in result:
+    print(line)
+```
+
+这段代码首先尝试对给定的有向图进行拓扑排序。如果成功，说明图是DAG；然后，它计算每个顶点的最早和最晚开始时间，最后找出所有满足条件的关键活动并输出。如果图不是DAG，即存在环，那么拓扑排序的结果不会包含图中的所有顶点，函数将返回“No”。
 
 
 
 ### 7.3 关键路径 中等
+
+现有一个共个顶点、条边的有向图（假设顶点编号为从`0`到`n-1`）。判断该图是否是有向无环图，并把顶点视作“事件”、边视作“活动”，求出所有关键路径。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 100, 0 \le m \le n(n-1)$），分别表示顶点数、边数；
+
+接下来m行，每行两个整数u、v、w（$0 \le u \le n-1, 0 \le v \le n-1, u \ne v, 1 \le w \le 100$），表示一条边的起点和终点的编号及边权。数据保证不会有重边。
+
+**输出**
+
+如果不是有向无环图，那么只输出`No`；
+
+如果是有向无环图，那么在第一行输出`Yes`，从第二行开始每行输出一条关键路径`v[1]->v[2]->...`。
+
+注意，路径的输出顺序满足基于整数的字典序，即如果有两条路径`a[1]->a[2]->...->a[k]->a[k+1]->...`与`b[1]->b[2]->...->b[k]->b[k+1]->...`，满足`a[1]==b[1]`、`a[2]==b[2]`、...、`a[k]==b[k]`、`a[k+1]<b[k+1]`，那么把路径`a`优先输出。
+
+数据保证关键路径条数不超过`1000`条。
+
+样例1
+
+输入
+
+```
+6 7
+0 1 1
+0 2 3
+1 3 3
+1 4 4
+2 4 2
+3 5 2
+4 5 3
+```
+
+输出
+
+```
+Yes
+0->1->4->5
+0->2->4->5
+```
+
+解释
+
+对应的有向无环图如下图所示，加粗的边组成了关键路径，共两条：`0->1->4->5`、`0->2->4->5`。
+
+![关键路径.png](https://raw.githubusercontent.com/GMyhf/img/main/img/9732e494-940b-4777-bed2-b6a82d749ebd.png)
+
+样例2
+
+输入
+
+```
+2 2
+1 2 1
+2 1 1
+```
+
+输出
+
+```
+No
+```
+
+解释
+
+显然不是有向无环图。
+
+
+
+```python
+from collections import defaultdict, deque
+
+class Edge:
+    def __init__(self, v, w):
+        self.v = v
+        self.w = w
+
+def topo_sort(n, G, in_degree):
+    q = deque([i for i in range(n) if in_degree[i] == 0])
+    ve = [0] * n
+    topo_order = []
+
+    while q:
+        u = q.popleft()
+        topo_order.append(u)
+        for edge in G[u]:
+            v = edge.v
+            in_degree[v] -= 1
+            if in_degree[v] == 0:
+                q.append(v)
+            if ve[u] + edge.w > ve[v]:
+                ve[v] = ve[u] + edge.w
+
+    if len(topo_order) == n:
+        return ve, topo_order
+    else:
+        return None, None
+
+def get_critical_path(n, G, in_degree):
+    ve, topo_order = topo_sort(n, G, in_degree.copy())
+    if ve is None:
+        return -1, []
+
+    maxLength = max(ve)
+    vl = [maxLength] * n
+
+    for u in reversed(topo_order):
+        for edge in G[u]:
+            v = edge.v
+            if vl[v] - edge.w < vl[u]:
+                vl[u] = vl[v] - edge.w
+
+    activity = defaultdict(list)
+    for u in G:
+        for edge in G[u]:
+            v = edge.v
+            e, l = ve[u], vl[v] - edge.w
+            if e == l:
+                activity[u].append(v)
+
+    return maxLength, activity
+
+def print_critical_path(u, activity, in_degree, path=[]):
+    path.append(u)
+    if u not in activity or not activity[u]:
+        print("->".join(map(str, path)))
+    else:
+        for v in sorted(activity[u]):
+            print_critical_path(v, activity, in_degree, path.copy())
+    path.pop()
+
+# Main
+n, m = map(int, input().split())
+G = defaultdict(list)
+in_degree = [0] * n  # Correctly define in_degree here
+for _ in range(m):
+    u, v, w = map(int, input().split())
+    G[u].append(Edge(v, w))
+    in_degree[v] += 1
+
+maxLength, activity = get_critical_path(n, G, in_degree)
+if maxLength == -1:
+    print("No")
+else:
+    print("Yes")
+    for i in range(n):
+        if in_degree[i] == 0:  # Correctly check for start points
+            print_critical_path(i, activity, in_degree)
+
+```
+
