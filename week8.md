@@ -1,8 +1,6 @@
 # 20240409-Week8
 
-
-
-Updated 1436 GMT+8 Apr 4, 2024
+Updated 1515 GMT+8 Apr 4, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -22,33 +20,25 @@ Updated 1436 GMT+8 Apr 4, 2024
 
 ```python
 def radixSort(arr):
-    digit = 0
-    max_digit = 1
     max_value = max(arr)
-    # 找出列表中最大的位数
-    while 10 ** max_digit < max_value:
-        max_digit = max_digit + 1
-
-    while digit < max_digit:
-        temp = [[] for i in range(10)]
+    digit = 1
+    while digit <= max_value:
+        temp = [[] for _ in range(10)]
         for i in arr:
-            # 求出每一个元素的个、十、百位的值
-            t = int((i / 10 ** digit) % 10)
+            t = i // digit % 10
             temp[t].append(i)
-
-        coll = []
+        arr.clear()
         for bucket in temp:
-            for i in bucket:
-                coll.append(i)
-
-        arr = coll
-        digit = digit + 1
-
+            arr.extend(bucket)
+        digit *= 10
     return arr
 
-arr = [ 170, 45, 75, 90, 802, 24, 2, 66]
+arr = [170, 45, 75, 90, 802, 24, 2, 66]
 ans = radixSort(arr)
 print(*ans)
+
+# Output:
+# 2 24 45 66 75 90 170 802
 ```
 
 
