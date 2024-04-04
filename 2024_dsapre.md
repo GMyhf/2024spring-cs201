@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 1636 GMT+8 April 3, 2024
+Updated 1803 GMT+8 April 3, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -11360,8 +11360,10 @@ while True:
 
 
 
+
+
 ```python
-from collections import deque					# . 时间: 105ms
+from collections import deque					# 时间: 105ms
 
 # Initialize groups and mapping of members to their groups
 t = int(input())
@@ -11480,6 +11482,61 @@ sample2 output:
 2024spring zht
 
 
+
+```python
+# 刘华君 物理学院
+class Tree:
+    def __init__(self, val):
+        self.val = val
+        self.children = []
+        self.parent = None
+
+    def add_child(self, child):
+        self.children.append(child)
+        child.parent = self
+
+    def traverse(self):
+        if self.children == []:
+            print(self.val)
+        else:
+            tmp_nodes = self.children + [self]
+            tmp_nodes.sort(key=lambda x: x.val)
+            for node in tmp_nodes:
+                if node.val != self.val:
+                    node.traverse()
+                else:
+                    print(node.val)
+
+def build_tree(n, nodes):
+    for _ in range(n):
+        values = list(map(int, input().split()))
+        root_val = values[0]
+        if root_val not in nodes:
+            nodes[root_val] = Tree(root_val)
+        t = nodes[root_val]
+        for child_val in values[1:]:
+            if child_val not in nodes:
+                nodes[child_val] = Tree(child_val)
+            child = nodes[child_val]
+            t.add_child(child)
+            child.parent = t
+
+    root = None
+    for root_val in nodes:
+        if not nodes[root_val].parent:
+            root = nodes[root_val]
+            break
+
+    return root
+
+if __name__ == "__main__":
+    nodes = {}
+    n = int(input())
+    root = build_tree(n, nodes)
+    if root:
+        root.traverse()
+
+```
 
 
 
