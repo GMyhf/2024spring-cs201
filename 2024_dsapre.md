@@ -11330,10 +11330,38 @@ acwing 小组队列 https://www.acwing.com/problem/content/description/134/
 
 
 
+```python
+# 陈奕好 思路：思路：字典里套用deque()的想法第一次实现. 时间: 1267ms
+from collections import deque
+
+t = int(input())
+teams = {i: deque(map(int, input().split())) for i in range(t)}
+queue = deque()
+group_queue = {i: deque() for i in range(t)}
+
+while True:
+    command = input().split()
+    if command[0] == 'STOP':
+        break
+    elif command[0] == 'ENQUEUE':
+        person = int(command[1])
+        for i in range(t):
+            if person in teams[i]:
+                group_queue[i].append(person)
+                if i not in queue:
+                    queue.append(i)
+                break
+    elif command[0] == 'DEQUEUE':
+        group = queue[0]
+        print(group_queue[group].popleft())
+        if not group_queue[group]:
+            queue.popleft()
+```
+
 
 
 ```python
-from collections import deque
+from collections import deque					# . 时间: 105ms
 
 # Initialize groups and mapping of members to their groups
 t = int(input())
@@ -11512,13 +11540,11 @@ http://cs101.openjudge.cn/practice/27932/
 给定一个长度为n和整数k的整数序列。请你打印出[1,10^9]范围内的**最小整数**x(即1≤x≤10^9)，使得给定序列中恰好有k个元素**小于或等于x**。
 
 注意，序列可以包含相等的元素。
-
 如果没有这样的x，打印"-1"(不带引号)。
 
 **输入**
 
 输入的第一行包含整数 n 和 k ( 1≤n≤2·10^5, 0≤k≤n)。
-
 输入的第二行包含n个整数 a_1,a_2，…，a_n (1≤a_i≤10^9) ——序列本身。
 
 **输出**
