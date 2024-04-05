@@ -1,4 +1,4 @@
-# 20240409～23-Week8~10 图算法
+# 20240409～23-Week8~10 图论
 
 Updated 2215 GMT+8 Apr 5, 2024
 
@@ -49,6 +49,26 @@ mindmap
 
 
 # 一、（Week8）图的概念、表示方法和遍历
+
+图论是数学的一个分支，主要研究图的性质以及图之间的关系。在与数据结构和算法相关的内容中，图论涵盖了以下几个方面：
+
+1. **图的表示**：图可以用不同的数据结构来表示，包括邻接矩阵、邻接表、关联矩阵等。这些表示方法影响着对图进行操作和算法实现的效率。
+
+2. **图的遍历**：图的遍历是指从图中的某个顶点出发，访问图中所有顶点且不重复的过程。常见的图遍历算法包括深度优先搜索（DFS）和广度优先搜索（BFS）。
+
+3. **最短路径**：最短路径算法用于找出两个顶点之间的最短路径，例如 Dijkstra 算法和 Floyd-Warshall 算法。这些算法在网络路由、路径规划等领域有广泛的应用。
+
+4. **最小生成树**：最小生成树算法用于在一个连通加权图中找出一个权值最小的生成树，常见的算法包括 Prim 算法和 Kruskal 算法。最小生成树在网络设计、电力传输等领域有着重要的应用。
+
+5. ~~**图的匹配**：图的匹配是指在一个图中找出一组边，使得没有两条边有一个公共顶点。匹配算法在任务分配、航线规划等问题中有着广泛的应用。~~
+
+6. **拓扑排序**：拓扑排序算法用于对有向无环图进行排序，使得所有的顶点按照一定的顺序排列，并且保证图中的边的方向符合顺序关系。拓扑排序在任务调度、依赖关系分析等领域有重要的应用。
+
+7. **图的连通性**：图的连通性算法用于判断图中的顶点是否连通，以及找出图中的连通分量。这对于网络分析、社交网络分析等具有重要意义。
+
+8. ~~**图的颜色着色**：图的着色问题是指给图中的顶点赋予不同的颜色，使得相邻的顶点具有不同的颜色。这在调度问题、地图着色等方面有应用。~~
+
+这些内容是图论在数据结构与算法领域的一些重要内容，它们在计算机科学和工程领域有广泛的应用。
 
 
 
@@ -284,6 +304,7 @@ for i in range(n):
 
 图的抽象数据类型
 图的抽象数据类型由下列方法定义。
+
 ❏ Graph()新建一个空图。
 ❏ addVertex(vert)向图中添加一个顶点实例。
 ❏ addEdge(fromVert, toVert)向图中添加一条有向边，用于连接顶点fromVert和toVert。
@@ -291,7 +312,8 @@ for i in range(n):
 ❏ getVertex(vertKey)在图中找到名为vertKey的顶点。
 ❏ getVertices()以列表形式返回图中所有顶点。
 ❏ in通过vertex in graph这样的语句，在顶点存在时返回True，否则返回False。
-根据图的正式定义，可以通过多种方式在Python中实现图的抽象数据类型。你会看到，在使用不同的表达方式来实现图的抽象数据类型时，需要做很多取舍。有两种非常著名的图实现，它们分别是邻接矩阵**adjacency matrix**和邻接表**adjacency list**。本节会解释这两种实现，并且用Python类来实现邻接表。
+
+根据图的正式定义，可以通过多种方式在Python中实现图的抽象数据类型。你会看到，在使用不同的表达方式来实现图的抽象数据类型时，需要做很多取舍。有两种非常著名的图实现，它们分别是邻接矩阵 **adjacency matrix** 和邻接表**adjacency list**。本节会解释这两种实现，并且用Python类来实现邻接表。
 
 
 
@@ -366,7 +388,7 @@ for i in range(n):
 
 要实现图，最简单的方式就是使用二维矩阵。在矩阵实现中，每一行和每一列都表示图中的一个顶点。第v行和第w列交叉的格子中的值表示从顶点v到顶点w的边的权重。如果两个顶点被一条边连接起来，就称它们是相邻的。图3展示了图2对应的邻接矩阵。格子中的值表示从顶点v到顶点w的边的权重。
 
-![../_images/adjMat.png](https://raw.githubusercontent.com/GMyhf/img/main/img/adjMat.png)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/adjMat.png" alt="../_images/adjMat.png" style="zoom:67%;" />
 
 Figure 3: An Adjacency Matrix Representation for a Graph
 
@@ -383,7 +405,7 @@ Figure 3: An Adjacency Matrix Representation for a Graph
 
 
 
-![../_images/adjlist.png](https://raw.githubusercontent.com/GMyhf/img/main/img/adjlist.png)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/adjlist.png" alt="../_images/adjlist.png" style="zoom:67%;" />
 
 Figure 4: An Adjacency List Representation of a Graph
 
@@ -391,7 +413,96 @@ Figure 4: An Adjacency List Representation of a Graph
 
 
 
-### 2.3 类实现
+### 2.3 关联矩阵
+
+关联矩阵是一种图的表示方法，通常用于表示有向图。在关联矩阵中，行代表顶点，列代表边，如果顶点与边相连，则在对应的位置填上1，否则填上0。
+
+虽然关联矩阵和邻接表都可以用来表示图，但它们在内存消耗和操作效率上有所不同。关联矩阵的存储空间复杂度为O(V*E)，其中V是顶点数，E是边数。但是，邻接表的存储空间复杂度为O(V+E)，它通常比关联矩阵更节省空间。
+
+另外，对于某些图的操作，如查找两个顶点之间是否存在边，邻接表的操作效率更高。而对于其他操作，如计算图的闭包或者判断两个图是否同构等，关联矩阵可能更方便。
+
+因此，关联矩阵和邻接表都有各自的优势和适用场景，选择使用哪种数据结构取决于具体的应用需求和对内存和操作效率的考虑。
+
+> 图的闭包是指对于一个有向图或无向图，将所有顶点对之间的可达路径都加入到图中的过程。闭包可以用于分析图中的传递性关系。
+>
+> 判断两个图是否同构是指确定两个图是否具有相同的结构，即它们的顶点和边的连接关系是否一致。同构性是图的一个重要性质，可以用于在不同图之间进行匹配、比较和分类。
+>
+> 图的闭包和判断两个图是否同构是两个不同的概念，它们在图论中具有不同的应用和研究方向。
+>
+> 图的闭包可以通过图的邻接矩阵或邻接表来计算。对于有向图，可以使用传递闭包算法，通过矩阵乘法或深度优先搜索来确定顶点对之间的可达性。对于无向图，可以使用传递闭包算法或者深度优先搜索来计算。
+>
+> 判断两个图是否同构是一个复杂的问题，没有简单的算法可以解决。通常使用图同构性的定义和算法来进行判断，其中一种常用的方法是通过图的特征向量或特征值来比较两个图的结构。其他方法包括基于图的同构性的哈希算法和子图同构性的算法。
+>
+> 判断两个图是否同构是一个重要的图论问题，它在许多领域中都有应用，包括网络分析、化学和生物信息学等。
+>
+> 当涉及到图的闭包和判断两个图是否同构时，以下是一些示例：
+>
+> 1. 图的闭包：
+> 考虑一个有向图，表示人际关系网络。假设有以下关系：A认识B，B认识C，C认识D。闭包操作将在图中添加所有可达的路径。在这种情况下，闭包操作将在图中添加A到D的边，因为A通过B和C可以到达D。闭包操作后的图将包含A、B、C、D四个顶点，并存在A到D的边。
+>
+> 2. 判断两个图是否同构：
+> 考虑两个无向图G1和G2。G1有三个顶点{A, B, C}和两条边{A-B, B-C}。G2有三个顶点{X, Y, Z}和两条边{X-Y, Y-Z}。通过比较两个图的边连接关系，我们可以发现G1和G2具有相同的结构。因此，可以判断G1和G2是同构的。
+>
+> 
+>
+> 尽管图的闭包和同构问题在理论上具有重要性，并且在某些应用领域中有实际意义，但在常见的编程题目中，它们并不是经常出现的主题。更常见的图相关编程题目包括广度优先搜索、深度优先搜索、拓扑排序、最短路径算法（如Dijkstra算法和Floyd-Warshall算法）、最小生成树算法（如Prim算法和Kruskal算法）等。
+>
+> 
+>
+> 闭包和最小生成树是两个不同的概念？
+>
+> 闭包是指对于一个有向图或无向图，将所有顶点对之间的可达路径都加入到图中的过程。闭包操作后的图包含了原图中所有顶点和它们之间的可达路径。闭包操作可以用于分析图中的传递性关系。
+>
+> 最小生成树是指在一个连通无向图中，选择一棵包含所有顶点且边权重之和最小的树。最小生成树可以用来找到连接图中所有顶点的最短路径。
+>
+> 闭包和最小生成树是针对不同类型的图的不同操作。闭包适用于有向图和无向图，而最小生成树适用于无向图。闭包操作是为了添加路径，以展示顶点之间的可达性，而最小生成树是为了找到一棵最小权重的树，以连接所有顶点。
+>
+> 因此，闭包和最小生成树是不同的概念，在图论中具有不同的应用和意义。
+
+
+
+下面是一个用 Python 实现的关联矩阵示例：
+
+```python
+class Graph:
+    def __init__(self, vertices, edges):
+        self.vertices = vertices
+        self.edges = edges
+        self.adj_matrix = self.create_adj_matrix()
+
+    def create_adj_matrix(self):
+        # Create an empty adjacency matrix
+        adj_matrix = [[0] * len(self.edges) for _ in range(len(self.vertices))]
+
+        # Fill adjacency matrix based on edges
+        for i, vertex in enumerate(self.vertices):
+            for j, edge in enumerate(self.edges):
+                if vertex in edge:
+                    adj_matrix[i][j] = 1
+        return adj_matrix
+
+    def display_adj_matrix(self):
+        for row in self.adj_matrix:
+            print(row)
+
+
+# Example usage
+if __name__ == "__main__":
+    vertices = ['A', 'B', 'C', 'D']
+    edges = [('A', 'B'), ('B', 'C'), ('C', 'D'), ('D', 'A')]
+
+    graph = Graph(vertices, edges)
+    print("Adjacency Matrix:")
+    graph.display_adj_matrix()
+```
+
+在这个示例中，定义了一个 `Graph` 类来表示图。在初始化时，传入顶点列表和边列表。然后，使用 `create_adj_matrix` 方法来创建关联矩阵。最后，调用 `display_adj_matrix` 方法来显示关联矩阵。
+
+注意：这个示例假设了顶点和边的表示是字符串形式，可以根据需要调整表示方式。
+
+
+
+### 2.4 类实现
 
 在Python中，通过字典可以轻松地实现邻接表。我们要创建两个类：Graph类存储包含所有顶点的主列表，Vertex类表示图中的每一个顶点。
 Vertex使用字典connectedTo来记录与其相连的顶点，以及每一条边的权重。代码清单7-1展示了Vertex类的实现，其构造方法简单地初始化id（它通常是一个字符串），以及字典connectedTo。addNeighbor方法添加从一个顶点到另一个的连接。getConnections方法返回邻接表中的所有顶点，由connectedTo来表示。getWeight方法返回从当前顶点到以参数传入的顶点之间的边的权重。
@@ -506,7 +617,7 @@ class Graph:
 
 
 
-### 2.4 编程题目
+### 2.5 编程题目
 
 #### sy376: 无向图的邻接矩阵 简单
 
@@ -2900,6 +3011,12 @@ Explanation:
 8. If the destination node is found exit the while loop.
 9. If the destination node is not present then “Not found” is printed.
 10. Finally, print the path from starting node to the destination node.
+
+
+
+### 4.3 编程题目
+
+
 
 
 
