@@ -3016,6 +3016,569 @@ Explanation:
 
 ### 4.3 编程题目
 
+#### sy380: 无向图的连通块 简单
+
+https://sunnywhy.com/sfbj/10/3/380
+
+现有一个共n个顶点、m条边的无向图（假设顶点编号为从`0`到`n-1`），求图中的连通块个数。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2$），分别表示顶点数和边数；
+
+接下来m行，每行两个整数u、v（$0 \le u \le n-1,0 \le v \le n-1, u \ne v$），表示一条边的两个端点的编号。数据保证不会有重边。
+
+**输出**
+
+输出一个整数，表示图中的连通块个数。
+
+样例1
+
+输入
+
+```
+6 5
+0 1
+0 3
+3 5
+2 4
+1 5
+```
+
+输出
+
+```
+2
+```
+
+解释
+
+对应的无向图如下图所示，共有两个连通块。
+
+![无向图的连通块.png](https://raw.githubusercontent.com/GMyhf/img/main/img/d95ea531-1e5b-44e7-8d9c-8908a4bb1115.png)
+
+
+
+
+
+要解决这个问题，我们可以使用深度优先搜索（DFS）或广度优先搜索（BFS）来找出图中的所有连通块。我们首先创建一个邻接列表来表示图，然后对每个未访问的节点进行DFS或BFS，每次搜索都会找到一个连通块。搜索过程中，我们需要标记已访问的节点，以防止重复访问。
+
+以下是使用DFS的Python代码：
+
+```python
+def dfs(node, visited, adjacency_list):
+    visited[node] = True
+    for neighbor in adjacency_list[node]:
+        if not visited[neighbor]:
+            dfs(neighbor, visited, adjacency_list)
+
+n, m = map(int, input().split())
+adjacency_list = [[] for _ in range(n)]
+for _ in range(m):
+    u, v = map(int, input().split())
+    adjacency_list[u].append(v)
+    adjacency_list[v].append(u)
+
+visited = [False] * n
+connected_components = 0
+for i in range(n):
+    if not visited[i]:
+        dfs(i, visited, adjacency_list)
+        connected_components += 1
+
+print(connected_components)
+```
+
+在这段代码中，我们首先读取顶点数和边数，然后读取每条边的信息并在邻接列表中添加相应的边。然后我们初始化一个布尔数组`visited`来跟踪已访问的节点，并初始化连通块的数量为0。接着，我们遍历每个节点，如果它还未被访问，我们就从它开始进行DFS，并将连通块的数量加1。最后，我们输出连通块的数量。
+
+
+
+#### sy381: 无向连通图 简单
+
+https://sunnywhy.com/sfbj/10/3/381
+
+现有一个共个顶点、条边的无向图（假设顶点编号为从`0`到`n-1`），判断其是否是连通图。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2$），分别表示顶点数和边数；
+
+接下来m行，每行两个整数u、v（$0 \le u \le n-1,0 \le v \le n-1, u \ne v$），表示一条边的起点和终点的编号。数据保证不会有重边。
+
+**输出**
+
+如果是连通图，那么输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+6 5
+0 1
+0 3
+3 5
+2 4
+1 5
+```
+
+输出
+
+```
+No
+```
+
+解释
+
+对应的无向图如下图所示，不是连通图。
+
+![无向图的连通块.png](https://raw.githubusercontent.com/GMyhf/img/main/img/d95ea531-1e5b-44e7-8d9c-8908a4bb1115.png)
+
+样例2
+
+输入
+
+```
+6 6
+0 1
+0 3
+3 5
+2 4
+1 5
+3 4
+```
+
+输出
+
+```
+Yes
+```
+
+解释
+
+对应的无向图如下图所示，是连通图。
+
+![无向连通图_样例2.png](https://raw.githubusercontent.com/GMyhf/img/main/img/7c186721-b047-4cc0-b3d9-329d17c53d82.png)
+
+
+
+
+
+要判断一个图是否是连通图，我们可以使用深度优先搜索（DFS）或广度优先搜索（BFS）来遍历图。如果在遍历结束后，所有的节点都被访问过，那么这个图就是连通图。否则，就不是连通图。
+
+以下是使用DFS的Python代码：
+
+```python
+def dfs(node, visited, adjacency_list):
+    visited[node] = True
+    for neighbor in adjacency_list[node]:
+        if not visited[neighbor]:
+            dfs(neighbor, visited, adjacency_list)
+
+n, m = map(int, input().split())
+adjacency_list = [[] for _ in range(n)]
+for _ in range(m):
+    u, v = map(int, input().split())
+    adjacency_list[u].append(v)
+    adjacency_list[v].append(u)
+
+visited = [False] * n
+dfs(0, visited, adjacency_list)
+
+if all(visited):
+    print("Yes")
+else:
+    print("No")
+```
+
+在这段代码中，我们首先读取顶点数和边数，然后读取每条边的信息并在邻接列表中添加相应的边。然后我们初始化一个布尔数组`visited`来跟踪已访问的节点，并从第一个节点开始进行DFS。最后，我们检查是否所有的节点都被访问过，如果是，那么输出`Yes`，否则输出`No`。
+
+
+
+#### sy382: 有向图判环 中等
+
+https://sunnywhy.com/sfbj/10/3/382
+
+现有一个共n个顶点、m条边的有向图（假设顶点编号为从`0`到`n-1`），如果从图中一个顶点出发，沿着图中的有向边前进，最后能回到这个顶点，那么就称其为图中的一个环。判断图中是否有环。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 100,0 \le m \le n(n-1)$），分别表示顶点数和边数；
+
+接下来m行，每行两个整数u、v（$0 \le u \le n-1,0 \le v \le n-1, u \ne v$），表示一条边的起点和终点的编号。数据保证不会有重边。
+
+**输出**
+
+如果图中有环，那么输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+4 4
+1 0
+0 3
+3 2
+2 1
+```
+
+输出
+
+```
+Yes
+```
+
+解释
+
+对应的有向图如下图所示，存在`0->3->2->1->0`的环。
+
+![有向图判环_样例1.png](https://raw.githubusercontent.com/GMyhf/img/main/img/c2072489-936c-40c8-8e89-7ddd87d76705.png)
+
+样例2
+
+输入
+
+```
+4 4
+1 0
+0 3
+2 3
+2 1
+```
+
+输出
+
+```
+No
+```
+
+解释
+
+对应的有向图如下图所示，图中不存在环。
+
+![有向图判环_样例2.png](https://raw.githubusercontent.com/GMyhf/img/main/img/cd48cf44-20f5-4c21-aaae-f1df3fcc3ba8.png)
+
+
+
+
+
+在这个问题中，需要检查给定的有向图是否包含一个环。可以使用深度优先搜索（DFS）来解决这个问题。在DFS中，从一个节点开始，然后访问它的每一个邻居。如果在访问过程中，遇到了一个已经在当前路径中的节点，那么就存在一个环。可以使用一个颜色数组来跟踪每个节点的状态：未访问（0），正在访问（1），已访问（2）。
+
+以下是解决这个问题的Python代码：
+
+```python
+def has_cycle(n, edges):
+    graph = [[] for _ in range(n)]
+    for u, v in edges:
+        graph[u].append(v)
+
+    color = [0] * n
+
+    def dfs(node):
+        if color[node] == 1:
+            return True
+        if color[node] == 2:
+            return False
+
+        color[node] = 1
+        for neighbor in graph[node]:
+            if dfs(neighbor):
+                return True
+        color[node] = 2
+        return False
+
+    for i in range(n):
+        if dfs(i):
+            return "Yes"
+    return "No"
+
+# 接收数据
+n, m = map(int, input().split())
+edges = []
+for _ in range(m):
+    u, v = map(int, input().split())
+    edges.append((u, v))
+
+# 调用函数
+print(has_cycle(n, edges))
+```
+
+在这个函数中，我们首先构建了一个邻接列表来表示图。然后，我们对每个节点执行深度优先搜索。如果在搜索过程中，我们遇到了一个正在访问的节点，那么就存在一个环。如果我们遍历完所有的节点都没有找到环，那么就返回"No"。
+
+
+
+#### sy383: 最大权值连通块 中等
+
+https://sunnywhy.com/sfbj/10/3/383
+
+现有一个共个顶点、条边的无向图（假设顶点编号为从`0`到`n-1`），每个顶点有各自的权值。我们把一个连通块中所有顶点的权值之和称为这个连通块的权值。求图中所有连通块的最大权值。
+
+**输入**
+
+第一行两个整数n、m（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2$​），分别表示顶点数和边数；
+
+第二行个用空格隔开的正整数（每个正整数不超过`100`），表示个顶点的权值。
+
+接下来m行，每行两个整数u、v（$0 \le u \le n-1,0 \le v \le n-1, u \ne v$），表示一条边的起点和终点的编号。数据保证不会有重边。
+
+**输出**
+
+输出一个整数，表示连通块的最大权值。
+
+样例1
+
+输入
+
+```
+6 5
+2 3 4 1 3 2
+0 1
+0 3
+3 5
+2 4
+1 5
+```
+
+输出
+
+```
+8
+```
+
+解释
+
+对应的无向图如下图所示，左边连通块的权值为，右边连通块的权值为，因此最大权值为`8`。
+
+![最大权值连通块.png](https://raw.githubusercontent.com/GMyhf/img/main/img/0b6c3a49-118e-4432-bc17-e8d2f72d4410.png)
+
+
+
+
+
+需要找到给定无向图中所有连通块的最大权值。使用深度优先搜索（DFS）来解决这个问题。在DFS中，从一个节点开始，然后访问它的每一个邻居。可以使用一个visited数组来跟踪每个节点是否已经被访问过。对于每个连通块，可以计算其权值之和，并更新最大权值。
+
+以下是解决这个问题的Python代码：
+
+```python
+def max_weight(n, m, weights, edges):
+    graph = [[] for _ in range(n)]
+    for u, v in edges:
+        graph[u].append(v)
+        graph[v].append(u)
+
+    visited = [False] * n
+    max_weight = 0
+
+    def dfs(node):
+        visited[node] = True
+        total_weight = weights[node]
+        for neighbor in graph[node]:
+            if not visited[neighbor]:
+                total_weight += dfs(neighbor)
+        return total_weight
+
+    for i in range(n):
+        if not visited[i]:
+            max_weight = max(max_weight, dfs(i))
+
+    return max_weight
+
+# 接收数据
+n, m = map(int, input().split())
+weights = list(map(int, input().split()))
+edges = []
+for _ in range(m):
+    u, v = map(int, input().split())
+    edges.append((u, v))
+
+# 调用函数
+print(max_weight(n, m, weights, edges))
+```
+
+在这段代码中，首先通过`input()`函数接收用户输入的顶点数`n`、边数`m`和每个顶点的权值，然后在一个循环中接收每条边的起点和终点，并将它们添加到`edges`列表中。然后，我们调用`max_weight`函数并打印结果。
+
+
+
+
+
+#### sy384: 无向图的顶点层号
+
+https://sunnywhy.com/sfbj/10/3/384
+
+现有一个共n个顶点、m条边的无向连通图（假设顶点编号为从`0`到`n-1`）。我们称从s号顶点出发到达其他顶点经过的最小边数称为各顶点的层号。求图中所有顶点的层号。
+
+**输入**
+
+第一行三个整数n、m、s（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1$​），分别表示顶点数、边数、起始顶点编号；
+
+接下来m行，每行两个整数u、v（$0 \le u \le n-1,0 \le v \le n-1, u \ne v$），表示一条边的起点和终点的编号。数据保证不会有重边。
+
+**输出**
+
+输出n个整数，分别为编号从`0`到`n-1`的顶点的层号。整数之间用空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+6 6 0
+0 1
+0 3
+3 5
+2 4
+1 5
+3 4
+```
+
+输出
+
+```
+0 1 3 1 2 2
+```
+
+解释
+
+对应的无向图和顶点层号如下图所示。
+
+![无向图的顶点层号.png](https://raw.githubusercontent.com/GMyhf/img/main/img/a896296d-23e0-4420-9e70-c4e979a78e89.png)
+
+
+
+
+
+需要找到从给定的起始顶点到图中所有其他顶点的最短路径长度，这也被称为顶点的层号。可以使用广度优先搜索（BFS）来解决这个问题。在BFS中，从起始节点开始，然后访问它的所有邻居，然后再访问这些邻居的邻居，依此类推。我们可以使用一个队列来跟踪待访问的节点，并使用一个距离数组来记录从起始节点到每个节点的最短距离。
+
+以下是解决这个问题的Python代码：
+
+```python
+from collections import deque
+
+def bfs(n, m, s, edges):
+    graph = [[] for _ in range(n)]
+    for u, v in edges:
+        graph[u].append(v)
+        graph[v].append(u)
+
+    distance = [-1] * n
+    distance[s] = 0
+
+    queue = deque([s])
+    while queue:
+        node = queue.popleft()
+        for neighbor in graph[node]:
+            if distance[neighbor] == -1:
+                distance[neighbor] = distance[node] + 1
+                queue.append(neighbor)
+
+    return distance
+
+# 接收数据
+n, m, s = map(int, input().split())
+edges = []
+for _ in range(m):
+    u, v = map(int, input().split())
+    edges.append((u, v))
+
+# 调用函数
+distances = bfs(n, m, s, edges)
+print(' '.join(map(str, distances)))
+```
+
+在这段代码中，我们首先通过`input()`函数接收用户输入的顶点数`n`、边数`m`和起始顶点`s`，然后在一个循环中接收每条边的起点和终点，并将它们添加到`edges`列表中。然后，我们调用`bfs`函数并打印结果。
+
+
+
+
+
+#### sy385: 受限层号的顶点数 中等
+
+https://sunnywhy.com/sfbj/10/3/385
+
+现有一个共n个顶点、m条边的有向图（假设顶点编号为从`0`到`n-1`）。我们称从s号顶点出发到达其他顶点经过的最小边数称为各顶点的层号。求层号不超过的顶点个数。
+
+**输入**
+
+第一行四个整数n、m、s、k（$1 \le n \le 100,0 \le m \le \frac{n(n-1)}2, 0 \le s \le n -1, 0 \le k \le 100$​），分别表示顶点数、边数、起始顶点编号；
+
+接下来m行，每行两个整数u、v（$0 \le u \le n-1,0 \le v \le n-1, u \ne v$），表示一条边的起点和终点的编号。数据保证不会有重边。
+
+**输出**
+
+输出一个整数，表示层号不超过的顶点个数。
+
+样例1
+
+输入
+
+```
+6 6 0 2
+0 1
+0 3
+3 5
+4 2
+3 4
+5 2
+```
+
+输出
+
+```
+5
+```
+
+解释
+
+对应的有向图和顶点层号如下图所示，层号不超过`2`的顶点有`5`个。
+
+![受限层号的顶点数.png](https://raw.githubusercontent.com/GMyhf/img/main/img/4f4d78cc-db0d-4a94-b195-b8fcc14e1d36.png)
+
+
+
+
+
+需要找到从给定的起始顶点到图中所有其他顶点的最短路径长度（也被称为顶点的层号），并计算层号不超过k的顶点个数。可以使用广度优先搜索（BFS）来解决这个问题。在BFS中，从起始节点开始，然后访问它的所有邻居，然后再访问这些邻居的邻居，依此类推。可以使用一个队列来跟踪待访问的节点，并使用一个距离数组来记录从起始节点到每个节点的最短距离。
+
+以下是解决这个问题的Python代码：
+
+```python
+from collections import deque
+
+def bfs(n, m, s, k, edges):
+    graph = [[] for _ in range(n)]
+    for u, v in edges:
+        graph[u].append(v)  # 只按照输入的方向添加边
+
+    distance = [-1] * n
+    distance[s] = 0
+
+    queue = deque([s])
+    while queue:
+        node = queue.popleft()
+        for neighbor in graph[node]:
+            if distance[neighbor] == -1:
+                distance[neighbor] = distance[node] + 1
+                queue.append(neighbor)
+
+    return sum(1 for d in distance if d <= k and d != -1)
+
+# 接收数据
+n, m, s, k = map(int, input().split())
+edges = []
+for _ in range(m):
+    u, v = map(int, input().split())
+    edges.append((u, v))
+
+# 调用函数
+count = bfs(n, m, s, k, edges)
+print(count)
+```
+
+在这段代码中，首先通过`input()`函数接收用户输入的顶点数`n`、边数`m`、起始顶点`s`和层号上限`k`，然后在一个循环中接收每条边的起点和终点，并将它们添加到`edges`列表中。然后，调用`bfs`函数并打印结果。
+
+
+
 
 
 
@@ -3030,33 +3593,25 @@ Explanation:
 
 ### 5.1 拓扑排序
 
-```python
 
-```
 
 
 
 ### 5.2 强连通
 
-```python
 
-```
 
 
 
 ### 5.3 Dijkstra
 
-```python
 
-```
 
 
 
 ### 5.4 Prim
 
-```python
 
-```
 
 
 
