@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 0927 GMT+8 April 5, 2024
+Updated 2059 GMT+8 April 5, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -10439,6 +10439,102 @@ for _ in range(n):
 ```
 
 
+
+## 25655: 核酸检测统计
+
+http://cs101.openjudge.cn/2024sp_routine/25655/
+
+因疫情防控需要，每名同学需要遵守“三天一检”的核酸要求，即每三天至少需要做一次核酸检测。现在需要统计学校同学近9天内的核酸检测完成情况，其中每名同学第一天必须完成一次核酸检测。请输出有多少名同学没有按时完成核酸检测，并输出完成情况（未按时完成核酸的学生数量除以院系总人数）最差的院系编号。
+
+**输入**
+
+第一行是整数n，为学生数量；
+第二行是整数m，为核酸检测信息数量；
+接下来先有n行，每行为学生的基本信息，即学生编号和院系编号，用空格隔开；
+最后为m行核酸检测信息，每行为检测日期和学生编号，用空格隔开。其中，检测日期为1～9的数字。
+
+**输出**
+
+第一行为没有按时完成核酸检测的学生数量；
+第二行为完成情况最差的院系编号
+
+样例输入
+
+```
+3
+10
+1001 101
+1003 101
+1004 102
+1 1001
+3 1001
+6 1001
+6 1003
+1 1003
+8 1003
+4 1003
+4 1004
+7 1004
+2 1004
+```
+
+样例输出
+
+```
+2
+102
+```
+
+
+
+```python
+# 真不玩原
+from collections import defaultdict
+
+n = int(input())  # 学生数量
+m = int(input())  # 核酸检测信息数量
+
+# 学生基本信息，以及核酸检测信息
+student_info = [list(map(int, input().split())) for _ in range(n)]
+test_info = [list(map(int, input().split())) for _ in range(m)]
+
+# 统计每名学生的核酸检测情况
+test_record = defaultdict(list)
+for day, student_id in test_info:
+    test_record[student_id].append(day)
+
+# 统计未按时完成核酸检测的学生数量
+late_count = 0
+department_uncompletion = defaultdict(int)
+department_total_students = defaultdict(int)
+
+for student in student_info:
+    student_id, department = student
+    sign = False
+    a = sorted(test_record[student_id])
+    if a[0] != 1 or max(a) < 7:
+        sign = True
+    for i in range(len(a)-1):
+        if a[i+1] - a[i] > 3:
+            sign = True
+            break
+    if sign:
+        late_count += 1
+        department_uncompletion[department] += 1
+    department_total_students[department] += 1
+
+# 计算每个院系未按时完成核酸检测的学生数量占比
+department_ratio = {}
+for department in department_uncompletion.keys():
+    ratio = department_uncompletion[department] / department_total_students[department]
+    department_ratio[department] = ratio
+
+# 输出结果
+worst_department = max(department_ratio, key=department_ratio.get)
+
+print(late_count)
+print(worst_department)
+```
 
 
 
