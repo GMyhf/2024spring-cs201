@@ -3583,35 +3583,93 @@ print(count)
 
 
 
-
-
 # 二、（Week9~10）图的算法
 
 ## 5 图的算法
 
 
 
-### 5.1 拓扑排序
+### 5.1 最短路径
+
+在图论中，有两种常见的方法用于求解最短路径问题：**Dijkstra算法**和**Bellman-Ford算法**。这两种算法各有优劣，选择哪种算法取决于图的特性和问题要求。如果图中没有负权边，并且只需要求解单源最短路径，Dijkstra算法通常是一个较好的选择。如果图中存在负权边或需要检测负权回路，或者需要求解所有节点对之间的最短路径，可以使用Bellman-Ford算法。
 
 
 
+#### 5.1.1 Dijkstra 算法
+
+**Dijkstra算法**：Dijkstra算法用于解决单源最短路径问题，即从给定源节点到图中所有其他节点的最短路径。算法的基本思想是通过不断扩展离源节点最近的节点来逐步确定最短路径。具体步骤如下：
+
+- 初始化一个距离数组，用于记录源节点到所有其他节点的最短距离。初始时，源节点的距离为0，其他节点的距离为无穷大。
+- 选择一个未访问的节点中距离最小的节点作为当前节点。
+- 更新当前节点的邻居节点的距离，如果通过当前节点到达邻居节点的路径比已知最短路径更短，则更新最短路径。
+- 标记当前节点为已访问。
+- 重复上述步骤，直到所有节点都被访问或者所有节点的最短路径都被确定。
+
+Dijkstra算法的时间复杂度为O(V^2)，其中V是图中的节点数。当使用优先队列（如最小堆）来选择距离最小的节点时，可以将时间复杂度优化到O((V+E)logV)，其中E是图中的边数。
 
 
-### 5.2 强连通
+
+#### 5.1.2 Bellman-Ford算法
+
+**Bellman-Ford算法**：Bellman-Ford算法用于解决单源最短路径问题，与Dijkstra算法不同，它可以处理带有负权边的图。算法的基本思想是通过松弛操作逐步更新节点的最短路径估计值，直到收敛到最终结果。具体步骤如下：
+
+- 初始化一个距离数组，用于记录源节点到所有其他节点的最短距离。初始时，源节点的距离为0，其他节点的距离为无穷大。
+- 进行V-1次循环（V是图中的节点数），每次循环对所有边进行松弛操作。如果从节点u到节点v的路径经过节点u的距离加上边(u, v)的权重比当前已知的从源节点到节点v的最短路径更短，则更新最短路径。
+- 检查是否存在负权回路。如果在V-1次循环后，仍然可以通过松弛操作更新最短路径，则说明存在负权回路，因此无法确定最短路径。
+
+Bellman-Ford算法的时间复杂度为O(V*E)，其中V是图中的节点数，E是图中的边数。
 
 
 
+#### 5.1.3 多源最短路径Floyd-Warshall算法
+
+求解所有顶点之间的最短路径可以使用**Floyd-Warshall算法**，它是一种多源最短路径算法。Floyd-Warshall算法可以在有向图或无向图中找到任意两个顶点之间的最短路径。
+
+算法的基本思想是通过一个二维数组来存储任意两个顶点之间的最短距离。初始时，这个数组包含图中各个顶点之间的直接边的权重，对于不直接相连的顶点，权重为无穷大。然后，通过迭代更新这个数组，逐步求得所有顶点之间的最短路径。
+
+具体步骤如下：
+
+1. 初始化一个二维数组`dist`，用于存储任意两个顶点之间的最短距离。初始时，`dist[i][j]`表示顶点i到顶点j的直接边的权重，如果i和j不直接相连，则权重为无穷大。
+
+2. 对于每个顶点k，在更新`dist`数组时，考虑顶点k作为中间节点的情况。遍历所有的顶点对(i, j)，如果通过顶点k可以使得从顶点i到顶点j的路径变短，则更新`dist[i][j]`为更小的值。
+
+   `dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])`
+
+3. 重复进行上述步骤，对于每个顶点作为中间节点，进行迭代更新`dist`数组。最终，`dist`数组中存储的就是所有顶点之间的最短路径。
+
+Floyd-Warshall算法的时间复杂度为O(V^3)，其中V是图中的顶点数。它适用于解决稠密图（边数较多）的最短路径问题，并且可以处理负权边和负权回路。
+
+以下是一个使用Floyd-Warshall算法求解所有顶点之间最短路径的示例代码：
+
+```python
+def floyd_warshall(graph):
+    n = len(graph)
+    dist = [[float('inf')] * n for _ in range(n)]
+
+    for i in range(n):
+        for j in range(n):
+            if i == j:
+                dist[i][j] = 0
+            elif j in graph[i]:
+                dist[i][j] = graph[i][j]
+
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+
+    return dist
+```
+
+在上述代码中，`graph`是一个字典，用于表示图的邻接关系。它的键表示起始顶点，值表示一个字典，其中键表示终点顶点，值表示对应边的权重。
+
+你可以将你的图表示为一个邻接矩阵或邻接表，并将其作为参数传递给`floyd_warshall`函数。函数将返回一个二维数组，其中`dist[i][j]`表示从顶点i到顶点j的最短路径长度。
 
 
-### 5.3 Dijkstra
 
+### 5.4 最小生成树 (MST) 
 
-
-
-
-### 5.4 Prim
-
-
+#### 5.4.1 Prim's algorithm
 
 
 
@@ -3623,7 +3681,39 @@ Prim's Algorithm:
 - Suitable for: Prim's algorithm is often used when the graph is dense or when the number of edges is close to the number of vertices. It is efficient for finding the MST in such cases.
 - Connectivity: Prim's algorithm always produces a connected MST.
 
-Kruskal's Algorithm:
+
+
+在数据结构中，关键路径算法通常与有向加权图（有向图中每条边都有一个权重）相关。一种常用的关键路径算法是**AOV 网络关键路径算法**（Activity On Vertex Network Critical Path Algorithm），它适用于没有环路的有向加权图。
+
+以下是 AOV 网络关键路径算法的基本步骤：
+
+1. 根据项目的活动和依赖关系，构建有向加权图。图的顶点表示活动，边表示活动之间的依赖关系，边的权重表示活动的持续时间。
+
+2. 对图进行拓扑排序，以确定活动的执行顺序。拓扑排序可以使用上述提到的拓扑排序算法（如 Kahn 算法）来实现。
+
+3. 初始化两个数组：`earliest_start_time` 和 `latest_finish_time`，分别用于存储每个顶点的最早开始时间和最晚完成时间。
+
+4. 从拓扑排序的第一个顶点开始，按照拓扑排序的顺序遍历每个顶点。
+
+   - 对于当前顶点 u，计算其最早开始时间 `earliest_start_time[u]`，即前面所有依赖顶点的最晚完成时间中的最大值加上 u 的持续时间。
+
+5. 从拓扑排序的最后一个顶点开始，按照逆拓扑排序的顺序遍历每个顶点。
+
+   - 对于当前顶点 v，计算其最晚完成时间 `latest_finish_time[v]`，即后面所有依赖顶点的最早开始时间中的最小值减去 v 的持续时间。
+
+6. 对于每条边 (u, v)，计算其总时差（Total Float）：
+
+   - 总时差等于 `latest_finish_time[v] - earliest_start_time[u] - edge_weight(u, v)`。
+
+7. 找到总时差为 0 的边，这些边构成了关键路径。关键路径上的活动是项目的关键活动，任何关键活动的延迟都会导致项目延迟。
+
+关键路径算法可以使用图的邻接表或邻接矩阵来表示有向加权图，并以此作为输入进行计算。通过计算关键路径，可以确定项目的关键活动和项目的最长完成时间，有助于项目管理和资源分配。
+
+请注意，这里介绍的是一种常见的关键路径算法，其他算法和技术也可用于求解关键路径问题，具体选择取决于实际情况和需求。
+
+
+
+#### 5.4.2 Kruskal's Algorithm:
 
 - Approach: Kruskal's algorithm sorts all the edges in the graph by their weights and then iteratively adds the edges with the minimum weight as long as they do not create a cycle in the MST.
 - Suitable for: Kruskal's algorithm is often used when the graph is sparse or when the number of edges is much smaller than the number of vertices. It is efficient for finding the MST in such cases.
@@ -3639,6 +3729,184 @@ In summary, you can choose between Prim's algorithm and Kruskal's algorithm base
 
 
 
+Kruskal算法是一种用于解决最小生成树（Minimum Spanning Tree，简称MST）问题的贪心算法。给定一个连通的带权无向图，Kruskal算法可以找到一个包含所有顶点的最小生成树，即包含所有顶点且边权重之和最小的树。
+
+以下是Kruskal算法的基本步骤：
+
+1. 将图中的所有边按照权重从小到大进行排序。
+
+2. 初始化一个空的边集，用于存储最小生成树的边。
+
+3. 重复以下步骤，直到边集中的边数等于顶点数减一或者所有边都已经考虑完毕：
+
+   - 选择排序后的边集中权重最小的边。
+   - 如果选择的边不会导致形成环路（即加入该边后，两个顶点不在同一个连通分量中），则将该边加入最小生成树的边集中。
+
+4. 返回最小生成树的边集作为结果。
+
+Kruskal算法的核心思想是通过不断选择权重最小的边，并判断是否会形成环路来构建最小生成树。算法开始时，每个顶点都是一个独立的连通分量，随着边的不断加入，不同的连通分量逐渐合并为一个连通分量，直到最终形成最小生成树。
+
+实现Kruskal算法时，一种常用的数据结构是并查集（Disjoint Set）。并查集可以高效地判断两个顶点是否在同一个连通分量中，并将不同的连通分量合并。
+
+下面是一个使用Kruskal算法求解最小生成树的示例代码：
+
+```python
+class DisjointSet:
+    def __init__(self, num_vertices):
+        self.parent = list(range(num_vertices))
+        self.rank = [0] * num_vertices
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        root_x = self.find(x)
+        root_y = self.find(y)
+
+        if root_x != root_y:
+            if self.rank[root_x] < self.rank[root_y]:
+                self.parent[root_x] = root_y
+            elif self.rank[root_x] > self.rank[root_y]:
+                self.parent[root_y] = root_x
+            else:
+                self.parent[root_x] = root_y
+                self.rank[root_y] += 1
+
+
+def kruskal(graph):
+    num_vertices = len(graph)
+    edges = []
+
+    # 构建边集
+    for i in range(num_vertices):
+        for j in range(i + 1, num_vertices):
+            if graph[i][j] != 0:
+                edges.append((i, j, graph[i][j]))
+
+    # 按照权重排序
+    edges.sort(key=lambda x: x[2])
+
+    # 初始化并查集
+    disjoint_set = DisjointSet(num_vertices)
+
+    # 构建最小生成树的边集
+    minimum_spanning_tree = []
+
+    for edge in edges:
+        u, v, weight = edge
+        if disjoint_set.find(u) != disjoint_set.find(v):
+            disjoint_set.union(u, v)
+            minimum_spanning_tree.append((u, v, weight))
+
+    return minimum_spanning_tree
+```
+
+在上述代码中，`graph` 是一个二维矩阵，表示带权无向图的邻接矩阵。`graph[i][j]` 表示顶点 i 和顶点 j 之间的边的权重。
+
+Kruskal算法的时间复杂度为 O(ElogE)，其中 E 是边的数量。排序边集的时间复杂度为 O(ElogE)，并查集操作的时间复杂度为 O(Eα(V))，其中 α 是 Ackermann 函数的反函数，近似为常数。因此，总体上来说，Kruskal算法的时间复杂度可以近似为 O(ElogE)。
+
+
+
+### 5.3 拓扑排序
+
+拓扑排序（Topological Sorting）是对有向无环图（DAG）进行排序的一种算法。它将图中的顶点按照一种线性顺序进行排列，使得对于任意的有向边 (u, v)，顶点 u 在排序中出现在顶点 v 的前面。
+
+拓扑排序可以用于解决一些依赖关系的问题，例如任务调度、编译顺序等。
+
+下面是拓扑排序的一种常见算法，称为**Kahn算法**：
+
+1. 计算每个顶点的入度（Indegree），即指向该顶点的边的数量。
+
+2. 初始化一个空的结果列表 `result` 和一个队列 `queue`。
+
+3. 将所有入度为 0 的顶点加入队列 `queue`。
+
+4. 当队列 `queue` 不为空时，执行以下步骤：
+   - 从队列中取出一个顶点 `u`。
+   - 将 `u` 添加到 `result` 列表中。
+   - 对于顶点 `u` 的每个邻接顶点 `v`，减少 `v` 的入度值。
+   - 如果顶点 `v` 的入度变为 0，则将 `v` 加入队列 `queue`。
+
+5. 如果 `result` 列表的长度等于图中顶点的数量，则拓扑排序成功，返回结果列表 `result`；否则，图中存在环，无法进行拓扑排序。
+
+下面是一个使用 Kahn 算法进行拓扑排序的示例代码：
+
+```python
+from collections import defaultdict
+from queue import Queue
+
+def topological_sort(graph):
+    indegree = defaultdict(int)
+    result = []
+    queue = Queue()
+
+    # 计算每个顶点的入度
+    for u in graph:
+        for v in graph[u]:
+            indegree[v] += 1
+
+    # 将入度为 0 的顶点加入队列
+    for u in graph:
+        if indegree[u] == 0:
+            queue.put(u)
+
+    # 执行拓扑排序
+    while not queue.empty():
+        u = queue.get()
+        result.append(u)
+
+        for v in graph[u]:
+            indegree[v] -= 1
+            if indegree[v] == 0:
+                queue.put(v)
+
+    # 检查是否存在环
+    if len(result) == len(graph):
+        return result
+    else:
+        return None
+```
+
+在上述代码中，`graph` 是一个字典，用于表示有向图的邻接关系。它的键表示顶点，值表示一个列表，表示从该顶点出发的边所连接的顶点。
+
+你可以将你的有向图表示为一个邻接矩阵或邻接表，并将其作为参数传递给 `topological_sort` 函数。如果存在拓扑排序，函数将返回一个列表，按照拓扑排序的顺序包含所有顶点。如果图中存在环，函数将返回 `None`，表示无法进行拓扑排序。
+
+
+
+### 5.4 关键路径
+
+在数据结构中，关键路径算法通常与有向加权图（有向图中每条边都有一个权重）相关。一种常用的关键路径算法是**AOV 网络关键路径算法**（Activity On Vertex Network Critical Path Algorithm），它适用于没有环路的有向加权图。
+
+以下是 AOV 网络关键路径算法的基本步骤：
+
+1. 根据项目的活动和依赖关系，构建有向加权图。图的顶点表示活动，边表示活动之间的依赖关系，边的权重表示活动的持续时间。
+
+2. 对图进行拓扑排序，以确定活动的执行顺序。拓扑排序可以使用上述提到的拓扑排序算法（如 Kahn 算法）来实现。
+
+3. 初始化两个数组：`earliest_start_time` 和 `latest_finish_time`，分别用于存储每个顶点的最早开始时间和最晚完成时间。
+
+4. 从拓扑排序的第一个顶点开始，按照拓扑排序的顺序遍历每个顶点。
+
+   - 对于当前顶点 u，计算其最早开始时间 `earliest_start_time[u]`，即前面所有依赖顶点的最晚完成时间中的最大值加上 u 的持续时间。
+
+5. 从拓扑排序的最后一个顶点开始，按照逆拓扑排序的顺序遍历每个顶点。
+
+   - 对于当前顶点 v，计算其最晚完成时间 `latest_finish_time[v]`，即后面所有依赖顶点的最早开始时间中的最小值减去 v 的持续时间。
+
+6. 对于每条边 (u, v)，计算其总时差（Total Float）：
+
+   - 总时差等于 `latest_finish_time[v] - earliest_start_time[u] - edge_weight(u, v)`。
+
+7. 找到总时差为 0 的边，这些边构成了关键路径。关键路径上的活动是项目的关键活动，任何关键活动的延迟都会导致项目延迟。
+
+关键路径算法可以使用图的邻接表或邻接矩阵来表示有向加权图，并以此作为输入进行计算。通过计算关键路径，可以确定项目的关键活动和项目的最长完成时间，有助于项目管理和资源分配。
+
+请注意，这里介绍的是一种常见的关键路径算法，其他算法和技术也可用于求解关键路径问题，具体选择取决于实际情况和需求。
+
+
+
 # 三、笔试题目
 
 2023年有考到KMP，冒泡排序的优化。
@@ -3646,6 +3914,8 @@ In summary, you can choose between Prim's algorithm and Kruskal's algorithm base
 2022年5个大题：图Dijkstra，二叉树，排序，单链表，二叉树。
 
 2021年6个大题：森林dfs、bfs，哈夫曼树，二叉树建堆，图prim，二叉树遍历，图走迷宫。
+
+
 
 
 
