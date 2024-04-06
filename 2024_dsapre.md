@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 2059 GMT+8 April 5, 2024
+Updated 2014 GMT+8 April 6, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -11612,6 +11612,41 @@ for i in range(n):
         children_list.append(child_value)
 root = nodes[[value for value in nodes.keys() if value not in children_list][0]]
 traverse_print(root, nodes)
+
+```
+
+
+
+总体思路分为三步：1.通过字典建立输入数据的父子关系；2.找到树的根（这里我将父节点和子节点分别用两个列表记录，最后使用集合减法）；3.通过递归实现要求的从小到大遍历。
+
+感觉这种题目用字典写会更简洁，而且不再需要考虑如何将输入的值全部归入TreeNode类并建立父子关系的问题。
+
+```python
+# 王铭健，工学院 2300011118
+from collections import defaultdict
+n = int(input())
+tree = defaultdict(list)
+parents = []
+children = []
+for i in range(n):
+    t = list(map(int, input().split()))
+    parents.append(t[0])
+    if len(t) > 1:
+        ch = t[1::]
+        children.extend(ch)
+        tree[t[0]].extend(ch)
+
+
+def traversal(node):
+    seq = sorted(tree[node] + [node])
+    for x in seq:
+        if x == node:
+            print(node)
+        else:
+            traversal(x)
+
+
+traversal((set(parents) - set(children)).pop())
 
 ```
 
