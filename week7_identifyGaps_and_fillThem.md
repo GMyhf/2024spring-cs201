@@ -2,7 +2,7 @@
 
 
 
-Updated 1509 GMT+8 Apr 1, 2024
+Updated 0100 GMT+8 Apr 7, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -177,7 +177,7 @@ H(key) = key%p
 
 **1.开放地址法**
 
-开放地址法的基本思想是：把记录都存储在散列表数组中，当某一记录关键字 key 的初始散列地址 H0 = H(key)发生冲突时，以 H0 为基础，采取合适方法计算得到另一个地址 H1，如果 H1 仍然发生冲突，以 为基础再求下一个地址 H2，若 H2 仍然冲突，再求得 H3。依次类推，直至 Hk 不发生冲突为止，则 Hk 为该记录在表中的散列地址。
+开放地址法的基本思想是：把记录都存储在散列表数组中，当某一记录关键字 key 的初始散列地址 H0 = H(key)发生冲突时，以 H0 为基础，采取合适方法计算得到另一个地址 H1，如果 H1 仍然发生冲突，以 H1 为基础再求下一个地址 H2，若 H2 仍然冲突，再求得 H3。依次类推，直至 Hk 不发生冲突为止，则 Hk 为该记录在表中的散列地址。
 
 这种方法在寻找 ”下一个” 空的散列地址时，原来的数组空间对所有的元素都是开放的所以称为开放地址法。通常把寻找 “下一个” 空位的过程称为**探测**，上述方法可用如下公式表示：
 
@@ -242,7 +242,195 @@ di = 伪随机数序列
 
 
 
-## 1.4 散列表的查找
+> 处理散列表冲突的常见方法包括以下几种：
+>
+> 1. 链地址法（Chaining）：使用链表来处理冲突。每个散列桶（哈希桶）中存储一个链表，具有相同散列值的元素会链接在同一个链表上。
+>
+> 2. 开放地址法（Open Addressing）：
+>    - 线性探测（Linear Probing）：如果发生冲突，就线性地探测下一个可用的槽位，直到找到一个空槽位或者达到散列表的末尾。
+>    - 二次探测（Quadratic Probing）：如果发生冲突，就使用二次探测来查找下一个可用的槽位，避免线性探测中的聚集效应。
+>    - 双重散列（Double Hashing）：如果发生冲突，就使用第二个散列函数来计算下一个槽位的位置，直到找到一个空槽位或者达到散列表的末尾。
+>
+> 3. 再散列（Rehashing）：当散列表的**装载因子（load factor）**超过一定阈值时，进行扩容操作，重新调整散列函数和散列桶的数量，以减少冲突的概率。
+>
+> 4. 建立公共溢出区（Public Overflow Area）：将冲突的元素存储在一个公共的溢出区域，而不是在散列桶中。在进行查找时，需要遍历溢出区域。
+>
+> 这些方法各有优缺点，适用于不同的应用场景。选择合适的处理冲突方法取决于数据集的特点、散列表的大小以及性能需求。
+
+
+
+**双重散列（Double Hashing）**是一种处理散列表冲突的方法，它使用两个散列函数来计算冲突时下一个可用的槽位位置。下面是双重散列的一个示例：
+
+假设有一个散列表，大小为10，使用双重散列来处理冲突。我们定义两个散列函数：
+
+1. 第一个散列函数 `hash1(key)`：将关键字 `key` 转换为散列值，使用一种合适的散列算法，比如取模运算。
+2. 第二个散列函数 `hash2(key)`：将关键字 `key` 转换为一个正整数，在本例中，我们使用简单的散列函数 `hash2(key) = 7 - (key % 7)`。
+
+现在，我们通过以下步骤来插入一个关键字 `key` 到散列表中：
+
+1. 使用第一个散列函数 `hash1(key)` 计算关键字 `key` 的初始散列值 `hash_value = hash1(key)`。
+2. 如果散列表中的槽位 `hash_value` 是空的，则将关键字 `key` 插入到该槽位中。
+3. 如果槽位 `hash_value` 不为空，表示发生了冲突。在这种情况下，我们**使用第二个散列函数 `hash2(key)` 来计算关键字 `key` 的步长（step）**。
+4. 通过计算 `step = hash2(key)`，我们将跳过 `step` 个槽位，继续在散列表中查找下一个槽位。
+5. 重复步骤 3 和步骤 4，直到找到一个空槽位，将关键字 `key` 插入到该槽位中。
+
+如果散列表已满而且仍然无法找到空槽位，那么插入操作将失败。
+
+双重散列使用两个散列函数来计算步长，这样可以避免线性探测中的聚集效应，提高散列表的性能。每个关键字都有唯一的步长序列，因此它可以在散列表中的不同位置进行探测，减少冲突的可能性。
+
+
+
+**笔试例题：**
+
+有一个散列表如下图所示，其散列函数为 h(key)=key mod 13，该散列表使用再散列函数
+H2(Key)=Key MOD 3 解决碰撞，问从表中检索出关键码 38 需进行几次比较（ B ）。
+
+| 0    | 1    | 2    | 3    | 4    | 5    | 6    | 7    | 8    | 9    | 10   | 11   | 12   |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| 26   | 38   |      |      | 17   |      |      | 33   |      | 48   |      |      | 25   |
+
+A： 1 B：2 C: 3 D： 4
+
+
+
+## 1.5 程序实现
+
+字符串构建简单的散列函数。针对异序词，这个散列函数总是得到相同的散列值。要弥补这一点，可以用字符位置作为权重因子，
+
+```python
+def hash(a_string, table_size):
+    sum = 0
+    for pos in range(len(a_string)):
+        sum = sum + (pos+1) * ord(a_string[pos])
+
+    return sum%table_size
+
+print(hash('abba', 11))
+```
+
+
+
+使用两个列表创建HashTable类，以此实现映射抽象数据类型。其中，名为slots的列表用于存储键，名为data的列表用于存储值。两个列表中的键与值一一对应。在本节的例子中，散列表的初始大小是11。尽管初始大小可以任意指定，但选用一个素数很重要，这样做可以尽可能地提高冲突处理算法的效率。
+
+hashfunction实现了简单的取余函数。处理冲突时，采用“加1”再散列函数的线性探测法。put函数假设，除非键已经在self.slots中，否则总是可以分配一个空槽。该函数计算初始的散列值，如果对应的槽中已有元素，就循环运行rehash函数，直到遇见一个空槽。如果槽中已有这个键，就用新值替换旧值。
+
+同理，get函数也先计算初始散列值。如果值不在初始散列值对应的槽中，就使用rehash确定下一个位置。注意，第15行确保搜索最终一定能结束，因为不会回到初始槽。如果遇到初始槽，就说明已经检查完所有可能的槽，并且元素必定不存在。
+
+HashTable类的最后两个方法提供了额外的字典功能。重载__getitem__和__setitem__，以通过[]进行访问。这意味着创建HashTable类之后，就可以使用熟悉的索引运算符了。
+
+
+
+```python
+class HashTable:
+    def __init__(self):
+        self.size = 11
+        self.slots = [None] * self.size
+        self.data = [None] * self.size
+
+    def put(self,key,data):
+        hashvalue = self.hashfunction(key,len(self.slots))
+
+        if self.slots[hashvalue] == None:
+            self.slots[hashvalue] = key
+            self.data[hashvalue] = data
+        else:
+            if self.slots[hashvalue] == key:
+                self.data[hashvalue] = data #replace
+            else:
+                nextslot = self.rehash(hashvalue,len(self.slots))
+                while self.slots[nextslot] != None and self.slots[nextslot] != key:
+                    nextslot = self.rehash(nextslot,len(self.slots))
+
+                if self.slots[nextslot] == None:
+                    self.slots[nextslot] = key
+                    self.data[nextslot] = data
+                else:
+                    self.data[nextslot] = data #replace
+
+    def hashfunction(self,key,size):
+        return key%size
+
+    def rehash(self,oldhash,size):
+        return (oldhash+1)%size
+
+    def get(self,key):
+        startslot = self.hashfunction(key,len(self.slots))
+
+        data = None
+        stop = False
+        found = False
+        position = startslot
+        while self.slots[position] != None and not found and not stop:
+                if self.slots[position] == key:
+                    found = True
+                    data = self.data[position]
+                else:
+                    position=self.rehash(position,len(self.slots))
+                    if position == startslot:
+                        stop = True
+        return data
+
+    def __getitem__(self,key):
+        return self.get(key)
+
+    def __setitem__(self,key,data):
+        self.put(key,data)
+
+
+H=HashTable()
+H[54]="cat"
+H[26]="dog"
+H[93]="lion"
+H[17]="tiger"
+H[77]="bird"
+H[31]="cow"
+H[44]="goat"
+H[55]="pig"
+H[20]="chicken"
+print(H.slots)
+print(H.data)
+
+
+print(H[20])
+print(H[17])
+
+H[20] = 'duck'
+print(H[20])
+
+print(H.data)
+
+print(H[99])
+
+"""
+[77, 44, 55, 20, 26, 93, 17, None, None, 31, 54]
+['bird', 'goat', 'pig', 'chicken', 'dog', 'lion', 'tiger', None, None, 'cow', 'cat']
+chicken
+tiger
+duck
+['bird', 'goat', 'pig', 'duck', 'dog', 'lion', 'tiger', None, None, 'cow', 'cat']
+None
+"""
+```
+
+
+
+注意，在11个槽中，有9个被占用了。占用率被称作载荷因子（ load factor），记作λ，定义如下。
+
+
+
+ $\lambda = \frac {元素个数}{散列表大小}$ 
+
+
+
+在本例中, $\lambda = \frac {9}{11}$.
+
+
+
+
+
+
+
+## 1.6 散列表的查找
 
 在散列表上进行查找的过程和创建散列表的过程基本一致。
 
