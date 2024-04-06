@@ -1,6 +1,6 @@
 # 202404~05-Other
 
-Updated 1515 GMT+8 Apr 4, 2024
+Updated 2359 GMT+8 Apr 6, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -76,6 +76,117 @@ Auxiliary Space:
 
 
 
+
+# 二、KMP（Knuth-Morris-Pratt）
+
+
+
+https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm
+
+In computer science, the **Knuth–Morris–Pratt algorithm** (or **KMP algorithm**) is a string-searching algorithm that searches for occurrences of a "word" `W` within a main "text string" `S` by employing the observation that when a mismatch occurs, the word itself embodies sufficient information to determine where the next match could begin, thus bypassing re-examination of previously matched characters.
+
+The algorithm was conceived by James H. Morris and independently discovered by Donald Knuth "a few weeks later" from automata theory. Morris and Vaughan Pratt published a technical report in 1970. The three also published the algorithm jointly in 1977. Independently, in 1969, Matiyasevich discovered a similar algorithm, coded by a two-dimensional Turing machine, while studying a string-pattern-matching recognition problem over a binary alphabet. This was the first linear-time algorithm for string matching.
+
+
+
+## KMP Algorithm for Pattern Searching
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20231107135044605.png" alt="image-20231107135044605" style="zoom: 33%;" />
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20231107135333487.png" alt="image-20231107135333487" style="zoom:50%;" />
+
+
+
+**Generative AI is experimental**. Info quality may vary.
+
+The Knuth–Morris–Pratt (KMP) algorithm is **a computer science algorithm that searches for words in a text string**. The algorithm compares characters from left to right. 
+
+When a mismatch occurs, the algorithm uses a preprocessed table called a "Prefix Table" to skip character comparisons.
+
+How the KMP algorithm works
+
+- The algorithm finds repeated substrings called LPS in the pattern and stores LPS information in an array.
+- The algorithm compares characters from left to right.
+- When a mismatch occurs, the algorithm uses a preprocessed table called a "Prefix Table" to skip character comparisons.
+- The algorithm precomputes a prefix function that helps determine the number of characters to skip in the pattern whenever a mismatch occurs.
+- The algorithm improves upon the brute force method by utilizing information from previous comparisons to avoid unnecessary character comparisons.
+
+Benefits of the KMP algorithm
+
+- The KMP algorithm efficiently helps you find a specific pattern within a large body of text.
+- The KMP algorithm makes your text editing tasks quicker and more efficient.
+- The KMP algorithm guarantees 100% reliability.
+
+
+
+
+
+### **Preprocessing Overview:**
+
+- KMP algorithm preprocesses pat[] and constructs an auxiliary **lps[]** of size **m** (same as the size of the pattern) which is used to skip characters while matching.
+- Name **lps** indicates the longest proper prefix which is also a suffix. A proper prefix is a prefix with a whole string not allowed. For example, prefixes of “ABC” are “”, “A”, “AB” and “ABC”. Proper prefixes are “”, “A” and “AB”. Suffixes of the string are “”, “C”, “BC”, and “ABC”. 真前缀（proper prefix）是一个串除该串自身外的其他前缀。
+- We search for lps in subpatterns. More clearly we ==focus on sub-strings of patterns that are both prefix and suffix==.
+- For each sub-pattern pat[0..i] where i = 0 to m-1, lps[i] stores the length of the maximum matching proper prefix which is also a suffix of the sub-pattern pat[0..i].
+
+
+
+KMP（Knuth-Morris-Pratt）算法是一种利用双指针和动态规划的字符串匹配算法。
+
+```python
+""""
+compute_lps 函数用于计算模式字符串的LPS表。LPS表是一个数组，
+其中的每个元素表示模式字符串中当前位置之前的子串的最长前缀后缀的长度。
+该函数使用了两个指针 length 和 i，从模式字符串的第二个字符开始遍历。
+"""
+def compute_lps(pattern):
+    """
+    计算pattern字符串的最长前缀后缀（Longest Proper Prefix which is also Suffix）表
+    :param pattern: 模式字符串
+    :return: lps表
+    """
+
+    m = len(pattern)
+    lps = [0] * m
+    length = 0
+    for i in range(1, m):
+        while length > 0 and pattern[i] != pattern[length]:
+            length = lps[length - 1]    # 跳过前面已经比较过的部分
+        if pattern[i] == pattern[length]:
+            length += 1
+        lps[i] = length
+    return lps
+
+
+def kmp_search(text, pattern):
+    n = len(text)
+    m = len(pattern)
+    if m == 0:
+        return 0
+    lps = compute_lps(pattern)
+    matches = []
+
+    j = 0  # j是pattern的索引
+    for i in range(n):  # i是text的索引
+        while j > 0 and text[i] != pattern[j]:
+            j = lps[j - 1]
+        if text[i] == pattern[j]:
+            j += 1
+        if j == m:
+            matches.append(i - j + 1)
+            j = lps[j - 1]
+    return matches
+
+
+text = "ABABABABCABABABABCABABABABC"
+pattern = "ABABCABAB"
+index = kmp_search(text, pattern)
+print("pos matched：", index)
+# pos matched： [4, 13]
+
+
+```
 
 
 
