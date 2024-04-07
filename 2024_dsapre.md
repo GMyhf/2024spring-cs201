@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 2014 GMT+8 April 6, 2024
+Updated 0933 GMT+8 April 7, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -11910,6 +11910,44 @@ def construct_FBI_tree(s):
 N = int(input())
 s = input()
 print(construct_FBI_tree(s))
+```
+
+
+
+```python
+# ==谭訸 生命科学学院==
+class Node:
+    def __init__(self):
+        self.value = None
+        self.left = None
+        self.right = None
+
+def build_FBI(string):
+    root = Node()
+    if '0' not in string:
+        root.value = 'I'
+    elif '1' not in string:
+        root.value = 'B'
+    else:
+        root.value = 'F'
+    l = len(string) // 2
+    if l > 0:
+        root.left = build_FBI(string[:l])
+        root.right = build_FBI(string[l:])
+    return root
+
+def post_traverse(node):
+    ans = []
+    if node:
+        ans.extend(post_traverse(node.left))
+        ans.extend(post_traverse(node.right))
+        ans.append(node.value)
+    return ''.join(ans)
+
+n = int(input())
+string = input()
+root = build_FBI(string)
+print(post_traverse(root))
 ```
 
 
