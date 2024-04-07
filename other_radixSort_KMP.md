@@ -89,7 +89,7 @@ The algorithm was conceived by James H. Morris and independently discovered by D
 
 
 
-## KMP Algorithm for Pattern Searching
+KMP Algorithm for Pattern Searching
 
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20231107135044605.png" alt="image-20231107135044605" style="zoom: 33%;" />
 
@@ -123,7 +123,7 @@ Benefits of the KMP algorithm
 
 
 
-### **Preprocessing Overview:**
+**Preprocessing Overview:**
 
 - KMP algorithm preprocesses pat[] and constructs an auxiliary **lps[]** of size **m** (same as the size of the pattern) which is used to skip characters while matching.
 - Name **lps** indicates the longest proper prefix which is also a suffix. A proper prefix is a prefix with a whole string not allowed. For example, prefixes of “ABC” are “”, “A”, “AB” and “ABC”. Proper prefixes are “”, “A” and “AB”. Suffixes of the string are “”, “C”, “BC”, and “ABC”. 真前缀（proper prefix）是一个串除该串自身外的其他前缀。
@@ -189,6 +189,167 @@ print("pos matched：", index)
 ```
 
 
+
+
+
+
+
+# 三、B-trees
+
+2-3 树、2-3-4 树、B 树和 B+ 树
+
+**2-3 Tree**:
+
+- A 2-3 tree is a type of balanced search tree where each node can have either 2 or 3 children.
+- In a 2-3 tree:
+  - Every internal node has either 2 children and 1 data element, or 3 children and 2 data elements.
+  - The leaves are all at the same level.
+- Insertions and deletions in a 2-3 tree may cause tree restructuring to maintain the balance.
+
+**2-3-4 Tree**:
+
+- A 2-3-4 tree is a generalization of the 2-3 tree where nodes can have either 2, 3, or 4 children.
+- In a 2-3-4 tree:
+  - Every internal node has either 2, 3, or 4 children and 1, 2, or 3 data elements, respectively.
+  - The leaves are all at the same level.
+- Like the 2-3 tree, insertions and deletions may cause restructuring to maintain balance.
+
+**B-Tree**:
+
+- A B-tree is a self-balancing tree data structure that maintains sorted data and allows for efficient search, insertion, and deletion operations.
+- In a B-tree:
+  - Each node contains multiple keys and pointers to child nodes.
+  - Nodes can have a variable number of keys within a certain range, determined by the order of the B-tree.
+  - B-trees are balanced and ensure that all leaves are at the same level.
+- B-trees are commonly used in databases and file systems for their ability to handle large amounts of data efficiently.
+
+**B+ Tree**:
+
+- A B+ tree is a variation of the B-tree with additional features optimized for disk storage systems.
+- In a B+ tree:
+  - Data entries are stored only in leaf nodes.
+  - Internal nodes store keys and pointers to child nodes but do not store actual data.
+  - Leaf nodes are linked together in a linked list, making range queries efficient.
+- B+ trees are commonly used in database systems because of their efficiency in disk-based storage and their ability to handle range queries effectively.
+
+These tree structures are fundamental in computer science and are widely used in various applications where efficient data storage and retrieval are essential.
+
+
+
+
+
+Here's a brief tutorial on B-trees and B+ trees, along with Python implementations:
+
+### B-Tree Tutorial:
+
+1. **Introduction**:
+   - A B-tree is a self-balancing tree data structure that maintains sorted data and allows for efficient search, insertion, and deletion operations.
+   - Each node contains multiple keys and pointers to child nodes.
+   - Nodes can have a variable number of keys within a certain range, determined by the order of the B-tree.
+   - B-trees are balanced and ensure that all leaves are at the same level.
+
+2. **Operations**:
+   - **Search**: Starts from the root and recursively searches down the tree to find the target key.
+   - **Insertion**: Starts from the root and recursively inserts the key into the appropriate leaf node. If the leaf node is full, it may split, and the median key is pushed up to the parent node.
+   - **Deletion**: Starts from the root and recursively deletes the key from the appropriate leaf node. If deletion causes underflow, nodes may merge or borrow keys from neighboring nodes to maintain balance.
+
+### B-Tree Python Implementation:
+
+B树是一种自平衡的树，主要用于系统中大量数据的存储。它可以保持数据排序，并允许进行高效的插入、删除和查找操作。
+
+B树的主要特性如下：
+
+1. 所有叶子节点都在同一层。
+2. 每个节点中的元素从小到大排列，节点当中k个元素正好是k+1个孩子指针的分界点。
+3. 非叶子节点的孩子节点数目介于 t 和 2t 之间，其中 t 是树的阶数。每个非根节点至少有 t-1 个关键字，至多有 2t-1 个关键字。
+4. 根节点至少有两个孩子，除非它是一个叶节点（即树中只有一个节点）。
+
+以下是一个简单的B树的Python实现：
+
+```python
+class BTreeNode:
+    def __init__(self, leaf=False):
+        self.leaf = leaf
+        self.keys = []
+        self.child = []
+
+class BTree:
+    def __init__(self, t):
+        self.root = BTreeNode(True)
+        self.t = t
+
+    def insert(self, k):
+        root = self.root
+        if len(root.keys) == (2*self.t) - 1:
+            temp = BTreeNode()
+            self.root = temp
+            temp.child.insert(0, root)
+            self.split_child(temp, 0)
+            self.insert_non_full(temp, k)
+        else:
+            self.insert_non_full(root, k)
+
+    def insert_non_full(self, x, k):
+        i = len(x.keys) - 1
+        if x.leaf:
+            x.keys.append((None, None))
+            while i >= 0 and k < x.keys[i]:
+                x.keys[i+1] = x.keys[i]
+                i -= 1
+            x.keys[i+1] = k
+        else:
+            while i >= 0 and k < x.keys[i]:
+                i -= 1
+            i += 1
+            if len(x.child[i].keys) == (2*self.t) - 1:
+                self.split_child(x, i)
+                if k > x.keys[i]:
+                    i += 1
+            self.insert_non_full(x.child[i], k)
+
+    def split_child(self, x, i):
+        t = self.t
+        y = x.child[i]
+        z = BTreeNode(y.leaf)
+        x.child.insert(i+1, z)
+        x.keys.insert(i, y.keys[t-1])
+        z.keys = y.keys[t: (2*t) - 1]
+        y.keys = y.keys[0: t-1]
+        if not y.leaf:
+            z.child = y.child[t: 2*t]
+            y.child = y.child[0: t-1]
+
+# 创建一个阶数为3的B树
+btree = BTree(3)
+
+# 插入一些键
+keys = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+for key in keys:
+    btree.insert(key)
+
+# 打印B树的根节点的键
+print(btree.root.keys)
+#output: [(3, 6)] 
+```
+
+这个代码实现了B树的基本操作，包括插入和分裂子节点。但是，它并没有实现删除操作，这是一个更复杂的问题，需要更多的代码来处理各种情况。
+
+
+
+
+
+### B+ Tree Tutorial:
+
+1. **Introduction**:
+   - A B+ tree is a variation of the B-tree with additional features optimized for disk storage systems.
+   - Data entries are stored only in leaf nodes.
+   - Internal nodes store keys and pointers to child nodes but do not store actual data.
+   - Leaf nodes are linked together in a linked list, making range queries efficient.
+
+2. **Operations**:
+   - Operations are similar to B-trees but are optimized for disk access patterns, making them suitable for database systems.
+
+### 
 
 
 
