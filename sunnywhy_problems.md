@@ -1816,7 +1816,7 @@ else:
 
 
 
-### sy313: 迷宫可行路径数
+### sy313: 迷宫可行路径数 简单
 
 https://sunnywhy.com/sfbj/8/1/313
 
@@ -1944,7 +1944,7 @@ print(counter)
 
 
 
-### sy314: 指定步数的迷宫问题
+### sy314: 指定步数的迷宫问题 中等
 
 https://sunnywhy.com/sfbj/8/1/314
 
@@ -2097,7 +2097,7 @@ print("Yes" if canReach else "No")
 
 
 
-### sy315: 矩阵最大权值
+### sy315: 矩阵最大权值 中等
 
 https://sunnywhy.com/sfbj/8/1/315
 
@@ -2222,7 +2222,7 @@ print(maxValue)
 
 
 
-### sy316: 矩阵最大权值路径
+### sy316: 矩阵最大权值路径 中等
 
 https://sunnywhy.com/sfbj/8/1/316
 
@@ -2315,7 +2315,7 @@ for pos in optPath:
 
 
 
-### sy317: 迷宫最大权值
+### sy317: 迷宫最大权值 中等
 
 https://sunnywhy.com/sfbj/8/1/317
 
