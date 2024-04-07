@@ -1,6 +1,6 @@
 # 20240409～23-Week8~10 图论
 
-Updated 2359 GMT+8 Apr 5, 2024
+Updated 2301 GMT+8 Apr 7, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -614,122 +614,9 @@ if __name__ == "__main__":
 
 
 
-### 2.4 类实现
-
-在Python中，通过字典可以轻松地实现邻接表。我们要创建两个类：Graph类存储包含所有顶点的主列表，Vertex类表示图中的每一个顶点。
-Vertex使用字典connectedTo来记录与其相连的顶点，以及每一条边的权重。代码清单7-1展示了Vertex类的实现，其构造方法简单地初始化id（它通常是一个字符串），以及字典connectedTo。addNeighbor方法添加从一个顶点到另一个的连接。getConnections方法返回邻接表中的所有顶点，由connectedTo来表示。getWeight方法返回从当前顶点到以参数传入的顶点之间的边的权重。
-
-代码清单7-1 Vertex类
-
-```python
-class Vertex:
-    def __init__(self,key):
-        self.id = key
-        self.connectedTo = {}
-
-    def addNeighbor(self,nbr,weight=0):
-        self.connectedTo[nbr] = weight
-
-    def __str__(self):
-        return str(self.id) + ' connectedTo: ' + str([x.id for x in self.connectedTo])
-
-    def getConnections(self):
-        return self.connectedTo.keys()
-
-    def getId(self):
-        return self.id
-
-    def getWeight(self,nbr):
-        return self.connectedTo[nbr]
-```
 
 
-
-Graph类的实现如代码清单7-2所示，其中包含一个将顶点名映射到顶点对象的字典。在图6中，该字典对象由灰色方块表示。Graph类也提供了向图中添加顶点和连接不同顶点的方法。getVertices方法返回图中所有顶点的名字。此外，我们还实现了__iter__方法，从而使遍历图中的所有顶点对象更加方便。总之，这两个方法使我们能够根据顶点名或者顶点对象本身遍历图中的所有顶点。
-
-代码清单7-2 Graph类
-
-```python
-class Graph:
-    def __init__(self):
-        self.vertList = {}
-        self.numVertices = 0
-
-    def addVertex(self,key):
-        self.numVertices = self.numVertices + 1
-        newVertex = Vertex(key)
-        self.vertList[key] = newVertex
-        return newVertex
-
-    def getVertex(self,n):
-        if n in self.vertList:
-            return self.vertList[n]
-        else:
-            return None
-
-    def __contains__(self,n):
-        return n in self.vertList
-
-    def addEdge(self,f,t,weight=0):
-        if f not in self.vertList:
-            nv = self.addVertex(f)
-        if t not in self.vertList:
-            nv = self.addVertex(t)
-        self.vertList[f].addNeighbor(self.vertList[t], weight)
-
-    def getVertices(self):
-        return self.vertList.keys()
-
-    def __iter__(self):
-        return iter(self.vertList.values())
-```
-
-下面的Python会话使用Graph类和Vertex类创建了如图6所示的图。首先创建6个顶点，依次编号为0～5。然后打印顶点字典。注意，对每一个键，我们都创建了一个Vertex实例。接着，添加将顶点连接起来的边。最后，用一个嵌套循环验证图中的每一条边都已被正确存储。请按照图6的内容检查会话的最终结果。
-
-
-
-```
->>> g = Graph()
->>> for i in range(6):
-...    g.addVertex(i)
->>> g.vertList
-{0: <adjGraph.Vertex instance at 0x41e18>,
- 1: <adjGraph.Vertex instance at 0x7f2b0>,
- 2: <adjGraph.Vertex instance at 0x7f288>,
- 3: <adjGraph.Vertex instance at 0x7f350>,
- 4: <adjGraph.Vertex instance at 0x7f328>,
- 5: <adjGraph.Vertex instance at 0x7f300>}
->>> g.addEdge(0,1,5)
->>> g.addEdge(0,5,2)
->>> g.addEdge(1,2,4)
->>> g.addEdge(2,3,9)
->>> g.addEdge(3,4,7)
->>> g.addEdge(3,5,3)
->>> g.addEdge(4,0,1)
->>> g.addEdge(5,4,8)
->>> g.addEdge(5,2,1)
->>> for v in g:
-...    for w in v.getConnections():
-...        print("( %s , %s )" % (v.getId(), w.getId()))
-...
-( 0 , 5 )
-( 0 , 1 )
-( 1 , 2 )
-( 2 , 3 )
-( 3 , 4 )
-( 3 , 5 )
-( 4 , 0 )
-( 5 , 4 )
-( 5 , 2 )
-```
-
-
-
-上面类方式定义顶点和图，要求掌握，因为笔试可能出现。在机考中，也可以直接使用二维列表或者字典来表示邻接表。
-
-
-
-### 2.5 编程题目
+### 2.4 编程题目
 
 #### sy376: 无向图的邻接矩阵 简单
 
@@ -1037,2012 +924,563 @@ for i in range(n):
 
 
 
-## 3 图的矩阵遍历
+### 2.5 图的类实现（笔试）
 
-### 3.1 深度优先搜索(DFS)
+在Python中，通过字典可以轻松地实现邻接表。我们要创建两个类：Graph类存储包含所有顶点的主列表，Vertex类表示图中的每一个顶点。
+Vertex使用字典connectedTo来记录与其相连的顶点，以及每一条边的权重。代码清单7-1展示了Vertex类的实现，其构造方法简单地初始化id（它通常是一个字符串），以及字典connectedTo。addNeighbor方法添加从一个顶点到另一个的连接。getConnections方法返回邻接表中的所有顶点，由connectedTo来表示。getWeight方法返回从当前顶点到以参数传入的顶点之间的边的权重。
 
-设想我们现在以第一视角身处一个巨大的迷宫当中，没有上帝视角，没有通信设施，更没有热血动漫里的奇迹，有的只是四周长得一样的墙壁。于是，我们只能自己想办法走出去。如果迷失了内心，随便乱走，那么很可能被四周完全相同的景色绕晕在其中，这时只能放弃所谓的侥幸，而去采取下面这种看上去很盲目但实际上会很有效的方法。
-
-以当前所在位置为起点，沿着一条路向前走，当碰到岔道口时，选择其中一个岔路前进如果选择的这个岔路前方是一条死路，就退回到这个岔道口，选择另一个岔路前进。如果岔路中存在新的岔道口，那么仍然按上面的方法枚举新岔道口的每一条岔路。这样，只要迷宫存在出口，那么这个方法一定能够找到它。可能有读者会问，如果在第一个岔道口处选择了一条没有出路的分支，而这个分支比较深，并且路上多次出现新的岔道口，那么当发现这个分支是个死分支之后，如何退回到最初的这个岔道口?其实方法很简单，只要让右手始终贴着右边的墙壁一路往前走，那么自动会执行上面这个走法，并且最终一定能找到出口。图 8-1 即为使用这个方法走一个简单迷宫的示例。
-
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20231126163735204.png" alt="image-20231126163735204" style="zoom:50%;" />
-
-
-
-从图 8-1 可知，从起点开始前进，当碰到岔道口时，总是选择其中一条岔路前进(例如图中总是先选择最右手边的岔路)，在岔路上如果又遇到新的岔道口，仍然选择新岔道口的其中一条岔路前进，直到碰到死胡同才回退到最近的岔道口选择另一条岔路。也就是说，当碰到岔道口时，总是以“**深度**”作为前进的关键词，不碰到死胡同就不回头，因此把这种搜索的方式称为**深度优先搜索**(Depth First Search，**DFS**)。
-从迷宫的例子还应该注意到，深度优先搜索会走遍所有路径，并且每次走到死胡同就代表一条完整路径的形成。这就是说，**深度优先搜索是一种枚举所有完整路径以遍历所有情况的搜索方法**。
-
-
-
-深度优先搜索 (DFS)可以使用栈来实现。但是实现起来却并不轻松，有没有既容易理解又容易实现的方法呢?有的——递归。现在从 DFS 的角度来看当初求解 Fibonacci 数列的过程。
-
-回顾一下 Fibonacci数列的定义: $F(0)=1,F(1)=1,F(n)=F(n-1)+F(n-2)(n≥2)$​​。可以从这个定义中挖掘到，每当将 F(n)分为两部分 F(n-1)与 F(n-2)时，就可以把 F(n)看作迷宫的岔道口，由它可以到达两个新的关键结点 F(n-1)与 F(n-2)。而之后计算 F(n-1)时，又可以把 F(n-1)当作在岔道口 F(n)之下的岔道口。
-
-既然有岔道口，那么一定有死胡同。很容易想象，当访问到 F(0)和 F(1)时，就无法再向下递归下去，因此 F(0)和 F(1)就是死胡同。这样说来，==递归中的递归式就是岔道口，而递归边界就是死胡同==，这样就可以把如何用递归实现深度优先搜索的过程理解得很清楚。为了使上面的过程更清晰，可以直接来分析递归图 (见图 4-3)：可以在递归图中看到，只要n > 1，F(n)就有两个分支，即把 F(n)当作岔道口；而当n为1或0时，F(1)与F(0)就是迷宫的死胡同，在此处程序就需要返回结果。这样当遍历完所有路径（从顶端的 F(4)到底层的所有 F(1)与 F(0)）后，就可以得到 F(4)的值。
-
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20231126164549437.png" alt="image-20231126164549437" style="zoom: 50%;" />
-
-因此，使用递归可以很好地实现深度优先搜索。这个说法并不是说深度优先搜索就是递归，只能说递归是深度优先搜索的一种实现方式，因为使用非递归也是可以实现 DFS 的思想的，但是一般情况下会比递归麻烦。不过，使用递归时，系统会调用一个叫系统栈的东西来存放递归中每一层的状态，因此使用递归来实现 DFS 的本质其实还是栈。
-
-
-
-### 3.2 DFS编程题目
-
-#### sy313: 迷宫可行路径数
-
-https://sunnywhy.com/sfbj/8/1/313
-
-现有一个 n*m 大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。每次移动只能向上下左右移动一格（不允许移动到曾经经过的位置），且只能移动到平地上。求从迷宫左上角到右下角的所有可行路径的条数。
-
-**输入**
-
-第一行两个整数 $n、m \hspace{1em} (2 \le n \le5, 2 \le m \le 5)$，分别表示迷宫的行数和列数；
-
-接下来 n 行，每行 m 个整数（值为`0`或`1`），表示迷宫。
-
-**输出**
-
-一个整数，表示可行路径的条数。
-
-样例1
-
-输入
-
-```
-3 3
-0 0 0
-0 1 0
-0 0 0
-```
-
-输出
-
-```
-2
-```
-
-解释
-
-假设左上角坐标是(1,1)，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
-
-可以得到从左上角到右下角有两条路径：
-
-1. (1,1)=>(1,2)=>(1,3)=>(2,3)=>(3,3)
-2. (1,1)=>(2,1)=>(3,1)=>(3,2)=>(3,3)
-
-
-
-**加保护圈，原地修改**
+代码清单7-1 Vertex类
 
 ```python
-dx = [-1, 0, 1, 0]
-dy = [ 0, 1, 0, -1]
+class Vertex:
+    def __init__(self,key):
+        self.id = key
+        self.connectedTo = {}
 
-def dfs(maze, x, y):
-    global cnt
-    
-    for i in range(4):
-        nx = x + dx[i]
-        ny = y + dy[i]
-            
-        if maze[nx][ny] == 'e':
-            cnt += 1
-            continue
-            
-        if maze[nx][ny] == 0:
-            maze[x][y] = 1
-            dfs(maze, nx, ny)
-            maze[x][y] = 0
-    
-    return
-            
-n, m = map(int, input().split())
-maze = []
-maze.append( [-1 for x in range(m+2)] )
-for _ in range(n):
-    maze.append([-1] + [int(_) for _ in input().split()] + [-1])
-maze.append( [-1 for x in range(m+2)] )
+    def addNeighbor(self,nbr,weight=0):
+        self.connectedTo[nbr] = weight
 
-maze[1][1] = 's'
-maze[n][m] = 'e'
+    def __str__(self):
+        return str(self.id) + ' connectedTo: ' + str([x.id for x in self.connectedTo])
 
-cnt = 0
-dfs(maze, 1, 1)
-print(cnt)
+    def getConnections(self):
+        return self.connectedTo.keys()
+
+    def getId(self):
+        return self.id
+
+    def getWeight(self,nbr):
+        return self.connectedTo[nbr]
 ```
 
 
 
-**辅助visited空间**
+Graph类的实现如代码清单7-2所示，其中包含一个将顶点名映射到顶点对象的字典。在图6中，该字典对象由灰色方块表示。Graph类也提供了向图中添加顶点和连接不同顶点的方法。getVertices方法返回图中所有顶点的名字。此外，我们还实现了__iter__方法，从而使遍历图中的所有顶点对象更加方便。总之，这两个方法使我们能够根据顶点名或者顶点对象本身遍历图中的所有顶点。
+
+代码清单7-2 Graph类
 
 ```python
-# gpt translated version of the C++ code
-MAXN = 5
-n, m = map(int, input().split())
-maze = []
-for _ in range(n):
-    row = list(map(int, input().split()))
-    maze.append(row)
+class Graph:
+    def __init__(self):
+        self.vertList = {}
+        self.numVertices = 0
 
-visited = [[False for _ in range(m)] for _ in range(n)]
-counter = 0
+    def addVertex(self,key):
+        self.numVertices = self.numVertices + 1
+        newVertex = Vertex(key)
+        self.vertList[key] = newVertex
+        return newVertex
 
-MAXD = 4
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
+    def getVertex(self,n):
+        if n in self.vertList:
+            return self.vertList[n]
+        else:
+            return None
 
-def is_valid(x, y):
-    return 0 <= x < n and 0 <= y < m and maze[x][y] == 0 and not visited[x][y]
+    def __contains__(self,n):
+        return n in self.vertList
 
-def DFS(x, y):
-    global counter
-    if x == n - 1 and y == m - 1:
-        counter += 1
-        return
-    visited[x][y] = True
-    for i in range(MAXD):
-        nextX = x + dx[i]
-        nextY = y + dy[i]
-        if is_valid(nextX, nextY):
-            DFS(nextX, nextY)
-    visited[x][y] = False
+    def addEdge(self,f,t,weight=0):
+        if f not in self.vertList:
+            nv = self.addVertex(f)
+        if t not in self.vertList:
+            nv = self.addVertex(t)
+        self.vertList[f].addNeighbor(self.vertList[t], weight)
 
-DFS(0, 0)
-print(counter)
+    def getVertices(self):
+        return self.vertList.keys()
 
+    def __iter__(self):
+        return iter(self.vertList.values())
+```
+
+下面的Python会话使用Graph类和Vertex类创建了如图6所示的图。首先创建6个顶点，依次编号为0～5。然后打印顶点字典。注意，对每一个键，我们都创建了一个Vertex实例。接着，添加将顶点连接起来的边。最后，用一个嵌套循环验证图中的每一条边都已被正确存储。请按照图6的内容检查会话的最终结果。
+
+
+
+```
+>>> g = Graph()
+>>> for i in range(6):
+...    g.addVertex(i)
+>>> g.vertList
+{0: <adjGraph.Vertex instance at 0x41e18>,
+ 1: <adjGraph.Vertex instance at 0x7f2b0>,
+ 2: <adjGraph.Vertex instance at 0x7f288>,
+ 3: <adjGraph.Vertex instance at 0x7f350>,
+ 4: <adjGraph.Vertex instance at 0x7f328>,
+ 5: <adjGraph.Vertex instance at 0x7f300>}
+>>> g.addEdge(0,1,5)
+>>> g.addEdge(0,5,2)
+>>> g.addEdge(1,2,4)
+>>> g.addEdge(2,3,9)
+>>> g.addEdge(3,4,7)
+>>> g.addEdge(3,5,3)
+>>> g.addEdge(4,0,1)
+>>> g.addEdge(5,4,8)
+>>> g.addEdge(5,2,1)
+>>> for v in g:
+...    for w in v.getConnections():
+...        print("( %s , %s )" % (v.getId(), w.getId()))
+...
+( 0 , 5 )
+( 0 , 1 )
+( 1 , 2 )
+( 2 , 3 )
+( 3 , 4 )
+( 3 , 5 )
+( 4 , 0 )
+( 5 , 4 )
+( 5 , 2 )
 ```
 
 
 
-#### sy314: 指定步数的迷宫问题
-
-https://sunnywhy.com/sfbj/8/1/314
-
-现有一个 n*m 大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。每次移动只能向上下左右移动一格（不允许移动到曾经经过的位置），且只能移动到平地上。现从迷宫左上角出发，问能否在恰好第步时到达右下角。
-
-**输入**
-
-第一行三个整数$n、m、k \hspace{1em} (2 \le n \le5, 2 \le m \le 5, 2 \le k \le n*m)$，分别表示迷宫的行数、列数、移动的步数；
-
-接下来行，每行个整数（值为`0`或`1`），表示迷宫。
-
-**输出**
-
-如果可行，那么输出`Yes`，否则输出`No`。
-
-样例1
-
-输入
-
-```
-3 3 4
-0 1 0
-0 0 0
-0 1 0
-```
-
-输出
-
-```
-Yes
-```
-
-解释
-
-假设左上角坐标是(1,1)，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
-
-可以得到从左上角到右下角的步数为`4`的路径为：(1,1)=>(2,1)=>(2,2)=>(2,3)=>(3,3)。
-
-样例2
-
-输入
-
-```
-3 3 6
-0 1 0
-0 0 0
-0 1 0
-```
-
-输出
-
-```
-No
-```
-
-解释
-
-由于不能移动到曾经经过的位置，因此无法在恰好第`6`步时到达右下角。
+上面类方式定义顶点和图，要求掌握，**数算B-2021笔试出现在算法部分**。在机考中，也可以直接使用二维列表或者字典来表示邻接表。
 
 
 
-**加保护圈，原地修改**
 
-```python
-dx = [-1, 0, 1, 0]
-dy = [ 0, 1, 0, -1]
 
-canReach = False
-def dfs(maze, x, y, step):
-    global canReach
-    if canReach:
-        return
-    
-    for i in range(4):
-        nx = x + dx[i]
-        ny = y + dy[i]
-        if maze[nx][ny] == 'e':
-            if step==k-1:
-                canReach = True
-                return
-            
-            continue
-            
-        if maze[nx][ny] == 0:
-            if step < k:
-                maze[x][y] = -1
-                dfs(maze, nx, ny, step+1)
-                maze[x][y] = 0
-    
+## 3 图的遍历
 
-n, m, k = map(int, input().split())
-maze = []
-maze.append( [-1 for x in range(m+2)] )
-for _ in range(n):
-    maze.append([-1] + [int(_) for _ in input().split()] + [-1])
-maze.append( [-1 for x in range(m+2)] )
-
-maze[1][1] = 's'
-maze[n][m] = 'e'
-
-dfs(maze, 1, 1, 0)
-print("Yes" if canReach else "No")
-```
+### 3.1 宽度优先搜索
 
 
 
-**辅助visited空间**
+#### 3.1.1 词梯问题
+
+我们从词梯问题开始学习图算法。考虑这样一个任务：将单词FOOL转换成SAGE。在解决词梯问题时，必须每次只替换一个字母，并且每一步的结果都必须是一个单词，而不能是不存在的词。词梯问题由《爱丽丝梦游仙境》的作者刘易斯·卡罗尔于1878年提出。下面的单词转换序列是样例问题的一个解。
+
+FOOL
+POOL
+POLL
+POLE
+PALE
+SALE
+SAGE
+
+词梯问题有很多变体，例如在给定步数内完成转换，或者必须用到某个单词。在本节中，我们研究从起始单词转换到结束单词所需的最小步数。
+
+由于主题是图，因此我们自然会想到使用图算法来解决这个问题。以下是大致步骤：
+❏ 用图表示单词之间的关系；
+❏ 用一种名为宽度优先搜索的图算法找到从起始单词到结束单词的最短路径。
+
+
+
+#### 3.1.2 构建词梯图
+
+第一个问题是如何用图来表示大的单词集合。如果两个单词的区别仅在于有一个不同的字母，就用一条边将它们相连。如果能创建这样一个图，那么其中的任意一条连接两个单词的路径就是词梯问题的一个解。图7-5展示了一个小型图，可用于解决从FOOL到SAGE的词梯问题。注意，它是无向图，并且边没有权重。
+
+
+
+![../_images/wordgraph.png](https://raw.githubusercontent.com/GMyhf/img/main/img/wordgraph.png)
+
+Figure 1: A Small Word Ladder Graph
+
+
+
+创建这个图有多种方式。假设有一个单词列表，其中每个单词的长度都相同。首先，为每个单词创建顶点。为了连接这些顶点，可以将每个单词与列表中的其他所有单词进行比较。如果两个单词只相差一个字母，就可以在图中创建一条边，将它们连接起来。对于只有少量单词的情况，这个算法还不错。但是，假设列表中有5110个单词，将一个单词与列表中的其他所有单词进行比较，时间复杂度为O( n^2 )。对于5110个单词来说，这意味着要进行2600多万次比较。
+
+采用下述方法，可以更高效地构建这个关系图。假设有数目巨大的桶，每一个桶上都标有一个长度为4的单词，但是某一个字母被下划线代替。图7-6展示了一些例子，如POP_。当处理列表中的每一个单词时，将它与桶上的标签进行比较。使用下划线作为通配符，我们将POPE和POPS放入同一个桶中。一旦将所有单词都放入对应的桶中之后，我们就知道，同一个桶中的单词一定是相连的。
+
+
+
+![../_images/wordbuckets.png](https://raw.githubusercontent.com/GMyhf/img/main/img/wordbuckets.png)
+
+Figure 2: Word Buckets for Words That are Different by One Letter
+
+
+
+在Python中，可以通过字典来实现上述方法。字典的键就是桶上的标签，值就是对应的单词列表。一旦构建好字典，就能利用它来创建图。首先为每个单词创建顶点，然后在字典中对应同一个键的单词之间创建边。代码清单1展示了构建图所需的Python代码。
+
+代码清单1 为词梯问题构建单词关系
 
 ```python
-# gpt translated version of the C++ code
-MAXN = 5
-n, m, k = map(int, input().split())
-maze = []
-for _ in range(n):
-    row = list(map(int, input().split()))
-    maze.append(row)
+from pythonds.graphs import Graph
 
-visited = [[False for _ in range(m)] for _ in range(n)]
-canReach = False
-
-MAXD = 4
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
-
-def is_valid(x, y):
-    return 0 <= x < n and 0 <= y < m and maze[x][y] == 0 and not visited[x][y]
-
-def DFS(x, y, step):
-    global canReach
-    if canReach:
-        return
-    if x == n - 1 and y == m - 1:
-        if step == k:
-            canReach = True
-        return
-    visited[x][y] = True
-    for i in range(MAXD):
-        nextX = x + dx[i]
-        nextY = y + dy[i]
-        if step < k and is_valid(nextX, nextY):
-            DFS(nextX, nextY, step + 1)
-    visited[x][y] = False
-
-DFS(0, 0, 0)
-print("Yes" if canReach else "No")
-
+def buildGraph(wordFile):
+    d = {}
+    g = Graph()
+    wfile = open(wordFile,'r')
+    # create buckets of words that differ by one letter
+    for line in wfile:
+        word = line[:-1]
+        for i in range(len(word)):
+            bucket = word[:i] + '_' + word[i+1:]
+            if bucket in d:
+                d[bucket].append(word)
+            else:
+                d[bucket] = [word]
+    # add vertices and edges for words in the same bucket
+    for bucket in d.keys():
+        for word1 in d[bucket]:
+            for word2 in d[bucket]:
+                if word1 != word2:
+                    g.addEdge(word1,word2)
+    return g
 ```
 
 
 
-#### sy315: 矩阵最大权值
-
-https://sunnywhy.com/sfbj/8/1/315
-
-现有一个 n*m 大小的矩阵，矩阵中的每个元素表示该位置的权值。现需要从矩阵左上角出发到达右下角，每次移动只能向上下左右移动一格（不允许移动到曾经经过的位置）。求最后到达右下角时路径上所有位置的权值之和的最大值。
-
-**输入**
-
-第一行两个整数 $n、m \hspace{1em} (2 \le n \le5, 2 \le m \le 5)$，分别表示矩阵的行数和列数；
-
-接下来 n 行，每行 m 个整数（$-100 \le 整数 \le 100$），表示矩阵每个位置的权值。
-
-**输出**
-
-一个整数，表示权值之和的最大值。
-
-样例1
-
-输入
-
-```
-2 2
-1 2
-3 4
-```
-
-输出
-
-```
-8
-```
-
-解释
-
-从左上角到右下角的最大权值之和为。
+https://github.com/Yuqiu-Yang/problem_solving_with_algorithms_and_data_structures_using_python/tree/master/pythonds-1.2.1/pythonds/graphs
 
 
 
-**加保护圈，原地修改**
+这是我们在本节中遇到的第一个实际的图问题，你可能会好奇这个图的稀疏程度如何。本例中的单词列表包含5110个单词。如果使用邻接矩阵表示，就会有26112100个单元格（5110 ＊5110 = 26112100）。用buildGraph函数创建的图一共有53286条边（用邻接表来表示图）。因此，只有0.2%的单元格被填充。这显然是一个非常稀疏的矩阵。
+
+
+
+#### 3.1.3 实现宽度优先搜索
+
+完成图的构建之后，就可以编写能帮我们找到最短路径的图算法。我们使用的算法叫作宽度优先搜索（breadth first search，以下简称BFS）。BFS是最简单的图搜索算法之一，也是后续要介绍的其他重要图算法的原型。
+
+给定图G和起点s, BFS通过边来访问在G中与s之间存在路径的顶点。BFS的一个重要特性是，它会在访问完所有与s相距为k的顶点之后再去访问与s相距为k+1的顶点。为了理解这种搜索行为，可以想象BFS以每次生成一层的方式构建一棵树。它会在访问任意一个孙节点之前将起点的所有子节点都添加进来。
+
+为了记录进度，BFS会将顶点标记成白色、灰色或黑色。在构建时，所有顶点都被初始化成白色。白色代表该顶点没有被访问过。当顶点第一次被访问时，它就会被标记为灰色；当BFS完成对该顶点的访问之后，它就会被标记为黑色。这意味着一旦顶点变为黑色，就没有白色顶点与之相连。灰色顶点仍然可能与一些白色顶点相连，这意味着还有额外的顶点可以访问。
+
+
+
+来看看bfs函数如何构建对应于图1的宽度优先搜索树。从顶点fool开始，将所有与之相连的顶点都添加到树中。相邻的顶点有pool、foil、foul，以及cool。它们都被添加到队列中，作为之后要访问的顶点。
+
+> **Algorithm for BFS**
+>
+> How to implement Breadth First Search algorithm in Python 
+>
+> https://www.codespeedy.com/breadth-first-search-algorithm-in-python/
+>
+> BFS is one of the traversing algorithm used in graphs. This algorithm is implemented using a queue data structure. In this algorithm, the main focus is on the vertices of the graph. Select a starting node or vertex at first, mark the starting node or vertex as visited and store it in a queue. Then visit the vertices or nodes which are adjacent to the starting node, mark them as visited and store these vertices or nodes in a queue. Repeat this process until all the nodes or vertices are completely visited.
+>
+> **Advantages of BFS**
+>
+> 1. It can be useful in order to find whether the graph has connected components or not.
+> 2. It always finds or returns the shortest path if there is more than one path between two vertices.
+>
+>  
+>
+> **Disadvantages of BFS**
+>
+> 1. The execution time of this algorithm is very slow because the time complexity of this algorithm is exponential.
+> 2. This algorithm is not useful when large graphs are used.
+>
+>  
+>
+> **Implementation of BFS in Python ( Breadth First Search )**
+>
+> **Source Code: BFS in Python**
+>
+> ```python
+> graph = {'A': ['B', 'C', 'E'],
+>          'B': ['A','D', 'E'],
+>          'C': ['A', 'F', 'G'],
+>          'D': ['B'],
+>          'E': ['A', 'B','D'],
+>          'F': ['C'],
+>          'G': ['C']}
+>          
+>          
+> def bfs(graph, initial):
+>     visited = []
+>     queue = [initial]
+>  
+>     while queue:
+>         node = queue.pop(0)
+>         if node not in visited:
+>             visited.append(node)
+>             neighbours = graph[node]
+>  
+>             for neighbour in neighbours:
+>                 queue.append(neighbour)
+>     return visited
+>  
+> print(bfs(graph,'A'))
+> ```
+>
+> 
+>
+> Explanation:
+>
+> 1. Create a graph.
+> 2. Initialize a starting node.
+> 3. Send the graph and initial node as parameters to the bfs function.
+> 4. Mark the initial node as visited and push it into the queue.
+> 5. Explore the initial node and add its neighbours to the queue and remove the initial node from the queue.
+> 6. Check if the neighbours node of a neighbouring node is already visited.
+> 7. If not, visit the neighbouring node neighbours and mark them as visited.
+> 8. Repeat this process until all the nodes in a graph are visited and the queue becomes empty.
+>
+> Output:
+>
+> ```
+> ['A', 'B', 'C', 'E', 'D', 'F', 'G']
+> ```
+>
+> 
+>
+> Breadth First Search (BFS), algorithm for traversing or searching graphs
+>
+> O(|V| + |E|) time complexity, |V| number of nodes, |E| number of edges
+>
+> Applications:
+>
+> Shortest path between two nodes (unweighted Graph)
+>
+> Ford-Fulkson algorithm (Maximum Flow in a network)
+
+
+
+#### 3.1.4 笔试题目
+
+数算B-2021笔试最后一个算法题目（8分）
+
+1）图的深度优先周游算法实现的迷宫探索。图采用邻接表表示，给出了Graph类和Vertex类的基本定义。2）从题面看基本上与书上提供的实现一样，稍作更改。3）这样不一定得到的是最短路径？纯粹是为了笔试吧。因为通常走迷宫，用BFS。
+
+
+
+![image-20240407223151702](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240407223151702.png)
+
+
+
+
+
+
+
+
+
+阅读下列程序，完成图的深度优先周游算法实现的迷宫探索。已知图采用邻接表表示，Graph 类和 Vertex 类基本定义如下：
 
 ```python
-dx = [-1, 0, 1, 0]
-dy = [ 0, 1, 0, -1]
-
-maxValue = float("-inf")
-def dfs(maze, x, y, nowValue):
-    global maxValue
-    if x==n and y==m:
-        if nowValue > maxValue:
-            maxValue = nowValue
-        
-        return
-  
-    for i in range(4):
-        nx = x + dx[i]
-        ny = y + dy[i]
-  
-        if maze[nx][ny] != -9999:
-            tmp = maze[x][y]
-            maze[x][y] = -9999
-            nextValue = nowValue + maze[nx][ny]
-            dfs(maze, nx, ny, nextValue)
-            maze[x][y] = tmp
-    
-
-n, m = map(int, input().split())
-maze = []
-maze.append( [-9999 for x in range(m+2)] )
-for _ in range(n):
-    maze.append([-9999] + [int(_) for _ in input().split()] + [-9999])
-maze.append( [-9999 for x in range(m+2)] )
-
-
-dfs(maze, 1, 1, maze[1][1])
-print(maxValue)
-```
-
-
-
-**辅助visited空间**
-
-```python
-# gpt translated version of the C++ code
-MAXN = 5
-INF = float('inf')
-n, m = map(int, input().split())
-maze = []
-for _ in range(n):
-    row = list(map(int, input().split()))
-    maze.append(row)
-
-visited = [[False for _ in range(m)] for _ in range(n)]
-maxValue = -INF
-
-MAXD = 4
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
-
-def is_valid(x, y):
-    return 0 <= x < n and 0 <= y < m and not visited[x][y]
-
-def DFS(x, y, nowValue):
-    global maxValue
-    if x == n - 1 and y == m - 1:
-        if nowValue > maxValue:
-            maxValue = nowValue
-        return
-    visited[x][y] = True
-    for i in range(MAXD):
-        nextX = x + dx[i]
-        nextY = y + dy[i]
-        if is_valid(nextX, nextY):
-            nextValue = nowValue + maze[nextX][nextY]
-            DFS(nextX, nextY, nextValue)
-    visited[x][y] = False
-
-DFS(0, 0, maze[0][0])
-print(maxValue)
-
-```
-
-
-
-
-
-#### sy316: 矩阵最大权值路径
-
-https://sunnywhy.com/sfbj/8/1/316
-
-现有一个 n*m 大小的矩阵，矩阵中的每个元素表示该位置的权值。现需要从矩阵左上角出发到达右下角，每次移动只能向上下左右移动一格（不允许移动到曾经经过的位置）。假设左上角坐标是(1,1)，行数增加的方向为增长的方向，列数增加的方向为增长的方向。求最后到达右下角时路径上所有位置的权值之和最大的路径。
-
-**输入**
-
-第一行两个整数 $n、m \hspace{1em} (2 \le n \le5, 2 \le m \le 5)$，分别表示矩阵的行数和列数；
-
-接下来 n 行，每行 m 个整数（$-100 \le 整数 \le 100$），表示矩阵每个位置的权值。
-
-**输出**
-
-从左上角的坐标开始，输出若干行（每行两个整数，表示一个坐标），直到右下角的坐标。
-
-数据保证权值之和最大的路径存在且唯一。
-
-样例1
-
-输入
-
-```
-2 2
-1 2
-3 4
-```
-
-输出
-
-```
-1 1
-2 1
-2 2
-```
-
-解释
-
-显然当路径是(1,1)=>(2,1)=>(2,2)时，权值之和最大，即 1+3+4 = 8。
-
-
-
-**辅助visited空间**
-
-```python
-# gpt translated version of the C++ code
-MAXN = 5
-INF = float('inf')
-n, m = map(int, input().split())
-maze = []
-for _ in range(n):
-    row = list(map(int, input().split()))
-    maze.append(row)
-
-visited = [[False for _ in range(m)] for _ in range(n)]
-maxValue = -INF
-tempPath, optPath = [], []
-
-MAXD = 4
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
-
-def is_valid(x, y):
-    return 0 <= x < n and 0 <= y < m and not visited[x][y]
-
-def DFS(x, y, nowValue):
-    global maxValue, tempPath, optPath
-    if x == n - 1 and y == m - 1:
-        if nowValue > maxValue:
-            maxValue = nowValue
-            optPath = list(tempPath)
-        return
-    visited[x][y] = True
-    for i in range(MAXD):
-        nextX = x + dx[i]
-        nextY = y + dy[i]
-        if is_valid(nextX, nextY):
-            nextValue = nowValue + maze[nextX][nextY]
-            tempPath.append((nextX, nextY))
-            DFS(nextX, nextY, nextValue)
-            tempPath.pop()
-    visited[x][y] = False
-
-tempPath.append((0, 0))
-DFS(0, 0, maze[0][0])
-for pos in optPath:
-    print(pos[0] + 1, pos[1] + 1)
-```
-
-
-
-#### sy317: 迷宫最大权值
-
-https://sunnywhy.com/sfbj/8/1/317
-
-现有一个大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。现需要从迷宫左上角出发到达右下角，每次移动只能向上下左右移动一格（不允许移动到曾经经过的位置），且只能移动到平地上。假设迷宫中每个位置都有权值，求最后到达右下角时路径上所有位置的权值之和的最大值。
-
-**输入**
-
-第一行两个整数$n、m \hspace{1em} (2 \le n \le5, 2 \le m \le 5)$，分别表示矩阵的行数和列数；
-
-接下来 n 行，每行个 m 整数（值为`0`或`1`），表示迷宫。
-
-再接下来行，每行个整数（$-100 \le 整数 \le 100$），表示迷宫每个位置的权值。
-
-**输出**
-
-一个整数，表示权值之和的最大值。
-
-样例1
-
-输入
-
-```
-3 3
-0 0 0
-0 1 0
-0 0 0
-1 2 3
-4 5 6
-7 8 9
-```
-
-输出
-
-```
-29
-```
-
-解释：从左上角到右下角的最大权值之和为 1+4+7+8+9 = 29。
-
-
-
-**加保护圈，原地修改**
-
-```python
-dx = [-1, 0, 1, 0]
-dy = [ 0, 1, 0, -1]
-
-maxValue = float("-inf")
-def dfs(maze, x, y, nowValue):
-    global maxValue
-    if x==n and y==m:
-        if nowValue > maxValue:
-            maxValue = nowValue
-        
-        return
-  
-    for i in range(4):
-        nx = x + dx[i]
-        ny = y + dy[i]
-  
-        if maze[nx][ny] == 0:
-            maze[nx][ny] = -1
-            tmp = w[x][y]
-            w[x][y] = -9999
-            nextValue = nowValue + w[nx][ny]
-            dfs(maze, nx, ny, nextValue)
-            maze[nx][ny] = 0
-            w[x][y] = tmp
-    
-
-n, m = map(int, input().split())
-maze = []
-maze.append( [-1 for x in range(m+2)] )
-for _ in range(n):
-    maze.append([-1] + [int(_) for _ in input().split()] + [-1])
-maze.append( [-1 for x in range(m+2)] )
-
-w = []
-w.append( [-9999 for x in range(m+2)] )
-for _ in range(n):
-    w.append([-9999] + [int(_) for _ in input().split()] + [-9999])
-w.append( [-9999 for x in range(m+2)] )
-
-
-dfs(maze, 1, 1, w[1][1])
-print(maxValue)
-```
-
-
-
-**辅助visited空间**
-
-```python
-# gpt translated version of the C++ code
-MAXN = 5
-INF = float('inf')
-n, m = map(int, input().split())
-maze = [list(map(int, input().split())) for _ in range(n)]
-w = [list(map(int, input().split())) for _ in range(n)]
-visited = [[False] * m for _ in range(n)]
-maxValue = -INF
-
-MAXD = 4
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
-
-def is_valid(x, y):
-    return 0 <= x < n and 0 <= y < m and not maze[x][y] and not visited[x][y]
-
-def dfs(x, y, nowValue):
-    global maxValue
-    if x == n - 1 and y == m - 1:
-        if nowValue > maxValue:
-            maxValue = nowValue
-        return
-    visited[x][y] = True
-    for i in range(MAXD):
-        nextX = x + dx[i]
-        nextY = y + dy[i]
-        if is_valid(nextX, nextY):
-            nextValue = nowValue + w[nextX][nextY]
-            dfs(nextX, nextY, nextValue)
-    visited[x][y] = False
-
-dfs(0, 0, w[0][0])
-print(maxValue)
-
-```
-
-
-
-### 3.3 广度优先搜索(BFS)
-
-前面介绍了深度优先搜索，可知 DFS 是以深度作为第一关键词的，即当碰到岔道口时总是先选择其中的一条岔路前进,而不管其他岔路,直到碰到死胡同时才返回岔道口并选择其他岔路。接下来将介绍的**广度优先搜索** (Breadth FirstSearch,**BFS**)则是以广度为第一关键词，当碰到岔道口时,总是先依次访问从该岔道口能直接到达的所有结点,然后再按这些结点被访问的顺序去依次访问它们能直接到达的所有结点，以此类推,直到所有结点都被访问为止。这就跟平静的水面中投入一颗小石子一样,水花总是以石子落水处为中心,并以同心圆的方式向外扩散至整个水面(见图 8-2),从这点来看和 DFS 那种沿着一条线前进的思路是完全不同的。
-
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202311262216546.png" alt="image-20231126221551540" style="zoom:50%;" />
-
-广度优先搜索 (BFS)一般由队列实现,且总是按层次的顺序进行遍历，其基本写法如下(可作模板用):
-
-```python
-from collections import deque
-  
-def bfs(s, e):
-    vis = set()
-    vis.add(s)
-      
-    q = deque()
-    q.append((0, s))
-
-    while q:
-        now, top = q.popleft() # 取出队首元素
-        if top == e:
-            return now # 返回需要的结果，如：步长、路径等信息
-
-        # 将 top 的下一层结点中未曾入队的结点全部入队q，并加入集合vis设置为已入队
-  
-```
-
-
-
-下面是对该模板中每一个步骤的说明,请结合代码一起看: 
-
-① 定义队列 q，并将起点(0, s)入队，0表示步长目前是0。
-② 写一个 while 循环，循环条件是队列q非空。
-③ 在 while 循环中，先取出队首元素 top。
-④ 将top 的下一层结点中所有**未曾入队**的结点入队，并标记它们的层号为 now 的层号加1，并加入集合vis设置为已入队。
-⑤ 返回 ② 继续循环。
-
-
-
-再强调一点,在BFS 中设置的 inq 数组的含义是判断结点是否已入过队，而不是**结点是否已被访问**。区别在于:如果设置成是否已被访问，有可能在某个结点正在队列中(但还未访问)时由于其他结点可以到达它而将这个结点再次入队，导致很多结点反复入队，计算量大大增加。因此BFS 中让每个结点只入队一次，故需要设置 inq 数组的含义为**结点是否已入过队**而非结点是否已被访问。
-
-
-
-### 3.4 BFS编程题目
-
-#### sy318: 数字操作（一维BFS）
-
-https://sunnywhy.com/sfbj/8/2/318
-
-从整数`1`开始，每轮操作可以选择将上轮结果加`1`或乘`2`。问至少需要多少轮操作才能达到指定整数。
-
-输入描述
-
-一个整数 $n \hspace{1em} (2 \le n \le 10^5)$，表示需要达到的整数。
-
-输出描述
-
-输出一个整数，表示至少需要的操作轮数。
-
-样例1
-
-输入
-
-```
-7
-```
-
-输出
-
-```
-4
-```
-
-解释
-
-第`1`轮：1 + 1 = 2
-
-第`2`轮：2 + 1 =3
-
-第`3`轮：3 * 2 = 6
-
-第`4`轮：6 + 1 = 7
-
-因此至少需要操作`4`轮。
-
-
-
-##### 数学思维
-
-```python
-'''
-2023TA-陈威宇，思路：是n的二进制表示 里面 1的个数+1的个数+0的个数-2。
-如果我们将 n 的二进制表示的每一位数从左到右依次编号为 0、1、2、...，那么：
-
-1 的个数表示需要进行加 1 的操作次数；
-0 的个数表示需要进行乘 2 的操作次数；
-len(l) - 2 表示操作的总次数减去初始状态的操作次数 1，即剩余的操作次数；
-sum(l) + len(l) - 2 表示所有操作次数之和。
-'''
-n = int(input())
-s = bin(n)
-l = [int(i) for i in s[2:]]
-print(sum(l) + len(l) - 2)
-```
-
-
-
-##### 计算机思维
-
-##### Python
-
-```python
-from collections import deque
-
-def bfs(n):
-
-    vis = set()
-    vis.add(1)
-    q = deque()
-    q.append((1, 0))
-    while q:
-        front, step = q.popleft()
-        if front == n:
-            return step
-
-        if front * 2 <= n and front * 2 not in vis:
-            vis.add(front *2)
-            q.append((front * 2, step+1))
-        if front + 1 <= n and front + 1 not in vis:
-            vis.add(front + 1)
-            q.append((front + 1, step+1))
-
-
-n = int(input())
-print(bfs(n))
-
-```
-
-
-
-```python
-# gpt translated version of the C++ code
-from collections import deque
-
-MAXN = 100000
-in_queue = [False] * (MAXN + 1)
-
-def get_step(n):
-    step = 0
-    q = deque()
-    q.append(1)
-    while True:
-        cnt = len(q)
-        for _ in range(cnt):
-            front = q.popleft()
-            if front == n:
-                return step
-            in_queue[front] = True
-            if front * 2 <= n and not in_queue[front * 2]:
-                q.append(front * 2)
-            if front + 1 <= n and not in_queue[front + 1]:
-                q.append(front + 1)
-        step += 1
-
-if __name__ == "__main__":
-    n = int(input())
-    print(get_step(n))
-```
-
-
-
-
-
-#### sy319: 矩阵中的块
-
-https://sunnywhy.com/sfbj/8/2/319
-
-现有一个 n*m 的矩阵，矩阵中的元素为`0`或`1`。然后进行如下定义：
-
-1. 位置(x,y)与其上下左右四个位置 $(x,y + 1)、(x,y - 1)、(x + 1,y)、(x-1,y)$ 是相邻的；
-2. 如果位置 (x1,y1) 与位置 (x2,y2) 相邻，且位置 (x2,y2) 与位置 (x3,y3) 相邻，那么称位置(x1,y1)与位置(x3,y3)也相邻；
-3. 称个数尽可能多的相邻的`1`构成一个“块”。
-
-求给定的矩阵中“块”的个数。
-
-**输入**
-
-第一行两个整数 n、m（$2 \le n \le 100, 2 \le m \le 100$），分别表示矩阵的行数和列数；
-
-接下来 n 行，每行 m 个`0`或`1`（用空格隔开），表示矩阵中的所有元素。
-
-**输出**
-
-输出一个整数，表示矩阵中“块”的个数。
-
-样例1
-
-输入
-
-```
-6 7
-0 1 1 1 0 0 1
-0 0 1 0 0 0 0
-0 0 0 0 1 0 0
-0 0 0 1 1 1 0
-1 1 1 0 1 0 0
-1 1 1 1 0 0 0
-```
-
-输出
-
-```
-4
-```
-
-解释
-
-矩阵中的`1`共有`4`块，如下图所示。
-
-![矩阵中的块_样例.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202311262246785.png)
-
-
-
-##### 加保护圈，inq_set集合判断是否入过队
-
-```python
-from collections import deque
-
-# Constants
-MAXD = 4
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
-
-def bfs(x, y):
-    q = deque([(x, y)])
-    inq_set.add((x,y))
-    while q:
-        front = q.popleft()
-        for i in range(MAXD):
-            next_x = front[0] + dx[i]
-            next_y = front[1] + dy[i]
-            if matrix[next_x][next_y] == 1 and (next_x,next_y) not in inq_set:
-                inq_set.add((next_x, next_y))
-                q.append((next_x, next_y))
-
-# Input
-n, m = map(int, input().split())
-matrix=[[-1]*(m+2)]+[[-1]+list(map(int,input().split()))+[-1] for i in range(n)]+[[-1]*(m+2)]
-inq_set = set()
-
-# Main process
-counter = 0
-for i in range(1,n+1):
-    for j in range(1,m+1):
-        if matrix[i][j] == 1 and (i,j) not in inq_set:
-            bfs(i, j)
-            counter += 1
-
-# Output
-print(counter)
-```
-
-
-
-##### inq 数组，结点是否已入过队
-
-```python
-# gpt translated version of the C++ code
-from collections import deque
-
-# Constants
-MAXN = 100
-MAXD = 4
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
-
-# Functions
-def can_visit(x, y):
-    return 0 <= x < n and 0 <= y < m and matrix[x][y] == 1 and not in_queue[x][y]
-
-def bfs(x, y):
-    q = deque([(x, y)])
-    in_queue[x][y] = True
-    while q:
-        front = q.popleft()
-        for i in range(MAXD):
-            next_x = front[0] + dx[i]
-            next_y = front[1] + dy[i]
-            if can_visit(next_x, next_y):
-                in_queue[next_x][next_y] = True
-                q.append((next_x, next_y))
-
-# Input
-n, m = map(int, input().split())
-matrix = [list(map(int, input().split())) for _ in range(n)]
-in_queue = [[False] * MAXN for _ in range(MAXN)]
-
-# Main process
-counter = 0
-for i in range(n):
-    for j in range(m):
-        if matrix[i][j] == 1 and not in_queue[i][j]:
-            bfs(i, j)
-            counter += 1
-
-# Output
-print(counter)
-
-```
-
-
-
-
-
-#### sy320: 迷宫问题
-
-https://sunnywhy.com/sfbj/8/2/320
-
-现有一个 n*m 大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。每次移动只能向上下左右移动一格，且只能移动到平地上。求从迷宫左上角到右下角的最小步数。
-
-**输入**
-
-第一行两个整数 $n、m \hspace{1em} (2 \le n \le 100, 2 \le m \le 100)$，分别表示迷宫的行数和列数；
-
-接下来 n 行，每行 m 个整数（值为`0`或`1`），表示迷宫。
-
-**输出**
-
-输出一个整数，表示最小步数。如果无法到达，那么输出`-1`。
-
-样例1
-
-输入
-
-```
-3 3
-0 1 0
-0 0 0
-0 1 0
-```
-
-输出
-
-```
-4
-```
-
-解释: 假设左上角坐标是(1,1)，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
-
-可以得到从左上角到右下角的前进路线：(1,1)=>(2,1)=>(2,2)=>(2,3)=>(3,3)。
-
-因此最少需要`4`步。
-
-样例2
-
-输入
-
-```
-3 3
-0 1 0
-0 1 0
-0 1 0
-```
-
-输出
-
-```
--1
-```
-
-解释: 显然从左上角无法到达右下角。
-
-
-
-##### 加保护圈，inq_set集合判断是否入过队
-
-```python
-from collections import deque
-
-# 声明方向变化的数组，代表上下左右移动
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
-
-def bfs(x, y):
-    q = deque()
-    q.append((x, y))
-    inq_set.add((x, y))
-    step = 0
-    while q:
-        for _ in range(len(q)):
-            cur_x, cur_y = q.popleft()
-            if cur_x == n and cur_y == m:
-                return step
-            for direction in range(4):
-                next_x = cur_x + dx[direction]
-                next_y = cur_y + dy[direction]
-                if maze[next_x][next_y] == 0 and (next_x,next_y) not in inq_set:
-                    inq_set.add((next_x, next_y))
-                    q.append((next_x, next_y))
-        step += 1
-    return -1
-
-if __name__ == '__main__':
-
-    n, m = map(int, input().split())
-    maze = [[-1] * (m + 2)] + [[-1] + list(map(int, input().split())) + [-1] for i in range(n)] + [[-1] * (m + 2)]
-    inq_set = set()
-
-    step = bfs(1, 1)
-    print(step)
-
-```
-
-
-
-##### inq 数组，结点是否已入过队
-
-```python
-# gpt translated version of the C++ code
-from collections import deque
-
-# 声明方向变化的数组，代表上下左右移动
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
-
-# 检查是否可以访问位置 (x, y)
-def can_visit(x, y):
-    return 0 <= x < n and 0 <= y < m and maze[x][y] == 0 and not in_queue[x][y]
-
-# BFS函数 实现广度优先搜索
-def bfs(x, y):
-    q = deque()
-    q.append((x, y))
-    in_queue[x][y] = True
-    step = 0
-    while q:
-        for _ in range(len(q)):
-            cur_x, cur_y = q.popleft()
-            if cur_x == n - 1 and cur_y == m - 1:
-                return step
-            for direction in range(4):
-                next_x = cur_x + dx[direction]
-                next_y = cur_y + dy[direction]
-                if can_visit(next_x, next_y):
-                    in_queue[next_x][next_y] = True
-                    q.append((next_x, next_y))
-        step += 1
-    return -1
-
-# 主函数
-if __name__ == '__main__':
-    # 读取 n 和 m
-    n, m = map(int, input().split())
-    maze = []
-    in_queue = [[False] * m for _ in range(n)]
-
-    # 填充迷宫和访问状态数组
-    for i in range(n):
-        maze.append(list(map(int, input().split())))
-
-    # 执行BFS并输出步数
-    step = bfs(0, 0)
-    print(step)
-
-```
-
-
-
-
-
-#### sy321: 迷宫最短路径
-
-https://sunnywhy.com/sfbj/8/2/321
-
-现有一个 n*m 大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。每次移动只能向上下左右移动一格，且只能移动到平地上。假设左上角坐标是(1,1)，行数增加的方向为增长的方向，列数增加的方向为增长的方向，求从迷宫左上角到右下角的最少步数的路径。
-
-**输入**
-
-第一行两个整数$n、m \hspace{1em} (2 \le n \le 100, 2 \le m \le 100)$，分别表示迷宫的行数和列数；
-
-接下来 n 行，每行 m 个整数（值为`0`或`1`），表示迷宫。
-
-**输出**
-
-从左上角的坐标开始，输出若干行（每行两个整数，表示一个坐标），直到右下角的坐标。
-
-数据保证最少步数的路径存在且唯一。
-
-样例1
-
-输入
-
-```
-3 3
-0 1 0
-0 0 0
-0 1 0
-```
-
-输出
-
-```
-1 1
-2 1
-2 2
-2 3
-3 3
-```
-
-解释
-
-假设左上角坐标是(1,)，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
-
-可以得到从左上角到右下角的最少步数的路径为：(1,1)=>(2,1)=>(2,2)=>(2,3)=>(3,3)。
-
-
-
-##### inq 数组，结点是否已入过队
-
-```python
-# gpt translated version of the C++ code
-from queue import Queue
-
-MAXN = 100
-MAXD = 4
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
-
-def canVisit(x, y):
-    return x >= 0 and x < n and y >= 0 and y < m and maze[x][y] == 0 and not inQueue[x][y]
-
-def BFS(x, y):
-    q = Queue()
-    q.put((x, y))
-    inQueue[x][y] = True
-    while not q.empty():
-        front = q.get()
-        if front[0] == n - 1 and front[1] == m - 1:
-            return
-        for i in range(MAXD):
-            nextX = front[0] + dx[i]
-            nextY = front[1] + dy[i]
-            if canVisit(nextX, nextY):
-                pre[nextX][nextY] = (front[0], front[1])
-                inQueue[nextX][nextY] = True
-                q.put((nextX, nextY))
-
-def printPath(p):
-    prePosition = pre[p[0]][p[1]]
-    if prePosition == (-1, -1):
-        print(p[0] + 1, p[1] + 1)
-        return
-    printPath(prePosition)
-    print(p[0] + 1, p[1] + 1)
-
-n, m = map(int, input().split())
-maze = []
-for _ in range(n):
-    row = list(map(int, input().split()))
-    maze.append(row)
-
-inQueue = [[False] * m for _ in range(n)]
-pre = [[(-1, -1)] * m for _ in range(n)]
-
-BFS(0, 0)
-printPath((n - 1, m - 1))
-```
-
-
-
-
-
-#### sy322: 跨步迷宫
-
-https://sunnywhy.com/sfbj/8/2/322
-
-现有一个n*m大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。每次移动只能向上下左右移动一格或两格（两格为同向），且只能移动到平地上（不允许跨越墙壁）。求从迷宫左上角到右下角的最小步数（假设移动两格时算作一步）。
-
-**输入**
-
-第一行两个整数 $n、m \hspace{1em} (2 \le n \le 100, 2 \le m \le 100)$，分别表示迷宫的行数和列数；
-
-接下来n行，每行m个整数（值为`0`或`1`），表示迷宫。
-
-**输出**
-
-输出一个整数，表示最小步数。如果无法到达，那么输出`-1`。
-
-样例1
-
-输入
-
-```
-3 3
-0 1 0
-0 0 0
-0 1 0
-```
-
-输出
-
-```
-3
-```
-
-解释
-
-假设左上角坐标是，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
-
-可以得到从左上角到右下角的前进路线：=>=>=>。
-
-因此最少需要`3`步。
-
-样例2
-
-输入
-
-```
-3 3
-0 1 0
-0 1 0
-0 1 0
-```
-
-输出
-
-```
--1
-```
-
-解释
-
-显然从左上角无法到达右下角。
-
-
-
-```python
-from queue import Queue
-
-MAXN = 100
-MAXD = 8
-
-dx = [0, 0, 0, 0, 1, -1, 2, -2]
-dy = [1, -1, 2, -2, 0, 0, 0, 0]
-
-def canVisit(x, y):
-    return x >= 0 and x < n and y >= 0 and y < m and maze[x][y] == 0 and not inQueue[x][y]
-
-def BFS(x, y):
-    q = Queue()
-    q.put((x, y))
-    inQueue[x][y] = True
-    step = 0
-    while not q.empty():
-        cnt = q.qsize()
-        while cnt > 0:
-            front = q.get()
-            cnt -= 1
-            if front[0] == n - 1 and front[1] == m - 1:
-                return step
-            for i in range(MAXD):
-                nextX = front[0] + dx[i]
-                nextY = front[1] + dy[i]
-                nextHalfX = front[0] + dx[i] // 2
-                nextHalfY = front[1] + dy[i] // 2
-                if canVisit(nextX, nextY) and maze[nextHalfX][nextHalfY] == 0:
-                    inQueue[nextX][nextY] = True
-                    q.put((nextX, nextY))
-        step += 1
-    return -1
-
-n, m = map(int, input().split())
-maze = []
-inQueue = [[False] * m for _ in range(n)]
-for _ in range(n):
-    maze.append(list(map(int, input().split())))
-
-step = BFS(0, 0)
-print(step)
-```
-
-
-
-#### sy323: 字符迷宫
-
-https://sunnywhy.com/sfbj/8/2/323
-
-现有一个n*m大小的迷宫，其中`*`表示不可通过的墙壁，`.`表示平地。每次移动只能向上下左右移动一格，且只能移动到平地上。求从起点`S`到终点`T`的最小步数。
-
-**输入**
-
-第一行两个整数 $n、m \hspace{1em} (2 \le n \le 100, 2 \le m \le 100)$，分别表示迷宫的行数和列数；
-
-接下来n行，每行一个长度为m的字符串，表示迷宫。
-
-**输出**
-
-输出一个整数，表示最小步数。如果无法从`S`到达`T`，那么输出`-1`。
-
-样例1
-
-输入
-
-```
-5 5
-.....
-.*.*.
-.*S*.
-.***.
-...T*
-```
-
-输出
-
-```
-11
-```
-
-解释
-
-假设左上角坐标是，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
-
-起点的坐标为，终点的坐标为。
-
-可以得到从`S`到`T`的前进路线：=>=>=>=>=>=>=>=>=>=>=>。
-
-样例2
-
-输入
-
-复制
-
-```
-5 5
-.....
-.*.*.
-.*S*.
-.***.
-..*T*
-```
-
-输出
-
-```
--1
-```
-
-解释
-
-显然终点`T`被墙壁包围，无法到达。
-
-
-
-
-
-```python
-from queue import Queue
-
-MAXN = 100
-MAXD = 4
-
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
-
-def canVisit(x, y):
-    return x >= 0 and x < n and y >= 0 and y < m and maze[x][y] == 0 and not inQueue[x][y]
-
-def BFS(start, target):
-    q = Queue()
-    q.put(start)
-    inQueue[start[0]][start[1]] = True
-    step = 0
-    while not q.empty():
-        cnt = q.qsize()
-        while cnt > 0:
-            front = q.get()
-            cnt -= 1
-            if front == target:
-                return step
-            for i in range(MAXD):
-                nextX = front[0] + dx[i]
-                nextY = front[1] + dy[i]
-                if canVisit(nextX, nextY):
-                    inQueue[nextX][nextY] = True
-                    q.put((nextX, nextY))
-        step += 1
-    return -1
-
-n, m = map(int, input().split())
-maze = []
-inQueue = [[False] * m for _ in range(n)]
-start, target = None, None
-
-for i in range(n):
-    row = input()
-    maze_row = []
-    for j in range(m):
-        if row[j] == '.':
-            maze_row.append(0)
-        elif row[j] == '*':
-            maze_row.append(1)
-        elif row[j] == 'S':
-            start = (i, j)
-            maze_row.append(0)
-        elif row[j] == 'T':
-            target = (i, j)
-            maze_row.append(0)
-    maze.append(maze_row)
-
-step = BFS(start, target)
-print(step)
-```
-
-
-
-#### sy324: 多终点迷宫问题
-
-https://sunnywhy.com/sfbj/8/2/324
-
-现有一个 n*m 大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。每次移动只能向上下左右移动一格，且只能移动到平地上。求从迷宫左上角到迷宫中每个位置的最小步数。
-
-**输入**
-
-第一行两个整数  $n、m \hspace{1em} (2 \le n \le 100, 2 \le m \le 100)$，分别表示迷宫的行数和列数；
-
-接下来n行，每行m个整数（值为`0`或`1`），表示迷宫。
-
-**输出**
-
-输出n行m列个整数，表示从左上角到迷宫中每个位置需要的最小步数。如果无法到达，那么输出`-1`。注意，整数之间用空格隔开，行末不允许有多余的空格。
-
-样例1
-
-输入
-
-```
-3 3
-0 0 0
-1 0 0
-0 1 0
-```
-
-输出
-
-```
-0 1 2
--1 2 3
--1 -1 4
-```
-
-解释
-
-假设左上角坐标是，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
-
-可以得到从左上角到所有点的前进路线：=>=>或=>=>。
-
-左下角的三个位置无法到达。
-
-
-
-```python
-from queue import Queue
 import sys
+sys.setrecursionlimit(10000000)
 
-INF = sys.maxsize
-MAXN = 100
-MAXD = 4
+class Graph:
+    def __init__(self):
+        self.vertices = {}
 
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
+    def addVertex(self, key, label): #添加节点，id 为key，附带数据 label
+        self.vertices[key] = Vertex(key, label)
 
-def canVisit(x, y):
-    return x >= 0 and x < n and y >= 0 and y < m and maze[x][y] == 0 and not inQueue[x][y]
+    def getVertex(self, key): # 返回 id 为 key 的节点
+        return self.vertices.get(key)
 
-def BFS(x, y):
-    minStep = [[-1] * m for _ in range(n)]
-    q = Queue()
-    q.put((x, y))
-    inQueue[x][y] = True
-    minStep[x][y] = 0
-    step = 0
-    while not q.empty():
-        cnt = q.qsize()
-        while cnt > 0:
-            front = q.get()
-            cnt -= 1
-            for i in range(MAXD):
-                nextX = front[0] + dx[i]
-                nextY = front[1] + dy[i]
-                if canVisit(nextX, nextY):
-                    inQueue[nextX][nextY] = True
-                    minStep[nextX][nextY] = step + 1
-                    q.put((nextX, nextY))
-        step += 1
-    return minStep
+    def __contains__(self, key): # 判断 key 节点是否在图中
+        return key in self.vertices
 
-n, m = map(int, input().split())
-maze = []
-inQueue = [[False] * m for _ in range(n)]
+    def addEdge(self, f, t, cost=0): # 添加从节点 id==f 到 id==t 的边
+        if f in self.vertices and t in self.vertices:
+            self.vertices[f].addNeighbor(t, cost)
 
-for _ in range(n):
-    maze.append(list(map(int, input().split())))
+    def getVertices(self): # 返回所有的节点 key
+        return self.vertices.keys()
 
-minStep = BFS(0, 0)
-for i in range(n):
-    #for j in range(m):
-    print(' '.join(map(str, minStep[i])))
-#        print(minStep[i][j], end='')
-#        if j < m - 1:
-#            print(' ', end='')
-#    print()
-```
+    def __iter__(self): # 迭代每一个节点对象
+        return iter(self.vertices.values())
 
 
+class Vertex:
+    def __init__(self, key, label=None): # 缺省颜色为"white“
+        self.id = key
+        self.label = label
+        self.color = "white"
+        self.connections = {}
 
-#### sy325: 迷宫问题-传送点
+    def addNeighbor(self, nbr, weight=0): # 添加到节点 nbr 的边
+        self.connections[nbr] = weight
 
-https://sunnywhy.com/sfbj/8/2/325
+    def setColor(self, color): # 设置节点颜色标记
+        self.color = color
 
-现有一个n*m大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地，`2`表示传送点。每次移动只能向上下左右移动一格，且只能移动到平地或传送点上。当位于传送点时，可以选择传送到另一个`2`处（传送不计入步数），也可以选择不传送。求从迷宫左上角到右下角的最小步数。
+    def getColor(self): # 返回节点颜色标记
+        return self.color
 
-**输入**
+    def getConnections(self): # 返回节点的所有邻接节点列表
+        return self.connections.keys()
 
-第一行两个整数$n、m \hspace{1em} (2 \le n \le 100, 2 \le m \le 100)$，分别表示迷宫的行数和列数；
+    def getId(self): # 返回节点的 id
+        return self.id
 
-接下来n行，每行m个整数（值为`0`或`1`或`2`），表示迷宫。数据保证有且只有两个`2`，且传送点不会在起始点出现。
-
-**输出**
-
-输出一个整数，表示最小步数。如果无法到达，那么输出`-1`。
-
-样例1
-
-输入
-
-复制
-
-```
-3 3
-0 1 2
-0 1 0
-2 1 0
-```
-
-输出
-
-```
-4
-```
-
-解释
-
-假设左上角坐标是，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
-
-可以得到从左上角到右下角的前进路线：=>=>=>=>=>，其中=>属于传送，不计入步数。
-
-因此最少需要`4`步。
-
-样例2
-
-输入
-
-```
-3 3
-0 1 0
-2 1 0
-2 1 0
-```
-
-输出
-
-```
--1
-```
-
-解释
-
-显然从左上角无法到达右下角。
+    def getLabel(self): # 返回节点的附带数据 label
+        return self.label
 
 
-
-将 transVector 中的第一个位置映射到第二个位置，并将第二个位置映射到第一个位置。这样，就建立了传送门的双向映射关系。
-
-在 BFS 函数中，当遇到传送门时，通过映射表 transMap 找到传送门的另一侧位置，并将其加入队列，以便继续进行搜索。
-
-```python
-from queue import Queue
-
-MAXN = 100
-MAXD = 4
-
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
-
-def canVisit(x, y):
-    return x >= 0 and x < n and y >= 0 and y < m and (maze[x][y] == 0 or maze[x][y] == 2) and not inQueue[x][y]
-
-def BFS(x, y):
-    q = Queue()
-    q.put((x, y))
-    inQueue[x][y] = True
-    step = 0
-    while not q.empty():
-        cnt = q.qsize()
-        while cnt > 0:
-            front = q.get()
-            cnt -= 1
-            if front[0] == n - 1 and front[1] == m - 1:
-                return step
-            for i in range(MAXD):
-                nextX = front[0] + dx[i]
-                nextY = front[1] + dy[i]
-                if canVisit(nextX, nextY):
-                    inQueue[nextX][nextY] = True
-                    q.put((nextX, nextY))
-                    if maze[nextX][nextY] == 2:
-                        transPosition = transMap[(nextX, nextY)]
-                        inQueue[transPosition[0]][transPosition[1]] = True
-                        q.put(transPosition)
-        step += 1
-    return -1
-
-n, m = map(int, input().split())
-maze = []
-inQueue = [[False] * m for _ in range(n)]
-transMap = {}
-transVector = []
-for i in range(n):
-    row = list(map(int, input().split()))
-    maze.append(row)
-
-    if 2 in row:
-        #transVector.append( (i, j) for j, val in enumerate(row) if val == 2)
-        for j, val in enumerate(row):
-            if val == 2:
-                transVector.append((i,j))
-
-        if len(transVector) == 2:
-            transMap[transVector[0]] = transVector[1]
-            transMap[transVector[1]] = transVector[0]
-
-    #print(transMap)
-step = BFS(0, 0)
-print(step)
-```
+mazelist = [
+    "++++++++++++++++++++++",
+    "+   +   ++ ++        +",
+    "E     +     ++++++++++",
+    "+ +    ++  ++++ +++ ++",
+    "+ +   + + ++    +++  +",
+    "+          ++  ++  + +",
+    "+++++ + +      ++  + +",
+    "+++++ +++  + +  ++   +",
+    "+         + + S+ +   +",
+    "+++++ +  + + +     + +",
+    "++++++++++++++++++++++",
+]
 
 
+def mazeGraph(mlist, rows, cols): # 从 mlist 创建图，迷宫有 rows 行 cols 列
+    mGraph = Graph()
+    vstart = None
+    for row in range(rows):
+        for col in range(cols):
+            if mlist[row][col] != "+":
+                mGraph.addVertex((row, col), mlist[row][col])
+                if mlist[row][col] == "S":
+                    vstart = mGraph.getVertex((row, col)) # 等号右侧填空（1分）
 
-#### sy326: 中国象棋-马-无障碍
+    for v in mGraph:
+        row, col = v.getId()
+        for i in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            if 0 <= row + i[0] < rows and 0 <= col + i[1] < cols:
+                if (row + i[0], col + i[1]) in mGraph:
+                    mGraph.addEdge((row, col), (row + i[0], col + i[1])) #括号中两个参数填空（1分）
 
-https://sunnywhy.com/sfbj/8/2/326 
+    return mGraph, vstart # 返回图对象，和开始节点
 
-现有一个n*m大小的棋盘，在棋盘的第行第列的位置放置了一个棋子，其他位置都未放置棋子。棋子的走位参照中国象棋的“马”。求该棋子到棋盘上每个位置的最小步数。
 
-注：中国象棋中“马”的走位为“日”字形，如下图所示。
+def searchMaze(path, vcurrent, mGraph): # 从 vcurrent 节点开始 DFS 搜索迷宫，path 保存路径
+    path.append(vcurrent.getId())
+    vcurrent.setColor("gray")
+    if vcurrent.getLabel() != "E":
+        done = False
+        for nbr in vcurrent.getConnections(): # in 后面部分填空（2分）
+            nbr_vertex = mGraph.getVertex(nbr)
+            if nbr_vertex.getColor() == "white":
+                done = searchMaze(path, nbr_vertex, mGraph) # 参数填空（2分）
+                if done:
+                    break
+        if not done:
+            path.pop() # 这条语句空着，填空（2分）
+            vcurrent.setColor("white")
+    else:
+        done = True
+    return done # 返回是否成功找到通路
 
-![image-20231213160152455](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20231213160152455.png)
 
-**输入**
+g, vstart = mazeGraph(mazelist, len(mazelist), len(mazelist[0]))
+path = []
+searchMaze(path, vstart, g)
+print(path)
 
-四个整数$n、m、x、y \hspace{1em} (2 \le n \le 100, 2 \le m \le 100, 1 \le x \le n, 1\le y \le m)$，分别表示棋盘的行数和列数、棋子的所在位置。
-
-**输出**
-
-输出行列个整数，表示从棋子到棋盘上每个位置需要的最小步数。如果无法到达，那么输出`-1`。注意，整数之间用空格隔开，行末不允许有多余的空格。
-
-样例1
-
-输入
+# [(8, 14), (7, 14), (6, 14), (5, 14), (4, 14), (4, 13), (5, 13), (6, 13), (6, 12), (6, 11), (6, 10), (5, 10), (5, 9), (4, 9), (3, 9), (2, 9), (2, 8), (2, 7), (1, 7), (1, 6), (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (5, 4), (4, 4), (3, 4), (2, 4), (2, 3), (1, 3), (1, 2), (2, 2), (2, 1), (2, 0)]
 
 ```
-3 3 2 1
-```
 
-输出
 
-```
-3 2 1
-0 -1 4
-3 2 1
-```
 
-解释
 
-共`3`行`3`列，“马”在第`2`行第`1`列的位置，由此可得“马”能够前进的路线如下图所示。
 
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20231213160421486.png" alt="image-20231213160421486" style="zoom:67%;" />
+> #### sy321: 迷宫最短路径
+>
+> https://sunnywhy.com/sfbj/8/2/321
+>
+> 现有一个 n*m 大小的迷宫，其中`1`表示不可通过的墙壁，`0`表示平地。每次移动只能向上下左右移动一格，且只能移动到平地上。假设左上角坐标是(1,1)，行数增加的方向为增长的方向，列数增加的方向为增长的方向，求从迷宫左上角到右下角的最少步数的路径。
+>
+> **输入**
+>
+> 第一行两个整数$n、m \hspace{1em} (2 \le n \le 100, 2 \le m \le 100)$，分别表示迷宫的行数和列数；
+>
+> 接下来 n 行，每行 m 个整数（值为`0`或`1`），表示迷宫。
+>
+> **输出**
+>
+> 从左上角的坐标开始，输出若干行（每行两个整数，表示一个坐标），直到右下角的坐标。
+>
+> 数据保证最少步数的路径存在且唯一。
+>
+> 样例1
+>
+> 输入
+>
+> ```
+> 3 3
+> 0 1 0
+> 0 0 0
+> 0 1 0
+> ```
+>
+> 输出
+>
+> ```
+> 1 1
+> 2 1
+> 2 2
+> 2 3
+> 3 3
+> ```
+>
+> 解释
+>
+> 假设左上角坐标是(1,)，行数增加的方向为增长的方向，列数增加的方向为增长的方向。
+>
+> 可以得到从左上角到右下角的最少步数的路径为：(1,1)=>(2,1)=>(2,2)=>(2,3)=>(3,3)。
+>
+> 
+>
+> **inq 数组，结点是否已入过队** 类似于 在图的类实现中，构建图时，所有顶点都被初始化成白色。白色代表该顶点没有被访问过。当顶点第一次被访问时，它就会被标记为灰色。
+>
+> ```python
+> # gpt translated version of the C++ code
+> from queue import Queue
+> 
+> MAXN = 100
+> MAXD = 4
+> dx = [0, 0, 1, -1]
+> dy = [1, -1, 0, 0]
+> 
+> def canVisit(x, y):
+>     return x >= 0 and x < n and y >= 0 and y < m and maze[x][y] == 0 and not inQueue[x][y]
+> 
+> def BFS(x, y):
+>     q = Queue()
+>     q.put((x, y))
+>     inQueue[x][y] = True
+>     while not q.empty():
+>         front = q.get()
+>         if front[0] == n - 1 and front[1] == m - 1:
+>             return
+>         for i in range(MAXD):
+>             nextX = front[0] + dx[i]
+>             nextY = front[1] + dy[i]
+>             if canVisit(nextX, nextY):
+>                 pre[nextX][nextY] = (front[0], front[1])
+>                 inQueue[nextX][nextY] = True
+>                 q.put((nextX, nextY))
+> 
+> def printPath(p):
+>     prePosition = pre[p[0]][p[1]]
+>     if prePosition == (-1, -1):
+>         print(p[0] + 1, p[1] + 1)
+>         return
+>     printPath(prePosition)
+>     print(p[0] + 1, p[1] + 1)
+> 
+> n, m = map(int, input().split())
+> maze = []
+> for _ in range(n):
+>     row = list(map(int, input().split()))
+>     maze.append(row)
+> 
+> inQueue = [[False] * m for _ in range(n)]
+> pre = [[(-1, -1)] * m for _ in range(n)]
+> 
+> BFS(0, 0)
+> printPath((n - 1, m - 1))
+> ```
+>
 
 
 
 
 
-```python
-from collections import deque
 
-MAXN = 100
-MAXD = 8
 
-dx = [-2, -1, 1, 2, -2, -1, 1, 2]
-dy = [1, 2, 2, 1, -1, -2, -2, -1]
 
-def canVisit(x, y):
-    return 0 <= x < n and 0 <= y < m and not inQueue[x][y]
 
-def BFS(x, y):
-    minStep = [[-1] * m for _ in range(n)]
-    queue = deque()
-    queue.append((x, y))
-    inQueue[x][y] = True
-    minStep[x][y] = 0
-    step = 0
-    while queue:
-        cnt = len(queue)
-        while cnt > 0:
-            front = queue.popleft()
-            cnt -= 1
-            for i in range(MAXD):
-                nextX = front[0] + dx[i]
-                nextY = front[1] + dy[i]
-                if canVisit(nextX, nextY):
-                    inQueue[nextX][nextY] = True
-                    minStep[nextX][nextY] = step + 1
-                    queue.append((nextX, nextY))
-        step += 1
-    return minStep
 
 
-n, m, x, y = map(int, input().split())
-inQueue = [[False] * m for _ in range(n)]
-minStep = BFS(x - 1, y - 1)
-for row in minStep:
-    print(' '.join(map(str, row)))
-```
 
 
-
-#### sy327: 中国象棋-马-有障碍
-
-https://sunnywhy.com/sfbj/8/2/327
-
-现有一个大小的棋盘，在棋盘的第行第列的位置放置了一个棋子，其他位置中的一部分放置了障碍棋子。棋子的走位参照中国象棋的“马”（障碍棋子将成为“马脚”）。求该棋子到棋盘上每个位置的最小步数。
-
-注`1`：中国象棋中“马”的走位为“日”字形，如下图所示。
-
-![中国象棋-马-有障碍_题目描述1.png](https://raw.githubusercontent.com/GMyhf/img/main/img/405270a4-8a80-4837-891a-d0d05cc5577c.png)
-
-注`2`：与“马”**直接相邻**的棋子会成为“马脚”，“马”不能往以“马”=>“马脚”为**长边**的方向前进，如下图所示。
-
-![中国象棋-马-有障碍_题目描述2.png](https://raw.githubusercontent.com/GMyhf/img/main/img/0b79f8a0-7b3e-4675-899c-b44e86ee5e40.png)
-
-**输入**
-
-第一行四个整数$n、m、x、y \hspace{1em} (2 \le n \le 100, 2 \le m \le 100, 1 \le x \le n, 1\le y \le m)$，分别表示棋盘的行数和列数、棋子的所在位置；
-
-第二行一个整数$k（1 \le k \le 10）$，表示障碍棋子的个数；
-
-接下来k行，每行两个整数$x_i、y_i（1 \le x_i \le n, 1 \le y_i \le m）$，表示第i个障碍棋子的所在位置。数据保证不存在相同位置的障碍棋子。
-
-**输出**
-
-输出n行m列个整数，表示从棋子到棋盘上每个位置需要的最小步数。如果无法到达，那么输出`-1`。注意，整数之间用空格隔开，行末不允许有多余的空格。
-
-样例1
-
-输入
-
-复制
-
-```
-3 3 2 1
-1
-1 2
-```
-
-输出
-
-复制
-
-```
-3 -1 1
-0 -1 -1
--1 2 1
-```
-
-解释
-
-共`3`行`3`列，“马”在第`2`行第`1`列的位置，障碍棋子在第`1`行第`2`列的位置，由此可得“马”能够前进的路线如下图所示。
-
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/f005a3c6-b042-471b-b10f-26daf7ff97fb.png" alt="中国象棋-马-有障碍_样例.png" style="zoom:67%;" />
-
-
-
-```python
-from collections import deque
-
-MAXD = 8
-dx = [-2, -1, 1, 2, -2, -1, 1, 2]
-dy = [1, 2, 2, 1, -1, -2, -2, -1]
-
-
-def canVisit(x, y):
-    return x >= 0 and x < n and y >= 0 and y < m and not isBlock.get((x, y), False) and not inQueue[x][y]
-
-
-def BFS(x, y):
-    minStep = [[-1] * m for _ in range(n)]
-    queue = deque()
-    queue.append((x, y))
-    inQueue[x][y] = True
-    minStep[x][y] = 0
-    step = 0
-    while queue:
-        cnt = len(queue)
-        for _ in range(cnt):
-            front = queue.popleft()
-            for i in range(MAXD):
-                nextX = front[0] + dx[i]
-                nextY = front[1] + dy[i]
-                if dx[i] == -1 and dy[i] == -1: #如果dx=-1，-1//2=-1，期望得到0
-                    footX, footY = front[0], front[1]
-                elif dx[i] == -1 and dy[i] != -1:
-                    footX, footY = front[0], front[1] + dy[i] // 2
-                elif dx[i] != -1 and dy[i] == -1:
-                    footX, footY = front[0] + dx[i] // 2, front[1]
-                else:
-                    footX, footY = front[0] + dx[i] // 2, front[1] + dy[i] // 2
-
-                if canVisit(nextX, nextY) and not isBlock.get((footX, footY), False):
-                    inQueue[nextX][nextY] = True
-                    minStep[nextX][nextY] = step + 1
-                    queue.append((nextX, nextY))
-
-
-        step += 1
-    return minStep
-
-n, m, x, y = map(int, input().split())
-inQueue = [[False] * m for _ in range(n)]
-isBlock = {}
-
-k = int(input())
-for _ in range(k):
-    blockX, blockY = map(int, input().split())
-    isBlock[(blockX - 1, blockY - 1)] = True
-
-minStep = BFS(x - 1, y - 1)
-
-for row in minStep:
-    print(' '.join(map(str, row)))
-```
-
-
-
-
-
-
-
-## 4 图的邻接表遍历
-
-### 4.1 宽度优先搜索
-
-**Algorithm for BFS**
-
-How to implement Breadth First Search algorithm in Python 
-
-https://www.codespeedy.com/breadth-first-search-algorithm-in-python/
-
-BFS is one of the traversing algorithm used in graphs. This algorithm is implemented using a queue data structure. In this algorithm, the main focus is on the vertices of the graph. Select a starting node or vertex at first, mark the starting node or vertex as visited and store it in a queue. Then visit the vertices or nodes which are adjacent to the starting node, mark them as visited and store these vertices or nodes in a queue. Repeat this process until all the nodes or vertices are completely visited.
-
-**Advantages of BFS**
-
-1. It can be useful in order to find whether the graph has connected components or not.
-2. It always finds or returns the shortest path if there is more than one path between two vertices.
-
- 
-
-**Disadvantages of BFS**
-
-1. The execution time of this algorithm is very slow because the time complexity of this algorithm is exponential.
-2. This algorithm is not useful when large graphs are used.
-
- 
-
-**Implementation of BFS in Python ( Breadth First Search )**
-
-**Source Code: BFS in Python**
-
-```python
-graph = {'A': ['B', 'C', 'E'],
-         'B': ['A','D', 'E'],
-         'C': ['A', 'F', 'G'],
-         'D': ['B'],
-         'E': ['A', 'B','D'],
-         'F': ['C'],
-         'G': ['C']}
-         
-         
-def bfs(graph, initial):
-    visited = []
-    queue = [initial]
- 
-    while queue:
-        node = queue.pop(0)
-        if node not in visited:
-            visited.append(node)
-            neighbours = graph[node]
- 
-            for neighbour in neighbours:
-                queue.append(neighbour)
-    return visited
- 
-print(bfs(graph,'A'))
-```
-
-
-
-Explanation:
-
-1. Create a graph.
-2. Initialize a starting node.
-3. Send the graph and initial node as parameters to the bfs function.
-4. Mark the initial node as visited and push it into the queue.
-5. Explore the initial node and add its neighbours to the queue and remove the initial node from the queue.
-6. Check if the neighbours node of a neighbouring node is already visited.
-7. If not, visit the neighbouring node neighbours and mark them as visited.
-8. Repeat this process until all the nodes in a graph are visited and the queue becomes empty.
-
-Output:
-
-```
-['A', 'B', 'C', 'E', 'D', 'F', 'G']
-```
-
-
-
-Breadth First Search (BFS), algorithm for traversing or searching graphs
-
-O(|V| + |E|) time complexity, |V| number of nodes, |E| number of edges
-
-Applications:
-
-Shortest path between two nodes (unweighted Graph)
-
-Ford-Fulkson algorithm (Maximum Flow in a network)
-
-
-
-
-
-### 4.2 深度优先搜索
+### 3.2 深度优先搜索
 
 **Algorithm for DFS**
 
@@ -3126,7 +1564,7 @@ Explanation:
 
 
 
-### 4.3 编程题目
+### 3.3 编程题目
 
 #### sy380: 无向图的连通块 简单
 
@@ -3375,7 +1813,7 @@ No
 
 
 
-在这个问题中，需要检查给定的有向图是否包含一个环。可以使用深度优先搜索（DFS）来解决这个问题。在DFS中，从一个节点开始，然后访问它的每一个邻居。如果在访问过程中，遇到了一个已经在当前路径中的节点，那么就存在一个环。可以使用一个颜色数组来跟踪每个节点的状态：未访问（0），正在访问（1），已访问（2）。
+在这个问题中，需要检查给定的有向图是否包含一个环。可以使用深度优先搜索（DFS）来解决这个问题。在DFS中，从一个节点开始，然后访问它的每一个邻居。如果在访问过程中，遇到了一个已经在当前路径中的节点，那么就存在一个环。**可以使用一个颜色数组来跟踪每个节点的状态：未访问（0），正在访问（1），已访问（2）。**
 
 以下是解决这个问题的Python代码：
 
