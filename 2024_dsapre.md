@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 0933 GMT+8 April 7, 2024
+Updated 1613 GMT+8 April 7, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -11435,6 +11435,9 @@ from collections import deque					# 时间: 105ms
 t = int(input())
 groups = {}
 member_to_group = {}
+
+
+
 for _ in range(t):
     members = list(map(int, input().split()))
     group_id = members[0]  # Assuming the first member's ID represents the group ID
