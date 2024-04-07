@@ -11426,36 +11426,6 @@ acwing 小组队列 https://www.acwing.com/problem/content/description/134/
 
 
 
-```python
-# 陈奕好 思路：思路：字典里套用deque()的想法第一次实现. 时间: 1267ms
-from collections import deque
-
-t = int(input())
-teams = {i: deque(map(int, input().split())) for i in range(t)}
-queue = deque()
-group_queue = {i: deque() for i in range(t)}
-
-while True:
-    command = input().split()
-    if command[0] == 'STOP':
-        break
-    elif command[0] == 'ENQUEUE':
-        person = int(command[1])
-        for i in range(t):
-            if person in teams[i]:
-                group_queue[i].append(person)
-                if i not in queue:
-                    queue.append(i)
-                break
-    elif command[0] == 'DEQUEUE':
-        group = queue[0]
-        print(group_queue[group].popleft())
-        if not group_queue[group]:
-            queue.popleft()
-```
-
-
-
 
 
 ```python
