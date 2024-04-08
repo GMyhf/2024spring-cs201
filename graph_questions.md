@@ -1062,7 +1062,7 @@ class Graph:
 
 
 
-**19943: 图的拉普拉斯矩阵**, 
+**19943: 图的拉普拉斯矩阵**
 
 http://cs101.openjudge.cn/practice/19943/
 
