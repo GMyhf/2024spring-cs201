@@ -1,6 +1,6 @@
 # Assignment #8: 图论：概念、遍历，及 树算
 
-Updated 1150 GMT+8 Apr 8, 2024
+Updated 1919 GMT+8 Apr 8, 2024
 
 2024 spring, Complied by ==同学的姓名、院系==
 
@@ -33,6 +33,8 @@ C/C++编程环境：Mac terminal vi (version 9.0.1424), g++/gcc (Apple clang ver
 ### 19943: 图的拉普拉斯矩阵
 
 matrices, http://cs101.openjudge.cn/practice/19943/
+
+请定义Vertex类，Graph类，然后实现
 
 
 
@@ -133,6 +135,8 @@ data structure/binary search, http://cs101.openjudge.cn/practice/03441
 ### 04089: 电话号码
 
 trie, http://cs101.openjudge.cn/practice/04089/
+
+Trie 数据结构可能需要自学下。
 
 
 
