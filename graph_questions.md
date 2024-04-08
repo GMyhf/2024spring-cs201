@@ -1062,6 +1062,144 @@ class Graph:
 
 
 
+**19943: 图的拉普拉斯矩阵**, 
+
+http://cs101.openjudge.cn/practice/19943/
+
+在图论中，度数矩阵是一个对角矩阵 ，其中包含的信息为的每一个顶点的度数，也就是说，每个顶点相邻的边数。邻接矩阵是图的一种常用存储方式。如果一个图一共有编号为0,1,2，…n-1的n个节点，那么邻接矩阵A的大小为n*n，对其中任一元素Aij，如果节点i，j直接有边，那么Aij=1；否则Aij=0。
+
+将度数矩阵与邻接矩阵逐位相减，可以求得图的拉普拉斯矩阵。具体可见下图示意。
+
+![img](http://media.openjudge.cn/images/upload/1575881364.jpg)
+
+现给出一个图中的所有边的信息，需要你输出该图的拉普拉斯矩阵。
+
+
+
+**输入**
+
+第一行2个整数，代表该图的顶点数n和边数m。
+接下m行，每行为空格分隔的2个整数a和b，代表顶点a和顶点b之间有一条无向边相连，a和b均为大小范围在0到n-1之间的整数。输入保证每条无向边仅出现一次（如1 2和2 1是同一条边，并不会在数据中同时出现）。
+
+**输出**
+
+共n行，每行为以空格分隔的n个整数，代表该图的拉普拉斯矩阵。
+
+样例输入
+
+```
+4 5
+2 1
+1 3
+2 3
+0 1
+0 2
+```
+
+样例输出
+
+```
+2 -1 -1 0
+-1 3 -1 -1
+-1 -1 3 -1
+0 -1 -1 2
+```
+
+来源
+
+cs101 2019 Final Exam
+
+
+
+```python
+class Vertex:	
+    def __init__(self, key):
+        self.id = key
+        self.connectedTo = {}
+
+    def addNeighbor(self, nbr, weight=0):
+        self.connectedTo[nbr] = weight
+
+    def __str__(self):
+        return str(self.id) + ' connectedTo: ' + str([x.id for x in self.connectedTo])
+
+    def getConnections(self):
+        return self.connectedTo.keys()
+
+    def getId(self):
+        return self.id
+
+    def getWeight(self, nbr):
+        return self.connectedTo[nbr]
+
+class Graph:
+    def __init__(self):
+        self.vertList = {}
+        self.numVertices = 0
+
+    def addVertex(self, key):
+        self.numVertices = self.numVertices + 1
+        newVertex = Vertex(key)
+        self.vertList[key] = newVertex
+        return newVertex
+
+    def getVertex(self, n):
+        if n in self.vertList:
+            return self.vertList[n]
+        else:
+            return None
+
+    def __contains__(self, n):
+        return n in self.vertList
+
+    def addEdge(self, f, t, weight=0):
+        if f not in self.vertList:
+            nv = self.addVertex(f)
+        if t not in self.vertList:
+            nv = self.addVertex(t)
+        self.vertList[f].addNeighbor(self.vertList[t], weight)
+
+    def getVertices(self):
+        return self.vertList.keys()
+
+    def __iter__(self):
+        return iter(self.vertList.values())
+
+def constructLaplacianMatrix(n, edges):
+    graph = Graph()
+    for i in range(n):	# 添加顶点
+        graph.addVertex(i)
+    
+    for edge in edges:	# 添加边
+        a, b = edge
+        graph.addEdge(a, b)
+        graph.addEdge(b, a)
+    
+    laplacianMatrix = []	# 构建拉普拉斯矩阵
+    for vertex in graph:
+        row = [0] * n
+        row[vertex.getId()] = len(vertex.getConnections())
+        for neighbor in vertex.getConnections():
+            row[neighbor.getId()] = -1
+        laplacianMatrix.append(row)
+
+    return laplacianMatrix
+
+
+n, m = map(int, input().split())	# 解析输入
+edges = []
+for i in range(m):
+    a, b = map(int, input().split())
+    edges.append((a, b))
+
+laplacianMatrix = constructLaplacianMatrix(n, edges)	# 构建拉普拉斯矩阵
+
+for row in laplacianMatrix:	# 输出结果
+    print(' '.join(map(str, row)))
+```
+
+
+
 
 
 ## 3 图的遍历
@@ -1145,10 +1283,6 @@ def buildGraph(wordFile):
 
 
 
-https://github.com/Yuqiu-Yang/problem_solving_with_algorithms_and_data_structures_using_python/tree/master/pythonds-1.2.1/pythonds/graphs
-
-
-
 这是我们在本节中遇到的第一个实际的图问题，你可能会好奇这个图的稀疏程度如何。本例中的单词列表包含5110个单词。如果使用邻接矩阵表示，就会有26112100个单元格（5110 ＊5110 = 26112100）。用buildGraph函数创建的图一共有53286条边（用邻接表来表示图）。因此，只有0.2%的单元格被填充。这显然是一个非常稀疏的矩阵。
 
 
@@ -1178,14 +1312,14 @@ https://github.com/Yuqiu-Yang/problem_solving_with_algorithms_and_data_structure
 > 1. It can be useful in order to find whether the graph has connected components or not.
 > 2. It always finds or returns the shortest path if there is more than one path between two vertices.
 >
->  
+> 
 >
 > **Disadvantages of BFS**
 >
 > 1. The execution time of this algorithm is very slow because the time complexity of this algorithm is exponential.
 > 2. This algorithm is not useful when large graphs are used.
 >
->  
+> 
 >
 > **Implementation of BFS in Python ( Breadth First Search )**
 >
@@ -1199,22 +1333,22 @@ https://github.com/Yuqiu-Yang/problem_solving_with_algorithms_and_data_structure
 >          'E': ['A', 'B','D'],
 >          'F': ['C'],
 >          'G': ['C']}
->          
->          
+> 
+> 
 > def bfs(graph, initial):
 >     visited = []
 >     queue = [initial]
->  
+> 
 >     while queue:
 >         node = queue.pop(0)
 >         if node not in visited:
 >             visited.append(node)
 >             neighbours = graph[node]
->  
+> 
 >             for neighbour in neighbours:
 >                 queue.append(neighbour)
 >     return visited
->  
+> 
 > print(bfs(graph,'A'))
 > ```
 >
@@ -1248,6 +1382,248 @@ https://github.com/Yuqiu-Yang/problem_solving_with_algorithms_and_data_structure
 > Shortest path between two nodes (unweighted Graph)
 >
 > Ford-Fulkson algorithm (Maximum Flow in a network)
+
+
+
+**BFS算法示例运行**
+
+https://github.com/GMyhf/2024spring-cs201/tree/main/code
+
+BFS 算法主体是两个循环的嵌套: while-for
+    while 循环对图中每个顶点访问一次，所以是 O(|V|)；
+    嵌套在 while 中的 for，由于每条边只有在其起始顶点u出队的时候才会被检查一次，
+    而每个顶点最多出队1次，所以边最多被检查次，一共是 O(|E|)；
+    综合起来 BFS 的时间复杂度为 0(V+|E|)
+
+词梯问题还包括两个部分算法
+    建立 BFS 树之后，回溯顶点到起始顶点的过程，最多为 O(|V|)
+    创建单词关系图也需要时间，时间是 O(|V|+|E|) 的，因为每个顶点和边都只被处理一次
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240408170459534.png" alt="image-20240408170459534" style="zoom: 67%;" />
+
+
+
+```python
+#!/usr/bin/env python3
+"""Solving Wordladder problem"""
+import sys
+
+
+class Queue:
+    def __init__(self):
+        self.items = []
+
+    def isEmpty(self):
+        return self.items == []
+
+    def enqueue(self, item):
+        self.items.insert(0, item)
+
+    def dequeue(self):
+        return self.items.pop()
+
+    def size(self):
+        return len(self.items)
+
+
+class Graph:
+    def __init__(self):
+        self.vertices = {}
+        self.numVertices = 0
+
+    def addVertex(self, key):
+        self.numVertices = self.numVertices + 1
+        newVertex = Vertex(key)
+        self.vertices[key] = newVertex
+        return newVertex
+
+    def getVertex(self, n):
+        if n in self.vertices:
+            return self.vertices[n]
+        else:
+            return None
+
+    def __len__(self):
+        return self.numVertices
+
+    def __contains__(self, n):
+        return n in self.vertices
+
+    def addEdge(self, f, t, cost=0):
+        if f not in self.vertices:
+            nv = self.addVertex(f)
+        if t not in self.vertices:
+            nv = self.addVertex(t)
+        self.vertices[f].addNeighbor(self.vertices[t], cost)
+
+    def getVertices(self):
+        return list(self.vertices.keys())
+
+    def __iter__(self):
+        return iter(self.vertices.values())
+
+
+class Vertex:
+    def __init__(self, num):
+        self.id = num
+        self.connectedTo = {}
+        self.color = 'white'
+        self.dist = sys.maxsize
+        self.pred = None
+        self.disc = 0
+        self.fin = 0
+
+    # def __lt__(self,o):
+    #     return self.id < o.id
+
+    def addNeighbor(self, nbr, weight=0):
+        self.connectedTo[nbr] = weight
+
+    def setColor(self, color):
+        self.color = color
+
+    def setDistance(self, d):
+        self.dist = d
+
+    def setPred(self, p):
+        self.pred = p
+
+    def setDiscovery(self, dtime):
+        self.disc = dtime
+
+    def setFinish(self, ftime):
+        self.fin = ftime
+
+    def getFinish(self):
+        return self.fin
+
+    def getDiscovery(self):
+        return self.disc
+
+    def getPred(self):
+        return self.pred
+
+    def getDistance(self):
+        return self.dist
+
+    def getColor(self):
+        return self.color
+
+    def getConnections(self):
+        return self.connectedTo.keys()
+
+    def getWeight(self, nbr):
+        return self.connectedTo[nbr]
+
+    def __str__(self):
+        return str(self.id) + ":color " + self.color + ":disc " + str(self.disc) + ":fin " + str(
+            self.fin) + ":dist " + str(self.dist) + ":pred \n\t[" + str(self.pred) + "]\n"
+
+    def getId(self):
+        return self.id
+
+
+def build_graph(filename):
+    buckets = {}
+    the_graph = Graph()
+    with open(filename, "r", encoding="utf8") as file_in:
+        all_words = file_in.readlines()
+    # all_words = ["bane", "bank", "bunk", "cane", "dale", "dunk", "foil", "fool", "kale",
+    #              "lane", "male", "mane", "pale", "pole", "poll", "pool", "quip",
+    #              "quit", "rain", "sage", "sale", "same", "tank", "vain", "wane"
+    #              ]
+
+    # create buckets of words that differ by 1 letter
+    for line in all_words:
+        word = line.strip()
+        for i, _ in enumerate(word):
+            bucket = f"{word[:i]}_{word[i + 1:]}"
+            buckets.setdefault(bucket, set()).add(word)
+
+    # connect different words in the same bucket
+    for similar_words in buckets.values():
+        for word1 in similar_words:
+            for word2 in similar_words - {word1}:
+                the_graph.addEdge(word1, word2)
+    return the_graph
+
+
+#g = build_graph("words_small")
+g = build_graph("vocabulary.txt")
+print(len(g))
+
+
+def bfs(start):
+    # start.distance = 0
+    start.setDistance(0)
+    start.setPred(None)
+    # start.previous = None
+    vert_queue = Queue()
+    vert_queue.enqueue(start)
+    while vert_queue.size() > 0:
+        current = vert_queue.dequeue()  # 取队首作为当前顶点
+        # for neighbor in current.get_neighbors():
+        for neighbor in current.getConnections():   # 遍历当前顶点的邻接顶点
+            if neighbor.color == "white":
+                neighbor.color = "gray"
+                # neighbor.distance = current.distance + 1
+                neighbor.setDistance(current.getDistance() + 1)
+                # neighbor.previous = current
+                neighbor.setPred(current)
+                vert_queue.enqueue(neighbor)
+        current.color = "black" # 当前顶点已经处理完毕，设黑色
+
+"""
+BFS 算法主体是两个循环的嵌套: while-for
+    while 循环对图中每个顶点访问一次，所以是 O(|V|)；
+    嵌套在 while 中的 for，由于每条边只有在其起始顶点u出队的时候才会被检查一次，
+    而每个顶点最多出队1次，所以边最多被检查次，一共是 O(|E|)；
+    综合起来 BFS 的时间复杂度为 0(V+|E|)
+
+词梯问题还包括两个部分算法
+    建立 BFS 树之后，回溯顶点到起始顶点的过程，最多为 O(|V|)
+    创建单词关系图也需要时间，时间是 O(|V|+|E|) 的，因为每个顶点和边都只被处理一次
+"""
+
+
+
+#bfs(g.getVertex("fool"))
+
+# 以FOOL为起点，进行广度优先搜索, 从FOOL到SAGE的最短路径,
+# 并为每个顶点着色、赋距离和前驱。
+bfs(g.getVertex("FOOL"))
+
+
+# def traverse(starting_vertex):
+#     current = starting_vertex
+#     while current:
+#         print(current.key)
+#         current = current.previous
+
+def traverse(y):
+    x = y
+    while (x.getPred()):
+        print(x.getId())
+        x = x.getPred()
+    print(x.getId())
+
+
+# traverse(g.get_vertex("sage"))
+#traverse(g.getVertex("sage"))
+traverse(g.getVertex("SAGE")) # 从SAGE开始回溯，逆向打印路径，直到FOOL
+"""
+3867
+SAGE
+SALE
+SALL
+TALL
+TOLL
+TOOL
+FOOL
+"""
+```
+
+
 
 
 
