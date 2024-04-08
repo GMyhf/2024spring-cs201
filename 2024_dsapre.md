@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 1613 GMT+8 April 7, 2024
+Updated 0929 GMT+8 April 8, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4563,13 +4563,102 @@ else:
 
 ## 04089: 电话号码
 
-http://cs101.openjudge.cn/dsapre/04089/
+trie, http://cs101.openjudge.cn/practice/04089/
+
+给你一些电话号码，请判断它们是否是一致的，即是否有某个电话是另一个电话的前缀。比如：
+
+Emergency 911
+Alice 97 625 999
+Bob 91 12 54 26
+
+在这个例子中，我们不可能拨通Bob的电话，因为Emergency的电话是它的前缀，当拨打Bob的电话时会先接通Emergency，所以这些电话号码不是一致的。
+
+**输入**
+
+第一行是一个整数t，1 ≤ t ≤ 40，表示测试数据的数目。
+每个测试样例的第一行是一个整数n，1 ≤ n ≤ 10000，其后n行每行是一个不超过10位的电话号码。
+
+**输出**
+
+对于每个测试数据，如果是一致的输出“YES”，如果不是输出“NO”。
+
+样例输入
+
+```
+2
+3
+911
+97625999
+91125426
+5
+113
+12340
+123440
+12345
+98346
+```
+
+样例输出
+
+```
+NO
+YES
+```
 
 
 
-题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
+https://www.geeksforgeeks.org/trie-insert-and-search/
 
-的 Optional Problems 部分相应题目
+**Definition:** A trie (prefix tree, derived from retrieval) is a multiway tree data structure used for storing strings over an alphabet. It is used to store a large amount of strings. The pattern matching can be done efficiently using tries.
+
+使用字典实现的字典树（Trie）。它的主要功能是插入和搜索字符串。
+
+```python
+class TrieNode:
+    def __init__(self):
+        self.child={}
+
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, nums):
+        curnode = self.root
+        for x in nums:
+            if x not in curnode.child:
+                curnode.child[x] = TrieNode()
+            curnode=curnode.child[x]
+
+    def search(self, num):
+        curnode = self.root
+        for x in num:
+            if x not in curnode.child:
+                return 0
+            curnode = curnode.child[x]
+        return 1
+
+
+t = int(input())
+p = []
+for _ in range(t):
+    n = int(input())
+    nums = []
+    for _ in range(n):
+        nums.append(str(input()))
+    nums.sort(reverse=True)
+    s = 0
+    trie = Trie()
+    for num in nums:
+        s += trie.search(num)
+        trie.insert(num)
+    if s > 0:
+        print('NO')
+    else:
+        print('YES')
+```
+
+
 
 
 
