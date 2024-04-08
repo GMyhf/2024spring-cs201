@@ -1,4 +1,4 @@
-class Vertex:  # 19943: 图的拉普拉斯矩阵**, http://cs101.openjudge.cn/practice/19943/
+class Vertex:  # 19943: 图的拉普拉斯矩阵, http://cs101.openjudge.cn/practice/19943/
     def __init__(self, key):
         self.id = key
         self.connectedTo = {}
