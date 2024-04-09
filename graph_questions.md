@@ -16,7 +16,9 @@ Updated 1947 GMT+8 Apr 8, 2024
 
 
 
+这可以是笔试判断题：
 
+计算机存储器线性编址的简单性与程序逻辑的复杂性之间的鸿沟，导致了数据结构的必要性。✅
 
 
 
@@ -126,7 +128,7 @@ mindmap
 
 **权值Weight**
 
-顶点和边都可以有一定属性，而量化的属性称为权值，顶点的权值和边的权值分别称为点权和边权。权值可以根据问题的实际背景设定，例如点权可以是城市中资源的数目，边权可以使两个城市之间来往所需要的时间、花费或距离。
+顶点和边都可以有一定属性，而量化的属性称为权值，顶点的权值和边的权值分别称为点权和边权。权值可以根据问题的实际背景设定，例如点权可以是城市中资源的数目，边权可以是两个城市之间来往所需要的时间、花费或距离。
 
 
 
@@ -305,18 +307,18 @@ for i in range(n):
 
 ## 2 图的表示方法
 
-图的抽象数据类型
+
 图的抽象数据类型由下列方法定义。
 
-❏ Graph()新建一个空图。
-❏ addVertex(vert)向图中添加一个顶点实例。
-❏ addEdge(fromVert, toVert)向图中添加一条有向边，用于连接顶点fromVert和toVert。
-❏ addEdge(fromVert, toVert, weight)向图中添加一条带权重weight的有向边，用于连接顶点fromVert和toVert。
-❏ getVertex(vertKey)在图中找到名为vertKey的顶点。
-❏ getVertices()以列表形式返回图中所有顶点。
-❏ in通过vertex in graph这样的语句，在顶点存在时返回True，否则返回False。
+❏ Graph() 新建一个空图。
+❏ addVertex(vert) 向图中添加一个顶点实例。
+❏ addEdge(fromVert, toVert) 向图中添加一条有向边，用于连接顶点fromVert和toVert。
+❏ addEdge(fromVert, toVert, weight) 向图中添加一条带权重weight的有向边，用于连接顶点fromVert和toVert。
+❏ getVertex(vertKey) 在图中找到名为vertKey的顶点。
+❏ getVertices() 以列表形式返回图中所有顶点。
+❏ in 通过 vertex in graph 这样的语句，在顶点存在时返回True，否则返回False。
 
-根据图的正式定义，可以通过多种方式在Python中实现图的抽象数据类型。你会看到，在使用不同的表达方式来实现图的抽象数据类型时，需要做很多取舍。有两种非常著名的图实现，它们分别是邻接矩阵 **adjacency matrix** 和邻接表**adjacency list**。本节会解释这两种实现，并且用Python类来实现邻接表。
+根据图的正式定义，可以通过多种方式在Python中实现图的抽象数据类型（ADT）。在使用不同的表达方式来实现图的抽象数据类型时，需要做很多取舍。有两种非常著名的图实现，它们分别是邻接矩阵 **adjacency matrix** 和邻接表**adjacency list**。本节会解释这两种实现，并且用 Python 类来实现邻接表。
 
 
 
@@ -341,7 +343,7 @@ for i in range(n):
 >
 > 
 >
-> **dict的value如果是list，是邻接表。dici嵌套dict 是 字典树/前缀树/Trie**
+> **dict的value如果是list/set，是邻接表。dici嵌套dict 是 字典树/前缀树/Trie**
 >
 > 是的，你提到的两种数据结构分别是邻接表和字典树（前缀树，Trie）。
 >
