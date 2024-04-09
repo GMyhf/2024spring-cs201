@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 2359 GMT+8 Apr 5, 2024
+Updated 2117 GMT+8 Apr 9, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8706,6 +8706,44 @@ print(max_weight(n, m, weights, edges))
 ```
 
 在这段代码中，首先通过`input()`函数接收用户输入的顶点数`n`、边数`m`和每个顶点的权值，然后在一个循环中接收每条边的起点和终点，并将它们添加到`edges`列表中。然后，我们调用`max_weight`函数并打印结果。
+
+
+
+学习了图的相关知识，发现用并查集处理连通分支相关问题好像很方便，可以简化很多代码。
+
+用并查集存储连通关系，额外对并查集每个根节点维护一个所在集合权值和，union时把新根的s变为原来两个根之和即可。
+
+```python
+# 杨博文，数学科学学院
+n, m = map(int, input().split())
+key = list(map(int, input().split()))
+s = [key[i] for i in range(n)]
+p = [i for i in range(n)]
+
+
+def find(x):
+    if p[x] == x:
+        return x
+    else:
+        y = find(p[x])
+        p[x] = y
+        return y
+
+
+def union(x, y):
+    u = find(x);
+    v = find(y)
+    if u != v:
+        p[u] = v;
+        s[v] += s[u]
+
+
+for _ in range(m):
+    x, y = map(int, input().split())
+    union(x, y)
+print(max(s))
+
+```
 
 
 
