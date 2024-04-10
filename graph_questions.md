@@ -1,6 +1,6 @@
 # 20240409～23-Week8~10 图论
 
-Updated 1947 GMT+8 Apr 8, 2024
+Updated 2322 GMT+8 Apr 10, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1310,7 +1310,7 @@ def buildGraph(wordFile):
 
 
 
-#### 3.1.3 实现宽度优先搜索
+#### 3.1.3 BFS实现词梯问题
 
 完成图的构建之后，就可以编写能帮我们找到最短路径的图算法。我们使用的算法叫作宽度优先搜索（breadth first search，以下简称BFS）。BFS是最简单的图搜索算法之一，也是后续要介绍的其他重要图算法的原型。
 
@@ -1405,24 +1405,6 @@ def buildGraph(wordFile):
 > Shortest path between two nodes (unweighted Graph)
 >
 > Ford-Fulkson algorithm (Maximum Flow in a network)
-
-
-
-**BFS算法示例运行**
-
-https://github.com/GMyhf/2024spring-cs201/tree/main/code
-
-BFS 算法主体是两个循环的嵌套: while-for
-    while 循环对图中每个顶点访问一次，所以是 O(|V|)；
-    嵌套在 while 中的 for，由于每条边只有在其起始顶点u出队的时候才会被检查一次，
-    而每个顶点最多出队1次，所以边最多被检查次，一共是 O(|E|)；
-    综合起来 BFS 的时间复杂度为 0(V+|E|)
-
-词梯问题还包括两个部分算法
-    建立 BFS 树之后，回溯顶点到起始顶点的过程，最多为 O(|V|)
-    创建单词关系图也需要时间，时间是 O(|V|+|E|) 的，因为每个顶点和边都只被处理一次
-
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240408170459534.png" alt="image-20240408170459534" style="zoom: 67%;" />
 
 
 
@@ -1577,21 +1559,16 @@ print(len(g))
 
 
 def bfs(start):
-    # start.distance = 0
     start.setDistance(0)
     start.setPred(None)
-    # start.previous = None
     vert_queue = Queue()
     vert_queue.enqueue(start)
     while vert_queue.size() > 0:
         current = vert_queue.dequeue()  # 取队首作为当前顶点
-        # for neighbor in current.get_neighbors():
         for neighbor in current.getConnections():   # 遍历当前顶点的邻接顶点
             if neighbor.color == "white":
                 neighbor.color = "gray"
-                # neighbor.distance = current.distance + 1
                 neighbor.setDistance(current.getDistance() + 1)
-                # neighbor.previous = current
                 neighbor.setPred(current)
                 vert_queue.enqueue(neighbor)
         current.color = "black" # 当前顶点已经处理完毕，设黑色
@@ -1647,13 +1624,48 @@ FOOL
 
 ```
 
-
-
-"vocabulary.txt"是 3933行单词，**但是build_graph，只有3867个顶点？**检查了vocabulary.txt，没有重复的。
+代码及数据在，https://github.com/GMyhf/2024spring-cs201/tree/main/code
 
 
 
-#### 3.1.4 笔试题目
+Q: "vocabulary.txt"是 3933行单词，**但是build_graph，只有3867个顶点？**检查了vocabulary.txt，没有重复的。
+
+A: 建图过程中，如果桶里只有一个单词，就没有加入顶点集合。
+
+
+
+
+
+#### 3.1.4 分析词梯时间复杂度
+
+在学习其他图算法之前，让我们先分析BFS的性能。
+
+```python
+def bfs(start):
+    start.setDistance(0)
+    start.setPred(None)
+    vert_queue = Queue()
+    vert_queue.enqueue(start)
+    while vert_queue.size() > 0:
+        current = vert_queue.dequeue()  # 取队首作为当前顶点
+        for neighbor in current.getConnections():   # 遍历当前顶点的邻接顶点
+            if neighbor.color == "white":
+                neighbor.color = "gray"
+                neighbor.setDistance(current.getDistance() + 1)
+                neighbor.setPred(current)
+                vert_queue.enqueue(neighbor)
+        current.color = "black" # 当前顶点已经处理完毕，设黑色
+```
+
+
+
+BFS 算法主体是两个循环的嵌套，while-for。while 循环对图中每个顶点最多只执行一次，时间复杂度是 O(|V|)，因为只有白色顶点才能被访问并添加到队列中。嵌套在 while 中的 for，由于每条边只有在其起始顶点u出队的时候才会被检查一次，而每个顶点最多出队1次，所以边最多被检查1次，一共是 O(|E|)。因此两个循环总的时间复杂度为 O(|V|+|E|)。
+
+词梯问题还包括两个部分算法。建立 BFS 树之后，回溯顶点到起始顶点的过程，最多为 O(|V|)，因为最坏情况是整个图是一条长链。另外，创建单词关系图也需要时间，时间是 O(|V|+|E|) 的，因为每个顶点和边都只被处理一次。
+
+
+
+#### 3.1.5 笔试题目（类图 + dfs）
 
 数算B-2021笔试最后一个算法题目（8分）
 
@@ -1669,7 +1681,7 @@ FOOL
 
 
 
-<u>下面是我给的答案，请同学自己完成上面算法填空，然后来对照，看我提供的答案是否正确。</u>
+<u>下面是我给的答案，请同学自己完成上面算法填空，然后来对照，看答案是否正确。</u>
 
 阅读下列程序，完成图的深度优先周游算法实现的迷宫探索。已知图采用邻接表表示，Graph 类和 Vertex 类基本定义如下：
 
@@ -1990,6 +2002,12 @@ Explanation:
 
 
 ### 3.3 编程题目
+
+#### 28046: 词梯
+
+http://cs101.openjudge.cn/practice/28046/
+
+
 
 #### sy380: 无向图的连通块 简单
 
