@@ -1,6 +1,6 @@
 # 20240409～23-Week8~10 图论
 
-Updated 2350 GMT+8 Apr 10, 2024
+Updated 2359 GMT+8 Apr 10, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1226,7 +1226,89 @@ for row in laplacianMatrix:	# 输出结果
 
 ### 3.1 宽度优先搜索
 
+**Algorithm for BFS**
 
+How to implement Breadth First Search algorithm in Python 
+
+https://www.codespeedy.com/breadth-first-search-algorithm-in-python/
+
+BFS is one of the traversing algorithm used in graphs. This algorithm is implemented using a queue data structure. In this algorithm, the main focus is on the vertices of the graph. Select a starting node or vertex at first, mark the starting node or vertex as visited and store it in a queue. Then visit the vertices or nodes which are adjacent to the starting node, mark them as visited and store these vertices or nodes in a queue. Repeat this process until all the nodes or vertices are completely visited.
+
+**Advantages of BFS**
+
+1. It can be useful in order to find whether the graph has connected components or not.
+2. It always finds or returns the **shortest path** if there is more than one path between two vertices.
+
+
+
+**Disadvantages of BFS**
+
+1. The execution time of this algorithm is very slow because the time complexity of this algorithm is exponential.
+2. This algorithm is not useful when large graphs are used.
+
+
+
+**Implementation of BFS in Python ( Breadth First Search )**
+
+**Source Code: BFS in Python**
+
+```python
+graph = {'A': ['B', 'C', 'E'],
+         'B': ['A','D', 'E'],
+         'C': ['A', 'F', 'G'],
+         'D': ['B'],
+         'E': ['A', 'B','D'],
+         'F': ['C'],
+         'G': ['C']}
+
+
+def bfs(graph, initial):
+    visited = []
+    queue = [initial]
+
+    while queue:
+        node = queue.pop(0)
+        if node not in visited:
+            visited.append(node)
+            neighbours = graph[node]
+
+            for neighbour in neighbours:
+                queue.append(neighbour)
+    return visited
+
+print(bfs(graph,'A'))
+```
+
+
+
+Explanation:
+
+1. Create a graph.
+2. Initialize a starting node.
+3. Send the graph and initial node as parameters to the bfs function.
+4. Mark the initial node as visited and push it into the queue.
+5. Explore the initial node and add its neighbours to the queue and remove the initial node from the queue.
+6. Check if the neighbours node of a neighbouring node is already visited.
+7. If not, visit the neighbouring node neighbours and mark them as visited.
+8. Repeat this process until all the nodes in a graph are visited and the queue becomes empty.
+
+Output:
+
+```
+['A', 'B', 'C', 'E', 'D', 'F', 'G']
+```
+
+
+
+Breadth First Search (BFS), algorithm for traversing or searching graphs
+
+O(|V| + |E|) time complexity, |V| number of nodes, |E| number of edges
+
+Applications:
+
+Shortest path between two nodes (unweighted Graph)
+
+Ford-Fulkson algorithm (Maximum Flow in a network)
 
 #### 3.1.1 词梯问题
 
@@ -1321,90 +1403,6 @@ def buildGraph(wordFile):
 
 
 来看看bfs函数如何构建对应于图1的宽度优先搜索树。从顶点fool开始，将所有与之相连的顶点都添加到树中。相邻的顶点有pool、foil、foul，以及cool。它们都被添加到队列中，作为之后要访问的顶点。
-
-> **Algorithm for BFS**
->
-> How to implement Breadth First Search algorithm in Python 
->
-> https://www.codespeedy.com/breadth-first-search-algorithm-in-python/
->
-> BFS is one of the traversing algorithm used in graphs. This algorithm is implemented using a queue data structure. In this algorithm, the main focus is on the vertices of the graph. Select a starting node or vertex at first, mark the starting node or vertex as visited and store it in a queue. Then visit the vertices or nodes which are adjacent to the starting node, mark them as visited and store these vertices or nodes in a queue. Repeat this process until all the nodes or vertices are completely visited.
->
-> **Advantages of BFS**
->
-> 1. It can be useful in order to find whether the graph has connected components or not.
-> 2. It always finds or returns the **shortest path** if there is more than one path between two vertices.
->
-> 
->
-> **Disadvantages of BFS**
->
-> 1. The execution time of this algorithm is very slow because the time complexity of this algorithm is exponential.
-> 2. This algorithm is not useful when large graphs are used.
->
-> 
->
-> **Implementation of BFS in Python ( Breadth First Search )**
->
-> **Source Code: BFS in Python**
->
-> ```python
-> graph = {'A': ['B', 'C', 'E'],
->          'B': ['A','D', 'E'],
->          'C': ['A', 'F', 'G'],
->          'D': ['B'],
->          'E': ['A', 'B','D'],
->          'F': ['C'],
->          'G': ['C']}
-> 
-> 
-> def bfs(graph, initial):
->     visited = []
->     queue = [initial]
-> 
->     while queue:
->         node = queue.pop(0)
->         if node not in visited:
->             visited.append(node)
->             neighbours = graph[node]
-> 
->             for neighbour in neighbours:
->                 queue.append(neighbour)
->     return visited
-> 
-> print(bfs(graph,'A'))
-> ```
->
-> 
->
-> Explanation:
->
-> 1. Create a graph.
-> 2. Initialize a starting node.
-> 3. Send the graph and initial node as parameters to the bfs function.
-> 4. Mark the initial node as visited and push it into the queue.
-> 5. Explore the initial node and add its neighbours to the queue and remove the initial node from the queue.
-> 6. Check if the neighbours node of a neighbouring node is already visited.
-> 7. If not, visit the neighbouring node neighbours and mark them as visited.
-> 8. Repeat this process until all the nodes in a graph are visited and the queue becomes empty.
->
-> Output:
->
-> ```
-> ['A', 'B', 'C', 'E', 'D', 'F', 'G']
-> ```
->
-> 
->
-> Breadth First Search (BFS), algorithm for traversing or searching graphs
->
-> O(|V| + |E|) time complexity, |V| number of nodes, |E| number of edges
->
-> Applications:
->
-> Shortest path between two nodes (unweighted Graph)
->
-> Ford-Fulkson algorithm (Maximum Flow in a network)
 
 
 
@@ -1836,7 +1834,7 @@ class Vertex:
     def getLabel(self): # 返回节点的附带数据 label
         return self.label
 
-
+#https://github.com/Yuqiu-Yang/problem_solving_with_algorithms_and_data_structures_using_python/blob/master/ch7/ch4_maze2.txt
 mazelist = [
     "++++++++++++++++++++++",
     "+   +   ++ ++        +",
@@ -1846,11 +1844,10 @@ mazelist = [
     "+          ++  ++  + +",
     "+++++ + +      ++  + +",
     "+++++ +++  + +  ++   +",
-    "+         + + S+ +   +",
+    "+          + + S+ +  +",
     "+++++ +  + + +     + +",
     "++++++++++++++++++++++",
 ]
-
 
 def mazeGraph(mlist, rows, cols): # 从 mlist 创建图，迷宫有 rows 行 cols 列
     mGraph = Graph()
@@ -1896,8 +1893,7 @@ path = []
 searchMaze(path, vstart, g)
 print(path)
 
-# [(8, 14), (7, 14), (6, 14), (5, 14), (4, 14), (4, 13), (5, 13), (6, 13), (6, 12), (6, 11), (6, 10), (5, 10), (5, 9), (4, 9), (3, 9), (2, 9), (2, 8), (2, 7), (1, 7), (1, 6), (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (5, 4), (4, 4), (3, 4), (2, 4), (2, 3), (1, 3), (1, 2), (2, 2), (2, 1), (2, 0)]
-
+# [(8, 15), (7, 15), (7, 14), (6, 14), (5, 14), (4, 14), (4, 13), (5, 13), (6, 13), (6, 12), (6, 11), (6, 10), (5, 10), (5, 9), (4, 9), (3, 9), (2, 9), (2, 8), (2, 7), (1, 7), (1, 6), (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (5, 4), (4, 4), (3, 4), (2, 4), (2, 3), (1, 3), (1, 2), (2, 2), (2, 1), (2, 0)]
 ```
 
 
@@ -1992,11 +1988,446 @@ Explanation:
 
 
 
+
+
+#### 3.2.1 骑士周游问题
+
+骑士周游问题是经典问题，用它来说明DFS算法。为了解决骑士周游问题，取一块国际象棋棋盘和一颗骑士棋子（马）。目标是找到一系列走法，使得骑士对棋盘上的每一格刚好都只访问一次。这样的一个移动序列被称为“周游路径”。多年来，骑士周游问题吸引了众多棋手、数学家和计算机科学家。对于8×8的棋盘，周游数的上界是1.305×10^35，但死路更多。很明显，解决这个问题需要聪明人或者强大的计算能力，抑或兼具二者。
+
+尽管人们研究出很多种算法来解决骑士周游问题，但是图搜索算法是其中最好理解和最易编程的一种。我们再一次通过两步来解决这个问题：
+
+❏ 用图表示骑士在棋盘上的合理走法；
+❏ 使用图算法找到一条长度为rows × columns-1的路径，满足图中的每一个顶点都只被访问一次。
+
+##### 1 构建骑士周游图
+
+为了用图表示骑士周游问题，将棋盘上的每一格表示为一个顶点，同时将骑士的每一次合理走法表示为一条边。图1展示了骑士的合理走法以及在图中对应的边。
+
+
+
+![../_images/knightmoves.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202404110007738.png)
+
+图1 骑士的合理走法以及在图中对应的边
+
+
+
+用List 1中的函数来构建n × n棋盘对应的完整图。`knightGraph`函数将整个棋盘遍历了一遍。当它访问棋盘上的每一格时，都会调用辅助函数`genLegalMoves`来创建一个列表，用于记录从这一格开始的所有合理走法。之后，所有的合理走法都被转换成图中的边。另一个辅助函数`posToNodeId`将棋盘上的行列位置转换成与图1中顶点编号相似的线性顶点数。
+
+**Listing 1**
+
+```python
+from pythonds.graphs import Graph
+
+def knightGraph(bdSize):
+    ktGraph = Graph()
+    for row in range(bdSize):			#遍历每一行
+       for col in range(bdSize):	#遍历行上的每一个格子
+           nodeId = posToNodeId(row,col,bdSize)	#把行、列号转为格子ID
+           newPositions = genLegalMoves(row,col,bdSize)	#按照 马走日，返回下一步可能位置
+           for e in newPositions:
+               nid = posToNodeId(e[0],e[1],bdSize)	#下一步的格子ID
+               ktGraph.addEdge(nodeId,nid)	#在骑士周游图中为两个格子加一条边
+    return ktGraph
+
+def posToNodeId(row, column, board_size):
+    return (row * board_size) + column
+```
+
+
+
+在List2中，`genLegalMoves`函数接受骑士在棋盘上的位置，并且生成8种可能的走法。`legalCoord`辅助函数确认走法是合理的
+
+**Listing 2**
+
+```python
+def genLegalMoves(x,y,bdSize):
+    newMoves = []
+    moveOffsets = [(-1,-2),(-1,2),(-2,-1),(-2,1),	#马走日的8种走法
+                   ( 1,-2),( 1,2),( 2,-1),( 2,1)]
+    for i in moveOffsets:
+        newX = x + i[0]
+        newY = y + i[1]
+        if legalCoord(newX,bdSize) and \					#检查，不能走出棋盘
+                        legalCoord(newY,bdSize):
+            newMoves.append((newX,newY))
+    return newMoves
+
+def legalCoord(x,bdSize):	#判断是否走出棋盘
+    if x >= 0 and x < bdSize:
+        return True
+    else:
+        return False
+```
+
+
+
+图2 展示了在8×8的棋盘上所有合理走法所对应的完整图，其中一共有336条边。注意，与棋盘中间的顶点相比，边缘顶点的连接更少。可以看到，这个图也是非常稀疏的。如果图是完全相连的，那么会有4096条边。由于本图只有336条边，因此邻接矩阵的填充率只有8.2%。还是稀疏图。
+
+<img src="https://runestone.academy/ns/books/published/pythonds/_images/bigknight.png" alt="../_images/bigknight.png" style="zoom:67%;" />
+
+Figure 2: All Legal Moves for a Knight on an 8×8 Chessboard
+
+
+
+#### 3.2.2 实现骑士周游
+
+用来解决骑士周游问题的搜索算法叫作深度优先搜索（depth first search，以下简称DFS）。与BFS每次构建一层不同，DFS通过尽可能深地探索分支来构建搜索树。下面介绍DFS的两种实现：第1种每个顶点顶点仅访问一次，用于解决骑士周游问题；第2种更通用，它在构建搜索树时允许其中的顶点被多次访问。可以作为其他的图算法的基础。
+
+DFS正是为找到由63条边构成的路径所需的算法。我们会看到，当DFS遇到死路时（无法找到下一个合理走法），它会回退到树中倒数第2深的顶点，以继续移动。
+
+在list 3中，`knightTour`函数接受4个参数：n是搜索树的当前深度；path是到当前为止访问过的顶点列表；u是希望在图中访问的顶点；limit是路径上的顶点总数。`knightTour`函数是递归的。当被调用时，它首先检查基本情况。如果有一条包含64个顶点的路径，就从`knightTour`返回True，以表示找到了一次成功的周游。如果路径不够长，则通过选择一个新的访问顶点并对其递归调用`knightTour`来进行更深一层的探索。
+
+DFS也使用颜色来记录已被访问的顶点。未访问的顶点是白色的，已被访问的则是灰色的。如果一个顶点的所有相邻顶点都已被访问过，但是路径长度仍然没有达到64，就说明遇到了死路。如果遇到死路，就必须回溯。当从`knightTour`返回False时，就会发生回溯。在宽度优先搜索中，我们使用了队列来记录将要访问的顶点。由于深度优先搜索是递归的，因此我们隐式地使用一个栈来回溯。当从`knightTour`调用返回False时，仍然在循环中，并且会查看nbrList中的下一个顶点。
+
+
+
+List 3 knightTour函数
+
+```python
+from pythonds.graphs import Graph, Vertex
+def knightTour(n,path,u,limit):
+    u.setColor('gray')
+    path.append(u)																#当前顶点涂色并加入路径
+    if n < limit:
+        nbrList = list(u.getConnections())				#对所有的合法移动依次深入
+        for nbr in nbrList:
+            if nbr.getColor() == 'white' and \		#选择“白色”未经深入的点
+                	knightTour(n+1, path, nbr, limit) #层次加一，递归深入
+            		return True
+        else:  														#所有的“下一步”都试了走不通
+            path.pop()										#回退途径
+            u.setColor('white')						#改回颜色
+            return False
+    else:
+        return True
+```
+
+我们通过一个例子来看看`knightTour`的运行情况，可以参照图3来追踪搜索的变化。这个例子假设在list 3中第6行对`getConnections`方法的调用将顶点按照字母顺序排好。首先调用`knightTour(0, path, A, 6)`。
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202404110022563.png" alt="image-20240411002152657" style="zoom: 50%;" />
+
+图3 利用knightTour函数找到路径
+
+`knightTour`函数从顶点A开始访问。与A相邻的顶点是B和D。按照字母顺序，B在D之前，因此DFS选择B作为下一个要访问的顶点，如图3b所示。对B的访问从递归调用`knightTour`开始。B与C和D相邻，因此`knightTour`接下来会访问C。但是，<u>C没有白色的相邻顶点（如图3c所示），因此是死路。此时，将C的颜色改回白色</u>。`knightTour`的调用返回False，也就是将搜索回溯到顶点B，如图3d所示。接下来要访问的顶点是D，因此`knightTour`进行了一次递归调用来访问它。从顶点D开始，`knightTour`可以继续进行递归调用，直到再一次访问顶点C。但是，这一次，检验条件n < limit失败了，因此我们知道遍历完了图中所有的顶点。此时返回True，以表明对图进行了一次成功的遍历。当返回列表时，path包含[A, B, D, E, F, C]。其中的顺序就是每个顶点只访问一次所需的顺序。
+
+图4展示了在8×8的棋盘上周游的完整路径。存在多条周游路径，其中有一些是对称的。通过一些修改之后，可以实现循环周游，即起点和终点在同一个位。
+
+
+
+![../_images/completeTour.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202404110023421.png)
+
+Figure 4: A Complete Tour of the Board
+
+
+
+#### 3.2.3 分析骑士周游
+
+在学习深度优先搜索的通用版本之前，我们探索骑士周游问题中的最后一个有趣的话题：性能。具体地说，`knightTour`对用于选择下一个访问顶点的方法非常敏感。例如，利用速度正常的计算机，可以在1.5秒之内针对5×5的棋盘生成一条周游路径。但是，如果针对8×8的棋盘，会怎么样呢？可能需要等待半个小时才能得到结果！
+
+如此耗时的原因在于，目前实现的骑士周游问题算法是一种$O(k^N)$的指数阶算法，其中 N是棋盘上的格子数，k是一个较小的常量。图5有助于理解搜索过程。树的根节点代表搜索过程的起点。从起点开始，算法生成并且检测骑士能走的每一步。如前所述，合理走法的数目取决于骑士在棋盘上的位置。若骑士位于四角，只有2种合理走法；若位于与四角相邻的格子中，则有3种合理走法；若在棋盘中央，则有8种合理走法。图5展示了棋盘上的每一格所对应的合理走法数目。在树的下一层，对于骑士当前位置来说，又有2～8种不同的合理走法。待检查位置的数目对应搜索树中的节点数目。
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202404110025553.png" alt="../_images/8arrayTree.png" style="zoom: 67%;" />
+
+Figure 5: A Search Tree for the Knight’s Tour
+
+
+
+![../_images/moveCount.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202404110026225.png)
+
+图6 每个格子对应的合理走法数目
+
+我们已经看到，在高度为N的二叉树中，节点数为 $2^{N+1}-1$；至于子节点可能多达8个而非2个的树，其节点数会更多。由于每一个节点的分支数是可变的，因此可以使用平均分支因子来估计节点数。需要注意的是，这个算法是指数阶算法：$k^{N+1}-1$，其中k是棋盘的平均分支因子。让我们看看它增长得有多快。对于5× 5的棋盘，搜索树有25层（若把顶层记为第0层，则N = 24），平均分支因子k = 3.8。因此，搜索树中的节点数是$3.8^{25}-1$或者$3.12×10^40$。对于6×6的棋盘，k =4.4，搜索树有$1.5×10^{23}$个节点。对于8×8的棋盘，k = 5.25，搜索树有$1.3×10^{46}$个节点。由于这个问题有很多个解，因此不需要访问搜索树中的每一个节点。但是，需要访问的节点的小数部分只是一个常量乘数，它并不能改变该问题的指数特性。我们把将k表达成棋盘大小的函数留作练习。
+
+幸运的是，有办法针对8×8的棋盘在1秒内得到一条周游路径。list 4展示了加速搜索过程的代码。`orderByAvail`函数用于替换代码list 3中第6行的`u.getConnections`调用。在`orderByAvail`函数中，第10行是最重要的一行。这一行保证接下来要访问的顶点有最少的合理走法。你可能认为这样做非常影响性能；为什么不选择合理走法最多的顶点呢？运行该程序，并在排序语句之后插入resList.reverse()，便可轻松找到原因。
+
+List4 选择下一个要访问的顶点至关重要
+
+```python
+def orderByAvail(n):
+    resList = []
+    for v in n.getConnections():
+        if v.getColor() == 'white':
+            c = 0
+            for w in v.getConnections():
+                if w.getColor() == 'white':
+                    c = c + 1
+            resList.append((c,v))
+    resList.sort(key=lambda x: x[0])
+    return [y[1] for y in resList]
+```
+
+
+
+选择合理走法最多的顶点作为下一个访问顶点的问题在于，它会使骑士在周游的前期就访问位于棋盘中间的格子。当这种情况发生时，骑士很容易被困在棋盘的一边，而无法到达另一边的那些没访问过的格子。首先访问合理走法最少的顶点，则可使骑士优先访问棋盘边缘的格子。这样做保证了骑士能够尽早访问难以到达的角落，并且在需要的时候通过中间的格子跨越到棋盘的另一边。我们称<u>利用这类知识来加速算法为**启发式技术**</u>。人类每天都在使用启发式技术做决定，启发式搜索也经常被用于人工智能领域。本例用到的启发式技术被称作Warnsdorff算法，以纪念在1823年提出该算法的数学家H. C. Warnsdorff。
+
+
+
+#### 3.2.4 通用深度优先搜索
+
+骑士周游是深度优先搜索的一种特殊情况，它需要创建没有分支的最深深度优先搜索树。通用的深度优先搜索其实更简单，它的目标是尽可能深地搜索，尽可能多地连接图中的顶点，并且在需要的时候进行分支。
+
+有时候深度优先搜索会创建多棵深度优先搜索树，称之为**深度优先森林**。和宽度优先搜索类似，深度优先搜索也利用前驱连接来构建树。此外，深度优先搜索还会使用Vertex类中的两个额外的实例变量：`发现时间`记录算法在第一次访问顶点时的步数，`结束时间`记录算法在顶点被标记为黑色时的步数。在学习之后会发现，顶点的`发现时间`和`结束时间`提供了一些有趣的特性，后续算法会用到这些特性。
+
+深度优先搜索的实现如代码list 5所示。由于dfs函数和`dfsvisit`辅助函数使用一个变量来记录调用`dfsvisit`的时间，因此我们选择将代码作为Graph类的一个子类中的方法来实现。该实现继承Graph类，并且增加了time实例变量，以及dfs和dfsvisit两个方法。注意第11行，dfs方法遍历图中所有的顶点，并对白色顶点调用`dfsvisit`方法。之所以遍历所有的顶点，而不是简单地从一个指定的顶点开始搜索，是因为这样做能够确保深度优先森林中的所有顶点都在考虑范围内，而不会有被遗漏的顶点。for aVertex in self这条语句可能看上去不太正确，但是此处的self是DFSGraph类的一个实例，遍历一个图实例中的所有顶点其实是一件非常自然的事情。
+
+List5 实现通用深度优先搜索
+
+```python
+from pythonds.graphs import Graph
+class DFSGraph(Graph):
+    def __init__(self):
+        super().__init__()
+        self.time = 0									#不是物理世界，而是算法执行步数
+
+    def dfs(self):
+        for aVertex in self:
+            aVertex.setColor('white')	#颜色初始化
+            aVertex.setPred(-1)
+        for aVertex in self:					#从每个顶点开始遍历
+            if aVertex.getColor() == 'white':
+                self.dfsvisit(aVertex)	#第一次运行后还有未包括的顶点
+                												#则建立森林
+
+    def dfsvisit(self,startVertex):
+        startVertex.setColor('gray')
+        self.time += 1									#记录算法的步骤
+        startVertex.setDiscovery(self.time)
+        for nextVertex in startVertex.getConnections():
+            if nextVertex.getColor() == 'white':
+                nextVertex.setPred(startVertex)
+                self.dfsvisit(nextVertex)		#深度优先递归访问
+        startVertex.setColor('black')
+        self.time += 1
+        startVertex.setFinish(self.time)
+```
+
+
+
+尽管本例中的bfs实现只对回到起点的路径上的顶点感兴趣，但也可以创建一个表示图中所有顶点间的最短路径的宽度优先森林。这个问题留作练习。在接下来的两个例子中，我们会看到为何记录深度优先森林十分重要。
+
+从startVertex开始，`dfsvisit`方法尽可能深地探索所有相邻的白色顶点。如果仔细观察`dfsvisit`的代码并且将其与bfs比较，应该注意到二者几乎一样，除了内部for循环的最后一行，dfsvisit通过递归地调用自己来继续进行下一层的搜索，bfs则将顶点添加到队列中，以供后续搜索。有趣的是，bfs使用队列，dfsvisit则使用栈。我们没有在代码中看到栈，但是它其实隐式地存在于dfsvisit的递归调用中。
+
+图7展示了在小型图上应用深度优先搜索算法的过程。图中，虚线表示被检查过的边，但是其一端的顶点已经被添加到深度优先搜索树中。在代码中，这是通过检查另一端的顶点是否不为白色来完成的。
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202404110100894.png" alt="image-20240411010044844" style="zoom: 50%;" />
+
+图7 构建深度优先搜索树
+
+
+
+搜索从图中的顶点A开始。由于所有顶点一开始都是白色的，因此算法会访问A。访问顶点的第一步是将其颜色设置为灰色，以表明正在访问该顶点，并将其发现时间设为1。由于A有两个相邻顶点（B和D），因此它们都需要被访问。我们按照字母顺序来访问顶点。
+
+接下来访问顶点B，将它的颜色设置为灰色，并把发现时间设置为2。B也与两个顶点（C和D）相邻，因此根据字母顺序访问C。
+访问C时，搜索到达某个分支的终点。在将C标为灰色并且把发现时间设置为3之后，算法发现C没有相邻顶点。这意味着对C的探索完成，因此将它标为黑色，并将完成时间设置为4。图7d展示了搜索至这一步时的状态。
+
+由于C是一个分支的终点，因此需要返回到B，并且继续探索其余的相邻顶点。唯一的待探索顶点就是D，它把搜索引到E。E有两个相邻顶点，即B和F。正常情况下，应该按照字母顺序来访问这两个顶点，但是由于B已经被标记为灰色，因此算法自知不应该访问B，因为如果这么做就会陷入死循环。因此，探索过程跳过B，继续访问F。
+
+F只有C这一个相邻顶点，但是C已经被标记为黑色，因此没有后续顶点需要探索，也即到达另一个分支的终点。从此时起，算法一路回溯到起点，同时为各个顶点设置完成时间并将它们标记为黑色，如图7h～图7l所示。
+
+每个顶点的发现时间和结束时间都体现了括号特性，这意味着深度优先搜索树中的任一节点的子节点都有比该节点更晚的发现时间和更早的结束时间。图8展示了通过深度优先搜索算法构建的树。
+
+
+
+![../_images/dfstree.png](https://raw.githubusercontent.com/GMyhf/img/main/img/202404110102281.png)
+
+图8 最终的深度优先搜索
+
+
+
+#### 3.2.5 分析深度优先搜索
+
+一般来说，深度优先搜索的运行时间如下。在dfs函数中有两个循环，每个都是|V|次，所以是O(|V|)，这是由于它们针对图中的每个顶点都只执行一次。在dfsvisit中，循环针对当前顶点的邻接表中的每一条边都执行一次，且仅在顶点是白色时被递归调用，因此循环最多会对图中的每一条边执行一次，也就是O(|E|)。因此，深度优先搜索算法的时间复杂度是O(|V|+|E|)。
+
+
+
+```python
+import sys
+
+class Graph:
+    def __init__(self):
+        self.vertices = {}
+        self.numVertices = 0
+
+    def addVertex(self, key):
+        self.numVertices = self.numVertices + 1
+        newVertex = Vertex(key)
+        self.vertices[key] = newVertex
+        return newVertex
+
+    def getVertex(self, n):
+        if n in self.vertices:
+            return self.vertices[n]
+        else:
+            return None
+
+    def __len__(self):
+        return self.numVertices
+
+    def __contains__(self, n):
+        return n in self.vertices
+
+    def addEdge(self, f, t, cost=0):
+        if f not in self.vertices:
+            nv = self.addVertex(f)
+        if t not in self.vertices:
+            nv = self.addVertex(t)
+        self.vertices[f].addNeighbor(self.vertices[t], cost)
+        self.vertices[t].addNeighbor(self.vertices[f], cost)
+
+    def getVertices(self):
+        return list(self.vertices.keys())
+
+    def __iter__(self):
+        return iter(self.vertices.values())
+
+
+class Vertex:
+    def __init__(self, num):
+        self.id = num
+        self.connectedTo = {}
+        self.color = 'white'
+        self.dist = sys.maxsize
+        self.pred = None
+        self.disc = 0
+        self.fin = 0
+
+    def addNeighbor(self, nbr, weight=0):
+        self.connectedTo[nbr] = weight
+
+    def setColor(self, color):
+        self.color = color
+
+    def setDistance(self, d):
+        self.dist = d
+
+    def setPred(self, p):
+        self.pred = p
+
+    def setDiscovery(self, dtime):
+        self.disc = dtime
+
+    def setFinish(self, ftime):
+        self.fin = ftime
+
+    def getFinish(self):
+        return self.fin
+
+    def getDiscovery(self):
+        return self.disc
+
+    def getPred(self):
+        return self.pred
+
+    def getDistance(self):
+        return self.dist
+
+    def getColor(self):
+        return self.color
+
+    def getConnections(self):
+        return self.connectedTo.keys()
+
+    def getWeight(self, nbr):
+        return self.connectedTo[nbr]
+
+    def __str__(self):
+        return str(self.id) + ":color " + self.color + ":disc " + str(self.disc) + ":fin " + str(
+            self.fin) + ":dist " + str(self.dist) + ":pred \n\t[" + str(self.pred) + "]\n"
+
+    def getId(self):
+        return self.id
+
+
+def knightGraph(bdSize):
+    ktGraph = Graph()
+    for row in range(bdSize):
+        for col in range(bdSize):
+            nodeId = posToNodeId(row, col, bdSize)
+            newPositions = genLegalMoves(row, col, bdSize)  # 修改函数名称
+            for e in newPositions:
+                nid = posToNodeId(e[0], e[1], bdSize)
+                ktGraph.addEdge(nodeId, nid, 1)  # 添加权重参数
+    return ktGraph
+
+def genLegalMoves(x, y, bdSize):
+    newMoves = []
+    moveOffsets = [(-1,-2), (-1,2),(-2,-1),(-2,1),\
+                    (1, -2), (1, 2), (2, -1), (2, 1)]
+    for i in moveOffsets:
+        newX = x + i[0]
+        newY = y + i[1]
+        if legalCoord(newX, bdSize) and \
+                legalCoord(newY, bdSize):
+            newMoves.append((newX, newY))
+    return newMoves
+
+def legalCoord(x, bdSize):
+    if x >= 0 and x < bdSize:
+        return True
+    else:
+        return False
+
+def posToNodeId(x, y, bdSize):
+    return x + bdSize * y
+
+
+def orderedByAvail(n):
+    resList = []
+    for v in n.getConnections():
+        if v.getColor() == "white":
+            c = 0
+            for w in v.getConnections():
+                if w.getColor() == "white":
+                    c += 1
+            resList.append((c,v))
+    resList.sort(key = lambda x: x[0])
+    return [y[1] for y in resList]
+
+def knightTour(n, path, u, limit):
+    u.setColor("gray")
+    path.append(u)
+    if n < limit:  # 修改条件判断
+        nbrList = orderedByAvail(u)
+        i = 0
+        done = False
+        while i < len(nbrList) and not done:
+            if nbrList[i].getColor() == "white":
+                done = knightTour(n + 1, path, nbrList[i], limit)
+            i += 1
+        if not done:
+            path.pop()
+            u.setColor("white")
+    else:
+        done = True
+    return done
+
+# 主程序
+bdSize = 8  # 棋盘大小
+start_pos = (0, 0)  # 起始位置
+knight_graph = knightGraph(bdSize)
+start_vertex = knight_graph.getVertex(posToNodeId(start_pos[0], start_pos[1], bdSize))
+tour_path = []
+knightTour(0, tour_path, start_vertex, bdSize * bdSize)
+
+# 打印路径
+for vertex in tour_path:
+    print(vertex.getId(), end=" ")
+
+```
+
+
+
 ### 3.3 编程题目
 
 #### 28046: 词梯
 
-http://cs101.openjudge.cn/practice/28046/
+bfs, http://cs101.openjudge.cn/practice/28046/
 
 
 
