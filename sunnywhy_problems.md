@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 2117 GMT+8 Apr 9, 2024
+Updated 2340 GMT+8 Apr 10, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2966,55 +2966,51 @@ https://sunnywhy.com/sfbj/8/2/321
 
 
 
-#### inq 数组，结点是否已入过队
+in_queue 数组，结点是否已入过队
 
 ```python
-# gpt translated version of the C++ code
-from queue import Queue
+from collections import deque
 
-MAXN = 100
-MAXD = 4
+MAX_DIRECTIONS = 4
 dx = [0, 0, 1, -1]
 dy = [1, -1, 0, 0]
 
-def canVisit(x, y):
-    return x >= 0 and x < n and y >= 0 and y < m and maze[x][y] == 0 and not inQueue[x][y]
+def is_valid_move(x, y):
+    return 0 <= x < n and 0 <= y < m and maze[x][y] == 0 and not in_queue[x][y]
 
-def BFS(x, y):
-    q = Queue()
-    q.put((x, y))
-    inQueue[x][y] = True
-    while not q.empty():
-        front = q.get()
-        if front[0] == n - 1 and front[1] == m - 1:
+def bfs(start_x, start_y):
+    queue = deque()
+    queue.append((start_x, start_y))
+    in_queue[start_x][start_y] = True
+    while queue:
+        x, y = queue.popleft()
+        if x == n - 1 and y == m - 1:
             return
-        for i in range(MAXD):
-            nextX = front[0] + dx[i]
-            nextY = front[1] + dy[i]
-            if canVisit(nextX, nextY):
-                pre[nextX][nextY] = (front[0], front[1])
-                inQueue[nextX][nextY] = True
-                q.put((nextX, nextY))
+        for i in range(MAX_DIRECTIONS):
+            next_x = x + dx[i]
+            next_y = y + dy[i]
+            if is_valid_move(next_x, next_y):
+                prev[next_x][next_y] = (x, y)
+                in_queue[next_x][next_y] = True
+                queue.append((next_x, next_y))
 
-def printPath(p):
-    prePosition = pre[p[0]][p[1]]
-    if prePosition == (-1, -1):
-        print(p[0] + 1, p[1] + 1)
+def print_path(pos):
+    prev_position = prev[pos[0]][pos[1]]
+    if prev_position == (-1, -1):
+        print(pos[0] + 1, pos[1] + 1)
         return
-    printPath(prePosition)
-    print(p[0] + 1, p[1] + 1)
+    print_path(prev_position)
+    print(pos[0] + 1, pos[1] + 1)
 
 n, m = map(int, input().split())
-maze = []
-for _ in range(n):
-    row = list(map(int, input().split()))
-    maze.append(row)
+maze = [list(map(int, input().split())) for _ in range(n)]
 
-inQueue = [[False] * m for _ in range(n)]
-pre = [[(-1, -1)] * m for _ in range(n)]
+in_queue = [[False] * m for _ in range(n)]
+prev = [[(-1, -1)] * m for _ in range(n)]
 
-BFS(0, 0)
-printPath((n - 1, m - 1))
+bfs(0, 0)
+print_path((n - 1, m - 1))
+
 ```
 
 
