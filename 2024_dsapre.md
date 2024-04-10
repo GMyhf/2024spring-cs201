@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）pre每日选做
 
-Updated 0929 GMT+8 April 8, 2024
+Updated 1913 GMT+8 April 8, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4342,7 +4342,7 @@ def create_node():
 def build_tree(tempList, index):
     node = create_node()
     node.x = tempList[index][0]
-    if tempList[index][1] == '0' and node.x != '$':
+    if tempList[index][1] == '0':
         index += 1
         child, index = build_tree(tempList, index)
         node.children.append(child)
@@ -4382,9 +4382,9 @@ def print_tree(p):
             while s:
                 Q.append(s.pop())
 
-# 读取输入
+
 n = int(input())
-tempList = input().split(' ')
+tempList = input().split()
 
 # 构建多叉树
 root, _ = build_tree(tempList, 0)
@@ -6431,6 +6431,146 @@ while len(l) > 1:
 
 print(ans)
 ```
+
+
+
+## 19943: 图的拉普拉斯矩阵
+
+http://cs101.openjudge.cn/practice/19943/
+
+在图论中，度数矩阵是一个对角矩阵 ，其中包含的信息为的每一个顶点的度数，也就是说，每个顶点相邻的边数。邻接矩阵是图的一种常用存储方式。如果一个图一共有编号为0,1,2，…n-1的n个节点，那么邻接矩阵A的大小为n*n，对其中任一元素Aij，如果节点i，j直接有边，那么Aij=1；否则Aij=0。
+
+将度数矩阵与邻接矩阵逐位相减，可以求得图的拉普拉斯矩阵。具体可见下图示意。
+
+![img](http://media.openjudge.cn/images/upload/1575881364.jpg)
+
+现给出一个图中的所有边的信息，需要你输出该图的拉普拉斯矩阵。
+
+
+
+**输入**
+
+第一行2个整数，代表该图的顶点数n和边数m。
+接下m行，每行为空格分隔的2个整数a和b，代表顶点a和顶点b之间有一条无向边相连，a和b均为大小范围在0到n-1之间的整数。输入保证每条无向边仅出现一次（如1 2和2 1是同一条边，并不会在数据中同时出现）。
+
+**输出**
+
+共n行，每行为以空格分隔的n个整数，代表该图的拉普拉斯矩阵。
+
+样例输入
+
+```
+4 5
+2 1
+1 3
+2 3
+0 1
+0 2
+```
+
+样例输出
+
+```
+2 -1 -1 0
+-1 3 -1 -1
+-1 -1 3 -1
+0 -1 -1 2
+```
+
+来源
+
+cs101 2019 Final Exam
+
+
+
+```python
+class Vertex:	
+    def __init__(self, key):
+        self.id = key
+        self.connectedTo = {}
+
+    def addNeighbor(self, nbr, weight=0):
+        self.connectedTo[nbr] = weight
+
+    def __str__(self):
+        return str(self.id) + ' connectedTo: ' + str([x.id for x in self.connectedTo])
+
+    def getConnections(self):
+        return self.connectedTo.keys()
+
+    def getId(self):
+        return self.id
+
+    def getWeight(self, nbr):
+        return self.connectedTo[nbr]
+
+class Graph:
+    def __init__(self):
+        self.vertList = {}
+        self.numVertices = 0
+
+    def addVertex(self, key):
+        self.numVertices = self.numVertices + 1
+        newVertex = Vertex(key)
+        self.vertList[key] = newVertex
+        return newVertex
+
+    def getVertex(self, n):
+        if n in self.vertList:
+            return self.vertList[n]
+        else:
+            return None
+
+    def __contains__(self, n):
+        return n in self.vertList
+
+    def addEdge(self, f, t, weight=0):
+        if f not in self.vertList:
+            nv = self.addVertex(f)
+        if t not in self.vertList:
+            nv = self.addVertex(t)
+        self.vertList[f].addNeighbor(self.vertList[t], weight)
+
+    def getVertices(self):
+        return self.vertList.keys()
+
+    def __iter__(self):
+        return iter(self.vertList.values())
+
+def constructLaplacianMatrix(n, edges):
+    graph = Graph()
+    for i in range(n):	# 添加顶点
+        graph.addVertex(i)
+    
+    for edge in edges:	# 添加边
+        a, b = edge
+        graph.addEdge(a, b)
+        graph.addEdge(b, a)
+    
+    laplacianMatrix = []	# 构建拉普拉斯矩阵
+    for vertex in graph:
+        row = [0] * n
+        row[vertex.getId()] = len(vertex.getConnections())
+        for neighbor in vertex.getConnections():
+            row[neighbor.getId()] = -1
+        laplacianMatrix.append(row)
+
+    return laplacianMatrix
+
+
+n, m = map(int, input().split())	# 解析输入
+edges = []
+for i in range(m):
+    a, b = map(int, input().split())
+    edges.append((a, b))
+
+laplacianMatrix = constructLaplacianMatrix(n, edges)	# 构建拉普拉斯矩阵
+
+for row in laplacianMatrix:	# 输出结果
+    print(' '.join(map(str, row)))
+```
+
+
 
 
 
