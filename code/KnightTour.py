@@ -29,7 +29,7 @@ class Graph:
         if t not in self.vertices:
             nv = self.add_vertex(t)
         self.vertices[f].add_neighbor(self.vertices[t], cost)
-        self.vertices[t].add_neighbor(self.vertices[f], cost)
+        #self.vertices[t].add_neighbor(self.vertices[f], cost)
 
     def getVertices(self):
         return list(self.vertices.keys())
@@ -85,9 +85,9 @@ def knight_graph(board_size):
         for col in range(board_size):
             node_id = row * board_size + col
             new_positions = gen_legal_moves(row, col, board_size)
+            new_positions = gen_legal_moves(row, col, board_size)
             for row2, col2 in new_positions:
-                #nid = pos_to_node_id(e[0], e[1], board_size)
-                other_node_id = row2 * board_size + col2
+                other_node_id = pos_to_node_id(row2, col2, board_size)
                 kt_graph.add_edge(node_id, other_node_id)
     return kt_graph
 
@@ -122,23 +122,21 @@ def legal_coord(row, col, board_size):
 def knight_tour(n, path, u, limit):
     u.color = "gray"
     path.append(u)
-    if n < limit:  # 修改条件判断
+    if n < limit:
         neighbors = ordered_by_avail(u)
         #neighbors = sorted(list(u.get_neighbors()))
         i = 0
-        done = False
-        while i < len(neighbors) and not done:
-            if neighbors[i].color == "white":
-                done = knight_tour(
-                    n + 1, path, neighbors[i], limit
-                )
-            i += 1
-        if not done:
+
+        for nbr in neighbors:
+            if nbr.color == "white" and \
+                knight_tour(n + 1, path, nbr, limit):
+                return True
+        else:
             path.pop()
             u.color = "white"
+            return False
     else:
-        done = True
-    return done
+        return True
 
 def ordered_by_avail(n):
     res_list = []
@@ -182,17 +180,32 @@ def main():
     def NodeToPos(id):
        return ((id//8, id%8))
 
-    bdSize = 8  # 棋盘大小
-    start_pos = (0, 0)  # 起始位置
+    bdSize = int(input())  # 棋盘大小
+    *start_pos, = map(int, input().split())  # 起始位置
     g = knight_graph(bdSize)
     start_vertex = g.get_vertex(pos_to_node_id(start_pos[0], start_pos[1], bdSize))
+    if start_vertex is None:
+        print("fail")
+        exit(0)
+
     tour_path = []
-    knight_tour(0, tour_path, start_vertex, bdSize * bdSize-1)
+    done = knight_tour(0, tour_path, start_vertex, bdSize * bdSize-1)
+    if done:
+        print("success")
+    else:
+        print("fail")
+
+    #exit(0)
 
     # 打印路径
+    cnt = 0
     for vertex in tour_path:
-        print(vertex.key, end=" ")
-        print(NodeToPos(vertex.key), end=" ")   # 打印坐标
+        cnt += 1
+        if cnt % bdSize == 0:
+            print()
+        else:
+            print(vertex.key, end=" ")
+            #print(NodeToPos(vertex.key), end=" ")   # 打印坐标
 
 if __name__ == '__main__':
     main()
