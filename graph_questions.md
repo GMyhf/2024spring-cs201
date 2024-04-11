@@ -26,12 +26,11 @@ Updated 1135 GMT+8 Apr 11, 2024
 mindmap
   Graph(Graph)
     Notations{{**NOTATIONS**}}
-    	Node,Edge
+    	Vertex,Edge
     	Path, Weight
     	DFS, BFS
       
     Representation{{**REPRESENTATION**}}
-      Node-Based
       Matrix
       Adjacency List
       
@@ -1967,52 +1966,55 @@ Explanation:
 
 
 
-用List 1中的函数来构建n × n棋盘对应的完整图。`knightGraph`函数将整个棋盘遍历了一遍。当它访问棋盘上的每一格时，都会调用辅助函数`genLegalMoves`来创建一个列表，用于记录从这一格开始的所有合理走法。之后，所有的合理走法都被转换成图中的边。另一个辅助函数`posToNodeId`将棋盘上的行列位置转换成与图1中顶点编号相似的线性顶点数。
+用List 1中的函数来构建n × n棋盘对应的完整图。`knightGraph`函数将整个棋盘遍历了一遍。当它访问棋盘上的每一格时，都会调用辅助函数`gen_legal_moves`来创建一个列表，用于记录从这一格开始的所有合理走法。之后，所有的合理走法都被转换成图中的边。另一个辅助函数`pos_to_node_id`将棋盘上的行列位置转换成与图1中顶点编号相似的线性顶点数。
 
 **Listing 1**
 
 ```python
-from pythonds.graphs import Graph
+def knight_graph(board_size):
+    kt_graph = Graph()
+    for row in range(board_size):           #遍历每一行
+        for col in range(board_size):       #遍历行上的每一个格子
+            node_id = pos_to_node_id(row, col, board_size) #把行、列号转为格子ID
+            new_positions = gen_legal_moves(row, col, board_size) #按照 马走日，返回下一步可能位置
+            for row2, col2 in new_positions:
+                other_node_id = pos_to_node_id(row2, col2, board_size) #下一步的格子ID
+                kt_graph.add_edge(node_id, other_node_id) #在骑士周游图中为两个格子加一条边
+    return kt_graph
 
-def knightGraph(bdSize):
-    ktGraph = Graph()
-    for row in range(bdSize):			#遍历每一行
-       for col in range(bdSize):	#遍历行上的每一个格子
-           nodeId = posToNodeId(row,col,bdSize)	#把行、列号转为格子ID
-           newPositions = genLegalMoves(row,col,bdSize)	#按照 马走日，返回下一步可能位置
-           for e in newPositions:
-               nid = posToNodeId(e[0],e[1],bdSize)	#下一步的格子ID
-               ktGraph.addEdge(nodeId,nid)	#在骑士周游图中为两个格子加一条边
-    return ktGraph
-
-def posToNodeId(row, column, board_size):
-    return (row * board_size) + column
+def pos_to_node_id(x, y, bdSize):
+    return x * bdSize + y
 ```
 
 
 
-在List2中，`genLegalMoves`函数接受骑士在棋盘上的位置，并且生成8种可能的走法。`legalCoord`辅助函数确认走法是合理的
+在List2中，`gen_legal_moves`函数接受骑士在棋盘上的位置，并且生成8种可能的走法。`legal_coord`辅助函数确认走法是合理的
 
 **Listing 2**
 
 ```python
-def genLegalMoves(x,y,bdSize):
-    newMoves = []
-    moveOffsets = [(-1,-2),(-1,2),(-2,-1),(-2,1),	#马走日的8种走法
-                   ( 1,-2),( 1,2),( 2,-1),( 2,1)]
-    for i in moveOffsets:
-        newX = x + i[0]
-        newY = y + i[1]
-        if legalCoord(newX,bdSize) and \					#检查，不能走出棋盘
-                        legalCoord(newY,bdSize):
-            newMoves.append((newX,newY))
-    return newMoves
+def gen_legal_moves(row, col, board_size):
+    new_moves = []
+    move_offsets = [                        # 马走日的8种走法
+        (-1, -2),  # left-down-down
+        (-1, 2),  # left-up-up
+        (-2, -1),  # left-left-down
+        (-2, 1),  # left-left-up
+        (1, -2),  # right-down-down
+        (1, 2),  # right-up-up
+        (2, -1),  # right-right-down
+        (2, 1),  # right-right-up
+    ]
+    for r_off, c_off in move_offsets:
+        if (                                # #检查，不能走出棋盘
+            0 <= row + r_off < board_size
+            and 0 <= col + c_off < board_size
+        ):
+            new_moves.append((row + r_off, col + c_off))
+    return new_moves
 
-def legalCoord(x,bdSize):	#判断是否走出棋盘
-    if x >= 0 and x < bdSize:
-        return True
-    else:
-        return False
+# def legal_coord(row, col, board_size):
+#     return 0 <= row < board_size and 0 <= col < board_size
 ```
 
 
@@ -2033,32 +2035,40 @@ DFS正是为找到由63条边构成的路径所需的算法。我们会看到，
 
 在list 3中，`knightTour`函数接受4个参数：n是搜索树的当前深度；path是到当前为止访问过的顶点列表；u是希望在图中访问的顶点；limit是路径上的顶点总数。`knightTour`函数是递归的。当被调用时，它首先检查基本情况。如果有一条包含64个顶点的路径，就从`knightTour`返回True，以表示找到了一次成功的周游。如果路径不够长，则通过选择一个新的访问顶点并对其递归调用`knightTour`来进行更深一层的探索。
 
-DFS也使用颜色来记录已被访问的顶点。未访问的顶点是白色的，已被访问的则是灰色的。如果一个顶点的所有相邻顶点都已被访问过，但是路径长度仍然没有达到64，就说明遇到了死路。如果遇到死路，就必须回溯。当从`knightTour`返回False时，就会发生回溯。在宽度优先搜索中，我们使用了队列来记录将要访问的顶点。由于深度优先搜索是递归的，因此我们隐式地使用一个栈来回溯。当从`knightTour`调用返回False时，仍然在循环中，并且会查看nbrList中的下一个顶点。
+DFS也使用颜色来记录已被访问的顶点。未访问的顶点是白色的，已被访问的则是灰色的。如果一个顶点的所有相邻顶点都已被访问过，但是路径长度仍然没有达到64，就说明遇到了死路。如果遇到死路，就必须回溯。当从`knight_tour`返回False时，就会发生回溯。在宽度优先搜索中，我们使用了队列来记录将要访问的顶点。由于深度优先搜索是递归的，因此我们隐式地使用一个栈来回溯。当从`knight_tour`调用返回False时，仍然在循环中，并且会查看nbrList中的下一个顶点。
 
 
 
-List 3 knightTour函数
+List 3 knight_tour函数
 
 ```python
-from pythonds.graphs import Graph, Vertex
-def knightTour(n,path,u,limit):
-    u.setColor('gray')
-    path.append(u)																#当前顶点涂色并加入路径
+def knight_tour(n, path, u, limit):
+    u.color = "gray"
+    path.append(u)              #当前顶点涂色并加入路径
     if n < limit:
-        nbrList = list(u.getConnections())				#对所有的合法移动依次深入
-        for nbr in nbrList:
-            if nbr.getColor() == 'white' and \		#选择“白色”未经深入的点
-                	knightTour(n+1, path, nbr, limit) #层次加一，递归深入
-            		return True
-        else:  														#所有的“下一步”都试了走不通
-            path.pop()										#回退途径
-            u.setColor('white')						#改回颜色
+        neighbors = ordered_by_avail(u) #对所有的合法移动依次深入
+        #neighbors = sorted(list(u.get_neighbors()))
+        i = 0
+
+        for nbr in neighbors:
+            if nbr.color == "white" and \               
+                knight_tour(n + 1, path, nbr, limit):   #选择“白色”未经深入的点，层次加一，递归深入
+                return True
+        else:                       #所有的“下一步”都试了走不通
+            path.pop()              #回溯，从路径中删除当前顶点
+            u.color = "white"       #当前顶点改回白色
             return False
     else:
         return True
 ```
 
-我们通过一个例子来看看`knightTour`的运行情况，可以参照图3来追踪搜索的变化。这个例子假设在list 3中第6行对`getConnections`方法的调用将顶点按照字母顺序排好。首先调用`knightTour(0, path, A, 6)`。
+第 5 行是最重要的一行。这一行保证接下来要访问的顶点有最少的合理走法。你可能认为这样做非常影响性能；为什么不选择合理走法最多的顶点呢？
+
+> 选择合理走法最多的顶点作为下一个访问顶点的问题在于，它会使骑士在周游的前期就访问位于棋盘中间的格子。当这种情况发生时，骑士很容易被困在棋盘的一边，而无法到达另一边的那些没访问过的格子。首先访问合理走法最少的顶点，则可使骑士优先访问棋盘边缘的格子。这样做保证了骑士能够尽早访问难以到达的角落，并且在需要的时候通过中间的格子跨越到棋盘的另一边。我们称利用这类知识来加速算法为启发式技术。人类每天都在使用启发式技术做决定，启发式搜索也经常被用于人工智能领域。本例用到的启发式技术被称作 **Warnsdorff 算法**，以纪念在 1823 年提出该算法的数学家 H. C. Warnsdorff。
+
+
+
+我们通过一个例子来看看`knight_tour`的运行情况，可以参照图3来追踪搜索的变化。这个例子假设在list 3中第6行对`getConnections`方法的调用将顶点按照字母顺序排好。首先调用`knightTour(0, path, A, 6)`。
 
 
 
@@ -2096,29 +2106,247 @@ Figure 5: A Search Tree for the Knight’s Tour
 
 图6 每个格子对应的合理走法数目
 
-我们已经看到，在高度为N的二叉树中，节点数为 $2^{N+1}-1$；至于子节点可能多达8个而非2个的树，其节点数会更多。由于每一个节点的分支数是可变的，因此可以使用平均分支因子来估计节点数。需要注意的是，这个算法是指数阶算法：$k^{N+1}-1$，其中k是棋盘的平均分支因子。让我们看看它增长得有多快。对于5× 5的棋盘，搜索树有25层（若把顶层记为第0层，则N = 24），平均分支因子k = 3.8。因此，搜索树中的节点数是$3.8^{25}-1$或者$3.12×10^40$。对于6×6的棋盘，k =4.4，搜索树有$1.5×10^{23}$个节点。对于8×8的棋盘，k = 5.25，搜索树有$1.3×10^{46}$个节点。由于这个问题有很多个解，因此不需要访问搜索树中的每一个节点。但是，需要访问的节点的小数部分只是一个常量乘数，它并不能改变该问题的指数特性。我们把将k表达成棋盘大小的函数留作练习。
+我们已经看到，在高度为N的二叉树中，节点数为 $2^{N+1}-1$；至于子节点可能多达8个而非2个的树，其节点数会更多。由于每一个节点的分支数是可变的，因此可以使用平均分支因子来估计节点数。需要注意的是，这个算法是指数阶算法：$k^{N+1}-1$，其中k是棋盘的平均分支因子。让我们看看它增长得有多快。对于5× 5的棋盘，搜索树有25层（若把顶层记为第0层，则N = 24），平均分支因子k = 3.8。因此，搜索树中的节点数是$3.8^{25}-1$或者$3.12×10^{14}$。对于6×6的棋盘，k =4.4，搜索树有$1.5×10^{23}$个节点。对于8×8的棋盘，k = 5.25，搜索树有$1.3×10^{46}$个节点。由于这个问题有很多个解，因此不需要访问搜索树中的每一个节点。但是，需要访问的节点的小数部分只是一个常量乘数，它并不能改变该问题的指数特性。
 
-幸运的是，有办法针对8×8的棋盘在1秒内得到一条周游路径。list 4展示了加速搜索过程的代码。`orderByAvail`函数用于替换代码list 3中第6行的`u.getConnections`调用。在`orderByAvail`函数中，第10行是最重要的一行。这一行保证接下来要访问的顶点有最少的合理走法。你可能认为这样做非常影响性能；为什么不选择合理走法最多的顶点呢？运行该程序，并在排序语句之后插入resList.reverse()，便可轻松找到原因。
+幸运的是，有办法针对8×8的棋盘在1秒内得到一条周游路径。list 4展示了加速搜索过程的代码。在`order_by_avail`函数中，第10行是最重要的一行。这一行保证接下来要访问的顶点有最少的合理走法。你可能认为这样做非常影响性能；为什么不选择合理走法最多的顶点呢？
 
 List4 选择下一个要访问的顶点至关重要
 
 ```python
-def orderByAvail(n):
-    resList = []
-    for v in n.getConnections():
-        if v.getColor() == 'white':
+def ordered_by_avail(n):
+    res_list = []
+    for v in n.get_neighbors():
+        if v.color == "white":
             c = 0
-            for w in v.getConnections():
-                if w.getColor() == 'white':
-                    c = c + 1
-            resList.append((c,v))
-    resList.sort(key=lambda x: x[0])
-    return [y[1] for y in resList]
+            for w in v.get_neighbors():
+                if w.color == "white":
+                    c += 1
+            res_list.append((c,v))
+    res_list.sort(key = lambda x: x[0])
+    return [y[1] for y in res_list]
 ```
 
 
 
 选择合理走法最多的顶点作为下一个访问顶点的问题在于，它会使骑士在周游的前期就访问位于棋盘中间的格子。当这种情况发生时，骑士很容易被困在棋盘的一边，而无法到达另一边的那些没访问过的格子。首先访问合理走法最少的顶点，则可使骑士优先访问棋盘边缘的格子。这样做保证了骑士能够尽早访问难以到达的角落，并且在需要的时候通过中间的格子跨越到棋盘的另一边。我们称<u>利用这类知识来加速算法为**启发式技术**</u>。人类每天都在使用启发式技术做决定，启发式搜索也经常被用于人工智能领域。本例用到的启发式技术被称作Warnsdorff算法，以纪念在1823年提出该算法的数学家H. C. Warnsdorff。
+
+
+
+骑士周游程序在，https://github.com/GMyhf/2024spring-cs201/blob/main/code/KnightTour.py
+
+```python
+import sys
+
+class Graph:
+    def __init__(self):
+        self.vertices = {}
+        self.num_vertices = 0
+
+    def add_vertex(self, key):
+        self.num_vertices = self.num_vertices + 1
+        new_ertex = Vertex(key)
+        self.vertices[key] = new_ertex
+        return new_ertex
+
+    def get_vertex(self, n):
+        if n in self.vertices:
+            return self.vertices[n]
+        else:
+            return None
+
+    def __len__(self):
+        return self.num_vertices
+
+    def __contains__(self, n):
+        return n in self.vertices
+
+    def add_edge(self, f, t, cost=0):
+        if f not in self.vertices:
+            nv = self.add_vertex(f)
+        if t not in self.vertices:
+            nv = self.add_vertex(t)
+        self.vertices[f].add_neighbor(self.vertices[t], cost)
+        #self.vertices[t].add_neighbor(self.vertices[f], cost)
+
+    def getVertices(self):
+        return list(self.vertices.keys())
+
+    def __iter__(self):
+        return iter(self.vertices.values())
+
+
+class Vertex:
+    def __init__(self, num):
+        self.key = num
+        self.connectedTo = {}
+        self.color = 'white'
+        self.distance = sys.maxsize
+        self.previous = None
+        self.disc = 0
+        self.fin = 0
+
+    def __lt__(self,o):
+        return self.key < o.key
+
+    def add_neighbor(self, nbr, weight=0):
+        self.connectedTo[nbr] = weight
+
+
+    # def setDiscovery(self, dtime):
+    #     self.disc = dtime
+    #
+    # def setFinish(self, ftime):
+    #     self.fin = ftime
+    #
+    # def getFinish(self):
+    #     return self.fin
+    #
+    # def getDiscovery(self):
+    #     return self.disc
+
+    def get_neighbors(self):
+        return self.connectedTo.keys()
+
+    # def getWeight(self, nbr):
+    #     return self.connectedTo[nbr]
+
+    def __str__(self):
+        return str(self.key) + ":color " + self.color + ":disc " + str(self.disc) + ":fin " + str(
+            self.fin) + ":dist " + str(self.distance) + ":pred \n\t[" + str(self.previous) + "]\n"
+
+
+
+def knight_graph(board_size):
+    kt_graph = Graph()
+    for row in range(board_size):           #遍历每一行
+        for col in range(board_size):       #遍历行上的每一个格子
+            node_id = pos_to_node_id(row, col, board_size) #把行、列号转为格子ID
+            new_positions = gen_legal_moves(row, col, board_size) #按照 马走日，返回下一步可能位置
+            for row2, col2 in new_positions:
+                other_node_id = pos_to_node_id(row2, col2, board_size) #下一步的格子ID
+                kt_graph.add_edge(node_id, other_node_id) #在骑士周游图中为两个格子加一条边
+    return kt_graph
+
+def pos_to_node_id(x, y, bdSize):
+    return x * bdSize + y
+
+def gen_legal_moves(row, col, board_size):
+    new_moves = []
+    move_offsets = [                        # 马走日的8种走法
+        (-1, -2),  # left-down-down
+        (-1, 2),  # left-up-up
+        (-2, -1),  # left-left-down
+        (-2, 1),  # left-left-up
+        (1, -2),  # right-down-down
+        (1, 2),  # right-up-up
+        (2, -1),  # right-right-down
+        (2, 1),  # right-right-up
+    ]
+    for r_off, c_off in move_offsets:
+        if (                                # #检查，不能走出棋盘
+            0 <= row + r_off < board_size
+            and 0 <= col + c_off < board_size
+        ):
+            new_moves.append((row + r_off, col + c_off))
+    return new_moves
+
+# def legal_coord(row, col, board_size):
+#     return 0 <= row < board_size and 0 <= col < board_size
+
+
+def knight_tour(n, path, u, limit):
+    u.color = "gray"
+    path.append(u)              #当前顶点涂色并加入路径
+    if n < limit:
+        neighbors = ordered_by_avail(u) #对所有的合法移动依次深入
+        #neighbors = sorted(list(u.get_neighbors()))
+        i = 0
+
+        for nbr in neighbors:
+            if nbr.color == "white" and \
+                knight_tour(n + 1, path, nbr, limit):   #选择“白色”未经深入的点，层次加一，递归深入
+                return True
+        else:                       #所有的“下一步”都试了走不通
+            path.pop()              #回溯，从路径中删除当前顶点
+            u.color = "white"       #当前顶点改回白色
+            return False
+    else:
+        return True
+
+def ordered_by_avail(n):
+    res_list = []
+    for v in n.get_neighbors():
+        if v.color == "white":
+            c = 0
+            for w in v.get_neighbors():
+                if w.color == "white":
+                    c += 1
+            res_list.append((c,v))
+    res_list.sort(key = lambda x: x[0])
+    return [y[1] for y in res_list]
+
+# class DFSGraph(Graph):
+#     def __init__(self):
+#         super().__init__()
+#         self.time = 0                   #不是物理世界，而是算法执行步数
+#
+#     def dfs(self):
+#         for vertex in self:
+#             vertex.color = "white"      #颜色初始化
+#             vertex.previous = -1
+#         for vertex in self:             #从每个顶点开始遍历
+#             if vertex.color == "white":
+#                 self.dfs_visit(vertex)  #第一次运行后还有未包括的顶点
+#                                         # 则建立森林
+#
+#     def dfs_visit(self, start_vertex):
+#         start_vertex.color = "gray"
+#         self.time = self.time + 1       #记录算法的步骤
+#         start_vertex.discovery_time = self.time
+#         for next_vertex in start_vertex.get_neighbors():
+#             if next_vertex.color == "white":
+#                 next_vertex.previous = start_vertex
+#                 self.dfs_visit(next_vertex)     #深度优先递归访问
+#         start_vertex.color = "black"
+#         self.time = self.time + 1
+#         start_vertex.closing_time = self.time
+
+
+def main():
+    def NodeToPos(id):
+       return ((id//8, id%8))
+
+    bdSize = int(input())  # 棋盘大小
+    *start_pos, = map(int, input().split())  # 起始位置
+    g = knight_graph(bdSize)
+    start_vertex = g.get_vertex(pos_to_node_id(start_pos[0], start_pos[1], bdSize))
+    if start_vertex is None:
+        print("fail")
+        exit(0)
+
+    tour_path = []
+    done = knight_tour(0, tour_path, start_vertex, bdSize * bdSize-1)
+    if done:
+        print("success")
+    else:
+        print("fail")
+
+    exit(0)
+
+    # 打印路径
+    cnt = 0
+    for vertex in tour_path:
+        cnt += 1
+        if cnt % bdSize == 0:
+            print()
+        else:
+            print(vertex.key, end=" ")
+            #print(NodeToPos(vertex.key), end=" ")   # 打印坐标
+
+if __name__ == '__main__':
+    main()
+
+```
 
 
 
@@ -2128,44 +2356,43 @@ def orderByAvail(n):
 
 有时候深度优先搜索会创建多棵深度优先搜索树，称之为**深度优先森林**。和宽度优先搜索类似，深度优先搜索也利用前驱连接来构建树。此外，深度优先搜索还会使用Vertex类中的两个额外的实例变量：`发现时间`记录算法在第一次访问顶点时的步数，`结束时间`记录算法在顶点被标记为黑色时的步数。在学习之后会发现，顶点的`发现时间`和`结束时间`提供了一些有趣的特性，后续算法会用到这些特性。
 
-深度优先搜索的实现如代码list 5所示。由于dfs函数和`dfsvisit`辅助函数使用一个变量来记录调用`dfsvisit`的时间，因此我们选择将代码作为Graph类的一个子类中的方法来实现。该实现继承Graph类，并且增加了time实例变量，以及dfs和dfsvisit两个方法。注意第11行，dfs方法遍历图中所有的顶点，并对白色顶点调用`dfsvisit`方法。之所以遍历所有的顶点，而不是简单地从一个指定的顶点开始搜索，是因为这样做能够确保深度优先森林中的所有顶点都在考虑范围内，而不会有被遗漏的顶点。for aVertex in self这条语句可能看上去不太正确，但是此处的self是DFSGraph类的一个实例，遍历一个图实例中的所有顶点其实是一件非常自然的事情。
+深度优先搜索的实现如代码list 5所示。由于dfs函数和`dfsvisit`辅助函数使用一个变量来记录调用`dfsvisit`的时间，因此我们选择将代码作为Graph类的一个子类中的方法来实现。该实现继承Graph类，并且增加了time实例变量，以及dfs和dfsvisit两个方法。注意第11行，dfs方法遍历图中所有的顶点，并对白色顶点调用`dfsvisit`方法。之所以遍历所有的顶点，而不是简单地从一个指定的顶点开始搜索，是因为这样做能够确保深度优先森林中的所有顶点都在考虑范围内，而不会有被遗漏的顶点。`for vertex in self`这条语句可能看上去不太正确，但是此处的self是DFSGraph类的一个实例，遍历一个图实例中的所有顶点其实是一件非常自然的事情。
 
 List5 实现通用深度优先搜索
 
 ```python
-from pythonds.graphs import Graph
 class DFSGraph(Graph):
     def __init__(self):
         super().__init__()
-        self.time = 0									#不是物理世界，而是算法执行步数
+        self.time = 0                   #不是物理世界，而是算法执行步数
 
     def dfs(self):
-        for aVertex in self:
-            aVertex.setColor('white')	#颜色初始化
-            aVertex.setPred(-1)
-        for aVertex in self:					#从每个顶点开始遍历
-            if aVertex.getColor() == 'white':
-                self.dfsvisit(aVertex)	#第一次运行后还有未包括的顶点
-                												#则建立森林
+        for vertex in self:
+            vertex.color = "white"      #颜色初始化
+            vertex.previous = -1
+        for vertex in self:             #从每个顶点开始遍历
+            if vertex.color == "white":
+                self.dfs_visit(vertex)  #第一次运行后还有未包括的顶点
+                                        # 则建立森林
 
-    def dfsvisit(self,startVertex):
-        startVertex.setColor('gray')
-        self.time += 1									#记录算法的步骤
-        startVertex.setDiscovery(self.time)
-        for nextVertex in startVertex.getConnections():
-            if nextVertex.getColor() == 'white':
-                nextVertex.setPred(startVertex)
-                self.dfsvisit(nextVertex)		#深度优先递归访问
-        startVertex.setColor('black')
-        self.time += 1
-        startVertex.setFinish(self.time)
+    def dfs_visit(self, start_vertex):
+        start_vertex.color = "gray"
+        self.time = self.time + 1       #记录算法的步骤
+        start_vertex.discovery_time = self.time
+        for next_vertex in start_vertex.get_neighbors():
+            if next_vertex.color == "white":
+                next_vertex.previous = start_vertex
+                self.dfs_visit(next_vertex)     #深度优先递归访问
+        start_vertex.color = "black"
+        self.time = self.time + 1
+        start_vertex.closing_time = self.time
 ```
 
 
 
-尽管本例中的bfs实现只对回到起点的路径上的顶点感兴趣，但也可以创建一个表示图中所有顶点间的最短路径的宽度优先森林。这个问题留作练习。在接下来的两个例子中，我们会看到为何记录深度优先森林十分重要。
+~~尽管本例中的bfs实现只对回到起点的路径上的顶点感兴趣，但也可以创建一个表示图中所有顶点间的最短路径的宽度优先森林。这个问题留作练习。在接下来的两个例子中，我们会看到为何记录深度优先森林十分重要。~~
 
-从startVertex开始，`dfsvisit`方法尽可能深地探索所有相邻的白色顶点。如果仔细观察`dfsvisit`的代码并且将其与bfs比较，应该注意到二者几乎一样，除了内部for循环的最后一行，dfsvisit通过递归地调用自己来继续进行下一层的搜索，bfs则将顶点添加到队列中，以供后续搜索。有趣的是，bfs使用队列，dfsvisit则使用栈。我们没有在代码中看到栈，但是它其实隐式地存在于dfsvisit的递归调用中。
+从start_vertex开始，`dfs_visit`方法尽可能深地探索所有相邻的白色顶点。如果仔细观察`df_svisit`的代码并且将其与bfs比较，应该注意到二者几乎一样，除了内部for循环的最后一行，`dfs_visit`通过递归地调用自己来继续进行下一层的搜索，bfs则将顶点添加到队列中，以供后续搜索。有趣的是，bfs使用队列，dfsvisit则使用栈。我们没有在代码中看到栈，但是它其实隐式地存在于`dfs_visit`的递归调用中。
 
 图7展示了在小型图上应用深度优先搜索算法的过程。图中，虚线表示被检查过的边，但是其一端的顶点已经被添加到深度优先搜索树中。在代码中，这是通过检查另一端的顶点是否不为白色来完成的。
 
@@ -2202,181 +2429,6 @@ F只有C这一个相邻顶点，但是C已经被标记为黑色，因此没有�
 
 
 
-```python
-import sys
-
-class Graph:
-    def __init__(self):
-        self.vertices = {}
-        self.numVertices = 0
-
-    def addVertex(self, key):
-        self.numVertices = self.numVertices + 1
-        newVertex = Vertex(key)
-        self.vertices[key] = newVertex
-        return newVertex
-
-    def getVertex(self, n):
-        if n in self.vertices:
-            return self.vertices[n]
-        else:
-            return None
-
-    def __len__(self):
-        return self.numVertices
-
-    def __contains__(self, n):
-        return n in self.vertices
-
-    def addEdge(self, f, t, cost=0):
-        if f not in self.vertices:
-            nv = self.addVertex(f)
-        if t not in self.vertices:
-            nv = self.addVertex(t)
-        self.vertices[f].addNeighbor(self.vertices[t], cost)
-        self.vertices[t].addNeighbor(self.vertices[f], cost)
-
-    def getVertices(self):
-        return list(self.vertices.keys())
-
-    def __iter__(self):
-        return iter(self.vertices.values())
-
-
-class Vertex:
-    def __init__(self, num):
-        self.id = num
-        self.connectedTo = {}
-        self.color = 'white'
-        self.dist = sys.maxsize
-        self.pred = None
-        self.disc = 0
-        self.fin = 0
-
-    def addNeighbor(self, nbr, weight=0):
-        self.connectedTo[nbr] = weight
-
-    def setColor(self, color):
-        self.color = color
-
-    def setDistance(self, d):
-        self.dist = d
-
-    def setPred(self, p):
-        self.pred = p
-
-    def setDiscovery(self, dtime):
-        self.disc = dtime
-
-    def setFinish(self, ftime):
-        self.fin = ftime
-
-    def getFinish(self):
-        return self.fin
-
-    def getDiscovery(self):
-        return self.disc
-
-    def getPred(self):
-        return self.pred
-
-    def getDistance(self):
-        return self.dist
-
-    def getColor(self):
-        return self.color
-
-    def getConnections(self):
-        return self.connectedTo.keys()
-
-    def getWeight(self, nbr):
-        return self.connectedTo[nbr]
-
-    def __str__(self):
-        return str(self.id) + ":color " + self.color + ":disc " + str(self.disc) + ":fin " + str(
-            self.fin) + ":dist " + str(self.dist) + ":pred \n\t[" + str(self.pred) + "]\n"
-
-    def getId(self):
-        return self.id
-
-
-def knightGraph(bdSize):
-    ktGraph = Graph()
-    for row in range(bdSize):
-        for col in range(bdSize):
-            nodeId = posToNodeId(row, col, bdSize)
-            newPositions = genLegalMoves(row, col, bdSize)  # 修改函数名称
-            for e in newPositions:
-                nid = posToNodeId(e[0], e[1], bdSize)
-                ktGraph.addEdge(nodeId, nid, 1)  # 添加权重参数
-    return ktGraph
-
-def genLegalMoves(x, y, bdSize):
-    newMoves = []
-    moveOffsets = [(-1,-2), (-1,2),(-2,-1),(-2,1),\
-                    (1, -2), (1, 2), (2, -1), (2, 1)]
-    for i in moveOffsets:
-        newX = x + i[0]
-        newY = y + i[1]
-        if legalCoord(newX, bdSize) and \
-                legalCoord(newY, bdSize):
-            newMoves.append((newX, newY))
-    return newMoves
-
-def legalCoord(x, bdSize):
-    if x >= 0 and x < bdSize:
-        return True
-    else:
-        return False
-
-def posToNodeId(x, y, bdSize):
-    return x + bdSize * y
-
-
-def orderedByAvail(n):
-    resList = []
-    for v in n.getConnections():
-        if v.getColor() == "white":
-            c = 0
-            for w in v.getConnections():
-                if w.getColor() == "white":
-                    c += 1
-            resList.append((c,v))
-    resList.sort(key = lambda x: x[0])
-    return [y[1] for y in resList]
-
-def knightTour(n, path, u, limit):
-    u.setColor("gray")
-    path.append(u)
-    if n < limit:  # 修改条件判断
-        nbrList = orderedByAvail(u)
-        i = 0
-        done = False
-        while i < len(nbrList) and not done:
-            if nbrList[i].getColor() == "white":
-                done = knightTour(n + 1, path, nbrList[i], limit)
-            i += 1
-        if not done:
-            path.pop()
-            u.setColor("white")
-    else:
-        done = True
-    return done
-
-# 主程序
-bdSize = 8  # 棋盘大小
-start_pos = (0, 0)  # 起始位置
-knight_graph = knightGraph(bdSize)
-start_vertex = knight_graph.getVertex(posToNodeId(start_pos[0], start_pos[1], bdSize))
-tour_path = []
-knightTour(0, tour_path, start_vertex, bdSize * bdSize)
-
-# 打印路径
-for vertex in tour_path:
-    print(vertex.getId(), end=" ")
-
-```
-
 
 
 ### 3.3 编程题目
@@ -2384,6 +2436,12 @@ for vertex in tour_path:
 #### 28046: 词梯
 
 bfs, http://cs101.openjudge.cn/practice/28046/
+
+
+
+#### 28050: 骑士周游
+
+http://cs101.openjudge.cn/practice/28050/
 
 
 
