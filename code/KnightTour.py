@@ -81,14 +81,13 @@ class Vertex:
 
 def knight_graph(board_size):
     kt_graph = Graph()
-    for row in range(board_size):
-        for col in range(board_size):
-            node_id = row * board_size + col
-            new_positions = gen_legal_moves(row, col, board_size)
-            new_positions = gen_legal_moves(row, col, board_size)
+    for row in range(board_size):           #遍历每一行
+        for col in range(board_size):       #遍历行上的每一个格子
+            node_id = pos_to_node_id(row, col, board_size) #把行、列号转为格子ID
+            new_positions = gen_legal_moves(row, col, board_size) #按照 马走日，返回下一步可能位置
             for row2, col2 in new_positions:
-                other_node_id = pos_to_node_id(row2, col2, board_size)
-                kt_graph.add_edge(node_id, other_node_id)
+                other_node_id = pos_to_node_id(row2, col2, board_size) #下一步的格子ID
+                kt_graph.add_edge(node_id, other_node_id) #在骑士周游图中为两个格子加一条边
     return kt_graph
 
 def gen_legal_moves(row, col, board_size):
