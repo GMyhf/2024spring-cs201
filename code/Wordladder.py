@@ -1,56 +1,37 @@
-#!/usr/bin/env python3
-"""Solving Wordladder problem"""
 import sys
-
-
-class Queue:
-    def __init__(self):
-        self.items = []
-
-    def isEmpty(self):
-        return self.items == []
-
-    def enqueue(self, item):
-        self.items.insert(0, item)
-
-    def dequeue(self):
-        return self.items.pop()
-
-    def size(self):
-        return len(self.items)
-
+from collections import deque
 
 class Graph:
     def __init__(self):
         self.vertices = {}
-        self.numVertices = 0
+        self.num_vertices = 0
 
-    def addVertex(self, key):
-        self.numVertices = self.numVertices + 1
-        newVertex = Vertex(key)
-        self.vertices[key] = newVertex
-        return newVertex
+    def add_vertex(self, key):
+        self.num_vertices = self.num_vertices + 1
+        new_vertex = Vertex(key)
+        self.vertices[key] = new_vertex
+        return new_vertex
 
-    def getVertex(self, n):
+    def get_vertex(self, n):
         if n in self.vertices:
             return self.vertices[n]
         else:
             return None
 
     def __len__(self):
-        return self.numVertices
+        return self.num_vertices
 
     def __contains__(self, n):
         return n in self.vertices
 
-    def addEdge(self, f, t, cost=0):
+    def add_edge(self, f, t, cost=0):
         if f not in self.vertices:
-            nv = self.addVertex(f)
+            nv = self.add_vertex(f)
         if t not in self.vertices:
-            nv = self.addVertex(t)
-        self.vertices[f].addNeighbor(self.vertices[t], cost)
+            nv = self.add_vertex(t)
+        self.vertices[f].add_neighbor(self.vertices[t], cost)
 
-    def getVertices(self):
+    def get_vertices(self):
         return list(self.vertices.keys())
 
     def __iter__(self):
@@ -59,62 +40,43 @@ class Graph:
 
 class Vertex:
     def __init__(self, num):
-        self.id = num
+        self.key = num
         self.connectedTo = {}
         self.color = 'white'
-        self.dist = sys.maxsize
-        self.pred = None
+        self.distance = sys.maxsize
+        self.previous = None
         self.disc = 0
         self.fin = 0
+
+    def add_neighbor(self, nbr, weight=0):
+        self.connectedTo[nbr] = weight
 
     # def __lt__(self,o):
     #     return self.id < o.id
 
-    def addNeighbor(self, nbr, weight=0):
-        self.connectedTo[nbr] = weight
+    # def setDiscovery(self, dtime):
+    #     self.disc = dtime
+    #
+    # def setFinish(self, ftime):
+    #     self.fin = ftime
+    #
+    # def getFinish(self):
+    #     return self.fin
+    #
+    # def getDiscovery(self):
+    #     return self.disc
 
-    def setColor(self, color):
-        self.color = color
-
-    def setDistance(self, d):
-        self.dist = d
-
-    def setPred(self, p):
-        self.pred = p
-
-    def setDiscovery(self, dtime):
-        self.disc = dtime
-
-    def setFinish(self, ftime):
-        self.fin = ftime
-
-    def getFinish(self):
-        return self.fin
-
-    def getDiscovery(self):
-        return self.disc
-
-    def getPred(self):
-        return self.pred
-
-    def getDistance(self):
-        return self.dist
-
-    def getColor(self):
-        return self.color
-
-    def getConnections(self):
+    def get_neighbors(self):
         return self.connectedTo.keys()
 
-    def getWeight(self, nbr):
-        return self.connectedTo[nbr]
+    # def getWeight(self, nbr):
+    #     return self.connectedTo[nbr]
 
-    def __str__(self):
-        return str(self.id) + ":color " + self.color + ":disc " + str(self.disc) + ":fin " + str(
-            self.fin) + ":dist " + str(self.dist) + ":pred \n\t[" + str(self.pred) + "]\n"
+    # def __str__(self):
+    #     return str(self.key) + ":color " + self.color + ":disc " + str(self.disc) + ":fin " + str(
+    #         self.fin) + ":dist " + str(self.distance) + ":pred \n\t[" + str(self.previous) + "]\n"
 
-    def getId(self):
-        return self.id
+
 
 
 def build_graph(filename):
@@ -138,7 +100,8 @@ def build_graph(filename):
     for similar_words in buckets.values():
         for word1 in similar_words:
             for word2 in similar_words - {word1}:
-                the_graph.addEdge(word1, word2)
+                the_graph.add_edge(word1, word2)
+
     return the_graph
 
 
@@ -148,23 +111,18 @@ print(len(g))
 
 
 def bfs(start):
-    # start.distance = 0
-    start.setDistance(0)
-    start.setPred(None)
-    # start.previous = None
-    vert_queue = Queue()
-    vert_queue.enqueue(start)
-    while vert_queue.size() > 0:
-        current = vert_queue.dequeue()  # 取队首作为当前顶点
-        # for neighbor in current.get_neighbors():
-        for neighbor in current.getConnections():   # 遍历当前顶点的邻接顶点
+    start.distnce = 0
+    start.previous = None
+    vert_queue = deque()
+    vert_queue.append(start)
+    while len(vert_queue) > 0:
+        current = vert_queue.popleft()  # 取队首作为当前顶点
+        for neighbor in current.get_neighbors():   # 遍历当前顶点的邻接顶点
             if neighbor.color == "white":
                 neighbor.color = "gray"
-                # neighbor.distance = current.distance + 1
-                neighbor.setDistance(current.getDistance() + 1)
-                # neighbor.previous = current
-                neighbor.setPred(current)
-                vert_queue.enqueue(neighbor)
+                neighbor.distance = current.distance + 1
+                neighbor.previous = current
+                vert_queue.append(neighbor)
         current.color = "black" # 当前顶点已经处理完毕，设黑色
 
 """
@@ -185,33 +143,25 @@ BFS 算法主体是两个循环的嵌套: while-for
 
 # 以FOOL为起点，进行广度优先搜索, 从FOOL到SAGE的最短路径,
 # 并为每个顶点着色、赋距离和前驱。
-bfs(g.getVertex("FOOL"))
+bfs(g.get_vertex("FOOL"))
 
 
-# def traverse(starting_vertex):
-#     current = starting_vertex
-#     while current:
-#         print(current.key)
-#         current = current.previous
+# 回溯路径
+def traverse(starting_vertex):
+    ans = []
+    current = starting_vertex
+    while (current.previous):
+        ans.append(current.key)
+        current = current.previous
+    ans.append(current.key)
 
-def traverse(y):
-    x = y
-    while (x.getPred()):
-        print(x.getId())
-        x = x.getPred()
-    print(x.getId())
+    return ans
 
 
-# traverse(g.get_vertex("sage"))
-#traverse(g.getVertex("sage"))
-traverse(g.getVertex("SAGE")) # 从SAGE开始回溯，逆向打印路径，直到FOOL
+# ans = traverse(g.get_vertex("sage"))
+ans = traverse(g.get_vertex("SAGE")) # 从SAGE开始回溯，逆向打印路径，直到FOOL
+print(*ans[::-1])
 """
 3867
-SAGE
-SALE
-SALL
-TALL
-TOLL
-TOOL
-FOOL
+FOOL TOOL TOLL TALL SALL SALE SAGE
 """
