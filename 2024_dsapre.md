@@ -1,12 +1,16 @@
-# 数算（数据结构与算法）pre每日选做
+# 数算（数据结构与算法）题目
 
-Updated 1507 GMT+8 April 10, 2024
+Updated 1409 GMT+8 April 12, 2024
 
 2024 spring, Complied by Hongfei Yan
 
 
 
-**说明：**
+**Logs：**
+
+2024/4/12: 因为汇总进来数算题目，2024_dsapre.md 更名为 2024spring_dsa_problems.md
+
+2024/2/18:
 
 1）数算课程在春季学期开，前一年计算概论课程结束，正值寒假，同学建议每日推出少许题目练习，因此成为“**数算pre每日选做**”。
 
@@ -4664,6 +4668,164 @@ for _ in range(t):
         print('NO')
     else:
         print('YES')
+```
+
+
+
+## 04093: 倒排索引查询
+
+http://cs101.openjudge.cn/practice/04093/
+
+现在已经对一些文档求出了倒排索引，对于一些词得出了这些词在哪些文档中出现的列表。
+
+要求对于倒排索引实现一些简单的查询，即查询某些词同时出现，或者有些词出现有些词不出现的文档有哪些。
+
+输入
+
+第一行包含一个数N，1 <= N <= 100，表示倒排索引表的数目。
+接下来N行，每行第一个数ci，表示这个词出现在了多少个文档中。接下来跟着ci个数，表示出现在的文档编号，编号不一定有序。1 <= ci <= 1000，文档编号为32位整数。
+接下来一行包含一个数M，1 <= M <= 100，表示查询的数目。
+接下来M行每行N个数，每个数表示这个词要不要出现，1表示出现，-1表示不出现，0表示无所谓。数据保证每行至少出现一个1。
+
+输出
+
+共M行，每行对应一个查询。输出查询到的文档编号，按照编号升序输出。
+如果查不到任何文档，输出"NOT FOUND"。
+
+样例输入
+
+```
+3
+3 1 2 3
+1 2
+1 3
+3
+1 1 1
+1 -1 0
+1 -1 -1
+```
+
+样例输出
+
+```
+NOT FOUND
+1 3
+1
+```
+
+
+
+在实际搜索引擎在处理基于倒排索引的查询时，搜索引擎确实会优先关注各个查询词的倒排表的合并和交集处理，而不是直接准备未出现文档的集合。这种方法更有效，特别是在处理大规模数据集时，因为它允许系统动态地调整和优化查询过程，特别是在有复杂查询逻辑（如多个词的组合、词的排除等）时。详细解释一下搜索引擎如何使用倒排索引来处理查询：
+
+倒排索引查询的核心概念
+1. 倒排索引结构：
+   - 对于每个词（token），都有一个关联的文档列表，这个列表通常是按文档编号排序的。
+   - 每个文档在列表中可能还会有附加信息，如词频、位置信息等。
+2. 处理查询：
+   - 单词查询：对于单个词的查询，搜索引擎直接返回该词的倒排列表。
+   - 多词交集查询：对于包含多个词的查询，搜索引擎找到每个词的倒排列表，然后计算这些列表的交集。
+   这个交集代表了所有查询词都出现的文档集合。
+   - 复杂逻辑处理：对于包含逻辑运算（AND, OR, NOT）的查询，搜索引擎会结合使用集合的
+   交集（AND）、并集（OR）和差集（NOT）操作来处理查询。特别是在处理 NOT 逻辑时，
+   它并不是去查找那些未出现词的文档集合，而是从已经确定的结果集中排除含有这个词的文档。
+
+更贴近实际搜索引擎的处理实现，如下：
+
+```python
+import sys
+input = sys.stdin.read
+data = input().split()
+
+index = 0
+N = int(data[index])
+index += 1
+
+word_documents = []
+
+# 读取每个词的倒排索引
+for _ in range(N):
+    ci = int(data[index])
+    index += 1
+    documents = sorted(map(int, data[index:index + ci]))
+    index += ci
+    word_documents.append(documents)
+
+M = int(data[index])
+index += 1
+
+results = []
+
+# 处理每个查询
+for _ in range(M):
+    query = list(map(int, data[index:index + N]))
+    index += N
+
+    # 集合存储各词的文档集合（使用交集获取所有词都出现的文档）
+    included_docs = []
+    excluded_docs = set()
+
+    # 解析查询条件
+    for i in range(N):
+        if query[i] == 1:
+            included_docs.append(word_documents[i])
+        elif query[i] == -1:
+            excluded_docs.update(word_documents[i])
+
+    # 仅在有包含词时计算交集
+    if included_docs:
+        result_set = set(included_docs[0])
+        for docs in included_docs[1:]:
+            result_set.intersection_update(docs)
+        result_set.difference_update(excluded_docs)
+        final_docs = sorted(result_set)
+        results.append(" ".join(map(str, final_docs)) if final_docs else "NOT FOUND")
+    else:
+        results.append("NOT FOUND")
+
+# 输出所有查询结果
+for result in results:
+    print(result)
+```
+
+
+
+
+
+```python
+
+n = int(input())
+lis = []
+all_documents = set()
+
+# Read each word's document list
+for _ in range(n):
+    data = list(map(int, input().split()))
+    doc_set = set(data[1:])
+    lis.append(doc_set)
+    all_documents.update(doc_set)
+
+# Prepare the not-present sets 未出现文档集合
+lis1 = [all_documents - doc_set for doc_set in lis]
+
+# Read number of queries
+m = int(input())
+
+# Process each query
+for _ in range(m):
+    query = list(map(int, input().split()))
+    result_set = None
+
+    # Determine result set based on requirements in query
+    for num, requirement in enumerate(query):
+        if requirement != 0:
+            current_set = lis[num] if requirement == 1 else lis1[num]
+            result_set = current_set if result_set is None else result_set.intersection(current_set)
+
+    if not result_set:
+        print("NOT FOUND")
+    else:
+        print(' '.join(map(str, sorted(result_set))))
+
 ```
 
 
