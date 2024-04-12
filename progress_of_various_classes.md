@@ -1,13 +1,13 @@
 # 数算B各班进度
 
-Updated 1654 GMT+8 Apr 12, 2024
+Updated 1703 GMT+8 Apr 12, 2024
 2024 spring, Complied by Hongfei Yan
 
 
 
 **Logs:**
 
-2024/4/2  有6/10个班到树了
+2024/4/12  有6/10个班到树了
 
 2024/4/2  有4/10个班到树了：Guow, Yanhf, Zhaohy,Wangz
 
