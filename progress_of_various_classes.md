@@ -29,7 +29,7 @@ Huw（6班）: http://forhuwei.openjudge.cn hw3 树，hw2 栈, BFS
 Wangz（2班）: http://sydsb.openjudge.cn 
 ​	hw7 树，hw6 树， hw5.Supplementary，greedy, 字符串, hw5 栈、队列、递归
 
-Zhaohy（9班）：http://dsaex.openjudge.cn hw7并查集，hw6 树，hw5 树，hw4 像计概, hw3 队列，
+Zhaohy（9班）：http://dsaex.openjudge.cn hw7 并查集，hw6 树，hw5 树，hw4 像计概, hw3 队列
 Zhangsl: http://ssbzsl.openjudge.cn week7 排序、优先级队列，week5 dp，week4 bfs, 栈
 Zouyz: http://hxsjjg.openjudge.cn hw4 树，hw3 栈、队列
 
