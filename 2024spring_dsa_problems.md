@@ -8,7 +8,7 @@ Updated 1409 GMT+8 April 12, 2024
 
 **Logs：**
 
-2024/4/12: 因为汇总进来数算题目，2024_dsapre.md 更名为 2024spring_dsa_problems.md
+2024/4/12: 因为不断汇总进来数算题目，2024_dsapre.md 更名为 2024spring_dsa_problems.md
 
 2024/2/18:
 
