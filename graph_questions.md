@@ -1,6 +1,6 @@
 # 20240409～23-Week8~10 图论
 
-Updated 1944 GMT+8 Apr 11, 2024
+Updated 2228 GMT+8 Apr 12, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1749,9 +1749,6 @@ print_path((n - 1, m - 1))
 阅读下列程序，完成图的深度优先周游算法实现的迷宫探索。已知图采用邻接表表示，Graph 类和 Vertex 类基本定义如下：
 
 ```python
-import sys
-sys.setrecursionlimit(10000000)
-
 class Graph:
     def __init__(self):
         self.vertices = {}
