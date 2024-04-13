@@ -73,23 +73,23 @@ class Graph:
         return iter(self.vertices.values())
 
 
-print("\n---Graph---\n")
-g = Graph()
-for i in range(6):
-    g.set_vertex(i)
-print(g.vertices)
-g.add_edge(0, 1, 5)
-g.add_edge(0, 5, 2)
-g.add_edge(1, 2, 4)
-g.add_edge(2, 3, 9)
-g.add_edge(3, 4, 7)
-g.add_edge(3, 5, 3)
-g.add_edge(4, 0, 1)
-g.add_edge(5, 4, 8)
-g.add_edge(5, 2, 1)
-for v in g:
-    for w in v.get_neighbors():
-        print(f"({v.get_key()}, {w.get_key()})")
+# print("\n---Graph---\n")
+# g = Graph()
+# for i in range(6):
+#     g.set_vertex(i)
+# print(g.vertices)
+# g.add_edge(0, 1, 5)
+# g.add_edge(0, 5, 2)
+# g.add_edge(1, 2, 4)
+# g.add_edge(2, 3, 9)
+# g.add_edge(3, 4, 7)
+# g.add_edge(3, 5, 3)
+# g.add_edge(4, 0, 1)
+# g.add_edge(5, 4, 8)
+# g.add_edge(5, 2, 1)
+# for v in g:
+#     for w in v.get_neighbors():
+#         print(f"({v.get_key()}, {w.get_key()})")
 
 
 
@@ -154,19 +154,6 @@ print(
 )
 
 """
----Graph---
-
-{0: Vertex(0), 1: Vertex(1), 2: Vertex(2), 3: Vertex(3), 4: Vertex(4), 5: Vertex(5)}
-(0, 1)
-(0, 5)
-(1, 2)
-(2, 3)
-(3, 4)
-(3, 5)
-(4, 0)
-(5, 4)
-(5, 2)
-
 ---Dijkstra's---
 
 u    v    w    x    y    z    
