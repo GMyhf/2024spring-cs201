@@ -1,6 +1,6 @@
 # 20240409～23-Week8~10 图论
 
-Updated 2228 GMT+8 Apr 12, 2024
+Updated 1109 GMT+8 Apr 13, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2097,7 +2097,7 @@ Figure 4: A Complete Tour of the Board
 
 
 
-##### 3 分析骑士周游
+##### 3 分析骑士周游（Warnsdorff 算法）
 
 在学习深度优先搜索的通用版本之前，我们探索骑士周游问题中的最后一个有趣的话题：性能。具体地说，`knight_tour`对用于选择下一个访问顶点的方法非常敏感。例如，利用速度正常的计算机，可以在1.5秒之内针对5×5的棋盘生成一条周游路径。但是，如果针对8×8的棋盘，会怎么样呢？可能需要等待半个小时才能得到结果！
 
@@ -2138,6 +2138,8 @@ def ordered_by_avail(n):
 
 
 选择合理走法最多的顶点作为下一个访问顶点的问题在于，它会使骑士在周游的前期就访问位于棋盘中间的格子。当这种情况发生时，骑士很容易被困在棋盘的一边，而无法到达另一边的那些没访问过的格子。首先访问合理走法最少的顶点，则可使骑士优先访问棋盘边缘的格子。这样做保证了骑士能够尽早访问难以到达的角落，并且在需要的时候通过中间的格子跨越到棋盘的另一边。我们称<u>利用这类知识来加速算法为**启发式技术**</u>。人类每天都在使用启发式技术做决定，启发式搜索也经常被用于人工智能领域。本例用到的启发式技术被称作Warnsdorff算法，以纪念在1823年提出该算法的数学家H. C. Warnsdorff。
+
+> Warnsdorff 算法是一种用于解决骑士周游问题的启发式算法。该算法的主要思想是优先选择下一步可行路径中具有最少可选路径的顶点（优先选择子节点中可行节点少的），从而尽可能地减少搜索空间。
 
 
 
@@ -3062,13 +3064,12 @@ print(count)
 下面是一个使用 Kahn 算法进行拓扑排序的示例代码：
 
 ```python
-from collections import defaultdict
-from queue import Queue
+from collections import deque, defaultdict
 
 def topological_sort(graph):
     indegree = defaultdict(int)
     result = []
-    queue = Queue()
+    queue = deque()
 
     # 计算每个顶点的入度
     for u in graph:
@@ -3078,23 +3079,42 @@ def topological_sort(graph):
     # 将入度为 0 的顶点加入队列
     for u in graph:
         if indegree[u] == 0:
-            queue.put(u)
+            queue.append(u)
 
     # 执行拓扑排序
-    while not queue.empty():
-        u = queue.get()
+    while queue:
+        u = queue.popleft()
         result.append(u)
 
         for v in graph[u]:
             indegree[v] -= 1
             if indegree[v] == 0:
-                queue.put(v)
+                queue.append(v)
 
     # 检查是否存在环
     if len(result) == len(graph):
         return result
     else:
         return None
+
+# 示例调用代码
+graph = {
+    'A': ['B', 'C'],
+    'B': ['C', 'D'],
+    'C': ['E'],
+    'D': ['F'],
+    'E': ['F'],
+    'F': []
+}
+
+sorted_vertices = topological_sort(graph)
+if sorted_vertices:
+    print("Topological sort order:", sorted_vertices)
+else:
+    print("The graph contains a cycle.")
+
+# Output:
+# Topological sort order: ['A', 'B', 'C', 'D', 'E', 'F']
 ```
 
 在上述代码中，`graph` 是一个字典，用于表示有向图的邻接关系。它的键表示顶点，值表示一个列表，表示从该顶点出发的边所连接的顶点。
