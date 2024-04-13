@@ -1,6 +1,6 @@
 # 20240409～23-Week8~10 图论
 
-Updated 1109 GMT+8 Apr 13, 2024
+Updated 1525 GMT+8 Apr 13, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2361,11 +2361,11 @@ if __name__ == '__main__':
 
 
 
-#### 3.2.4 通用深度优先搜索
+#### 3.2.4 通用深度优先搜索（depth first forest）
 
 骑士周游是深度优先搜索的一种特殊情况，它需要创建没有分支的最深深度优先搜索树。通用的深度优先搜索其实更简单，它的目标是尽可能深地搜索，尽可能多地连接图中的顶点，并且在需要的时候进行分支。
 
-有时候深度优先搜索会创建多棵深度优先搜索树，称之为**深度优先森林**。和宽度优先搜索类似，深度优先搜索也利用前驱连接来构建树。此外，深度优先搜索还会使用Vertex类中的两个额外的实例变量：`发现时间`记录算法在第一次访问顶点时的步数，`结束时间`记录算法在顶点被标记为黑色时的步数。在学习之后会发现，顶点的`发现时间`和`结束时间`提供了一些有趣的特性，后续算法会用到这些特性。
+有时候深度优先搜索会创建多棵深度优先搜索树，称之为**深度优先森林（depth first forest）**。和宽度优先搜索类似，深度优先搜索也利用前驱连接来构建树。此外，深度优先搜索还会使用Vertex类中的两个额外的实例变量：`发现时间`记录算法在第一次访问顶点时的步数，`结束时间`记录算法在顶点被标记为黑色时的步数。在学习之后会发现，顶点的`发现时间`和`结束时间`提供了一些有趣的特性，后续算法会用到这些特性。
 
 深度优先搜索的实现如代码list 5所示。由于`dfs函数`和`dfsvisit`辅助函数使用一个变量来记录调用`dfsvisit`的时间，因此我们选择将代码作为Graph类的一个子类中的方法来实现。该实现继承Graph类，并且增加了time实例变量，以及dfs和dfsvisit两个方法。注意第10行，dfs方法遍历图中所有的顶点，并对白色顶点调用`dfsvisit`方法。之所以遍历所有的顶点，而不是简单地从一个指定的顶点开始搜索，是因为这样做能够确保深度优先森林中的所有顶点都在考虑范围内，而不会有被遗漏的顶点。`for vertex in self`这条语句可能看上去不太正确，但是此处的self是DFSGraph类的一个实例，遍历一个图实例中的所有顶点其实是一件非常自然的事情。
 
@@ -3041,6 +3041,215 @@ print(count)
 
 ### 5.1 拓扑排序
 
+##### 5.1.1 煎松饼
+
+为了展示计算机科学家可以将几乎所有问题都转换成图问题，让我们来考虑如何制作一批松饼。配方十分简单：一个鸡蛋、一杯松饼粉、一勺油，以及3/4杯牛奶。为了制作松饼，需要加热平底锅，并将所有原材料混合后倒入锅中。当出现气泡时，将松饼翻面，继续煎至底部变成金黄色。在享用松饼之前，还会加热一些枫糖浆。图7-18用图的形式展示了整个过程。
+
+
+
+![../_images/pancakes.png](https://raw.githubusercontent.com/GMyhf/img/main/img/pancakes.png)
+
+
+
+图1 松饼的制作步骤
+
+制作松饼的难点在于知道先做哪一步。从图1可知，可以首先加热平底锅或者混合原材料。我们借助拓扑排序这种图算法来确定制作松饼的步骤。
+
+拓扑排序根据有向无环图生成一个包含所有顶点的线性序列，使得如果图G中有一条边为(v, w)，那么顶点v排在顶点w之前。在很多应用中，有向无环图被用于表明事件优先级。制作松饼只是其中一个例子，其他例子还包括软件项目调度、优化数据库查询的优先级表，以及矩阵相乘。
+
+拓扑排序是对深度优先搜索的一种简单而强大的改进，其算法如下。
+(1) 对图`g`调用`dfs(g)`。之所以调用深度优先搜索函数，是因为要计算每一个顶点的结束时间。
+(2) 基于结束时间，将顶点按照递减顺序存储在列表中。
+(3) 将有序列表作为拓扑排序的结果返回。
+
+图2 展示了`dfs`根据如图1所示的松饼制作步骤构建的深度优先森林。
+
+
+
+![../_images/pancakesDFS.png](https://raw.githubusercontent.com/GMyhf/img/main/img/pancakesDFS.png)
+
+图2 根据松饼制作步骤构建的深度优先森林
+
+
+
+图3 展示了拓扑排序结果。现在，我们明确地知道了制作松饼所需的步骤
+
+
+
+![../_images/pancakesTS.png](https://raw.githubusercontent.com/GMyhf/img/main/img/pancakesTS.png)
+
+图3 对有向无环图的拓扑排序结果
+
+
+
+##### 5.1.2 实现煎松饼（depth first forest）
+
+最新MakingPancake_DepthFirstForest.py 在 https://github.com/GMyhf/2024spring-cs201/tree/main/code
+
+```python
+import sys
+
+class Graph:
+    def __init__(self):
+        self.vertices = {}
+        self.num_vertices = 0
+
+    def add_vertex(self, key):
+        self.num_vertices = self.num_vertices + 1
+        new_ertex = Vertex(key)
+        self.vertices[key] = new_ertex
+        return new_ertex
+
+    def get_vertex(self, n):
+        if n in self.vertices:
+            return self.vertices[n]
+        else:
+            return None
+
+    def __len__(self):
+        return self.num_vertices
+
+    def __contains__(self, n):
+        return n in self.vertices
+
+    def add_edge(self, f, t, cost=0):
+        if f not in self.vertices:
+            nv = self.add_vertex(f)
+        if t not in self.vertices:
+            nv = self.add_vertex(t)
+        self.vertices[f].add_neighbor(self.vertices[t], cost)
+        #self.vertices[t].add_neighbor(self.vertices[f], cost)
+
+    def getVertices(self):
+        return list(self.vertices.keys())
+
+    def __iter__(self):
+        return iter(self.vertices.values())
+
+
+class Vertex:
+    def __init__(self, num):
+        self.key = num
+        self.connectedTo = {}
+        self.color = 'white'
+        self.distance = sys.maxsize
+        self.previous = None
+        self.discovery = 0
+        self.finish = None
+
+    def __lt__(self, o):
+        return self.key < o.key
+
+    def add_neighbor(self, nbr, weight=0):
+        self.connectedTo[nbr] = weight
+
+    def setDiscovery(self, dtime):
+        self.discovery = dtime
+
+    def setFinish(self, ftime):
+        self.finish = ftime
+
+    def getFinish(self):
+        return self.finish
+
+    def getDiscovery(self):
+        return self.discovery
+
+    def get_neighbors(self):
+        return self.connectedTo.keys()
+
+    # def getWeight(self, nbr):
+    #     return self.connectedTo[nbr]
+
+    def __str__(self):
+        return str(self.key) + ":color " + self.color + ":disc " + str(self.discovery) + ":fin " + str(
+            self.finish) + ":dist " + str(self.distance) + ":pred \n\t[" + str(self.previous) + "]\n"
+
+
+class DFSGraph(Graph):
+    def __init__(self):
+        super().__init__()
+        self.time = 0
+        self.topologicalList = []
+
+    def dfs(self):
+        for aVertex in self:
+            aVertex.color = "white"
+            aVertex.predecessor = -1
+        for aVertex in self:
+            if aVertex.color == "white":
+                self.dfsvisit(aVertex)
+
+    def dfsvisit(self, startVertex):
+        startVertex.color = "gray"
+        self.time += 1
+        startVertex.setDiscovery(self.time)
+        for nextVertex in startVertex.get_neighbors():
+            if nextVertex.color == "white":
+                nextVertex.previous = startVertex
+                self.dfsvisit(nextVertex)
+        startVertex.color = "black"
+        self.time += 1
+        startVertex.setFinish(self.time)
+
+    def topologicalSort(self):
+        self.dfs()
+        temp = list(self.vertices.values())
+        temp.sort(key = lambda x: x.getFinish(), reverse = True)
+        print([(x.key,x.finish) for x in temp])
+        self.topologicalList = [x.key for x in temp]
+        return self.topologicalList
+
+# Creating the graph
+g = DFSGraph()
+
+g.add_vertex('cup_milk')    # 3/4杯牛奶
+g.add_vertex('egg')         # 一个鸡蛋
+g.add_vertex('tbl_oil')     # 1勺油
+
+g.add_vertex('heat_griddle')    # 加热平底锅
+g.add_vertex('mix_ingredients') # 混合材料——1杯松饼粉
+g.add_vertex('pour_batter')   # 倒入1/4杯松饼粉
+g.add_vertex('turn_pancake')    # 出现气泡时翻面
+g.add_vertex('heat_syrup')  # 加热枫糖浆
+g.add_vertex('eat_pancake') # 开始享用
+
+# Adding edges based on dependencies
+g.add_edge('cup_milk', 'mix_ingredients')
+g.add_edge('mix_ingredients', 'pour_batter')
+g.add_edge('pour_batter', 'turn_pancake')
+g.add_edge('turn_pancake', 'eat_pancake')
+
+g.add_edge('mix_ingredients', 'heat_syrup')
+g.add_edge('heat_syrup', 'eat_pancake')
+
+g.add_edge('heat_griddle', 'pour_batter')
+g.add_edge('tbl_oil', 'mix_ingredients')
+g.add_edge('egg', 'mix_ingredients')
+
+
+
+# Getting topological sort of the tasks
+topo_order = g.topologicalSort()
+print("Topological Sort of the Pancake Making Process:")
+print(topo_order)
+
+"""
+Output:
+函数 topologicalSort 中的调试信息
+[('eat_pancake', 18), ('heat_syrup', 16), ('turn_pancake', 14), ('pour_cup', 12), ('cup_mix', 10), ('cup_milk', 8), ('heat_griddle', 6), ('tbl_oil', 4), ('egg', 2)]
+
+Topological Sort of the Pancake Making Process:
+['heat_griddle', 'tbl_oil', 'egg', 'cup_milk', 'cup_mix', 'heat_syrup', 'pour_cup', 'turn_pancake', 'eat_pancake']
+"""
+```
+
+
+
+
+
+##### 5.1.3 Kahn算法
+
 拓扑排序（Topological Sorting）是对有向无环图（DAG）进行排序的一种算法。它将图中的顶点按照一种线性顺序进行排列，使得对于任意的有向边 (u, v)，顶点 u 在排序中出现在顶点 v 的前面。
 
 拓扑排序可以用于解决一些依赖关系的问题，例如任务调度、编译顺序等。
@@ -3120,6 +3329,76 @@ else:
 在上述代码中，`graph` 是一个字典，用于表示有向图的邻接关系。它的键表示顶点，值表示一个列表，表示从该顶点出发的边所连接的顶点。
 
 你可以将你的有向图表示为一个邻接矩阵或邻接表，并将其作为参数传递给 `topological_sort` 函数。如果存在拓扑排序，函数将返回一个列表，按照拓扑排序的顺序包含所有顶点。如果图中存在环，函数将返回 `None`，表示无法进行拓扑排序。
+
+
+
+##### 5.1.4 实现煎松饼（Kahn）
+
+最新MakingPancake_Kahn.py 在 https://github.com/GMyhf/2024spring-cs201/tree/main/code
+
+```python
+from collections import deque, defaultdict
+
+def topological_sort(graph):
+    indegree = defaultdict(int)
+    result = []
+    queue = deque()
+
+    # 计算每个顶点的入度
+    for u in graph:
+        for v in graph[u]:
+            indegree[v] += 1
+
+    # 将入度为 0 的顶点加入队列
+    for u in graph:
+        if indegree[u] == 0:
+            queue.append(u)
+
+    # 执行拓扑排序
+    while queue:
+        u = queue.popleft()
+        result.append(u)
+
+        for v in graph[u]:
+            indegree[v] -= 1
+            if indegree[v] == 0:
+                queue.append(v)
+
+    # 检查是否存在环
+    if len(result) == len(graph):
+        return result
+    else:
+        return None
+
+# 示例调用代码
+graph = {
+    'cup_milk': ['mix_ingredients'],
+    'mix_ingredients': ['pour_batter', 'heat_syrup'],
+    'pour_batter': ['turn_pancake'],
+    'turn_pancake': ['eat_pancake'],
+    'heat_syrup': ['eat_pancake'],
+    'heat_griddle': ['pour_batter'],
+    'tbl_oil': ['mix_ingredients'],
+    'egg': ['mix_ingredients'],
+    'eat_pancake': []
+}
+
+
+sorted_vertices = topological_sort(graph)
+if sorted_vertices:
+    print("Topological sort order:", sorted_vertices)
+else:
+    print("The graph contains a cycle.")
+
+"""
+#Depth First Forest ouput:
+#['heat_griddle', 'tbl_oil', 'egg', 'cup_milk', 'mix_ingredients', 'heat_syrup', 'pour_batter', 'turn_pancake', 'eat_pancake']
+
+# Kahn ouput:
+Topological sort order: ['cup_milk', 'heat_griddle', 'tbl_oil', 'egg', 'mix_ingredients', 'pour_batter', 'heat_syrup', 'turn_pancake', 'eat_pancake']
+
+"""
+```
 
 
 
