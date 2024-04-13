@@ -1,6 +1,6 @@
 # 20240409～23-Week8~10 图论
 
-Updated 2213 GMT+8 Apr 13, 2024
+Updated 0223 GMT+8 Apr 14, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3663,7 +3663,17 @@ def prim(G,start):
 
 #### 5.5.1 通常的Dijkstra实现
 
+使用 `heapq` 来实现 Dijkstra 算法的完整 Python 代码。这个实现包括了图的类表示，顶点类，以及 Dijkstra 算法的具体逻辑。
 
+通过维护一个 `visited` 集合，我们可以确保每个顶点只被处理一次。
+
+这个实现也包括了输出每个顶点的最短距离和从起始点到每个顶点的具体路径。
+
+使用 `heapq` 模块确实是一个好选择，因为它通常比 `PriorityQueue` 更为高效。
+
+> `PriorityQueue，即 Python 标准库中 `queue.PriorityQueue`，其底层实际上是基于 `heapq`实现的。就像`heapq`，`PriorityQueue` 也没有直接支持修改队列中元素优先级的内置方法。`PriorityQueue`提供线程安全的队列操作，适用于多线程程序，但它并不支持如`decrease-key` 操作，这种操作在很多图算法中非常有用。
+>
+> 要实现修改优先级的功能，你可以采用与 `heapq` 类似的策略：将新的优先级作为一个新的条目加入到队列中，并通过一种机制（比如标记或记录）忽略或移除旧的条目。这种方法在 `PriorityQueue` 中同样适用，但要注意它的线程安全性和性能影响。
 
 ```python
 import heapq
@@ -3778,7 +3788,7 @@ Path to F: A -> C -> B -> D -> E -> F, Distance:  9
 
 #### 5.5.2 通常的Prim实现
 
-
+通过维护一个 `visited` 集合，我们可以确保每个顶点只被处理一次。
 
 ```python
 import sys
