@@ -114,29 +114,29 @@ class DFSGraph(Graph):
 # Creating the graph
 g = DFSGraph()
 
-g.add_vertex('cup_milk')
-g.add_vertex('egg')
-g.add_vertex('tbl_oil')
+g.add_vertex('cup_milk')    # 3/4杯牛奶
+g.add_vertex('egg')         # 一个鸡蛋
+g.add_vertex('tbl_oil')     # 1勺油
 
-g.add_vertex('heat_griddle')
-g.add_vertex('cup_mix')
-g.add_vertex('pour_cup')
-g.add_vertex('turn_pancake')    # turn when bubbly
-g.add_vertex('heat_syrup')
-g.add_vertex('eat_pancake')
+g.add_vertex('heat_griddle')    # 加热平底锅
+g.add_vertex('mix_ingredients') # 混合材料——1杯松饼粉
+g.add_vertex('pour_batter')   # 倒入1/4杯松饼粉
+g.add_vertex('turn_pancake')    # 出现气泡时翻面
+g.add_vertex('heat_syrup')  # 加热枫糖浆
+g.add_vertex('eat_pancake') # 开始享用
 
 # Adding edges based on dependencies
-g.add_edge('cup_milk', 'cup_mix')
-g.add_edge('cup_mix', 'pour_cup')
-g.add_edge('pour_cup', 'turn_pancake')
+g.add_edge('cup_milk', 'mix_ingredients')
+g.add_edge('mix_ingredients', 'pour_batter')
+g.add_edge('pour_batter', 'turn_pancake')
 g.add_edge('turn_pancake', 'eat_pancake')
 
-g.add_edge('cup_mix', 'heat_syrup')
+g.add_edge('mix_ingredients', 'heat_syrup')
 g.add_edge('heat_syrup', 'eat_pancake')
 
-g.add_edge('heat_griddle', 'pour_cup')
-g.add_edge('tbl_oil', 'cup_mix')
-g.add_edge('egg', 'cup_mix')
+g.add_edge('heat_griddle', 'pour_batter')
+g.add_edge('tbl_oil', 'mix_ingredients')
+g.add_edge('egg', 'mix_ingredients')
 
 
 
