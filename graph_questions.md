@@ -1,6 +1,6 @@
 # 20240409～23-Week8~10 图论
 
-Updated 1525 GMT+8 Apr 13, 2024
+Updated 1601 GMT+8 Apr 13, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3402,13 +3402,83 @@ Topological sort order: ['cup_milk', 'heat_griddle', 'tbl_oil', 'egg', 'mix_ingr
 
 
 
-### 5.2 最短路径
+### 5.2 强连通单元（SCC）
+
+接下来将注意力转向规模庞大的图。我们将以互联网主机与各个网页构成的图为例，学习其他几种算法。首先讨论网页。
+
+在互联网上，各种网页形成一张大型的有向图，谷歌和必应等搜索引擎正是利用了这一事实。要将互联网转换成一张图，我们将网页当作顶点，将超链接当作连接顶点的边。图1展示了以路德学院计算机系的主页作为起点的网页连接图的一小部分。由于这张图的规模庞大，因此我们限制网页与起点页之间的链接数不超过10个。
+
+
+
+![../_images/cshome.png](https://raw.githubusercontent.com/GMyhf/img/main/img/cshome.png)
+
+图1 以路德学院计算机系的主页作为起点的网页连接图
+
+仔细研究图1，会有一些非常有趣的发现。首先，图中的很多网页来自路德学院的其他网站。其次，一些链接指向爱荷华州的其他学校。最后，一些链接指向其他文理学院。由此可以得出这样的结论：网络具有一种基础结构，使得在某种程度上相似的网页相互聚集。
+
+通过一种叫作强连通单元的图算法，可以找出图中高度连通的顶点簇。对于图G，强连通单元C为最大的顶点子集$C \subset V$ ，其中对于每一对顶点$v, w \in C$，都有一条从v到w的路径和一条从w到v的路径。
+
+We formally define a **strongly connected component (SCC) **, C, of a graph G, as the largest subset of vertices $C \subset V$ such that for every pair of vertices $v, w \in C$ we have a path from v to w and a path from w to v. 
+
+图2展示了一个包含3个强连通单元的简单图。不同的强连通单元通过不同的阴影来表现。
+
+![../_images/scc1.png](https://raw.githubusercontent.com/GMyhf/img/main/img/scc1.png)
+
+图2 含有3个强连通单元的有向图
+
+
+
+
+
+![../_images/scc2.png](https://raw.githubusercontent.com/GMyhf/img/main/img/scc2.png)
+图7-23 简化后的有向图
+
+定义强连通单元之后，就可以把强连通单元中的所有顶点组合成单个顶点，从而将图简化。图3是图2的简化版。
+
+利用深度优先搜索，我们可以再次创建强大高效的算法。在学习强连通单元算法之前，还要再看一个定义。图G的转置图被定义为$G^T$，其中所有的边都与图G的边反向。这意味着，如果在图G中有一条由A到B的边，那么在$G^T$中就会有一条由B到A的边。图4展示了一个简单图及其转置图。
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240413153931736.png" alt="image-20240413153931736" style="zoom: 33%;" />
+
+图4 图G及其转置图
+
+再次观察图4。注意，图4a中有2个强连通单元，图4b中也是如此。
+以下是计算强连通单元的算法。
+(1) 对图G调用dfs，以计算每一个顶点的结束时间。
+(2) 计算图$G^T$。
+(3) 对图$G^T$​调用dfs，但是在主循环中，按照结束时间的递减顺序访问顶点。
+(4) 第3步得到的深度优先森林中的每一棵树都是一个强连通单元。输出每一棵树中的顶点的id。
+
+以图2为例，让我们来逐步分析。图5a展示了用深度优先搜索算法对原图计算得到的发现时间和结束时间，图5b展示了用深度优先搜索算法在转置图上得到的发现时间和结束时间。
+
+
+
+![../_images/scc1.png](https://raw.githubusercontent.com/GMyhf/img/main/img/scc1.png)
+
+图2 含有3个强连通单元的有向图
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240413154118511.png" alt="image-20240413154118511" style="zoom:50%;" />
+
+图5 计算强连通单元
+
+最后，图6展示了由强连通单元算法在第3步生成的森林，其中有3棵树。我们没有提供强连通单元算法的Python代码
+
+
+
+![../_images/sccforest.png](https://runestone.academy/ns/books/published/pythonds/_images/sccforest.png)
+
+图6 由强连通单元算法生成的森林 SCCs
+
+
+
+### 5.3 最短路径
 
 在图论中，有两种常见的方法用于求解最短路径问题：**Dijkstra算法**和**Bellman-Ford算法**。这两种算法各有优劣，选择哪种算法取决于图的特性和问题要求。如果图中没有负权边，并且只需要求解单源最短路径，Dijkstra算法通常是一个较好的选择。如果图中存在负权边或需要检测负权回路，或者需要求解所有节点对之间的最短路径，可以使用Bellman-Ford算法。
 
 
 
-#### 5.2.1 Dijkstra 算法
+#### 5.3.1 Dijkstra 算法
 
 **Dijkstra算法**：Dijkstra算法用于解决单源最短路径问题，即从给定源节点到图中所有其他节点的最短路径。算法的基本思想是通过不断扩展离源节点最近的节点来逐步确定最短路径。具体步骤如下：
 
@@ -3422,7 +3492,7 @@ Dijkstra算法的时间复杂度为O(V^2)，其中V是图中的节点数。当�
 
 
 
-#### 5.2.2 Bellman-Ford算法
+#### 5.3.2 Bellman-Ford算法
 
 **Bellman-Ford算法**：Bellman-Ford算法用于解决单源最短路径问题，与Dijkstra算法不同，它可以处理带有负权边的图。算法的基本思想是通过松弛操作逐步更新节点的最短路径估计值，直到收敛到最终结果。具体步骤如下：
 
@@ -3434,7 +3504,7 @@ Bellman-Ford算法的时间复杂度为O(V*E)，其中V是图中的节点数，E
 
 
 
-#### 5.2.3 多源最短路径Floyd-Warshall算法
+#### 5.3.3 多源最短路径Floyd-Warshall算法
 
 求解所有顶点之间的最短路径可以使用**Floyd-Warshall算法**，它是一种多源最短路径算法。Floyd-Warshall算法可以在有向图或无向图中找到任意两个顶点之间的最短路径。
 
@@ -3480,9 +3550,9 @@ def floyd_warshall(graph):
 
 
 
-### 5.3 最小生成树 (MST) 
+### 5.4 最小生成树 (MST) 
 
-#### 5.3.1 Prim's algorithm
+#### 5.4.1 Prim's algorithm
 
 
 
@@ -3526,7 +3596,7 @@ Prim's Algorithm:
 
 
 
-#### 5.3.2 Kruskal's Algorithm:
+#### 5.4.2 Kruskal's Algorithm:
 
 - Approach: Kruskal's algorithm sorts all the edges in the graph by their weights and then iteratively adds the edges with the minimum weight as long as they do not create a cycle in the MST.
 - Suitable for: Kruskal's algorithm is often used when the graph is sparse or when the number of edges is much smaller than the number of vertices. It is efficient for finding the MST in such cases.
@@ -3626,7 +3696,7 @@ Kruskal算法的时间复杂度为 O(ElogE)，其中 E 是边的数量。排序�
 
 
 
-### 5.4 关键路径
+### 5.5 关键路径
 
 在数据结构中，关键路径算法通常与有向加权图（有向图中每条边都有一个权重）相关。一种常用的关键路径算法是**AOV 网络关键路径算法**（Activity On Vertex Network Critical Path Algorithm），它适用于没有环路的有向加权图。
 
