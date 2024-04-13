@@ -3661,7 +3661,225 @@ def prim(G,start):
 
 ### 5.5 Dijkstra 和 Prim实现
 
+#### 5.5.1 通常的Dijkstra实现
 
+
+
+```python
+import heapq
+import sys
+
+class Vertex:
+    def __init__(self, key):
+        self.id = key
+        self.connectedTo = {}
+        self.distance = sys.maxsize
+        self.pred = None
+
+    def addNeighbor(self, nbr, weight=0):
+        self.connectedTo[nbr] = weight
+
+    def getConnections(self):
+        return self.connectedTo.keys()
+
+    def getWeight(self, nbr):
+        return self.connectedTo[nbr]
+
+    def __lt__(self, other):
+        return self.distance < other.distance
+
+class Graph:
+    def __init__(self):
+        self.vertList = {}
+        self.numVertices = 0
+
+    def addVertex(self, key):
+        newVertex = Vertex(key)
+        self.vertList[key] = newVertex
+        self.numVertices += 1
+        return newVertex
+
+    def getVertex(self, n):
+        return self.vertList.get(n)
+
+    def addEdge(self, f, t, cost=0):
+        if f not in self.vertList:
+            self.addVertex(f)
+        if t not in self.vertList:
+            self.addVertex(t)
+        self.vertList[f].addNeighbor(self.vertList[t], cost)
+
+def dijkstra(graph, start):
+    pq = []
+    start.distance = 0
+    heapq.heappush(pq, (0, start))
+
+    while pq:
+        currentDist, currentVert = heapq.heappop(pq)
+        for nextVert in currentVert.getConnections():
+            newDist = currentDist + currentVert.getWeight(nextVert)
+            if newDist < nextVert.distance:
+                nextVert.distance = newDist
+                nextVert.pred = currentVert
+                heapq.heappush(pq, (newDist, nextVert))
+
+# 创建图和边
+g = Graph()
+g.addEdge('A', 'B', 4)
+g.addEdge('A', 'C', 2)
+g.addEdge('C', 'B', 1)
+g.addEdge('B', 'D', 2)
+g.addEdge('C', 'D', 5)
+g.addEdge('D', 'E', 3)
+g.addEdge('E', 'F', 1)
+g.addEdge('D', 'F', 6)
+
+# 执行 Dijkstra 算法
+print("Shortest Path Tree:")
+dijkstra(g, g.getVertex('A'))
+
+# 输出最短路径树的顶点及其距离
+for vertex in g.vertList.values():
+    print(f"Vertex: {vertex.id}, Distance: {vertex.distance}")
+
+# 输出最短路径到每个顶点
+def printPath(vert):
+    if vert.pred:
+        printPath(vert.pred)
+        print(" -> ", end="")
+    print(vert.id, end="")
+
+print("\nPaths from Start Vertex 'A':")
+for vertex in g.vertList.values():
+    print(f"Path to {vertex.id}: ", end="")
+    printPath(vertex)
+    print(", Distance: ", vertex.distance)
+
+"""
+Shortest Path Tree:
+Vertex: A, Distance: 0
+Vertex: B, Distance: 3
+Vertex: C, Distance: 2
+Vertex: D, Distance: 5
+Vertex: E, Distance: 8
+Vertex: F, Distance: 9
+
+Paths from Start Vertex 'A':
+Path to A: A, Distance:  0
+Path to B: A -> C -> B, Distance:  3
+Path to C: A -> C, Distance:  2
+Path to D: A -> C -> B -> D, Distance:  5
+Path to E: A -> C -> B -> D -> E, Distance:  8
+Path to F: A -> C -> B -> D -> E -> F, Distance:  9
+"""
+```
+
+
+
+#### 5.5.2 通常的Prim实现
+
+
+
+```python
+import sys
+import heapq
+
+class Vertex:
+    def __init__(self, key):
+        self.id = key
+        self.connectedTo = {}
+        self.distance = sys.maxsize
+        self.pred = None
+
+    def addNeighbor(self, nbr, weight=0):
+        self.connectedTo[nbr] = weight
+
+    def getConnections(self):
+        return self.connectedTo.keys()
+
+    def getWeight(self, nbr):
+        return self.connectedTo[nbr]
+
+    def __lt__(self, other):
+        return self.distance < other.distance
+
+class Graph:
+    def __init__(self):
+        self.vertList = {}
+        self.numVertices = 0
+
+    def addVertex(self, key):
+        newVertex = Vertex(key)
+        self.vertList[key] = newVertex
+        self.numVertices += 1
+        return newVertex
+
+    def getVertex(self, n):
+        return self.vertList.get(n)
+
+    def addEdge(self, f, t, cost=0):
+        if f not in self.vertList:
+            self.addVertex(f)
+        if t not in self.vertList:
+            self.addVertex(t)
+        self.vertList[f].addNeighbor(self.vertList[t], cost)
+        self.vertList[t].addNeighbor(self.vertList[f], cost)
+
+def prim(graph, start):
+    pq = []
+    start.distance = 0
+    heapq.heappush(pq, (0, start))
+    visited = set()
+
+    while pq:
+        currentDist, currentVert = heapq.heappop(pq)
+        if currentVert in visited:
+            continue
+        visited.add(currentVert)
+
+        for nextVert in currentVert.getConnections():
+            weight = currentVert.getWeight(nextVert)
+            if nextVert not in visited and weight < nextVert.distance:
+                nextVert.distance = weight
+                nextVert.pred = currentVert
+                heapq.heappush(pq, (weight, nextVert))
+
+# 创建图和边
+g = Graph()
+g.addEdge('A', 'B', 4)
+g.addEdge('A', 'C', 3)
+g.addEdge('C', 'B', 1)
+g.addEdge('C', 'D', 2)
+g.addEdge('D', 'B', 5)
+g.addEdge('D', 'E', 6)
+
+# 执行 Prim 算法
+print("Minimum Spanning Tree:")
+prim(g, g.getVertex('A'))
+
+# 输出最小生成树的边
+for vertex in g.vertList.values():
+    if vertex.pred:
+        print(f"{vertex.pred.id} -> {vertex.id} Weight:{vertex.distance}")
+
+"""
+Minimum Spanning Tree:
+C -> B Weight:1
+A -> C Weight:3
+C -> D Weight:2
+D -> E Weight:6
+"""
+```
+
+
+
+#### 5.5.3 书上Dijkstra实现，不敢恭维
+
+在 `heapq` 中，直接改变一个元素的优先级并重新排序堆并不是直接支持的功能，因为 `heapq` 模块提供的是一个简单的堆实现，而不是一个优先级队列。然而，你可以通过一种变通的方法来模拟这个功能。
+
+一个常用的技巧是将被更新优先级的元素重新插入到堆中，但标记原有的元素为失效。具体到 Dijkstra 算法中，这意味着当你发现到某个顶点的更短路径时，你将这个顶点与新的距离一起推入堆中，并通过一个字典或集合来跟踪最新的有效状态。
+
+下面的代码展示了这种技术的具体实现。Book_Dijkstra.py在https://github.com/GMyhf/2024spring-cs201/tree/main/code
 
 ```python
 import sys
@@ -3739,48 +3957,40 @@ class Graph:
         return iter(self.vertices.values())
 
 
-print("\n---Graph---\n")
-g = Graph()
-for i in range(6):
-    g.set_vertex(i)
-print(g.vertices)
-g.add_edge(0, 1, 5)
-g.add_edge(0, 5, 2)
-g.add_edge(1, 2, 4)
-g.add_edge(2, 3, 9)
-g.add_edge(3, 4, 7)
-g.add_edge(3, 5, 3)
-g.add_edge(4, 0, 1)
-g.add_edge(5, 4, 8)
-g.add_edge(5, 2, 1)
-for v in g:
-    for w in v.get_neighbors():
-        print(f"({v.get_key()}, {w.get_key()})")
+# print("\n---Graph---\n")
+# g = Graph()
+# for i in range(6):
+#     g.set_vertex(i)
+# print(g.vertices)
+# g.add_edge(0, 1, 5)
+# g.add_edge(0, 5, 2)
+# g.add_edge(1, 2, 4)
+# g.add_edge(2, 3, 9)
+# g.add_edge(3, 4, 7)
+# g.add_edge(3, 5, 3)
+# g.add_edge(4, 0, 1)
+# g.add_edge(5, 4, 8)
+# g.add_edge(5, 2, 1)
+# for v in g:
+#     for w in v.get_neighbors():
+#         print(f"({v.get_key()}, {w.get_key()})")
 
 
-# def dijkstra(graph, start):
-#     pq = PriorityQueue()
-#     start.distance = 0
-#     pq.heapify([(v.distance, v) for v in graph])
-#     while pq:
-#         distance, current_v = pq.delete()
-#         for next_v in current_v.get_neighbors():
-#             new_distance = (
-#                 current_v.distance
-#                 + current_v.get_neighbor(next_v)
-#             )
-#             if new_distance < next_v.distance:
-#                 next_v.distance = new_distance
-#                 next_v.previous = current_v
-#                 pq.change_priority(next_v, new_distance)
-                # print("".join(f"{v.distance % 1000:<5d}" for v in graph))
 
+"""
+这个实现使用了一个字典 visited 来跟踪每个顶点的最短已知距离。
+如果在优先队列中发现一个顶点的旧记录，通过检查 visited 中记录的距离来决定是否忽略它。
+这样可以确保每个顶点的最新距离总是被正确处理，即便它被多次推入堆中。
+"""
 def dijkstra(graph, start):
     pq = [(v.distance, v) for v in graph]
     start.distance = 0
     heapify(pq)
+    visited = {}
     while pq:
         distance, current_v = heappop(pq)
+        if current_v in visited and visited[current_v] < distance:
+            continue
         for next_v in current_v.get_neighbors():
             new_distance = (
                 current_v.distance
@@ -3827,98 +4037,7 @@ print(
     )
 )
 
-
-# def prim(graph, start):
-#     pq = PriorityQueue()
-#     for vertex in graph:
-#         vertex.distance = sys.maxsize
-#         vertex.previous = None
-#     start.distance = 0
-#     pq.heapify(
-#         [(vertex.distance, vertex) for vertex in graph]
-#     )
-#     while not pq.is_empty():
-#         # print(", ".join(f"{(v[1].key, v[1].distance % 1000)}" for v in pq._heap))
-#         distance, current_v = pq.delete()
-#         for next_v in current_v.get_neighbors():
-#             new_distance = current_v.get_neighbor(next_v)
-#             if (
-#                 next_v in pq
-#                 and new_distance < next_v.distance
-#             ):
-#                 next_v.previous = current_v
-#                 next_v.distance = new_distance
-#                 pq.change_priority(next_v, new_distance)
-#             # print("".join(f"{v.distance % 1000:<5d}" for v in graph))
-
-def prim(graph, start):
-    for vertex in graph:
-        vertex.distance = sys.maxsize
-        vertex.previous = None
-    start.distance = 0
-    pq = [(vertex.distance, vertex) for vertex in graph]
-    heapify(pq)
-
-    while pq:
-        #print(", ".join(f"{(v[1].key, v[1].distance % 1000)}" for v in pq))
-        distance, current_v = heappop(pq)
-        for next_v in current_v.get_neighbors():
-            new_distance = current_v.get_neighbor(next_v)
-            if (
-                next_v in pq
-                and new_distance < next_v.distance
-            ):
-                next_v.previous = current_v
-                next_v.distance = new_distance
-                heappush(pq, (next_v.distance, next_v))
-                #print("".join(f"{v.distance % 1000:<5d}" for v in graph))
-
-print("\n---Prim's---\n")
-g = Graph()
-vertices = ["A", "B", "C", "D", "E", "F", "G"]
-for v in vertices:
-    g.set_vertex(v)
-g.add_edge("A", "B", 2)
-g.add_edge("A", "C", 3)
-g.add_edge("B", "A", 2)
-g.add_edge("B", "C", 1)
-g.add_edge("B", "D", 1)
-g.add_edge("B", "E", 4)
-g.add_edge("C", "A", 3)
-g.add_edge("C", "B", 1)
-g.add_edge("C", "F", 5)
-g.add_edge("D", "B", 1)
-g.add_edge("D", "E", 1)
-g.add_edge("E", "B", 4)
-g.add_edge("E", "D", 1)
-g.add_edge("E", "F", 1)
-g.add_edge("F", "C", 5)
-g.add_edge("F", "E", 1)
-g.add_edge("F", "G", 1)
-g.add_edge("G", "F", 1)
-print("".join(f"{v:5s}" for v in vertices))
-prim(g, g.get_vertex("A"))
-print(
-    "".join(
-        f"{g.get_vertex(v).distance:<5d}"
-        for v in vertices
-    )
-)
-
 """
----Graph---
-
-{0: Vertex(0), 1: Vertex(1), 2: Vertex(2), 3: Vertex(3), 4: Vertex(4), 5: Vertex(5)}
-(0, 1)
-(0, 5)
-(1, 2)
-(2, 3)
-(3, 4)
-(3, 5)
-(4, 0)
-(5, 4)
-(5, 2)
-
 ---Dijkstra's---
 
 u    v    w    x    y    z    
@@ -3930,11 +4049,104 @@ u    v    w    x    y    z
 0    2    3    1    2    807  
 0    2    3    1    2    3    
 0    2    3    1    2    3    
+"""
 
----Prim's---
+```
 
-A    B    C    D    E    F    G    
-0    922337203685477580792233720368547758079223372036854775807922337203685477580792233720368547758079223372036854775807
+
+
+#### 5.5.4 书上Prim实现，不敢恭维
+
+Book_Prim.py在https://github.com/GMyhf/2024spring-cs201/tree/main/code
+
+```python
+import sys
+import heapq
+
+class Vertex:
+    def __init__(self, key):
+        self.id = key
+        self.connectedTo = {}
+        self.distance = sys.maxsize
+        self.pred = None
+
+    def addNeighbor(self, nbr, weight=0):
+        self.connectedTo[nbr] = weight
+
+    def getConnections(self):
+        return self.connectedTo.keys()
+
+    def getWeight(self, nbr):
+        return self.connectedTo[nbr]
+
+    def __lt__(self, other):
+        return self.distance < other.distance
+
+class Graph:
+    def __init__(self):
+        self.vertList = {}
+        self.numVertices = 0
+
+    def addVertex(self, key):
+        newVertex = Vertex(key)
+        self.vertList[key] = newVertex
+        self.numVertices += 1
+        return newVertex
+
+    def getVertex(self, n):
+        return self.vertList.get(n)
+
+    def addEdge(self, f, t, cost=0):
+        if f not in self.vertList:
+            self.addVertex(f)
+        if t not in self.vertList:
+            self.addVertex(t)
+        self.vertList[f].addNeighbor(self.vertList[t], cost)
+        self.vertList[t].addNeighbor(self.vertList[f], cost)
+
+def prim(graph, start):
+    pq = []
+    start.distance = 0
+    heapq.heappush(pq, (0, start))
+    visited = set()
+
+    while pq:
+        currentDist, currentVert = heapq.heappop(pq)
+        if currentVert in visited:
+            continue
+        visited.add(currentVert)
+
+        for nextVert in currentVert.getConnections():
+            weight = currentVert.getWeight(nextVert)
+            if nextVert not in visited and weight < nextVert.distance:
+                nextVert.distance = weight
+                nextVert.pred = currentVert
+                heapq.heappush(pq, (weight, nextVert))
+
+# 创建图和边
+g = Graph()
+g.addEdge('A', 'B', 4)
+g.addEdge('A', 'C', 3)
+g.addEdge('C', 'B', 1)
+g.addEdge('C', 'D', 2)
+g.addEdge('D', 'B', 5)
+g.addEdge('D', 'E', 6)
+
+# 执行 Prim 算法
+print("Minimum Spanning Tree:")
+prim(g, g.getVertex('A'))
+
+# 输出最小生成树的边
+for vertex in g.vertList.values():
+    if vertex.pred:
+        print(f"{vertex.pred.id} -> {vertex.id} Weight:{vertex.distance}")
+
+"""
+Minimum Spanning Tree:
+C -> B Weight:1
+A -> C Weight:3
+C -> D Weight:2
+D -> E Weight:6
 """
 ```
 
