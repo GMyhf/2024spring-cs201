@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 2340 GMT+8 Apr 10, 2024
+Updated 2322 GMT+8 Apr 13, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8659,6 +8659,8 @@ https://sunnywhy.com/sfbj/10/3/383
 
 
 
+提供三种解法：常规，类，并查集（类似最小生成树的Krusal算法）
+
 
 
 需要找到给定无向图中所有连通块的最大权值。使用深度优先搜索（DFS）来解决这个问题。在DFS中，从一个节点开始，然后访问它的每一个邻居。可以使用一个visited数组来跟踪每个节点是否已经被访问过。对于每个连通块，可以计算其权值之和，并更新最大权值。
@@ -8702,6 +8704,56 @@ print(max_weight(n, m, weights, edges))
 ```
 
 在这段代码中，首先通过`input()`函数接收用户输入的顶点数`n`、边数`m`和每个顶点的权值，然后在一个循环中接收每条边的起点和终点，并将它们添加到`edges`列表中。然后，我们调用`max_weight`函数并打印结果。
+
+
+
+类的写法
+
+```python
+#洪亮 物理学院
+class Vertex:
+    def __init__(self,key,weight):
+        self.key=key
+        self.weight=weight
+        self.nbrs=[]
+    def addnbr(self,nbr):
+        self.nbrs.append(nbr)
+        
+class Graph:
+    def __init__(self):
+        self.vertexs={}
+    def addvertex(self,key,weight):
+        cur=Vertex(key,weight)
+        self.vertexs[key]=cur
+        return cur
+    def addedge(self,k1,k2):
+        self.vertexs[k1].nbrs.append(self.vertexs[k2])
+        self.vertexs[k2].nbrs.append(self.vertexs[k1])
+        
+def DFS(vertex):
+    ans=vertex.weight
+    check[vertex.key]=False
+    for k in vertex.nbrs:
+        if check[k.key]:
+            ans+=DFS(k)
+            check[k.key]=False
+    return ans
+
+n,m=map(int,input().split())
+check=[True]*n
+weights=list(map(int,input().split()))
+p=Graph()
+for i in range(n):
+    p.addvertex(i,weights[i])
+for j in range(m):
+    k1,k2=map(int,input().split())
+    p.addedge(k1,k2)
+ans=0
+for vertex in p.vertexs.values():
+    if check[vertex.key]:
+        ans=max(ans,DFS(vertex))
+print(ans)
+```
 
 
 
