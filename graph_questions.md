@@ -1,6 +1,6 @@
 # 20240409～23-Week8~10 图论
 
-Updated 1643 GMT+8 Apr 13, 2024
+Updated 2213 GMT+8 Apr 13, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3588,13 +3588,13 @@ Dijkstra算法使用了优先级队列。你应该记得，"树"那一章讲过�
 
 
 
-为了更好地理解上述问题，我们先来看看如何通过蛮力法求解。你稍后会看到，本节提出的解决方案为何优于蛮力法。假设互联网广播服务提供商要向所有收听者播放一条消息，最简单的方法是保存一份包含所有收听者的列表，然后向每一个收听者单独发送消息。以图2为例，若采用上述解法，则每一条消息都需要有4份副本。假设使用开销最小的路径，让我们来看看每一个路由器需要处理多少次相同的消息。
+为了更好地理解上述问题，我们先来看看如何通过蛮力法求解。你稍后会看到，本节提出的解决方案为何优于蛮力法。假设互联网广播服务提供商要向所有收听者播放一条消息，最简单的方法是保存一份包含所有收听者的列表，然后向每一个收听者单独发送消息。以图1为例，若采用上述解法，则每一条消息都需要有4份副本。假设使用开销最小的路径，让我们来看看每一个路由器需要处理多少次相同的消息。
 
 从广播服务提供商发出的所有消息都会经过路由器A，因此A能够看到每一条消息的所有副本。路由器C只能看到一份副本，而由于路由器B和D在收听者1、2、3的最短路径上，因此它们能够看到每一条消息的3份副本。考虑到广播服务提供商每秒会发送数百条消息，这样做会导致流量剧增。
 
-一种蛮力法是广播服务提供商针对每条消息只发送一份副本，然后由路由器来正确地发送。最简单的方法就是**无控制泛滥法（uncontrolled flooding）**，策略如下：每一条消息都设有**存活时间（time to live, ttl）**，它大于或等于广播服务提供商和最远的收听者之间的距离；每一个路由器都接收到消息的一份副本，并且将消息发送给所有的相邻路由器。在消息被发送时，它的`ttl`递减，直到变为0。不难发现，无控制泛滥法产生的不必要消息比第一种方法更多。
+一种蛮力法是广播服务提供商针对每条消息只发送一份副本，然后由路由器来正确地发送。最简单的方法就是`不受控泛洪法（uncontrolled flooding）`，策略如下：每一条消息都设有**存活时间（time to live, ttl）**，它大于或等于广播服务提供商和最远的收听者之间的距离；每一个路由器都接收到消息的一份副本，并且将消息发送给所有的相邻路由器。在消息被发送时，它的`ttl`递减，直到变为0。不难发现，不受控泛洪法产生的不必要消息比第一种方法更多。
 
-解决广播问题的关键在于构建一棵权重最小的生成树。我们对最小生成树的正式定义如下：对于图G=(V, E)，最小生成树T是E的无环子集，并且连接V 中的所有顶点。
+解决广播问题的关键在于构建一棵权重最小的`生成树`。我们对最小权重`生成树`的正式定义如下：对于图G=(V, E)，最小生成树T是E的无环子集，并且连接V 中的所有顶点。
 
 图2展示了简化的广播图，并且突出显示了形成最小生成树的所有边。为了解决广播问题，广播服务提供商只需向网络中发送一条消息副本。每一个路由器向属于生成树的相邻路由器转发消息，其中不包括刚刚向它发送消息的路由器。在图2的例子中，A把消息转发给B, B把消息转发给C和D, D转发给E, E转发给F, F转发给G。每一个路由器都只看到任意消息的一份副本，并且所有的收听者都接收到了消息。
 
@@ -3646,12 +3646,12 @@ def prim(G,start):
 
 
 
-图4展示了将Prim算法应用于示例生成树的过程。以顶点A作为起点，将A到其他所有顶点的距离都初始化为无穷大。检查A的相邻顶点后，可以更新从A到B和C的距离，因为实际的距离小于无穷大。更新距离之后，B和C被移到优先级队列的头部。并且，它们的前驱顶点被设置为A。注意，我们还没有把B和C添加到生成树中。只有在从优先级队列中移除时，顶点才会被添加到生成树中。
+图3展示了将Prim算法应用于示例生成树的过程。以顶点A作为起点，将A到其他所有顶点的距离都初始化为无穷大。检查A的相邻顶点后，可以更新从A到B和C的距离，因为实际的距离小于无穷大。更新距离之后，B和C被移到优先级队列的头部。并且，它们的前驱顶点被设置为A。注意，我们还没有把B和C添加到生成树中。只有在从优先级队列中移除时，顶点才会被添加到生成树中。
 
 
 ![image-20240413164314867](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240413164314867.png)
 
-图4 Prim算法的应用过程
+图3 Prim算法的应用过程
 
 由于到B的距离最短，因此接下来检查B的相邻顶点。检查后发现，可以更新D和E。接下来处理优先级队列中的下一个顶点C。与C相邻的唯一一个还在优先级队列中的顶点是F，因此更新到F的距离，并且调整F在优先级队列中的位置。
 
@@ -3659,7 +3659,288 @@ def prim(G,start):
 
 
 
-### 7.9 小结
+### 5.5 Dijkstra 和 Prim实现
+
+
+
+```python
+import sys
+from heapq import heappop, heappush, heapify
+
+class Vertex:
+    def __init__(self, key):
+        self.key = key
+        self.neighbors = {}
+        self.distance = sys.maxsize
+        self.previous = None
+        self.color = None
+
+    def get_neighbor(self, other):
+        return self.neighbors.get(other, None)
+
+    def set_neighbor(self, other, weight=0):
+        self.neighbors[other] = weight
+
+    def __repr__(self):
+        return f"Vertex({self.key})"
+
+    def __str__(self):
+        return (
+            f"{self.key} connected to: "
+            + f"{[x.key for x in self.neighbors]}"
+        )
+
+    def get_neighbors(self):
+        return self.neighbors.keys()
+
+    def get_key(self):
+        return self.key
+
+    def __eq__(self, other):
+        if isinstance(other, Vertex):
+            return self.key == other.key
+        return False
+
+    def __lt__(self, other):
+        if isinstance(other, Vertex):
+            return self.distance < other.distance
+        return False
+
+    def __hash__(self):
+        return hash(self.key)
+
+
+class Graph:
+    def __init__(self):
+        self.vertices = {}
+
+    def set_vertex(self, key):
+        self.vertices[key] = Vertex(key)
+
+    def get_vertex(self, key):
+        return self.vertices.get(key, None)
+
+    def __contains__(self, key):
+        return key in self.vertices
+
+    def add_edge(self, from_vert, to_vert, weight=0):
+        if from_vert not in self.vertices:
+            self.set_vertex(from_vert)
+        if to_vert not in self.vertices:
+            self.set_vertex(to_vert)
+        self.vertices[from_vert].set_neighbor(
+            self.vertices[to_vert], weight
+        )
+
+    def get_vertices(self):
+        return self.vertices.keys()
+
+    def __iter__(self):
+        return iter(self.vertices.values())
+
+
+print("\n---Graph---\n")
+g = Graph()
+for i in range(6):
+    g.set_vertex(i)
+print(g.vertices)
+g.add_edge(0, 1, 5)
+g.add_edge(0, 5, 2)
+g.add_edge(1, 2, 4)
+g.add_edge(2, 3, 9)
+g.add_edge(3, 4, 7)
+g.add_edge(3, 5, 3)
+g.add_edge(4, 0, 1)
+g.add_edge(5, 4, 8)
+g.add_edge(5, 2, 1)
+for v in g:
+    for w in v.get_neighbors():
+        print(f"({v.get_key()}, {w.get_key()})")
+
+
+# def dijkstra(graph, start):
+#     pq = PriorityQueue()
+#     start.distance = 0
+#     pq.heapify([(v.distance, v) for v in graph])
+#     while pq:
+#         distance, current_v = pq.delete()
+#         for next_v in current_v.get_neighbors():
+#             new_distance = (
+#                 current_v.distance
+#                 + current_v.get_neighbor(next_v)
+#             )
+#             if new_distance < next_v.distance:
+#                 next_v.distance = new_distance
+#                 next_v.previous = current_v
+#                 pq.change_priority(next_v, new_distance)
+                # print("".join(f"{v.distance % 1000:<5d}" for v in graph))
+
+def dijkstra(graph, start):
+    pq = [(v.distance, v) for v in graph]
+    start.distance = 0
+    heapify(pq)
+    while pq:
+        distance, current_v = heappop(pq)
+        for next_v in current_v.get_neighbors():
+            new_distance = (
+                current_v.distance
+                + current_v.get_neighbor(next_v)
+            )
+            if new_distance < next_v.distance:
+                next_v.distance = new_distance
+                next_v.previous = current_v
+                heappush(pq, (next_v.distance, next_v))
+                print("".join(f"{v.distance % 1000:<5d}" for v in graph))
+
+print("\n---Dijkstra's---\n")
+g = Graph()
+vertices = ["u", "v", "w", "x", "y", "z"]
+for v in vertices:
+    g.set_vertex(v)
+g.add_edge("u", "v", 2)
+g.add_edge("u", "w", 5)
+g.add_edge("u", "x", 1)
+g.add_edge("v", "u", 2)
+g.add_edge("v", "w", 3)
+g.add_edge("v", "x", 1)
+g.add_edge("w", "u", 5)
+g.add_edge("w", "v", 3)
+g.add_edge("w", "x", 3)
+g.add_edge("w", "y", 1)
+g.add_edge("w", "z", 5)
+g.add_edge("x", "u", 1)
+#g.add_edge("x", "v", 2)
+g.add_edge("x", "v", 1)
+g.add_edge("x", "w", 3)
+g.add_edge("x", "y", 1)
+g.add_edge("y", "w", 1)
+g.add_edge("y", "x", 1)
+g.add_edge("y", "z", 1)
+g.add_edge("z", "w", 5)
+g.add_edge("z", "y", 1)
+print("".join(f"{v:5s}" for v in vertices))
+dijkstra(g, g.get_vertex("u"))
+print(
+    "".join(
+        f"{g.get_vertex(v).distance:<5d}"
+        for v in vertices
+    )
+)
+
+
+# def prim(graph, start):
+#     pq = PriorityQueue()
+#     for vertex in graph:
+#         vertex.distance = sys.maxsize
+#         vertex.previous = None
+#     start.distance = 0
+#     pq.heapify(
+#         [(vertex.distance, vertex) for vertex in graph]
+#     )
+#     while not pq.is_empty():
+#         # print(", ".join(f"{(v[1].key, v[1].distance % 1000)}" for v in pq._heap))
+#         distance, current_v = pq.delete()
+#         for next_v in current_v.get_neighbors():
+#             new_distance = current_v.get_neighbor(next_v)
+#             if (
+#                 next_v in pq
+#                 and new_distance < next_v.distance
+#             ):
+#                 next_v.previous = current_v
+#                 next_v.distance = new_distance
+#                 pq.change_priority(next_v, new_distance)
+#             # print("".join(f"{v.distance % 1000:<5d}" for v in graph))
+
+def prim(graph, start):
+    for vertex in graph:
+        vertex.distance = sys.maxsize
+        vertex.previous = None
+    start.distance = 0
+    pq = [(vertex.distance, vertex) for vertex in graph]
+    heapify(pq)
+
+    while pq:
+        #print(", ".join(f"{(v[1].key, v[1].distance % 1000)}" for v in pq))
+        distance, current_v = heappop(pq)
+        for next_v in current_v.get_neighbors():
+            new_distance = current_v.get_neighbor(next_v)
+            if (
+                next_v in pq
+                and new_distance < next_v.distance
+            ):
+                next_v.previous = current_v
+                next_v.distance = new_distance
+                heappush(pq, (next_v.distance, next_v))
+                #print("".join(f"{v.distance % 1000:<5d}" for v in graph))
+
+print("\n---Prim's---\n")
+g = Graph()
+vertices = ["A", "B", "C", "D", "E", "F", "G"]
+for v in vertices:
+    g.set_vertex(v)
+g.add_edge("A", "B", 2)
+g.add_edge("A", "C", 3)
+g.add_edge("B", "A", 2)
+g.add_edge("B", "C", 1)
+g.add_edge("B", "D", 1)
+g.add_edge("B", "E", 4)
+g.add_edge("C", "A", 3)
+g.add_edge("C", "B", 1)
+g.add_edge("C", "F", 5)
+g.add_edge("D", "B", 1)
+g.add_edge("D", "E", 1)
+g.add_edge("E", "B", 4)
+g.add_edge("E", "D", 1)
+g.add_edge("E", "F", 1)
+g.add_edge("F", "C", 5)
+g.add_edge("F", "E", 1)
+g.add_edge("F", "G", 1)
+g.add_edge("G", "F", 1)
+print("".join(f"{v:5s}" for v in vertices))
+prim(g, g.get_vertex("A"))
+print(
+    "".join(
+        f"{g.get_vertex(v).distance:<5d}"
+        for v in vertices
+    )
+)
+
+"""
+---Graph---
+
+{0: Vertex(0), 1: Vertex(1), 2: Vertex(2), 3: Vertex(3), 4: Vertex(4), 5: Vertex(5)}
+(0, 1)
+(0, 5)
+(1, 2)
+(2, 3)
+(3, 4)
+(3, 5)
+(4, 0)
+(5, 4)
+(5, 2)
+
+---Dijkstra's---
+
+u    v    w    x    y    z    
+0    2    807  807  807  807  
+0    2    5    807  807  807  
+0    2    5    1    807  807  
+0    2    4    1    807  807  
+0    2    4    1    2    807  
+0    2    3    1    2    807  
+0    2    3    1    2    3    
+0    2    3    1    2    3    
+
+---Prim's---
+
+A    B    C    D    E    F    G    
+0    922337203685477580792233720368547758079223372036854775807922337203685477580792233720368547758079223372036854775807
+"""
+```
+
+
+
+### 5.6 小结
 
 本章介绍了图的抽象数据类型，以及一些实现方式。如果能将一个问题用图表示出来，那么就可以利用图算法加以解决。对于解决下列问题，图非常有用。
 ❏ 利用宽度优先搜索找到无权重的最短路径。
