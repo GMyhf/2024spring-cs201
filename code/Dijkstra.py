@@ -45,9 +45,15 @@ def dijkstra(graph, start):
     pq = []
     start.distance = 0
     heapq.heappush(pq, (0, start))
+    visited = set()
 
     while pq:
-        currentDist, currentVert = heapq.heappop(pq)
+        currentDist, currentVert = heapq.heappop(pq)    # 当一个顶点的最短路径确定后（也就是这个顶点
+                                                        # 从优先队列中被弹出时），它的最短路径不会再改变。
+        if currentVert in visited:
+            continue
+        visited.add(currentVert)
+
         for nextVert in currentVert.getConnections():
             newDist = currentDist + currentVert.getWeight(nextVert)
             if newDist < nextVert.distance:
