@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1441 GMT+8 April 12, 2024
+Updated 2331 GMT+8 April 12, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4668,6 +4668,38 @@ for _ in range(t):
         print('NO')
     else:
         print('YES')
+```
+
+
+
+
+
+
+
+```python
+# 雷逸鸣 物理学院
+class Solution:
+    def is_consistent(self, phone_numbers):
+        phone_numbers.sort()  # 对电话号码列表进行排序
+        for i in range(len(phone_numbers) - 1):
+            if phone_numbers[i + 1].startswith(phone_numbers[i]):
+                return False
+        return True
+
+def main():
+    t = int(input().strip())
+    for _ in range(t):
+        n = int(input().strip())
+        phone_numbers = [input().strip() for _ in range(n)]
+        solution = Solution()
+        if solution.is_consistent(phone_numbers):
+            print("YES")
+        else:
+            print("NO")
+
+if __name__ == "__main__":
+    main()
+
 ```
 
 
