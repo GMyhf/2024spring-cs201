@@ -52,7 +52,10 @@ else:
     print("The graph contains a cycle.")
 
 """
-# ['heat_griddle', 'tbl_oil', 'egg', 'cup_milk', 'mix_ingredients', 'heat_syrup', 'pour_batter', 'turn_pancake', 'eat_pancake']
+#Depth First Forest ouput:
+#['heat_griddle', 'tbl_oil', 'egg', 'cup_milk', 'mix_ingredients', 'heat_syrup', 'pour_batter', 'turn_pancake', 'eat_pancake']
+
+# Kahn ouput:
 Topological sort order: ['cup_milk', 'heat_griddle', 'tbl_oil', 'egg', 'mix_ingredients', 'pour_batter', 'heat_syrup', 'turn_pancake', 'eat_pancake']
 
 """
