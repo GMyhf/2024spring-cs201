@@ -1,6 +1,6 @@
 # 编程题目
 
-Updated 1412 GMT+8 Apr 8, 2024
+Updated 1735 GMT+8 Apr 14, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -22,25 +22,41 @@ http://cs101.openjudge.cn/dsapre/20743/
 
 http://cs101.openjudge.cn/dsapre/02255/
 
-04081: 树的转换
-
-http://cs101.openjudge.cn/dsapre/04081/
-
 05907: 二叉树的操作
 
 http://cs101.openjudge.cn/dsapre/05907/
 
-22067: 快速堆猪
+01426/428:Find The Multiple
 
-http://cs101.openjudge.cn/practice/22067/
+http://cs101.openjudge.cn/practice/01426/
+
+
+
+Assignment #9: 图论：遍历，及 树算
+
+04081: 树的转换
+
+http://cs101.openjudge.cn/dsapre/04081/
 
 08581: 扩展二叉树
 
 http://cs101.openjudge.cn/dsapre/08581/
 
-01426/428:Find The Multiple
+22067: 快速堆猪
 
-http://cs101.openjudge.cn/practice/01426/
+http://cs101.openjudge.cn/practice/22067/
+
+04123: 马走日
+
+dfs, http://cs101.openjudge.cn/practice/04123
+
+28046: 词梯
+
+bfs, http://cs101.openjudge.cn/practice/28046/
+
+28050: 骑士周游
+
+http://cs101.openjudge.cn/practice/28050/
 
 
 
@@ -117,9 +133,19 @@ at http://cs101.openjudge.cn
 
 
 
+### ==2024/4/15
+
+07734:虫子的生活	01191/193:棋盘分割
+
+04143/8207:和为给定数	28046:词梯
+
+
+
 ### ==2024/4/10
 
-04089/7114:电话号码
+01084/86:正方形破坏者
+
+01760/762:Disk Tree	04089/7114:电话号码
 
 18250 冰阔落 I	02386/1388: Lake Counting
 
