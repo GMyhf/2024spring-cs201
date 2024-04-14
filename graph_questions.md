@@ -1,6 +1,6 @@
 # 20240409～23-Week8~10 图论
 
-Updated 0223 GMT+8 Apr 14, 2024
+Updated 1625 GMT+8 Apr 14, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2372,6 +2372,9 @@ if __name__ == '__main__':
 **List5 实现通用深度优先搜索**
 
 ```python
+# https://github.com/psads/pythonds3
+from pythonds3.graphs import Graph
+
 class DFSGraph(Graph):
     def __init__(self):
         super().__init__()
@@ -2401,9 +2404,9 @@ class DFSGraph(Graph):
 
 
 
-~~尽管本例中的bfs实现只对回到起点的路径上的顶点感兴趣，但也可以创建一个表示图中所有顶点间的最短路径的宽度优先森林。这个问题留作练习。~~在接下来的两个例子中，我们会看到为何记录深度优先森林十分重要。
+在接下来的两个例子中，我们会看到为何记录深度优先森林十分重要。
 
-从start_vertex开始，`dfs_visit`方法尽可能深地探索所有相邻的白色顶点。如果仔细观察`df_svisit`的代码并且将其与bfs比较，应该注意到二者几乎一样，除了内部for循环的最后一行，`dfs_visit`通过递归地调用自己来继续进行下一层的搜索，bfs则将顶点添加到队列中，以供后续搜索。有趣的是，bfs使用队列，dfsvisit则使用栈。我们没有在代码中看到栈，但是它其实隐式地存在于`dfs_visit`的递归调用中。
+从`start_vertex`开始，`dfs_visit`方法尽可能深地探索所有相邻的白色顶点。如果仔细观察`df_svisit`的代码并且将其与bfs比较，应该注意到二者几乎一样，除了内部for循环的最后一行，`dfs_visit`通过递归地调用自己来继续进行下一层的搜索，bfs则将顶点添加到队列中，以供后续搜索。有趣的是，bfs使用队列，dfsvisit则使用栈。我们没有在代码中看到栈，但是它其实隐式地存在于`dfs_visit`的递归调用中。
 
 图7展示了在小型图上应用深度优先搜索算法的过程。图中，虚线表示被检查过的边，但是其一端的顶点已经被添加到深度优先搜索树中。在代码中，这是通过检查另一端的顶点是否不为白色来完成的。
 
@@ -2434,23 +2437,24 @@ F只有C这一个相邻顶点，但是C已经被标记为黑色，因此没有�
 
 
 
-##### 1 分析深度优先搜索
+#### 3.2.5 分析深度优先搜索
 
 一般来说，深度优先搜索的运行时间如下。在`dfs函数`中有两个循环，每个都是|V|次，所以是O(|V|)，这是由于它们针对图中的每个顶点都只执行一次。在`dfs_visit`中，循环针对当前顶点的邻接表中的每一条边都执行一次，且仅在顶点是白色时被递归调用，因此循环最多会对图中的每一条边执行一次，也就是O(|E|)。因此，深度优先搜索算法的时间复杂度是O(|V|+|E|)，与BFS一样。
 
 
 
-##### 2 深度优先搜索树（林）的性质
-
-1. **顶点大小的定义：** 对于图 G 中的任意两个顶点 u 和 v，当且仅当顶点 u 的结束时间（fin）小于顶点 v 的结束时间（fin）时，称顶点 u 小于顶点 v，即符号化表示为：$∀ u, v \in G; u < v \equiv u.fin < v.fin$。
-
-2. **子树大小的定义：** 对于深度优先搜索树（林）中的任意两棵不相交的子树 t1 和 t2，当且仅当 t1 中的任意节点的结束时间都早于 t2 中的任意节点的开始时间时，称 t1 小于 t2，即符号化表示为：$t1 < t2 \equiv ∀u \in t1, v \in t2; u < v$。
-
-3. **节点间的互斥关系：** 如果 t1 小于 t2，且节点 u 属于 t1，节点 v 属于 t2，则 $u \rightarrow v$ 不存在。
-
-4. **节点间的关系限定：** 如果顶点 u 小于顶点 v，并且它们在同一棵树中，则只有两种可能情况：
-   - 顶点 v 是顶点 u 的祖先。
-   - 顶点 u 和 v 具有共同的祖先 t。其中，顶点 u 属于 t 的子树 t1，顶点 v 属于 t 的子树 t2。这种情况下，t1 的结束时间早于 t2 的开始时间。
+> 深度优先搜索树（林）的性质
+>
+> 1. **顶点大小的定义：** 对于图 G 中的任意两个顶点 u 和 v，当且仅当顶点 u 的结束时间（fin）小于顶点 v 的结束时间（fin）时，称顶点 u 小于顶点 v，即符号化表示为：$∀ u, v \in G; u < v \equiv u.fin < v.fin$。
+>
+> 2. **子树大小的定义：** 对于深度优先搜索树（林）中的任意两棵不相交的子树 t1 和 t2，当且仅当 t1 中的任意节点的结束时间都早于 t2 中的任意节点的开始时间时，称 t1 小于 t2，即符号化表示为：$t1 < t2 \equiv ∀u \in t1, v \in t2; u < v$。
+>
+> 3. **节点间的互斥关系：** 如果 t1 小于 t2，且节点 u 属于 t1，节点 v 属于 t2，则 $u \rightarrow v$ 不存在。
+>
+> 4. **节点间的关系限定：** 如果顶点 u 小于顶点 v，并且它们在同一棵树中，则只有两种可能情况：
+>    - 顶点 v 是顶点 u 的祖先。
+>    - 顶点 u 和 v 具有共同的祖先 t。其中，顶点 u 属于 t 的子树 t1，顶点 v 属于 t 的子树 t2。这种情况下，t1 的结束时间早于 t2 的开始时间。
+>
 
 
 
@@ -3523,36 +3527,65 @@ Routers from One Host to the Next over the Internet
 
 #### 5.3.1 Dijkstra算法
 
+> **Breadth First Search** explores equally in all directions. This is an incredibly useful algorithm, not only for regular path finding, but also for procedural map generation, flow field pathfinding, distance maps, and other types of map analysis.
+> **Dijkstra’s Algorithm** (also called Uniform Cost Search) lets us prioritize which paths to explore. Instead of exploring all possible paths equally, it favors lower cost paths. We can assign lower costs to encourage moving on roads, higher costs to avoid enemies, and more. When movement costs vary, we use this instead of Breadth First Search.
+
+
+
 Dijkstra算法可用于确定最短路径，它是一种循环算法，可以提供从一个顶点到其他所有顶点的最短路径。这与宽度优先搜索非常像。
 
-为了记录从起点到各个终点的总开销，要利用Vertex类中的实例变量dist。该实例变量记录从起点到当前顶点的最小权重路径的总权重。Dijkstra算法针对图中的每个顶点都循环一次，但循环顺序是由一个优先级队列控制的。用来决定顺序的正是dist。在创建顶点时，将dist设为一个非常大的值。理论上可以将dist设为无穷大，但是实际一般将其设为一个大于所有可能出现的实际距离的值。
+为了记录从起点到各个终点的总开销，要利用Vertex类中的实例变量distance。该实例变量记录从起点到当前顶点的最小权重路径的总权重。Dijkstra算法针对图中的每个顶点都循环一次，但循环顺序是由一个优先级队列控制的。用来决定顺序的正是dist。在创建顶点时，将distance设为一个非常大的值。理论上可以将distance设为无穷大，但是实际一般将其设为一个大于所有可能出现的实际距离的值。
 
-Dijkstra算法的实现如代码清单List 2所示。当程序运行结束时，dist和predecessor都会被设置成正确的值。
+Dijkstra算法的实现如代码清单List 2所示。当程序运行结束时，distance和previous都会被设置成正确的值。
+
+> 2024/4/14 说明：教材目前已经有第3版了。我尽量按照第3版做课件，例程与老版相比有稍微改动。
 
 List1 Dijkstra算法的Python实现
 
 ```python
-from pythonds.graphs import PriorityQueue, Graph, Vertex
-def dijkstra(aGraph,start):
+# https://github.com/psads/pythonds3
+from pythonds3.graphs import PriorityQueue
+def dijkstra(graph,start):
     pq = PriorityQueue()
     start.setDistance(0)
-    pq.buildHeap([(v.getDistance(),v) for v in aGraph])
-    while not pq.isEmpty():
-        currentVert = pq.delMin()
-        for nextVert in currentVert.getConnections():
-            newDist = currentVert.getDistance() \
-                    + currentVert.getWeight(nextVert)
-            if newDist < nextVert.getDistance():
-                nextVert.setDistance( newDist )
-                nextVert.setPred(currentVert)
-                pq.decreaseKey(nextVert,newDist)
+    pq.buildHeap([(v.getDistance(),v) for v in graph])
+    while pq:
+        distance, current_v = pq.delete()
+        for next_v in current_v.getneighbors():
+            new_distance = current_v.distance + current_v.get_neighbor(next_v) # + get_weight
+            if new_distance < next_v.distance:
+                next_v.distance = new_distance
+                next_v.previous = current_v
+                pq.change_priority(next_v,new_distance)
 ```
 
 
 
-Dijkstra算法使用了优先级队列。你应该记得，"树"那一章讲过如何用堆实现优先级队列。不过，当时的简单实现和用于Dijkstra算法的实现有几个不同点。首先，PriorityQueue类存储了键-值对的二元组。这对于Dijkstra算法来说非常重要，因为优先级队列中的键必须与图中顶点的键相匹配。其次，二元组中的值被用来确定优先级，对应键在优先级队列中的位置。在Dijkstra算法的实现中，我们使用了顶点的距离作为优先级，这是因为我们总希望访问距离最小的顶点。另一个不同点是增加了decreaseKey方法（第14行）。当到一个顶点的距离减少并且该顶点已在优先级队列中时，就调用这个方法，从而将该顶点移向优先级队列的头部。
+```python
+from pythonds3.trees.binary_heap import BinaryHeap
+class PriorityQueue(BinaryHeap):
+    def change_priority(self, search_key: Any, new_priority: Any) -> None:
+        key_to_move = -1
+        for i, (_, key) in enumerate(self._heap):
+            if key == search_key:
+                key_to_move = i
+                break
+        if key_to_move > -1:
+            self._heap[key_to_move] = (new_priority, search_key)
+            self._perc_up(key_to_move)
 
-让我们对照图3 来理解如何针对每一个顶点应用Dijkstra算法。从顶点u开始，与u相邻的3个顶点分别是v、w和x。由于到v、w和x的初始距离都是sys.maxint，因此从起点到它们的新开销就是直接开销。更新这3个顶点的开销，同时将它们的前驱顶点设置成 u，并将它们添加到优先级队列中。我们使用距离作为优先级队列的键。此时，算法运行的状态如图3a所示。
+    def __contains__(self, search_key: Any) -> bool:
+        for _, key in self._heap:
+            if key == search_key:
+                return True
+        return False
+```
+
+
+
+Dijkstra算法使用了优先级队列。你应该记得，"树"那一章讲过如何用堆实现优先级队列。不过，当时的简单实现和用于Dijkstra算法的实现有几个不同点。首先，PriorityQueue类存储了键-值对的二元组。这对于Dijkstra算法来说非常重要，因为优先级队列中的键必须与图中顶点的键相匹配。其次，二元组中的值被用来确定优先级，对应键在优先级队列中的位置。在Dijkstra算法的实现中，我们使用了顶点的距离作为优先级，这是因为我们总希望访问距离最小的顶点。另一个不同点是增加了`change_priority`方法（第14行）。当到一个顶点的距离减少并且该顶点已在优先级队列中时，就调用这个方法，从而将该顶点移向优先级队列的头部。
+
+让我们对照图3 来理解如何针对每一个顶点应用Dijkstra算法。从顶点u开始，与u相邻的3个顶点分别是v、w和x。由于到v、w和x的初始距离都是`sys.maxint`，因此从起点到它们的新开销就是直接开销。更新这3个顶点的开销，同时将它们的前驱顶点设置成 u，并将它们添加到优先级队列中。我们使用距离作为优先级队列的键。此时，算法运行的状态如图3a所示。
 
 
 
@@ -3560,7 +3593,7 @@ Dijkstra算法使用了优先级队列。你应该记得，"树"那一章讲过�
 
 图3 Dijkstra算法的应用过程
 
-下一次while循环检查与x相邻的顶点。之所以x是第2个被访问的顶点，是因为它到起点的开销最小，因此排在了优先级队列的头部。与x相邻的有u、v、w和y。对于每一个相邻顶点，检查经由x到它的距离是否比已知的距离更短。显然，对于y来说确实如此，因为它的初始距离是sys.maxint；对于u和v来说则不然，因为它们的距离分别为0和2。但是，我们发现经过x到w的距离比直接从u到w的距离要短。因此，将到达w的距离更新为更短的值，并且将w的前驱顶点从u改为x。图3b展示了此时的状态。
+下一次while循环检查与x相邻的顶点。之所以x是第2个被访问的顶点，是因为它到起点的开销最小，因此排在了优先级队列的头部。与x相邻的有u、v、w和y。对于每一个相邻顶点，检查经由x到它的距离是否比已知的距离更短。显然，对于y来说确实如此，因为它的初始距离是`sys.maxsize`；对于u和v来说则不然，因为它们的距离分别为0和2。但是，我们发现经过x到w的距离比直接从u到w的距离要短。因此，将到达w的距离更新为更短的值，并且将w的前驱顶点从u改为x。图3b展示了此时的状态。
 
 下一步检查与v相邻的顶点。这一步没有对图做任何改动，因此我们继续检查顶点y。此时，我们发现经由y到达w和z的距离都更短，因此相应地调整它们的距离及前驱顶点。最后检查w和z，发现不需要做任何改动。由于优先级队列为空，因此退出。
 
@@ -3572,11 +3605,75 @@ Dijkstra算法使用了优先级队列。你应该记得，"树"那一章讲过�
 
 #### 5.3.2 分析Dijkstra算法
 
-最后，我们来分析Dijkstra算法的时间复杂度。开始时，要将图中的每一个顶点都添加到优先级队列中，这个操作的时间复杂度是$O(V)$。优先级队列构建完成之后，`while`循环针对每一个顶点都执行一次，这是由于一开始所有顶点都被添加到优先级队列中，并且只在循环时才被移除。在循环内部，每次对`delMin`的调用都是$O(V \log(V))$。综合起来考虑，循环和delMin调用的总时间复杂度是$O(V \log(V))$。for循环对图中的每一条边都执行一次，并且循环内部的decreaseKey调用为O(E logV)。因此，总的时间复杂度为$O((V+E) \log(V)).$。
+最后，我们来分析Dijkstra算法的时间复杂度。开始时，要将图中的每一个顶点都添加到优先级队列中，这个操作的时间复杂度是$O(|V|)$。优先级队列构建完成之后，`while`循环针对每一个顶点都执行一次，这是由于一开始所有顶点都被添加到优先级队列中，并且只在循环时才被移除。在循环内部，每次对`pq.delete`的调用都是$O(|V| \log(|V|))$。综合起来考虑，循环和delMin调用的总时间复杂度是$O(|V| \log(|V|))$。for循环对图中的每一条边都执行一次，并且循环内部的`change_priority`调用为O(|E| log|V|)。因此，总的时间复杂度为$O((|V|+|E|) \log(|V|))$。
 
 
 
-### 5.4 Prim算法
+#### *5.3.3 Bellman-Ford算法
+
+在图论中，有两种常见的方法用于求解最短路径问题：**Dijkstra算法**和**Bellman-Ford算法**。这两种算法各有优劣，选择哪种算法取决于图的特性和问题要求。如果图中没有负权边，并且只需要求解单源最短路径，Dijkstra算法通常是一个较好的选择。如果图中存在负权边或需要检测负权回路，或者需要求解所有节点对之间的最短路径，可以使用Bellman-Ford算法。
+
+**Bellman-Ford算法**：Bellman-Ford算法用于解决单源最短路径问题，与Dijkstra算法不同，它可以处理带有负权边的图。算法的基本思想是通过松弛操作逐步更新节点的最短路径估计值，直到收敛到最终结果。具体步骤如下：
+
+- 初始化一个距离数组，用于记录源节点到所有其他节点的最短距离。初始时，源节点的距离为0，其他节点的距离为无穷大。
+- 进行V-1次循环（V是图中的节点数），每次循环对所有边进行松弛操作。如果从节点u到节点v的路径经过节点u的距离加上边(u, v)的权重比当前已知的从源节点到节点v的最短路径更短，则更新最短路径。
+- 检查是否存在负权回路。如果在V-1次循环后，仍然可以通过松弛操作更新最短路径，则说明存在负权回路，因此无法确定最短路径。
+
+Bellman-Ford算法的时间复杂度为O(V*E)，其中V是图中的节点数，E是图中的边数。
+
+
+
+
+
+#### *5.3.4 多源最短路径Floyd-Warshall算法
+
+求解所有顶点之间的最短路径可以使用**Floyd-Warshall算法**，它是一种多源最短路径算法。Floyd-Warshall算法可以在有向图或无向图中找到任意两个顶点之间的最短路径。
+
+算法的基本思想是通过一个二维数组来存储任意两个顶点之间的最短距离。初始时，这个数组包含图中各个顶点之间的直接边的权重，对于不直接相连的顶点，权重为无穷大。然后，通过迭代更新这个数组，逐步求得所有顶点之间的最短路径。
+
+具体步骤如下：
+
+1. 初始化一个二维数组`dist`，用于存储任意两个顶点之间的最短距离。初始时，`dist[i][j]`表示顶点i到顶点j的直接边的权重，如果i和j不直接相连，则权重为无穷大。
+
+2. 对于每个顶点k，在更新`dist`数组时，考虑顶点k作为中间节点的情况。遍历所有的顶点对(i, j)，如果通过顶点k可以使得从顶点i到顶点j的路径变短，则更新`dist[i][j]`为更小的值。
+
+   `dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])`
+
+3. 重复进行上述步骤，对于每个顶点作为中间节点，进行迭代更新`dist`数组。最终，`dist`数组中存储的就是所有顶点之间的最短路径。
+
+Floyd-Warshall算法的时间复杂度为O(V^3)，其中V是图中的顶点数。它适用于解决稠密图（边数较多）的最短路径问题，并且可以处理负权边和负权回路。
+
+以下是一个使用Floyd-Warshall算法求解所有顶点之间最短路径的示例代码：
+
+```python
+def floyd_warshall(graph):
+    n = len(graph)
+    dist = [[float('inf')] * n for _ in range(n)]
+
+    for i in range(n):
+        for j in range(n):
+            if i == j:
+                dist[i][j] = 0
+            elif j in graph[i]:
+                dist[i][j] = graph[i][j]
+
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+
+    return dist
+```
+
+在上述代码中，`graph`是一个字典，用于表示图的邻接关系。它的键表示起始顶点，值表示一个字典，其中键表示终点顶点，值表示对应边的权重。
+
+你可以将你的图表示为一个邻接矩阵或邻接表，并将其作为参数传递给`floyd_warshall`函数。函数将返回一个二维数组，其中`dist[i][j]`表示从顶点i到顶点j的最短路径长度。
+
+
+
+### 5.4 最小生成树(MST) 
+
+#### 5.4.1 Prim算法
 
 在学习最后一个图算法之前，先考虑网络游戏设计师和互联网广播服务提供商面临的问题。他们希望高效地把信息传递给所有人。这在网络游戏中非常重要，因为所有玩家都可以据此知道其他玩家的最近位置。互联网广播也需要做到这一点，以让所有听众都接收到所需数据。图1展示了上述广播问题。
 
@@ -3625,23 +3722,24 @@ Prim算法的Python实现如代码List1所示。与Dijkstra算法类似，Prim�
 List1 Prim算法的Python实现
 
 ```python
-from pythonds.graphs import PriorityQueue, Graph, Vertex
+# https://github.com/psads/pythonds3
+from pythonds3.graphs import PriorityQueue
 
-def prim(G,start):
+def prim(graph,start):
     pq = PriorityQueue()
-    for v in G:
-        v.setDistance(sys.maxsize)
-        v.setPred(None)
-    start.setDistance(0)
-    pq.buildHeap([(v.getDistance(),v) for v in G])
-    while not pq.isEmpty():
-        currentVert = pq.delMin()
-        for nextVert in currentVert.getConnections():
-          newCost = currentVert.getWeight(nextVert)
-          if nextVert in pq and newCost<nextVert.getDistance():
-              nextVert.setPred(currentVert)
-              nextVert.setDistance(newCost)
-              pq.decreaseKey(nextVert,newCost)
+    for vertex in graph:
+        vertex.distance = sys.maxsize
+        vertex.previous = None
+    start.distance = 0
+    pq.buildHeap([(v.distance,v) for v in graph])
+    while pq:
+        distance, current_v = pq.delete()
+        for next_v in current_v.get_eighbors():
+          new_distance = current_v.get_neighbor(next_v)
+          if next_v in pq and new_distance < next_v.distance:
+              next_v.previous = current_v
+              next_v.distance = new_distance
+              pq.change_priority(next_v,new_distance)
 ```
 
 
@@ -3656,6 +3754,102 @@ def prim(G,start):
 由于到B的距离最短，因此接下来检查B的相邻顶点。检查后发现，可以更新D和E。接下来处理优先级队列中的下一个顶点C。与C相邻的唯一一个还在优先级队列中的顶点是F，因此更新到F的距离，并且调整F在优先级队列中的位置。
 
 现在检查与D相邻的顶点，发现可以将到E的距离从6减少为4。修改距离的同时，把E的前驱顶点改为D，以此准备将E添加到生成树中的另一个位置。Prim算法正是通过这样的方式将每一个顶点都添加到生成树中。
+
+
+
+#### 5.4.2 Kruskal's Algorithm:
+
+- Approach: Kruskal's algorithm sorts all the edges in the graph by their weights and then iteratively adds the edges with the minimum weight as long as they do not create a cycle in the MST.
+- Suitable for: Kruskal's algorithm is often used when the graph is sparse or when the number of edges is much smaller than the number of vertices. It is efficient for finding the MST in such cases.
+- Connectivity: Kruskal's algorithm may produce a forest of MSTs initially, and then it merges them into a single MST.
+
+Key similarities and connections between Prim's and Kruskal's algorithms:
+
+- Both algorithms find the minimum spanning tree of a graph.
+- They are both greedy algorithms that make locally optimal choices in each step to achieve the overall minimum weight.
+- The resulting MSTs produced by both algorithms have the same total weight.
+
+In summary, you can choose between Prim's algorithm and Kruskal's algorithm based on the characteristics of the graph, such as density or sparsity, and the specific requirements of your problem.
+
+
+
+Kruskal算法是一种用于解决最小生成树（Minimum Spanning Tree，简称MST）问题的贪心算法。给定一个连通的带权无向图，Kruskal算法可以找到一个包含所有顶点的最小生成树，即包含所有顶点且边权重之和最小的树。
+
+以下是Kruskal算法的基本步骤：
+
+1. 将图中的所有边按照权重从小到大进行排序。
+
+2. 初始化一个空的边集，用于存储最小生成树的边。
+
+3. 重复以下步骤，直到边集中的边数等于顶点数减一或者所有边都已经考虑完毕：
+
+   - 选择排序后的边集中权重最小的边。
+   - 如果选择的边不会导致形成环路（即加入该边后，两个顶点不在同一个连通分量中），则将该边加入最小生成树的边集中。
+
+4. 返回最小生成树的边集作为结果。
+
+Kruskal算法的核心思想是通过不断选择权重最小的边，并判断是否会形成环路来构建最小生成树。算法开始时，每个顶点都是一个独立的连通分量，随着边的不断加入，不同的连通分量逐渐合并为一个连通分量，直到最终形成最小生成树。
+
+实现Kruskal算法时，一种常用的数据结构是并查集（Disjoint Set）。并查集可以高效地判断两个顶点是否在同一个连通分量中，并将不同的连通分量合并。
+
+下面是一个使用Kruskal算法求解最小生成树的示例代码：
+
+```python
+class DisjointSet:
+    def __init__(self, num_vertices):
+        self.parent = list(range(num_vertices))
+        self.rank = [0] * num_vertices
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        root_x = self.find(x)
+        root_y = self.find(y)
+
+        if root_x != root_y:
+            if self.rank[root_x] < self.rank[root_y]:
+                self.parent[root_x] = root_y
+            elif self.rank[root_x] > self.rank[root_y]:
+                self.parent[root_y] = root_x
+            else:
+                self.parent[root_x] = root_y
+                self.rank[root_y] += 1
+
+
+def kruskal(graph):
+    num_vertices = len(graph)
+    edges = []
+
+    # 构建边集
+    for i in range(num_vertices):
+        for j in range(i + 1, num_vertices):
+            if graph[i][j] != 0:
+                edges.append((i, j, graph[i][j]))
+
+    # 按照权重排序
+    edges.sort(key=lambda x: x[2])
+
+    # 初始化并查集
+    disjoint_set = DisjointSet(num_vertices)
+
+    # 构建最小生成树的边集
+    minimum_spanning_tree = []
+
+    for edge in edges:
+        u, v, weight = edge
+        if disjoint_set.find(u) != disjoint_set.find(v):
+            disjoint_set.union(u, v)
+            minimum_spanning_tree.append((u, v, weight))
+
+    return minimum_spanning_tree
+```
+
+在上述代码中，`graph` 是一个二维矩阵，表示带权无向图的邻接矩阵。`graph[i][j]` 表示顶点 i 和顶点 j 之间的边的权重。
+
+Kruskal算法的时间复杂度为 O(ElogE)，其中 E 是边的数量。排序边集的时间复杂度为 O(ElogE)，并查集操作的时间复杂度为 O(Eα(V))，其中 α 是 Ackermann 函数的反函数，近似为常数。因此，总体上来说，Kruskal算法的时间复杂度可以近似为 O(ElogE)。
 
 
 
@@ -3674,6 +3868,18 @@ def prim(G,start):
 > `PriorityQueue，即 Python 标准库中 `queue.PriorityQueue`，其底层实际上是基于 `heapq`实现的。就像`heapq`，`PriorityQueue` 也没有直接支持修改队列中元素优先级的内置方法。`PriorityQueue`提供线程安全的队列操作，适用于多线程程序，但它并不支持如`decrease-key` 操作，这种操作在很多图算法中非常有用。
 >
 > 要实现修改优先级的功能，你可以采用与 `heapq` 类似的策略：将新的优先级作为一个新的条目加入到队列中，并通过一种机制（比如标记或记录）忽略或移除旧的条目。这种方法在 `PriorityQueue` 中同样适用，但要注意它的线程安全性和性能影响。
+
+**Dijkstra算法**：Dijkstra算法用于解决单源最短路径问题，即从给定源节点到图中所有其他节点的最短路径。算法的基本思想是通过不断扩展离源节点最近的节点来逐步确定最短路径。具体步骤如下：
+
+- 初始化一个距离数组，用于记录源节点到所有其他节点的最短距离。初始时，源节点的距离为0，其他节点的距离为无穷大。
+- 选择一个未访问的节点中距离最小的节点作为当前节点。
+- 更新当前节点的邻居节点的距离，如果通过当前节点到达邻居节点的路径比已知最短路径更短，则更新最短路径。
+- 标记当前节点为已访问。
+- 重复上述步骤，直到所有节点都被访问或者所有节点的最短路径都被确定。
+
+Dijkstra算法的时间复杂度为O(V^2)，其中V是图中的节点数。当使用优先队列（如最小堆）来选择距离最小的节点时，可以将时间复杂度优化到O((V+E)logV)，其中E是图中的边数。
+
+Dijkstra.py 程序在 https://github.com/GMyhf/2024spring-cs201/tree/main/code
 
 ```python
 import heapq
@@ -3723,9 +3929,15 @@ def dijkstra(graph, start):
     pq = []
     start.distance = 0
     heapq.heappush(pq, (0, start))
+    visited = set()
 
     while pq:
-        currentDist, currentVert = heapq.heappop(pq)
+        currentDist, currentVert = heapq.heappop(pq)    # 当一个顶点的最短路径确定后（也就是这个顶点
+                                                        # 从优先队列中被弹出时），它的最短路径不会再改变。
+        if currentVert in visited:
+            continue
+        visited.add(currentVert)
+
         for nextVert in currentVert.getConnections():
             newDist = currentDist + currentVert.getWeight(nextVert)
             if newDist < nextVert.distance:
@@ -3787,6 +3999,18 @@ Path to F: A -> C -> B -> D -> E -> F, Distance:  9
 
 
 #### 5.5.2 通常的Prim实现
+
+Prim's algorithm and Kruskal's algorithm are both used to find the minimum spanning tree (MST) of a connected, weighted graph. However, they have different approaches and are suitable for different scenarios. Here are the key differences and the typical use cases for each algorithm:
+
+Prim's Algorithm:
+
+- Approach: Prim's algorithm starts with a single vertex and gradually grows the MST by iteratively adding the edge with the minimum weight that connects a vertex in the MST to a vertex outside the MST.
+
+- Suitable for: Prim's algorithm is often used when the graph is dense or when the number of edges is close to the number of vertices. It is efficient for finding the MST in such cases.
+
+- Connectivity: Prim's algorithm always produces a connected MST.
+
+  
 
 通过维护一个 `visited` 集合，我们可以确保每个顶点只被处理一次。
 
@@ -4176,229 +4400,7 @@ D -> E Weight:6
 
 
 
-在图论中，有两种常见的方法用于求解最短路径问题：**Dijkstra算法**和**Bellman-Ford算法**。这两种算法各有优劣，选择哪种算法取决于图的特性和问题要求。如果图中没有负权边，并且只需要求解单源最短路径，Dijkstra算法通常是一个较好的选择。如果图中存在负权边或需要检测负权回路，或者需要求解所有节点对之间的最短路径，可以使用Bellman-Ford算法。
-
-
-
-#### 5.3.1 Dijkstra 算法
-
-**Dijkstra算法**：Dijkstra算法用于解决单源最短路径问题，即从给定源节点到图中所有其他节点的最短路径。算法的基本思想是通过不断扩展离源节点最近的节点来逐步确定最短路径。具体步骤如下：
-
-- 初始化一个距离数组，用于记录源节点到所有其他节点的最短距离。初始时，源节点的距离为0，其他节点的距离为无穷大。
-- 选择一个未访问的节点中距离最小的节点作为当前节点。
-- 更新当前节点的邻居节点的距离，如果通过当前节点到达邻居节点的路径比已知最短路径更短，则更新最短路径。
-- 标记当前节点为已访问。
-- 重复上述步骤，直到所有节点都被访问或者所有节点的最短路径都被确定。
-
-Dijkstra算法的时间复杂度为O(V^2)，其中V是图中的节点数。当使用优先队列（如最小堆）来选择距离最小的节点时，可以将时间复杂度优化到O((V+E)logV)，其中E是图中的边数。
-
-
-
-#### 5.3.2 Bellman-Ford算法
-
-**Bellman-Ford算法**：Bellman-Ford算法用于解决单源最短路径问题，与Dijkstra算法不同，它可以处理带有负权边的图。算法的基本思想是通过松弛操作逐步更新节点的最短路径估计值，直到收敛到最终结果。具体步骤如下：
-
-- 初始化一个距离数组，用于记录源节点到所有其他节点的最短距离。初始时，源节点的距离为0，其他节点的距离为无穷大。
-- 进行V-1次循环（V是图中的节点数），每次循环对所有边进行松弛操作。如果从节点u到节点v的路径经过节点u的距离加上边(u, v)的权重比当前已知的从源节点到节点v的最短路径更短，则更新最短路径。
-- 检查是否存在负权回路。如果在V-1次循环后，仍然可以通过松弛操作更新最短路径，则说明存在负权回路，因此无法确定最短路径。
-
-Bellman-Ford算法的时间复杂度为O(V*E)，其中V是图中的节点数，E是图中的边数。
-
-
-
-#### 5.3.3 多源最短路径Floyd-Warshall算法
-
-求解所有顶点之间的最短路径可以使用**Floyd-Warshall算法**，它是一种多源最短路径算法。Floyd-Warshall算法可以在有向图或无向图中找到任意两个顶点之间的最短路径。
-
-算法的基本思想是通过一个二维数组来存储任意两个顶点之间的最短距离。初始时，这个数组包含图中各个顶点之间的直接边的权重，对于不直接相连的顶点，权重为无穷大。然后，通过迭代更新这个数组，逐步求得所有顶点之间的最短路径。
-
-具体步骤如下：
-
-1. 初始化一个二维数组`dist`，用于存储任意两个顶点之间的最短距离。初始时，`dist[i][j]`表示顶点i到顶点j的直接边的权重，如果i和j不直接相连，则权重为无穷大。
-
-2. 对于每个顶点k，在更新`dist`数组时，考虑顶点k作为中间节点的情况。遍历所有的顶点对(i, j)，如果通过顶点k可以使得从顶点i到顶点j的路径变短，则更新`dist[i][j]`为更小的值。
-
-   `dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])`
-
-3. 重复进行上述步骤，对于每个顶点作为中间节点，进行迭代更新`dist`数组。最终，`dist`数组中存储的就是所有顶点之间的最短路径。
-
-Floyd-Warshall算法的时间复杂度为O(V^3)，其中V是图中的顶点数。它适用于解决稠密图（边数较多）的最短路径问题，并且可以处理负权边和负权回路。
-
-以下是一个使用Floyd-Warshall算法求解所有顶点之间最短路径的示例代码：
-
-```python
-def floyd_warshall(graph):
-    n = len(graph)
-    dist = [[float('inf')] * n for _ in range(n)]
-
-    for i in range(n):
-        for j in range(n):
-            if i == j:
-                dist[i][j] = 0
-            elif j in graph[i]:
-                dist[i][j] = graph[i][j]
-
-    for k in range(n):
-        for i in range(n):
-            for j in range(n):
-                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
-
-    return dist
-```
-
-在上述代码中，`graph`是一个字典，用于表示图的邻接关系。它的键表示起始顶点，值表示一个字典，其中键表示终点顶点，值表示对应边的权重。
-
-你可以将你的图表示为一个邻接矩阵或邻接表，并将其作为参数传递给`floyd_warshall`函数。函数将返回一个二维数组，其中`dist[i][j]`表示从顶点i到顶点j的最短路径长度。
-
-
-
-### 5.4 最小生成树 (MST) 
-
-#### 5.4.1 Prim's algorithm
-
-
-
-Prim's algorithm and Kruskal's algorithm are both used to find the minimum spanning tree (MST) of a connected, weighted graph. However, they have different approaches and are suitable for different scenarios. Here are the key differences and the typical use cases for each algorithm:
-
-Prim's Algorithm:
-
-- Approach: Prim's algorithm starts with a single vertex and gradually grows the MST by iteratively adding the edge with the minimum weight that connects a vertex in the MST to a vertex outside the MST.
-- Suitable for: Prim's algorithm is often used when the graph is dense or when the number of edges is close to the number of vertices. It is efficient for finding the MST in such cases.
-- Connectivity: Prim's algorithm always produces a connected MST.
-
-
-
-在数据结构中，关键路径算法通常与有向加权图（有向图中每条边都有一个权重）相关。一种常用的关键路径算法是**AOV 网络关键路径算法**（Activity On Vertex Network Critical Path Algorithm），它适用于没有环路的有向加权图。
-
-以下是 AOV 网络关键路径算法的基本步骤：
-
-1. 根据项目的活动和依赖关系，构建有向加权图。图的顶点表示活动，边表示活动之间的依赖关系，边的权重表示活动的持续时间。
-
-2. 对图进行拓扑排序，以确定活动的执行顺序。拓扑排序可以使用上述提到的拓扑排序算法（如 Kahn 算法）来实现。
-
-3. 初始化两个数组：`earliest_start_time` 和 `latest_finish_time`，分别用于存储每个顶点的最早开始时间和最晚完成时间。
-
-4. 从拓扑排序的第一个顶点开始，按照拓扑排序的顺序遍历每个顶点。
-
-   - 对于当前顶点 u，计算其最早开始时间 `earliest_start_time[u]`，即前面所有依赖顶点的最晚完成时间中的最大值加上 u 的持续时间。
-
-5. 从拓扑排序的最后一个顶点开始，按照逆拓扑排序的顺序遍历每个顶点。
-
-   - 对于当前顶点 v，计算其最晚完成时间 `latest_finish_time[v]`，即后面所有依赖顶点的最早开始时间中的最小值减去 v 的持续时间。
-
-6. 对于每条边 (u, v)，计算其总时差（Total Float）：
-
-   - 总时差等于 `latest_finish_time[v] - earliest_start_time[u] - edge_weight(u, v)`。
-
-7. 找到总时差为 0 的边，这些边构成了关键路径。关键路径上的活动是项目的关键活动，任何关键活动的延迟都会导致项目延迟。
-
-关键路径算法可以使用图的邻接表或邻接矩阵来表示有向加权图，并以此作为输入进行计算。通过计算关键路径，可以确定项目的关键活动和项目的最长完成时间，有助于项目管理和资源分配。
-
-请注意，这里介绍的是一种常见的关键路径算法，其他算法和技术也可用于求解关键路径问题，具体选择取决于实际情况和需求。
-
-
-
-#### 5.4.2 Kruskal's Algorithm:
-
-- Approach: Kruskal's algorithm sorts all the edges in the graph by their weights and then iteratively adds the edges with the minimum weight as long as they do not create a cycle in the MST.
-- Suitable for: Kruskal's algorithm is often used when the graph is sparse or when the number of edges is much smaller than the number of vertices. It is efficient for finding the MST in such cases.
-- Connectivity: Kruskal's algorithm may produce a forest of MSTs initially, and then it merges them into a single MST.
-
-Key similarities and connections between Prim's and Kruskal's algorithms:
-
-- Both algorithms find the minimum spanning tree of a graph.
-- They are both greedy algorithms that make locally optimal choices in each step to achieve the overall minimum weight.
-- The resulting MSTs produced by both algorithms have the same total weight.
-
-In summary, you can choose between Prim's algorithm and Kruskal's algorithm based on the characteristics of the graph, such as density or sparsity, and the specific requirements of your problem.
-
-
-
-Kruskal算法是一种用于解决最小生成树（Minimum Spanning Tree，简称MST）问题的贪心算法。给定一个连通的带权无向图，Kruskal算法可以找到一个包含所有顶点的最小生成树，即包含所有顶点且边权重之和最小的树。
-
-以下是Kruskal算法的基本步骤：
-
-1. 将图中的所有边按照权重从小到大进行排序。
-
-2. 初始化一个空的边集，用于存储最小生成树的边。
-
-3. 重复以下步骤，直到边集中的边数等于顶点数减一或者所有边都已经考虑完毕：
-
-   - 选择排序后的边集中权重最小的边。
-   - 如果选择的边不会导致形成环路（即加入该边后，两个顶点不在同一个连通分量中），则将该边加入最小生成树的边集中。
-
-4. 返回最小生成树的边集作为结果。
-
-Kruskal算法的核心思想是通过不断选择权重最小的边，并判断是否会形成环路来构建最小生成树。算法开始时，每个顶点都是一个独立的连通分量，随着边的不断加入，不同的连通分量逐渐合并为一个连通分量，直到最终形成最小生成树。
-
-实现Kruskal算法时，一种常用的数据结构是并查集（Disjoint Set）。并查集可以高效地判断两个顶点是否在同一个连通分量中，并将不同的连通分量合并。
-
-下面是一个使用Kruskal算法求解最小生成树的示例代码：
-
-```python
-class DisjointSet:
-    def __init__(self, num_vertices):
-        self.parent = list(range(num_vertices))
-        self.rank = [0] * num_vertices
-
-    def find(self, x):
-        if self.parent[x] != x:
-            self.parent[x] = self.find(self.parent[x])
-        return self.parent[x]
-
-    def union(self, x, y):
-        root_x = self.find(x)
-        root_y = self.find(y)
-
-        if root_x != root_y:
-            if self.rank[root_x] < self.rank[root_y]:
-                self.parent[root_x] = root_y
-            elif self.rank[root_x] > self.rank[root_y]:
-                self.parent[root_y] = root_x
-            else:
-                self.parent[root_x] = root_y
-                self.rank[root_y] += 1
-
-
-def kruskal(graph):
-    num_vertices = len(graph)
-    edges = []
-
-    # 构建边集
-    for i in range(num_vertices):
-        for j in range(i + 1, num_vertices):
-            if graph[i][j] != 0:
-                edges.append((i, j, graph[i][j]))
-
-    # 按照权重排序
-    edges.sort(key=lambda x: x[2])
-
-    # 初始化并查集
-    disjoint_set = DisjointSet(num_vertices)
-
-    # 构建最小生成树的边集
-    minimum_spanning_tree = []
-
-    for edge in edges:
-        u, v, weight = edge
-        if disjoint_set.find(u) != disjoint_set.find(v):
-            disjoint_set.union(u, v)
-            minimum_spanning_tree.append((u, v, weight))
-
-    return minimum_spanning_tree
-```
-
-在上述代码中，`graph` 是一个二维矩阵，表示带权无向图的邻接矩阵。`graph[i][j]` 表示顶点 i 和顶点 j 之间的边的权重。
-
-Kruskal算法的时间复杂度为 O(ElogE)，其中 E 是边的数量。排序边集的时间复杂度为 O(ElogE)，并查集操作的时间复杂度为 O(Eα(V))，其中 α 是 Ackermann 函数的反函数，近似为常数。因此，总体上来说，Kruskal算法的时间复杂度可以近似为 O(ElogE)。
-
-
-
-
-
-
-
-### 5.5 关键路径
+### *5.7 关键路径
 
 在数据结构中，关键路径算法通常与有向加权图（有向图中每条边都有一个权重）相关。一种常用的关键路径算法是**AOV 网络关键路径算法**（Activity On Vertex Network Critical Path Algorithm），它适用于没有环路的有向加权图。
 
@@ -4479,6 +4481,10 @@ Kruskal算法的时间复杂度为 O(ElogE)，其中 E 是边的数量。排序�
 Problem Solving with Algorithms and Data Structures using Python
 
 https://runestone.academy/ns/books/published/pythonds/index.html
+
+
+
+https://github.com/psads/pythonds3
 
 
 
