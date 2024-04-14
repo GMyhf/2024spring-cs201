@@ -1,6 +1,6 @@
 # 20240409～23-Week8~10 图论
 
-Updated 2005 GMT+8 Apr 14, 2024
+Updated 2225 GMT+8 Apr 14, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3453,7 +3453,7 @@ We formally define a **strongly connected component (SCC) **, C, of a graph G, a
 
 
 ![../_images/scc2.png](https://raw.githubusercontent.com/GMyhf/img/main/img/scc2.png)
-图7-23 简化后的有向图
+图3 简化后的有向图
 
 定义强连通单元之后，就可以把强连通单元中的所有顶点组合成单个顶点，从而将图简化。图3是图2的简化版。
 
@@ -3476,10 +3476,6 @@ We formally define a **strongly connected component (SCC) **, C, of a graph G, a
 
 
 
-![../_images/scc1.png](https://raw.githubusercontent.com/GMyhf/img/main/img/scc1.png)
-
-图2 含有3个强连通单元的有向图
-
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240413154118511.png" alt="image-20240413154118511" style="zoom:50%;" />
 
 图5 计算强连通单元
@@ -3491,6 +3487,148 @@ We formally define a **strongly connected component (SCC) **, C, of a graph G, a
 ![../_images/sccforest.png](https://runestone.academy/ns/books/published/pythonds/_images/sccforest.png)
 
 图6 由强连通单元算法生成的森林 SCCs
+
+
+
+#### 5.2.1 Kosaraju算法
+
+Kosaraju算法是一种用于在有向图中寻找强连通分量（Strongly Connected Components，SCC）的算法。它基于深度优先搜索（DFS）和图的转置操作。
+
+以下是Kosaraju算法的Python实现：
+
+```python
+def dfs1(graph, node, visited, stack):
+    visited[node] = True
+    for neighbor in graph[node]:
+        if not visited[neighbor]:
+            dfs1(graph, neighbor, visited, stack)
+    stack.append(node)
+
+def dfs2(graph, node, visited, component):
+    visited[node] = True
+    component.append(node)
+    for neighbor in graph[node]:
+        if not visited[neighbor]:
+            dfs2(graph, neighbor, visited, component)
+
+def kosaraju(graph):
+    # Step 1: Perform first DFS to get finishing times
+    stack = []
+    visited = [False] * len(graph)
+    for node in range(len(graph)):
+        if not visited[node]:
+            dfs1(graph, node, visited, stack)
+    
+    # Step 2: Transpose the graph
+    transposed_graph = [[] for _ in range(len(graph))]
+    for node in range(len(graph)):
+        for neighbor in graph[node]:
+            transposed_graph[neighbor].append(node)
+    
+    # Step 3: Perform second DFS on the transposed graph to find SCCs
+    visited = [False] * len(graph)
+    sccs = []
+    while stack:
+        node = stack.pop()
+        if not visited[node]:
+            scc = []
+            dfs2(transposed_graph, node, visited, scc)
+            sccs.append(scc)
+    return sccs
+
+# Example
+graph = [[1], [2, 4], [3, 5], [0, 6], [5], [4], [7], [5, 6]]
+sccs = kosaraju(graph)
+print("Strongly Connected Components:")
+for scc in sccs:
+    print(scc)
+
+"""
+Strongly Connected Components:
+[0, 3, 2, 1]
+[6, 7]
+[5, 4]
+
+"""
+```
+
+这段代码首先定义了两个DFS函数，分别用于第一次DFS和第二次DFS。然后，Kosaraju算法包含了三个步骤：
+1. 第一次DFS：遍历整个图，记录每个节点的完成时间，并将节点按照完成时间排序后压入栈中。
+2. 图的转置：将原图中的边反转，得到转置图。
+3. 第二次DFS：按照栈中节点的顺序，对转置图进行DFS，从而找到强连通分量。
+
+最后，输出找到的强连通分量。
+
+
+
+#### *5.2.2 Tarjan算法
+
+以下是Tarjan算法的Python实现：
+
+```python
+def tarjan(graph):
+    def dfs(node):
+        nonlocal index, stack, indices, low_link, on_stack, sccs
+        index += 1
+        indices[node] = index
+        low_link[node] = index
+        stack.append(node)
+        on_stack[node] = True
+        
+        for neighbor in graph[node]:
+            if indices[neighbor] == 0:  # Neighbor not visited yet
+                dfs(neighbor)
+                low_link[node] = min(low_link[node], low_link[neighbor])
+            elif on_stack[neighbor]:  # Neighbor is in the current SCC
+                low_link[node] = min(low_link[node], indices[neighbor])
+        
+        if indices[node] == low_link[node]:
+            scc = []
+            while True:
+                top = stack.pop()
+                on_stack[top] = False
+                scc.append(top)
+                if top == node:
+                    break
+            sccs.append(scc)
+    
+    index = 0
+    stack = []
+    indices = [0] * len(graph)
+    low_link = [0] * len(graph)
+    on_stack = [False] * len(graph)
+    sccs = []
+    
+    for node in range(len(graph)):
+        if indices[node] == 0:
+            dfs(node)
+    
+    return sccs
+
+# Example
+graph = [[1],        # Node 0 points to Node 1
+         [2, 4],     # Node 1 points to Node 2 and Node 4
+         [3, 5],     # Node 2 points to Node 3 and Node 5
+         [0, 6],     # Node 3 points to Node 0 and Node 6
+         [5],        # Node 4 points to Node 5
+         [4],        # Node 5 points to Node 4
+         [7],        # Node 6 points to Node 7
+         [5, 6]]     # Node 7 points to Node 5 and Node 6
+
+sccs = tarjan(graph)
+print("Strongly Connected Components:")
+for scc in sccs:
+    print(scc)
+
+"""
+Strongly Connected Components:
+[4, 5]
+[7, 6]
+[3, 2, 1, 0]
+"""
+```
+
+在这个实现中，`tarjan` 函数接收一个有向图（使用邻接表表示）作为参数，并返回图中的强连通分量。算法使用深度优先搜索（DFS）来遍历图，并使用一个栈来记录遍历过程中的节点。在DFS过程中，算法通过记录每个节点的搜索次序（即DFS序号）和能够回溯到的最早的节点的DFS序号（即low值），来确定强连通分量。最后，算法输出找到的强连通分量。
 
 
 
