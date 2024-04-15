@@ -1,6 +1,6 @@
 # 20240409～23-Week8~10 图论
 
-Updated 2225 GMT+8 Apr 14, 2024
+Updated 1034 GMT+8 Apr 15, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -26,25 +26,30 @@ Updated 2225 GMT+8 Apr 14, 2024
 
 ```mermaid
 mindmap
-  Graph(Graph)
-    Notations{{**NOTATIONS**}}
+  Graph (Graph)
+    Notation{{**NOTATIONS**}}
     	Vertex,Edge
     	Path, Weight
-    	DFS, BFS
       
     Representation{{**REPRESENTATION**}}
       Matrix
       Adjacency List
       
     Algorithm{{**ALGORITHM**}}
-    	Shortest Path
+    	Elementary Graph Algorithms(Elementary Graph Algorithm)
+    		BFS
+    		DFS
+    	Shortest Path(Shortest Path)
     		Dijkstra
-    		Bellman-Ford, SPFA
-    		Floyd-Warshall 
+    		*Bellman-Ford, SPFA
+    		*Floyd-Warshall 
     	Topological Sorting
     	MST(Minimum Spanning Tree)
     		Prim
     		Kruskal
+    	SCC(Strongly Connected Component)
+    		Kosaraju
+    		*Tarjan
       
 
 ```
@@ -3563,6 +3568,21 @@ Strongly Connected Components:
 
 #### *5.2.2 Tarjan算法
 
+Tarjan算法是一种图算法，用于查找有向图中的强连通分量。强连通分量是指在有向图中，存在一条路径可以从任意一个顶点到达另一个顶点的一组顶点。
+
+Tarjan算法使用了一种称为深度优先搜索（DFS）的技术来遍历图，并在遍历的过程中标记和识别强连通分量。算法的基本思想是，通过在深度优先搜索的过程中维护一个栈来记录已经访问过的顶点，并为每个顶点分配一个"搜索次序"（DFS编号）和一个"最低链接值"。搜索次序表示顶点被首次访问的次序，最低链接值表示从当前顶点出发经过一系列边能到达的最早的顶点的搜索次序。
+
+Tarjan算法的步骤如下：
+1. 从图中选择一个未访问的顶点开始深度优先搜索。
+2. 为当前顶点分配一个搜索次序和最低链接值，并将其入栈。
+3. 对当前顶点的每个邻接顶点进行递归深度优先搜索，如果邻接顶点尚未被访问过，则递归调用。
+4. 在递归回溯的过程中，更新当前顶点的最低链接值，使其指向当前顶点和其邻接顶点之间较小的搜索次序。
+5. 如果当前顶点的最低链接值等于其自身的搜索次序，那么将从当前顶点开始的栈中的所有顶点弹出，并将它们构成一个强连通分量。
+
+通过这样的深度优先搜索和回溯过程，Tarjan算法能够识别出图中的所有强连通分量。算法的时间复杂度为O(V+E)，其中V是顶点数，E是边数。
+
+总结起来，Tarjan算法是一种用于查找有向图中强连通分量的算法，它利用深度优先搜索和回溯的技术，在遍历图的过程中标记和识别强连通分量。
+
 以下是Tarjan算法的Python实现：
 
 ```python
@@ -3765,7 +3785,7 @@ Dijkstra算法使用了优先级队列。你应该记得，"树"那一章讲过�
 
 
 
-#### *5.3.3 Bellman-Ford算法
+#### *5.3.3 Bellman-Ford, SPFA算法
 
 在图论中，有两种常见的方法用于求解最短路径问题：**Dijkstra算法**和**Bellman-Ford算法**。这两种算法各有优劣，选择哪种算法取决于图的特性和问题要求。如果图中没有负权边，并且只需要求解单源最短路径，Dijkstra算法通常是一个较好的选择。如果图中存在负权边或需要检测负权回路，或者需要求解所有节点对之间的最短路径，可以使用Bellman-Ford算法。
 
@@ -3776,6 +3796,23 @@ Dijkstra算法使用了优先级队列。你应该记得，"树"那一章讲过�
 - 检查是否存在负权回路。如果在V-1次循环后，仍然可以通过松弛操作更新最短路径，则说明存在负权回路，因此无法确定最短路径。
 
 Bellman-Ford算法的时间复杂度为O(V*E)，其中V是图中的节点数，E是图中的边数。
+
+
+
+SPFA是"Shortest Path Faster Algorithm"的缩写，中文名称为最短路径快速算法。它是一种用于解决带有负权边的图中单源最短路径问题的算法。
+
+SPFA算法是对Bellman-Ford算法的一种优化，旨在减少算法的时间复杂度。Bellman-Ford算法的时间复杂度为O(VE)，其中V是顶点数，E是边数。而SPFA算法通过引入一个队列来避免对所有边进行松弛操作，从而减少了不必要的松弛操作，提高了算法的效率。
+
+SPFA算法的基本思想如下：
+1. 初始化源节点的最短距离为0，其他节点的最短距离为正无穷大。
+2. 将源节点加入队列中，并标记为已访问。
+3. 循环执行以下步骤直到队列为空：
+   - 从队列中取出一个节点作为当前节点。
+   - 遍历当前节点的所有邻接节点：
+     - 如果经过当前节点到达该邻接节点的路径比当前记录的最短路径更短，则更新最短路径，并将该邻接节点加入队列中。
+4. 当队列为空时，算法结束，所有节点的最短路径已计算出来。
+
+SPFA算法在实际应用中通常表现出良好的性能，尤其适用于稀疏图（边数相对较少）和存在负权边的情况。然而，需要注意的是，如果图中存在负权环路，SPFA算法将无法给出正确的结果。
 
 
 
