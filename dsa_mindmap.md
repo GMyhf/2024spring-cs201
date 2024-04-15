@@ -1,6 +1,6 @@
 # 数算知识图谱
 
-Updated 1833 GMT+8 Apr 1, 2024
+Updated 1123 GMT+8 Apr 15, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -14,9 +14,9 @@ Updated 1833 GMT+8 Apr 1, 2024
 mindmap
   root(**DSA**)
     Structure{{**DATA STRUCTURE**}}
-    	Stack
-    	Queue
-    		Deque
+    	Stack and Queue
+    	Hash Table
+    	Linked List
     	Generic Tree
     		Adjacency List
     		Disjoint Set
@@ -30,8 +30,8 @@ mindmap
     	Graph
       
     Algorithm{{**ALGORITHM**}}
-    	Other Sortings
-    	DC(Divide & Conquer)
+    	BFS and DFS
+    	DC(Divide & Conquer, and other sortings)
     		Quick Sort
     		Merge Sort
     	Shunting Yard
