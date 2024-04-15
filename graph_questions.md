@@ -1,6 +1,6 @@
 # 20240409～23-Week8~10 图论
 
-Updated 1034 GMT+8 Apr 15, 2024
+Updated 1345 GMT+8 Apr 15, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -652,8 +652,6 @@ if __name__ == "__main__":
 在这个示例中，定义了一个 `Graph` 类来表示图。在初始化时，传入顶点列表和边列表。然后，使用 `create_adj_matrix` 方法来创建关联矩阵。最后，调用 `display_adj_matrix` 方法来显示关联矩阵。
 
 注意：这个示例假设了顶点和边的表示是字符串形式，可以根据需要调整表示方式。
-
-
 
 
 
