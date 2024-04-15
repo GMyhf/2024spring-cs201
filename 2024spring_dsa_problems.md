@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2331 GMT+8 April 12, 2024
+Updated 0906 GMT+8 April 15, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4187,6 +4187,69 @@ dudduduudu
 
 
 
+思路：层序历遍，如果有子节点就递归建树，直到全部建完，最后求高度
+
+```python
+# 杨天健 信息科学技术学院
+from collections import defaultdict
+
+class Node:
+    def __init__(self,data):
+        self.data=data
+        self.children=[]
+
+class Tree:
+    def __init__(self,data):
+        self.data=data
+        self.left=None
+        self.right=None
+               
+s=input()
+dic=defaultdict(list)
+dic[0].append(Node(0))
+sumd=0
+pos=1
+for i in s:
+    if i=='d':
+        sumd+=1
+        a=Node(pos)
+        dic[sumd-1][-1].children.append(a)
+        dic[sumd].append(a)
+        pos+=1
+    else:
+        sumd-=1    
+oldmax=max(dic.keys())
+
+def buildtree(a):
+    root=Tree(a.data)
+    b=a.children[0]
+    if b.children:
+        root.left=buildtree(b)
+    else :
+        root.left=Tree(b.data)
+    stack=[root,root.left]
+    for i in a.children[1:]:
+        if i.children:
+            stack.append(buildtree(i))
+        else :
+            stack.append(Tree(i.data))
+        stack[-2].right=stack[-1]
+    return root
+
+root=buildtree(dic[0][0])
+
+def findmax(root):
+    return max(0 if root.left==None else findmax(root.left),(0 if root.right==None else findmax(root.right)))+1
+
+newmax=findmax(root)-1
+
+print(f"{oldmax} => {newmax}")
+```
+
+
+
+
+
 ```python
 """
 calculates the height of a general tree and its corresponding binary tree using the 
@@ -6527,6 +6590,45 @@ print(postorder(tree))
 
 
 
+递归建树，节点满载了就pop出去，最后递归得到答案
+
+```python
+#杨天健 信息科学技术学院
+class Node:
+    def __init__(self,data):
+        self.data=data
+        self.left=None
+        self.right=None
+
+def mid(root):
+    return ("" if root.left==None else mid(root.left))+(""if root.data=='.'else root.data)+(""if root.right==None else mid(root.right))
+
+def post(root):
+    return ("" if root.left==None else post(root.left))+(""if root.right==None else post(root.right))+(""if root.data=='.'else root.data)
+
+s=input()
+root=Node(s[0])
+stack=[root]
+for i in range(1,len(s)):
+    a=Node(s[i])
+    if stack[-1].left==None :
+        stack[-1].left=a
+        if a.data!='.':
+            stack.append(a)
+    else :
+        stack[-1].right=a
+        stack.pop()
+        if s[i]!='.':
+            stack.append(a)
+
+print(mid(root))
+print(post(root))
+
+#ABD..EF..G..C..
+```
+
+
+
 ## 08758: 2的幂次方表示
 
 http://cs101.openjudge.cn/dsapre/08758/
@@ -8221,11 +8323,11 @@ http://cs101.openjudge.cn/dsapre/22067/
 输入
 
 有三种输入
-1)push n
+1) push n
 n是整数(0<=0 <=20000)，表示叠上一头重量是n斤的新猪
-2)pop
+2) pop
 表示将猪堆顶的猪赶走。如果猪堆没猪，就啥也不干
-3)min
+3) min
 表示问现在猪堆里最轻的猪多重。如果猪堆没猪，就啥也不干
 
 输入总数不超过100000条
@@ -8258,7 +8360,7 @@ min
 
 
 
-辅助栈
+用辅助栈，，每次push时，在辅助栈中加入当前最轻的猪的体重，pop时也同步pop，这样栈顶始终是当前猪堆中最轻的体重，查询时直接输出即可
 
 ```python
 a = []
