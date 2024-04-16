@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2037 GMT+8 April 16, 2024
+Updated 2131 GMT+8 April 16, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4471,6 +4471,56 @@ root, _ = build_tree(tempList, 0)
 # 执行宽度优先遍历并打印镜像映射序列
 print_tree(root)
 ```
+
+
+
+按左儿子右兄弟的规则慢慢把树搓出来
+
+```python
+# 童溯 数学科学学院
+class binarynode:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+        self.children = []
+        self.parent = None
+
+n = int(input())
+lst = input().split()
+stack = []
+nodes = []
+for x in lst:
+    temp = binarynode(x[0])
+    nodes.append(temp)
+    if stack:
+        if stack[-1].left:
+            stack[-1].right = temp
+            stack.pop()
+        else:
+            stack[-1].left = temp
+    if x[1] == "0":
+        stack.append(temp)
+
+for x in nodes:
+    if x.left and x.left.value != "$":
+        x.children.append(x.left)
+        x.left.parent = x
+    if x.right and x.right.value != "$":
+        x.parent.children.append(x.right)
+        x.right.parent = x.parent
+
+for x in nodes:
+    x.children = x.children[::-1]
+
+lst1 = [nodes[0]]
+for x in lst1:
+    if x.children:
+        lst1 += x.children
+print(" ".join([x.value for x in lst1]))
+```
+
+
 
 
 
