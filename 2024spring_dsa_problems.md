@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2131 GMT+8 April 16, 2024
+Updated 2156 GMT+8 April 16, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4911,6 +4911,55 @@ if __name__ == "__main__":
     main()
 
 ```
+
+
+
+用字典嵌套建树，按照每一位数字，如果是子节点就在子节点继续添加，如果不是就新建子节点，在此添加，最后记录end；遍历的时候按深度优先，如果end和其他节点同时存在，就是NO
+
+```python
+# 赵新坤 物理学院
+def trav(adct,i):
+    ans=[]
+    kys=[k for k in adct.keys()]
+    if 'end' in kys and len(kys)>1:
+        ans.append('NO')
+    for key in adct.keys():
+#        print('     '*i+key)
+        if adct[key]:
+            ans.extend(trav(adct[key],i+1))
+    return ans
+def insert(alst,adct):
+    p=alst.pop(0)
+    if p not in adct.keys():
+        adct[p]={}
+    if alst:    
+        adct[p]=insert(alst,adct[p])
+    else :
+        adct[p].update({'end':None })
+    return adct
+t=int(input())
+anslst=[]
+for _ in range(t):
+    n=int(input())
+    tree={}
+    ans='YES'
+    num_set=set()
+    for i in range(n):
+        ipt=str(input())
+        if ipt in num_set:
+            ans='NO'
+        num_set.add(ipt)
+        ipt_num_lst=[x for x in ipt]
+        tree=insert(ipt_num_lst,tree)
+    if 'NO' in trav(tree,0):
+        ans='NO'
+    anslst.append(ans)
+for i in anslst:
+    print(i)
+
+```
+
+
 
 
 
