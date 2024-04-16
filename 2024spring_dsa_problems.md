@@ -12843,7 +12843,6 @@ class Graph:
         if t not in self.vertices:
             nv = self.add_vertex(t)
         self.vertices[f].add_neighbor(self.vertices[t], cost)
-        self.vertices[t].add_neighbor(self.vertices[f], cost)
 
     def get_vertices(self):
         return list(self.vertices.keys())
