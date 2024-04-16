@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 0906 GMT+8 April 15, 2024
+Updated 1413 GMT+8 April 16, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9568,7 +9568,7 @@ while True:
 
 
 
-# 23563~27951
+# 23563~28050
 
 ## 23563: 多项式时间复杂度
 
@@ -12648,6 +12648,496 @@ print(lookups)
 ```
 
 
+
+## 28046: 词梯
+
+bfs, http://cs101.openjudge.cn/practice/28046/
+
+词梯问题是由“爱丽丝漫游奇境”的作者 Lewis Carroll 在1878年所发明的单词游戏。从一个单词演变到另一个单词，其中的过程可以经过多个中间单词。要求是相邻两个单词之间差异只能是1个字母，如fool -> pool -> poll -> pole -> pale -> sale -> sage。与“最小编辑距离”问题的区别是，中间状态必须是单词。目标是找到最短的单词变换序列。
+
+假设有一个大的单词集合，集合中每个元素都是四个字母的单词。采用图来解决这个问题，如果两个单词的区别仅在于有一个不同的字母，就用一条边将它们相连。如果能创建这样一个图，那么其中的任意一条连接两个单词的路径就是词梯问题的一个解，我们要找最短路径的解。下图展示了一个小型图，可用于解决从 fool 到sage的词梯问题。
+
+注意，它是无向图，并且边没有权重。
+
+![img](http://media.openjudge.cn/images/upload/2596/1712744630.jpg)
+
+
+
+输入
+
+输入第一行是个正整数 n，表示接下来有n个四字母的单词，每个单词一行。2 <= n <= 4000。
+随后是 1 行，描述了一组要找词梯的起始单词和结束单词，空格隔开。
+
+输出
+
+输出词梯对应的单词路径，空格隔开。如果不存在输出 NO。
+如果有路径，保证有唯一解。
+
+样例输入
+
+```
+25
+bane
+bank
+bunk
+cane
+dale
+dunk
+foil
+fool
+kale
+lane
+male
+mane
+pale
+pole
+poll
+pool
+quip
+quit
+rain
+sage
+sale
+same
+tank
+vain
+wane
+fool sage
+```
+
+样例输出
+
+```
+fool pool poll pole pale sale sage
+```
+
+来源
+
+https://runestone.academy/ns/books/published/pythonds/Graphs/TheWordLadderProblem.html
+
+
+
+```python
+import sys
+from collections import deque
+
+class Graph:
+    def __init__(self):
+        self.vertices = {}
+        self.num_vertices = 0
+
+    def add_vertex(self, key):
+        self.num_vertices = self.num_vertices + 1
+        new_vertex = Vertex(key)
+        self.vertices[key] = new_vertex
+        return new_vertex
+
+    def get_vertex(self, n):
+        if n in self.vertices:
+            return self.vertices[n]
+        else:
+            return None
+
+    def __len__(self):
+        return self.num_vertices
+
+    def __contains__(self, n):
+        return n in self.vertices
+
+    def add_edge(self, f, t, cost=0):
+        if f not in self.vertices:
+            nv = self.add_vertex(f)
+        if t not in self.vertices:
+            nv = self.add_vertex(t)
+        self.vertices[f].add_neighbor(self.vertices[t], cost)
+        self.vertices[t].add_neighbor(self.vertices[f], cost)
+
+    def get_vertices(self):
+        return list(self.vertices.keys())
+
+    def __iter__(self):
+        return iter(self.vertices.values())
+
+
+class Vertex:
+    def __init__(self, num):
+        self.key = num
+        self.connectedTo = {}
+        self.color = 'white'
+        self.distance = sys.maxsize
+        self.previous = None
+        self.disc = 0
+        self.fin = 0
+
+    def add_neighbor(self, nbr, weight=0):
+        self.connectedTo[nbr] = weight
+
+    # def setDiscovery(self, dtime):
+    #     self.disc = dtime
+    #
+    # def setFinish(self, ftime):
+    #     self.fin = ftime
+    #
+    # def getFinish(self):
+    #     return self.fin
+    #
+    # def getDiscovery(self):
+    #     return self.disc
+
+    def get_neighbors(self):
+        return self.connectedTo.keys()
+
+    # def getWeight(self, nbr):
+    #     return self.connectedTo[nbr]
+
+    # def __str__(self):
+    #     return str(self.key) + ":color " + self.color + ":disc " + str(self.disc) + ":fin " + str(
+    #         self.fin) + ":dist " + str(self.distance) + ":pred \n\t[" + str(self.previous) + "]\n"
+
+
+
+def build_graph(all_words):
+    buckets = {}
+    the_graph = Graph()
+
+    # 创建词桶 create buckets of words that differ by 1 letter
+    for line in all_words:
+        word = line.strip()
+        for i, _ in enumerate(word):
+            bucket = f"{word[:i]}_{word[i + 1:]}"
+            buckets.setdefault(bucket, set()).add(word)
+
+    # 为同一个桶中的单词添加顶点和边
+    for similar_words in buckets.values():
+        for word1 in similar_words:
+            for word2 in similar_words - {word1}:
+                the_graph.add_edge(word1, word2)
+
+    return the_graph
+
+
+def bfs(start, end):
+    start.distnce = 0
+    start.previous = None
+    vert_queue = deque()
+    vert_queue.append(start)
+    while len(vert_queue) > 0:
+        current = vert_queue.popleft()  # 取队首作为当前顶点
+
+        if current == end:
+            return True
+
+        for neighbor in current.get_neighbors():  # 遍历当前顶点的邻接顶点
+            if neighbor.color == "white":
+                neighbor.color = "gray"
+                neighbor.distance = current.distance + 1
+                neighbor.previous = current
+                vert_queue.append(neighbor)
+        current.color = "black"  # 当前顶点已经处理完毕，设黑色
+
+    return False
+
+"""
+BFS 算法主体是两个循环的嵌套: while-for
+    while 循环对图中每个顶点访问一次，所以是 O(|V|)；
+    嵌套在 while 中的 for，由于每条边只有在其起始顶点u出队的时候才会被检查一次，
+    而每个顶点最多出队1次，所以边最多被检查次，一共是 O(|E|)；
+    综合起来 BFS 的时间复杂度为 0(V+|E|)
+
+词梯问题还包括两个部分算法
+    建立 BFS 树之后，回溯顶点到起始顶点的过程，最多为 O(|V|)
+    创建单词关系图也需要时间，时间是 O(|V|+|E|) 的，因为每个顶点和边都只被处理一次
+"""
+
+
+def traverse(starting_vertex):
+    ans = []
+    current = starting_vertex
+    while (current.previous):
+        ans.append(current.key)
+        current = current.previous
+    ans.append(current.key)
+
+    return ans
+
+
+n = int(input())
+all_words = []
+for _ in range(n):
+    all_words.append(input().strip())
+
+g = build_graph(all_words)
+# print(len(g))
+
+s, e = input().split()
+start, end = g.get_vertex(s), g.get_vertex(e)
+if start is None or end is None:
+    print('NO')
+    exit(0)
+
+if bfs(start, end):
+    ans = traverse(end)
+    print(' '.join(ans[::-1]))
+else:
+    print('NO')
+```
+
+
+
+
+
+## 28050: 骑士周游
+
+http://cs101.openjudge.cn/practice/28050/
+
+在一个国际象棋棋盘上，一个棋子“马”（骑士），按照“马走日”的规则，从一个格子出发，要走遍所有棋盘格恰好一次。把一个这样的走棋序列称为一次“周游“。在 8 × 8 的国际象棋棋盘上，合格的“周游”数量有 1.305×10^35这么多，走棋过程中失败的周游就更多了。
+
+采用图搜索算法，是解决骑士周游问题最容易理解和编程的方案之一，解决方案分为两步： 首先用图表示骑士在棋盘上的合理走法； 采用图搜索算法搜寻一个长度为（行 × 列-1）的路径，路径上包含每个顶点恰一次。
+
+![img](http://media.openjudge.cn/images/upload/9136/1712843793.jpg)
+
+输入
+
+两行。
+第一行是一个整数n，表示正方形棋盘边长，3 <= n <= 19。
+
+第二行是空格分隔的两个整数sr, sc，表示骑士的起始位置坐标。棋盘左上角坐标是 0 0。0 <= sr <= n-1, 0 <= sc <= n-1。
+
+输出
+
+如果是合格的周游，输出 success，否则输出 fail。
+
+样例输入
+
+```
+5
+0 0
+```
+
+样例输出
+
+```
+success
+```
+
+来源
+
+https://runestone.academy/ns/books/published/pythonds/Graphs/TheKnightsTourProblem.html
+
+
+
+```python
+import sys
+
+class Graph:
+    def __init__(self):
+        self.vertices = {}
+        self.num_vertices = 0
+
+    def add_vertex(self, key):
+        self.num_vertices = self.num_vertices + 1
+        new_ertex = Vertex(key)
+        self.vertices[key] = new_ertex
+        return new_ertex
+
+    def get_vertex(self, n):
+        if n in self.vertices:
+            return self.vertices[n]
+        else:
+            return None
+
+    def __len__(self):
+        return self.num_vertices
+
+    def __contains__(self, n):
+        return n in self.vertices
+
+    def add_edge(self, f, t, cost=0):
+        if f not in self.vertices:
+            nv = self.add_vertex(f)
+        if t not in self.vertices:
+            nv = self.add_vertex(t)
+        self.vertices[f].add_neighbor(self.vertices[t], cost)
+        #self.vertices[t].add_neighbor(self.vertices[f], cost)
+
+    def getVertices(self):
+        return list(self.vertices.keys())
+
+    def __iter__(self):
+        return iter(self.vertices.values())
+
+
+class Vertex:
+    def __init__(self, num):
+        self.key = num
+        self.connectedTo = {}
+        self.color = 'white'
+        self.distance = sys.maxsize
+        self.previous = None
+        self.disc = 0
+        self.fin = 0
+
+    def __lt__(self,o):
+        return self.key < o.key
+
+    def add_neighbor(self, nbr, weight=0):
+        self.connectedTo[nbr] = weight
+
+
+    # def setDiscovery(self, dtime):
+    #     self.disc = dtime
+    #
+    # def setFinish(self, ftime):
+    #     self.fin = ftime
+    #
+    # def getFinish(self):
+    #     return self.fin
+    #
+    # def getDiscovery(self):
+    #     return self.disc
+
+    def get_neighbors(self):
+        return self.connectedTo.keys()
+
+    # def getWeight(self, nbr):
+    #     return self.connectedTo[nbr]
+
+    def __str__(self):
+        return str(self.key) + ":color " + self.color + ":disc " + str(self.disc) + ":fin " + str(
+            self.fin) + ":dist " + str(self.distance) + ":pred \n\t[" + str(self.previous) + "]\n"
+
+
+
+def knight_graph(board_size):
+    kt_graph = Graph()
+    for row in range(board_size):           #遍历每一行
+        for col in range(board_size):       #遍历行上的每一个格子
+            node_id = pos_to_node_id(row, col, board_size) #把行、列号转为格子ID
+            new_positions = gen_legal_moves(row, col, board_size) #按照 马走日，返回下一步可能位置
+            for row2, col2 in new_positions:
+                other_node_id = pos_to_node_id(row2, col2, board_size) #下一步的格子ID
+                kt_graph.add_edge(node_id, other_node_id) #在骑士周游图中为两个格子加一条边
+    return kt_graph
+
+def pos_to_node_id(x, y, bdSize):
+    return x * bdSize + y
+
+def gen_legal_moves(row, col, board_size):
+    new_moves = []
+    move_offsets = [                        # 马走日的8种走法
+        (-1, -2),  # left-down-down
+        (-1, 2),  # left-up-up
+        (-2, -1),  # left-left-down
+        (-2, 1),  # left-left-up
+        (1, -2),  # right-down-down
+        (1, 2),  # right-up-up
+        (2, -1),  # right-right-down
+        (2, 1),  # right-right-up
+    ]
+    for r_off, c_off in move_offsets:
+        if (                                # #检查，不能走出棋盘
+            0 <= row + r_off < board_size
+            and 0 <= col + c_off < board_size
+        ):
+            new_moves.append((row + r_off, col + c_off))
+    return new_moves
+
+# def legal_coord(row, col, board_size):
+#     return 0 <= row < board_size and 0 <= col < board_size
+
+
+def knight_tour(n, path, u, limit):
+    u.color = "gray"
+    path.append(u)              #当前顶点涂色并加入路径
+    if n < limit:
+        neighbors = ordered_by_avail(u) #对所有的合法移动依次深入
+        #neighbors = sorted(list(u.get_neighbors()))
+        i = 0
+
+        for nbr in neighbors:
+            if nbr.color == "white" and \
+                knight_tour(n + 1, path, nbr, limit):   #选择“白色”未经深入的点，层次加一，递归深入
+                return True
+        else:                       #所有的“下一步”都试了走不通
+            path.pop()              #回溯，从路径中删除当前顶点
+            u.color = "white"       #当前顶点改回白色
+            return False
+    else:
+        return True
+
+def ordered_by_avail(n):
+    res_list = []
+    for v in n.get_neighbors():
+        if v.color == "white":
+            c = 0
+            for w in v.get_neighbors():
+                if w.color == "white":
+                    c += 1
+            res_list.append((c,v))
+    res_list.sort(key = lambda x: x[0])
+    return [y[1] for y in res_list]
+
+# class DFSGraph(Graph):
+#     def __init__(self):
+#         super().__init__()
+#         self.time = 0                   #不是物理世界，而是算法执行步数
+# 
+#     def dfs(self):
+#         for vertex in self:
+#             vertex.color = "white"      #颜色初始化
+#             vertex.previous = -1
+#         for vertex in self:             #从每个顶点开始遍历
+#             if vertex.color == "white":
+#                 self.dfs_visit(vertex)  #第一次运行后还有未包括的顶点
+#                                         # 则建立森林
+# 
+#     def dfs_visit(self, start_vertex):
+#         start_vertex.color = "gray"
+#         self.time = self.time + 1       #记录算法的步骤
+#         start_vertex.discovery_time = self.time
+#         for next_vertex in start_vertex.get_neighbors():
+#             if next_vertex.color == "white":
+#                 next_vertex.previous = start_vertex
+#                 self.dfs_visit(next_vertex)     #深度优先递归访问
+#         start_vertex.color = "black"
+#         self.time = self.time + 1
+#         start_vertex.closing_time = self.time
+
+
+def main():
+    def NodeToPos(id):
+       return ((id//8, id%8))
+
+    bdSize = int(input())  # 棋盘大小
+    *start_pos, = map(int, input().split())  # 起始位置
+    g = knight_graph(bdSize)
+    start_vertex = g.get_vertex(pos_to_node_id(start_pos[0], start_pos[1], bdSize))
+    if start_vertex is None:
+        print("fail")
+        exit(0)
+
+    tour_path = []
+    done = knight_tour(0, tour_path, start_vertex, bdSize * bdSize-1)
+    if done:
+        print("success")
+    else:
+        print("fail")
+
+    exit(0)
+
+    # 打印路径
+    cnt = 0
+    for vertex in tour_path:
+        cnt += 1
+        if cnt % bdSize == 0:
+            print()
+        else:
+            print(vertex.key, end=" ")
+            #print(NodeToPos(vertex.key), end=" ")   # 打印坐标
+
+if __name__ == '__main__':
+    main()
+```
 
 
 
