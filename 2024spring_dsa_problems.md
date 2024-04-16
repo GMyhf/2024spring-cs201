@@ -13145,7 +13145,7 @@ if __name__ == '__main__':
 
 
 
-# 题目渐进性分类
+# 部分题目渐进性分类
 
 http://cs101.openjudge.cn/dsapre/
 
