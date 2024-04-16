@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1413 GMT+8 April 16, 2024
+Updated 1422 GMT+8 April 16, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4466,6 +4466,99 @@ root, _ = build_tree(tempList, 0)
 
 # 执行宽度优先遍历并打印镜像映射序列
 print_tree(root)
+```
+
+
+
+一步一步来。先把前序输入+内外节点的信息转成二叉树，第二步是把二叉树转成原来的树，第三步是bfs镜像输出。
+
+```python
+# 叶晨曦 化学与分子工程
+class Noden:
+    def __init__(self, value):
+        self.child = []
+        self.value = value
+        self.parent = None
+
+class Node:
+    def __init__(self, value):
+        self.left = None
+        self.right = None
+        self.value = value
+        self.parent = None
+
+def bfs(noden):
+    queue.pop(0)
+    out.append(noden.value)
+    if noden.child:
+        for k in reversed(noden.child):
+            queue.append(k)
+    if queue:
+        bfs(queue[0])
+        
+
+def ex(node):
+    ans.append(node.value)
+    if node.left:
+        ex(node.left)
+    if node.right:
+        ex(node.right)
+
+def reverse(node):
+    if node.right == None:
+        return node
+    else:
+        return reverse(node.parent)
+
+def build(s, node, state):
+    if not s:
+        return
+    if state == '0':
+        new = Node(s[0][0])
+        node.left = new
+        new.parent = node
+    else:
+        pos = reverse(node.parent)
+        new = Node(s[0][0])
+        pos.right = new
+        new.parent = pos
+    build(s[1:], new, s[0][1])
+
+def bi_to_n(node):
+    if node.left:
+        if node.left.value != '$':
+            newn = Noden(node.left.value)
+            dic[node.left] = newn
+            dic[node].child.append(newn)
+            newn.parent = dic[node]
+            bi_to_n(node.left)
+    if node.right:
+        if node.right.value != '$':
+            newn = Noden(node.right.value)
+            dic[node.right] = newn
+            dic[node].parent.child.append(newn)
+            newn.parent = dic[node].parent
+            bi_to_n(node.right)
+
+n = int(input())
+k = input().split()
+root = Node(k[0][0])
+k.pop(0)
+if k:
+    build(k, root, k[0][1])
+ans = []
+ex(root)
+#print(ans)
+dic = {}
+dic[root] = Noden(root.value)
+bi_to_n(root)
+rootn = dic[root]
+#print(rootn)
+queue = [rootn]
+out =[]
+bfs(rootn)
+print(' '.join(out))
+
 ```
 
 
