@@ -4686,6 +4686,62 @@ int main() {
 
 
 
+镜面映射简单，每层倒着输出就行；关键是这个树怎么构建，其实是斜着来表示树的层级，具体实现有点类似dfs，遇到顶就回溯
+
+构建的数据结构很有意思，其实就是一个双层列表，我给他起了个名字叫梯子
+
+```python
+# 赵新坤 物理学院
+class ladder:
+    def __init__(self):
+        self.height=-1
+        self.matrix=[]
+
+    def add_level(self):
+        self.height+=1
+        self.matrix.append([])
+
+    def insert_i_level(self,node,level):
+        if self.height<level:
+            self.add_level()
+        self.matrix[level].append(node)
+
+def traversal(Ladder):
+    ans=[]
+    for i in range(Ladder.height+1):
+        stack=[]
+        for j in Ladder.matrix[i]:
+            stack.insert(0,j)
+        ans.extend(stack)
+    print(' '.join(ans))
+
+n=int(input())
+data=[str(x) for x in input().split()]
+L=ladder()
+level=0
+while data:
+#    print(f'current level is {level}')
+    p=data.pop(0)
+    if p =='$1':
+        level-=1
+#        print('turn right')
+    else:
+        L.insert_i_level(p[0],level)
+#        print(f'add {p[0]} into level {level}')
+        if p[-1]!='1':
+            level+=1
+        else:
+            level-=1
+
+#for i in range(L.height+1):
+#    print(L.matrix[i])
+traversal(L)
+```
+
+
+
+
+
 ## 04084: 拓扑排序
 
 http://cs101.openjudge.cn/dsapre/04084/
