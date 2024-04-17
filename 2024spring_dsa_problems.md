@@ -4187,66 +4187,47 @@ dudduduudu
 
 
 
-思路：层序历遍，如果有子节点就递归建树，直到全部建完，最后求高度
-
 ```python
-# 杨天健 信息科学技术学院
-from collections import defaultdict
+# 23n2300011072(X)
+class TreeNode:
+    def __init__(self):
+        self.children = []
+        self.first_child = None
+        self.next_sib = None
 
-class Node:
-    def __init__(self,data):
-        self.data=data
-        self.children=[]
 
-class Tree:
-    def __init__(self,data):
-        self.data=data
-        self.left=None
-        self.right=None
-               
-s=input()
-dic=defaultdict(list)
-dic[0].append(Node(0))
-sumd=0
-pos=1
-for i in s:
-    if i=='d':
-        sumd+=1
-        a=Node(pos)
-        dic[sumd-1][-1].children.append(a)
-        dic[sumd].append(a)
-        pos+=1
-    else:
-        sumd-=1    
-oldmax=max(dic.keys())
+def build(seq):
+    root = TreeNode()
+    stack = [root]
+    depth = 0
+    for act in seq:
+        cur_node = stack[-1]
+        if act == 'd':
+            new_node = TreeNode()
+            if not cur_node.children:
+                cur_node.first_child = new_node
+            else:
+                cur_node.children[-1].next_sib = new_node
+            cur_node.children.append(new_node)
+            stack.append(new_node)
+            depth = max(depth, len(stack) - 1)
+        else:
+            stack.pop()
+    return root, depth
 
-def buildtree(a):
-    root=Tree(a.data)
-    b=a.children[0]
-    if b.children:
-        root.left=buildtree(b)
-    else :
-        root.left=Tree(b.data)
-    stack=[root,root.left]
-    for i in a.children[1:]:
-        if i.children:
-            stack.append(buildtree(i))
-        else :
-            stack.append(Tree(i.data))
-        stack[-2].right=stack[-1]
-    return root
 
-root=buildtree(dic[0][0])
+def cal_h_bin(node):
+    if not node:
+        return 0
+    return max(cal_h_bin(node.first_child), cal_h_bin(node.next_sib)) + 1
 
-def findmax(root):
-    return max(0 if root.left==None else findmax(root.left),(0 if root.right==None else findmax(root.right)))+1
 
-newmax=findmax(root)-1
+seq = input()
+root, h_orig = build(seq)
+h_bin = cal_h_bin(root)
+print(f'{h_orig} => {h_bin - 1}')
 
-print(f"{oldmax} => {newmax}")
 ```
-
-
 
 
 
