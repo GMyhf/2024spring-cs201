@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 2322 GMT+8 Apr 13, 2024
+Updated 0837 GMT+8 Apr 17, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -14,7 +14,9 @@ Updated 2322 GMT+8 Apr 13, 2024
 
 ## 1 栈的应用 7题
 
-### 1.1 栈的操作序列 简单
+### sy293: 栈的操作序列 简单
+
+https://sunnywhy.com/sfbj/7/1/293
 
 现有一个空栈s，按顺序执行n个操作序列，每个操作是下面的两种之一：
 
@@ -107,7 +109,9 @@ In this program, we define a `Stack` class with `push` and `pop` methods. The `p
 
 
 
-### 1.2 合法的出栈序列 简单
+### sy294: 合法的出栈序列 简单
+
+https://sunnywhy.com/sfbj/7/1/294
 
 现有一个空栈s和一个正整数n，将1,2,3,...,n依次入栈，期间任意时刻出栈。然后给定一个出栈序列，问其是否是一个合法的出栈序列。
 
@@ -200,7 +204,9 @@ In this program, we define a function `is_valid_sequence` that simulates pushing
 
 
 
-### 1.3 可能的出栈序列 中等
+### sy295: 可能的出栈序列 中等
+
+https://sunnywhy.com/sfbj/7/1/295
 
 现有一个空栈s和一个正整数n，将1,2,3,...,n依次入栈，期间任意时刻出栈。求所有可能的出栈序列。
 
@@ -266,7 +272,9 @@ In this program, we define a function `generate_sequences` that recursively simu
 
 
 
-### 1.4 后缀表达式-无优先级 简单
+### sy296: 后缀表达式-无优先级 简单
+
+https://sunnywhy.com/sfbj/7/1/296
 
 给定一个仅由+、-、整数、空格组成的计算式（中缀表达式），将其转换为对应的后缀表达式（即逆波兰表达式）。
 
@@ -335,7 +343,9 @@ In this program, we define a function `infix_to_postfix` that converts an infix 
 
 
 
-### 1.5 后缀表达式-有优先级 中等
+### sy297: 后缀表达式-有优先级 中等
+
+https://sunnywhy.com/sfbj/7/1/297
 
 给定一个仅由+、-、*、/、整数、空格组成的计算式（中缀表达式），将其转换为对应的后缀表达式（即逆波兰表达式）。
 
@@ -406,7 +416,9 @@ In this program, we define a function `infix_to_postfix` that converts an infix 
 
 
 
-### 1.6 后缀表达式-求值 中等
+### sy298: 后缀表达式-求值 中等
+
+https://sunnywhy.com/sfbj/7/1/298
 
 给定一个仅由+、-、*、/、整数组成的计算式（后缀表达式），计算它的值。
 
@@ -475,7 +487,9 @@ In this program, we define a function `evaluate_postfix` that evaluates a postfi
 
 
 
-### 1.7 简单计算器 困难
+### sy299: 简单计算器 困难
+
+https://sunnywhy.com/sfbj/7/1/299
 
 给定一个仅由+、-、*、/、整数组成的计算式（中缀表达式），计算它的值。
 
@@ -565,7 +579,9 @@ In this program, we first convert the infix expression to a postfix expression u
 
 ## 2 队列的应用 4题
 
-### 2.1 队列的操作序列 简单
+### sy300: 队列的操作序列 简单
+
+https://sunnywhy.com/sfbj/7/2/300
 
 现有一个空队列q，按顺序执行n个操作序列，每个操作是下面的两种之一：
 
@@ -654,7 +670,9 @@ In this program, we use a deque from the collections module to simulate a queue.
 
 
 
-### 2.2 求和队列 简单
+### sy301: 求和队列 简单
+
+https://sunnywhy.com/sfbj/7/2/301
 
 现有一个空队列q，按顺序将n个正整数a1、a2、...、an入队，接着反复执行操作：将队首的两个元素求和，并将结果入队。最后队列中将只剩下一个整数，将这个整数输出。
 
@@ -721,7 +739,9 @@ In this program, we use a deque from the collections module to simulate a queue.
 
 
 
-### 2.3 约瑟夫环-队列 简单
+### sy302: 约瑟夫环-队列 简单
+
+https://sunnywhy.com/sfbj/7/2/302
 
 **约瑟夫环**：假设n个人按编号顺时针从小到大排成一圈（编号为从1到n）。接着约定一个正整数，从编号为1的人开始顺时针报数（编号为1的人报数1，编号为2的人报数2……），报到的人离开圈子，然后他的下一个人继续从1开始报数，以此类推，直到圈子里只剩下一个人。
 
@@ -795,7 +815,9 @@ In this program, we use a deque from the collections module to simulate a queue.
 
 
 
-### 2.4 匹配队列 简单
+### sy303: 匹配队列 简单
+
+https://sunnywhy.com/sfbj/7/2/303
 
 现有两个队列q1、q2，假设q1、q2初始状态下均有个n元素，每个元素为`1`和`2`之一，且q1中元素`1`的个数与q2中元素`1`的个数相同、q1中元素`2`的个数与q2中元素`2`的个数也相同。
 
@@ -913,7 +935,9 @@ In this program, we use a deque from the collections module to simulate a queue.
 
 ## 3 链表处理 9题
 
-### 3.1 链表遍历 简单
+### sy304: 链表遍历 简单
+
+https://sunnywhy.com/sfbj/7/3/304
 
 现有n个结点（编号为从`1`到`n`），以及链表的第一个结点的编号，请依次输出这条链表上每个结点的信息。
 
@@ -996,7 +1020,9 @@ In this program, we define a `Node` class to represent a node in the linked list
 
 
 
-### 3.2 链表的结点个数 简单
+### sy305: 链表的结点个数 简单
+
+https://sunnywhy.com/sfbj/7/3/305
 
 现有n个结点（编号为从`1`到`n`），以及链表的第一个结点的编号，求这条链表上的结点个数。
 
@@ -1079,7 +1105,9 @@ In this program, we define a `Node` class to represent a node in the linked list
 
 
 
-### 3.3 链表头插法 简单
+### sy306: 链表头插法 简单
+
+https://sunnywhy.com/sfbj/7/3/306
 
 现有n个结点（编号为从`1`到`n`），以及链表的第一个结点的编号，使用头插法在链表头部依次插入个结点，然后依次输出新链表上每个结点的信息。
 
@@ -1188,7 +1216,9 @@ In this program, we define a `Node` class to represent a node in the linked list
 
 
 
-### 3.4 链表删除元素 中等
+### sy307: 链表删除元素 中等
+
+https://sunnywhy.com/sfbj/7/3/307
 
 现有n个结点（编号为从`1`到`n`），以及链表的第一个结点的编号，请删去链表上所有数据域等于整数的结点，然后依次输出新链表上每个结点的信息。
 
@@ -1288,7 +1318,9 @@ In this program, we define a `Node` class to represent a node in the linked list
 
 
 
-### 3.5 链表反转 中等
+### sy308: 链表反转 中等
+
+https://sunnywhy.com/sfbj/7/3/308
 
 现有个结点（编号为从`1`到`n`），以及链表的第一个结点的编号，请将链表反转（结点顺序颠倒），然后依次输出新链表上每个结点的信息。
 
@@ -1381,7 +1413,9 @@ for node in reversed_nodes:
 
 
 
-### 3.6 链表去除重复元素 中等
+### sy309: 链表去除重复元素 中等
+
+https://sunnywhy.com/sfbj/7/3/309
 
 现有n个结点（编号为从`1`到`n`），以及链表的第一个结点的编号，请去掉链表上所有数据域重复的结点（只保留第一个），然后依次输出新链表上每个结点的信息。
 
@@ -1474,7 +1508,9 @@ for node in filtered_nodes:
 
 
 
-### 3.7 升序链表中位数 中等
+### sy310: 升序链表中位数 中等
+
+https://sunnywhy.com/sfbj/7/3/310
 
 现有n个结点（编号为从`1`到`n`），以及升序链表的第一个结点的编号，求链表中结点数据域的中位数。
 
@@ -1592,7 +1628,9 @@ print(f"{median:.1f}")
 
 
 
-### 3.8 链表倒数第k个结点 中等
+### sy311: 链表倒数第k个结点 中等
+
+https://sunnywhy.com/sfbj/7/3/311
 
 现有n个结点（编号为从`1`到`n`），以及链表的第一个结点的编号，求该链表的倒数第k个结点（假设表示最后一个结点）。
 
@@ -1676,7 +1714,9 @@ print(kth_node.id, kth_node.data, kth_node.next)
 
 
 
-### 3.9 回文链表 中等
+### sy312: 回文链表 中等
+
+https://sunnywhy.com/sfbj/7/3/312
 
 现有n个结点（编号为从`1`到`n`），以及链表的第一个结点的编号，判断该链表是否是回文的，即链表的结点按数据域正序和逆序是相同的。
 
@@ -3704,9 +3744,9 @@ for row in minStep:
 
 ## 1 树与二叉树 1题
 
-### 1.1 树的判定
+### sy328: 树的判定
 
-https://sunnywhy.com/sfbj/9/1
+https://sunnywhy.com/sfbj/9/1/328
 
 现有一个由个结点连接而成的**连通**结构，已知这个结构中存在的边数，问这个连通结构是否是一棵树。
 
@@ -3772,9 +3812,9 @@ if __name__ == "__main__":
 
 ## 2 二叉树的遍历 16题
 
-### 2.1 二叉树的先序遍历
+### sy329: 二叉树的先序遍历
 
-https://sunnywhy.com/sfbj/9/2
+https://sunnywhy.com/sfbj/9/2/329
 
 现有一棵个结点的二叉树（结点编号为从`0`到`n-1`，根结点为`0`号结点），求这棵二叉树的先序遍历序列。
 
@@ -3884,7 +3924,9 @@ print(*result)
 
 
 
-### 2.2 二叉树的中序遍历
+### sy330: 二叉树的中序遍历
+
+https://sunnywhy.com/sfbj/9/2/330
 
 
 
@@ -3892,7 +3934,9 @@ mode = "preorder"
 
 
 
-### 2.3 二叉树的后序遍历
+### sy331: 二叉树的后序遍历
+
+https://sunnywhy.com/sfbj/9/2/331
 
 
 
@@ -3900,7 +3944,9 @@ mode = "postorder"
 
 
 
-### 2.4 二叉树的层次遍历
+### sy332: 二叉树的层次遍历
+
+https://sunnywhy.com/sfbj/9/2/332
 
 
 
@@ -3914,7 +3960,9 @@ mode = "levelorder"
 
 
 
-### 2.5 二叉树的高度
+### sy333: 二叉树的高度
+
+https://sunnywhy.com/sfbj/9/2/333
 
 层级 Level：从根节点开始到达一个节点的路径，所包含的边的数量，称为这个节点的层级。根节点的层级为 0。
 
@@ -4010,7 +4058,7 @@ print(root.height())
 
 
 
-### 2.6 二叉树的结点层号
+### sy334: 二叉树的结点层号
 
 https://sunnywhy.com/sfbj/9/2/334
 
@@ -4080,7 +4128,7 @@ print(*node_levels(n, nodes))
 
 
 
-### 2.7 翻转二叉树
+### sy335: 翻转二叉树
 
 https://sunnywhy.com/sfbj/9/2/335
 
@@ -4166,7 +4214,7 @@ print(*inorder_traversal(nodes[0]))
 
 
 
-### 2.8 先序中序还原二叉树
+### sy336: 先序中序还原二叉树
 
 https://sunnywhy.com/sfbj/9/2/336
 
@@ -4238,7 +4286,7 @@ print(*postorder_traversal(root))
 
 
 
-### 2.9 后序中序还原二叉树
+### sy337: 后序中序还原二叉树
 
 https://sunnywhy.com/sfbj/9/2/337
 
@@ -4308,7 +4356,7 @@ print(*preorder_traversal(root))
 
 
 
-### 2.10 层序中序还原二叉树
+### sy338: 层序中序还原二叉树
 
 https://sunnywhy.com/sfbj/9/2/338
 
@@ -4383,7 +4431,7 @@ print(*preorder_traversal(root))
 
 
 
-### 2.11 二叉树的最近公共祖先
+### sy339: 二叉树的最近公共祖先
 
 https://sunnywhy.com/sfbj/9/2/339
 
@@ -4472,7 +4520,7 @@ print(find_LCA(nodes[0], n1, n2))
 
 
 
-### 2.12 二叉树的路径和
+### sy340: 二叉树的路径和
 
 https://sunnywhy.com/sfbj/9/2/340
 
@@ -4552,7 +4600,7 @@ print(path_sum(nodes[0]))
 
 
 
-### 2.13 二叉树的带权路径长度
+### sy341: 二叉树的带权路径长度
 
 https://sunnywhy.com/sfbj/9/2/341
 
@@ -4646,7 +4694,7 @@ print(weighted_path_length(root))
 
 
 
-### 2.14 二叉树的左视图序列
+### sy342: 二叉树的左视图序列
 
 https://sunnywhy.com/sfbj/9/2/342
 
@@ -4726,7 +4774,7 @@ print(*left_view(nodes[0]))
 
 
 
-### 2.15 满二叉树的判定
+### sy343: 满二叉树的判定
 
 https://sunnywhy.com/sfbj/9/2/343
 
@@ -4799,7 +4847,7 @@ print("Yes" if is_full(nodes[0]) else "No")
 
 
 
-### 2.16 完全二叉树的判定
+### sy344: 完全二叉树的判定
 
 https://sunnywhy.com/sfbj/9/2/344
 
@@ -4889,9 +4937,9 @@ print("Yes" if is_complete(nodes[0]) else "No")
 
 ## 3 树的遍历 7题
 
-### 3.1 树的先根遍历
+### sy345: 树的先根遍历
 
-https://sunnywhy.com/sfbj/9/3
+https://sunnywhy.com/sfbj/9/3/345
 
 现有一棵个结点的树（结点编号为从`0`到`n-1`，根结点为`0`号结点），求这棵树的先根遍历序列。
 
@@ -4967,7 +5015,7 @@ print(*pre_order(nodes[0]))
 
 
 
-### 3.2 树的后根遍历
+### sy346: 树的后根遍历
 
 https://sunnywhy.com/sfbj/9/3/346
 
@@ -5044,7 +5092,7 @@ print(*post_order(nodes[0]))
 
 
 
-### 3.3 树的层序遍历
+### sy347: 树的层序遍历
 
 https://sunnywhy.com/sfbj/9/3/347
 
@@ -5123,7 +5171,7 @@ print(*level_order(nodes[0]))
 
 
 
-### 3.4 树的高度
+### sy348: 树的高度
 
 https://sunnywhy.com/sfbj/9/3/348
 
@@ -5198,7 +5246,7 @@ print(height(nodes[0]))
 
 
 
-### 3.5 树的结点层号
+### sy349: 树的结点层号
 
 https://sunnywhy.com/sfbj/9/3/349
 
@@ -5311,7 +5359,7 @@ tree.print_levels()
 
 
 
-### 3.6 树的路径和
+### sy350: 树的路径和
 
 https://sunnywhy.com/sfbj/9/3/350
 
@@ -5395,7 +5443,7 @@ print(result)
 
 
 
-### 3.7 树的带权路径长度
+### sy351: 树的带权路径长度
 
 https://sunnywhy.com/sfbj/9/3/351
 
@@ -5510,9 +5558,9 @@ print(weighted_path_length(n, weights, edges))
 
 ## 4 二叉查找树（BST）5题
 
-### 4.1 二叉查找树的建立
+### sy352: 二叉查找树的建立
 
-https://sunnywhy.com/sfbj/9/4
+https://sunnywhy.com/sfbj/9/4/352
 
 将n个互不相同的正整数先后插入到一棵空的二叉查找树中，求最后生成的二叉查找树的先序序列。
 
@@ -5600,7 +5648,7 @@ print(' '.join(map(str, bst.preorder())))
 
 
 
-### 4.2 二叉查找树的判定
+### sy353: 二叉查找树的判定
 
 https://sunnywhy.com/sfbj/9/4/353
 
@@ -5676,7 +5724,7 @@ else:
 
 
 
-### 4.3 还原二叉查找树
+### sy354: 还原二叉查找树
 
 https://sunnywhy.com/sfbj/9/4/354
 
@@ -5758,7 +5806,7 @@ print(' '.join(map(str, bst.postorder())))
 
 
 
-### 4.4 相同的二叉查找树
+### sy355: 相同的二叉查找树
 
 https://sunnywhy.com/sfbj/9/4/355
 
@@ -5874,7 +5922,7 @@ else:
 
 
 
-### 4.5 填充二叉查找树
+### sy356: 填充二叉查找树
 
 https://sunnywhy.com/sfbj/9/4/356
 
@@ -5983,9 +6031,9 @@ This code reads the input values and the structure of the binary tree from the i
 
 ## 5 平衡二叉树（AVL树）3题
 
-### 5.1 二叉查找树的平衡因子
+### sy357: 二叉查找树的平衡因子
 
-https://sunnywhy.com/sfbj/9/5
+https://sunnywhy.com/sfbj/9/5/357
 
 对一棵二叉查找树来说，我们把结点的左子树和右子树的高度之差称为结点的平衡因子。
 
@@ -6092,7 +6140,7 @@ This code reads the sequence from the input, inserts its values into a BST, calc
 
 
 
-### 5.2 平衡二叉树的判定
+### sy358: 平衡二叉树的判定
 
 https://sunnywhy.com/sfbj/9/5/358
 
@@ -6225,7 +6273,7 @@ This code reads the sequence from the input, inserts its values into a BST, chec
 
 
 
-### 5.3 平衡二叉树的建立
+### sy359: 平衡二叉树的建立
 
 https://sunnywhy.com/sfbj/9/5/359
 
@@ -6374,7 +6422,7 @@ This code reads the sequence from the input, inserts its values into an AVL tree
 
 ## 6 并查集 5题
 
-### 6.1 学校的班级个数（1）
+### sy360: 学校的班级个数（1）
 
 https://sunnywhy.com/sfbj/9/6/360
 
@@ -6451,7 +6499,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-### 6.2 学校的班级人数（2）
+### sy361: 学校的班级人数（2）
 
 https://sunnywhy.com/sfbj/9/6/361
 
@@ -6542,7 +6590,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-### 6.3 是否相同班级
+### sy362: 是否相同班级
 
 https://sunnywhy.com/sfbj/9/6/362
 
@@ -6632,7 +6680,7 @@ This code reads the number of students and relationships from the input, initial
 
 
 
-### 6.4 迷宫连通性
+### sy363: 迷宫连通性
 
 https://sunnywhy.com/sfbj/9/6/363
 
@@ -6732,7 +6780,7 @@ This code reads the number of rooms and connections from the input, initializes 
 
 
 
-### 6.5 班级最高分
+### sy364: 班级最高分
 
 https://sunnywhy.com/sfbj/9/6/364
 
@@ -6829,9 +6877,9 @@ This code reads the number of students and relationships from the input, initial
 
 ## 7 堆 6题
 
-### 7.1 向下调整构建大顶堆
+### sy365: 向下调整构建大顶堆
 
-https://sunnywhy.com/sfbj/9/7
+https://sunnywhy.com/sfbj/9/7/365
 
 现有个不同的正整数，将它们按层序生成完全二叉树，然后使用**向下调整**的方式构建一个完整的大顶堆。最后按层序输出堆中的所有元素。
 
@@ -6980,7 +7028,7 @@ This code reads the number of elements and the elements themselves from the inpu
 
 
 
-### 7.2 向上调整构建大顶堆
+### sy366: 向上调整构建大顶堆
 
 https://sunnywhy.com/sfbj/9/7/366
 
@@ -7059,7 +7107,7 @@ This code reads the number of elements and the elements themselves from the inpu
 
 
 
-### 7.3 删除堆顶元素
+### sy367: 删除堆顶元素
 
 https://sunnywhy.com/sfbj/9/7/367
 
@@ -7218,7 +7266,7 @@ This code reads the number of elements and the elements themselves from the inpu
 
 
 
-### 7.4 堆排序
+### sy368: 堆排序
 
 https://sunnywhy.com/sfbj/9/7/368
 
@@ -7374,7 +7422,7 @@ This code reads the number of elements and the elements themselves from the inpu
 
 
 
-### 7.5 数据流第K大元素
+### sy369: 数据流第K大元素
 
 https://sunnywhy.com/sfbj/9/7/369
 
@@ -7467,7 +7515,7 @@ This code reads the number of operations and the value of `k` from the input, th
 
 
 
-### 7.6 数据流中位数
+### sy370: 数据流中位数
 
 https://sunnywhy.com/sfbj/9/7/370
 
@@ -7563,9 +7611,9 @@ This code reads the number of operations from the input, then for each operation
 
 ## 8 哈夫曼树 3题
 
-### 8.1 合并果子
+### sy371: 合并果子
 
-https://sunnywhy.com/sfbj/9/8
+https://sunnywhy.com/sfbj/9/8/371
 
 有 n 堆果子，每堆果子的质量已知，现在需要把这些果子合并成一堆，但是每次只能把两堆果子合并到一起，同时会消耗与两堆果子质量之和等值的体力。显然，在进行 n - 1 次合并之后，就只剩下一堆了。为了尽可能节省体力，需要使耗费的总体力最小。求需要耗费的最小总体力。
 
@@ -7636,7 +7684,7 @@ This code reads the number of piles of fruits and the weights of the piles from 
 
 
 
-### 8.2 树的最小带权路径长度
+### sy372: 树的最小带权路径长度
 
 https://sunnywhy.com/sfbj/9/8/372
 
@@ -7713,7 +7761,7 @@ This code reads the number of weights from the input, inserts each weight into t
 
 
 
-### 8.3 最小前缀编码长度
+### sy373: 最小前缀编码长度
 
 https://sunnywhy.com/sfbj/9/8/373
 
@@ -7868,7 +7916,7 @@ This code reads a string from the input, counts the frequency of each character,
 
 ## 1 图的定义和相关术语 2题  
 
-### sy374 无向图的度 简单
+### sy374: 无向图的度 简单
 
 https://sunnywhy.com/sfbj/10/1/374
 
@@ -8794,6 +8842,89 @@ print(max(s))
 ```
 
 
+
+```python
+# 余汶青 生命科学学院
+import sys
+from collections import deque
+
+class Vertex:
+    def __init__(self,key,weight=0):
+        self.id=key
+        self.weight=weight
+        self.connectedTo={}
+        self.visit=0
+    def addNeighbor(self,nbr,weight=0):
+        self.connectedTo[nbr]=weight
+    def __str__(self):
+        return str(self.id)+'connectedTo:'+str([x.id for x in self.connectedTo])
+    def getConnections(self):
+        return self.connectedTo.keys()
+    def getId(self):
+        return self.id
+    def getWeight(self,nbr):
+        return self.connectedTo[nbr]
+class Graph:
+    def __init__(self):
+        self.vertList={}
+        self.numVertices=0
+    def addVertex(self,key,weight=0):
+        self.numVertices+=1
+        newVertex=Vertex(key,weight)
+        self.vertList[key]=newVertex
+        return newVertex
+    def getVertex(self,n):
+        if n in self.vertList:
+            return self.vertList[n]
+        else:
+            return None
+    def __contains__(self,n):
+        return n in self.vertList
+    def addEdge(self,f,t,weight=0):
+        if f not in self.vertList:
+            nv=self.addVertex(f)
+        if t not in self.vertList:
+            nv=self.addVertex(t)
+        self.vertList[f].addNeighbor(self.vertList[t],weight)
+    def getVertices(self):
+        return self.vertList.keys()
+    def __iter__(self):
+        return iter(self.vertList.values())
+    
+def bfs(seed):
+    ans=0
+    q=deque()
+    q.append(seed)
+    ans+=seed.weight
+    
+    seed.visit=1
+    while q:
+        a=q.popleft()
+        for i in a.getConnections():
+            if i.visit==0:
+                q.append(i)
+                ans+=i.weight
+                i.visit=1
+    return ans
+    
+    
+graph=Graph()
+n,m=map(int,input().split())
+weight=[int(i) for i in input().split()]
+for i in range(n):
+    graph.addVertex(i,weight[i])
+for i in range(m):
+    a,b=map(int,input().split())
+    graph.addEdge(a, b)
+    graph.addEdge(b, a)
+ans=0
+for i in graph.getVertices():
+    vex=graph.getVertex(i)
+    if vex.visit==0:
+        ans=max(ans,bfs(vex))
+print(ans)
+
+```
 
 
 
