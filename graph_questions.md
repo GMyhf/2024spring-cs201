@@ -1,12 +1,14 @@
 # 20240409～23-Week8~10 图论
 
-Updated 1637 GMT+8 Apr 17, 2024
+Updated 2013 GMT+8 Apr 17, 2024
 
 2024 spring, Complied by Hongfei Yan
 
 
 
 > Logs:
+>
+> 2024/4/17 重构了目录，主要是把图算法分成了 基本图算法、更多图算法
 >
 > 2024/4/7 打*的章节，可以跳过，可能超纲了。
 >
@@ -1226,7 +1228,7 @@ for row in laplacianMatrix:	# 输出结果
 
 # 二、图算法
 
-## 3 基本图算法
+## 3 （Week9）基本图算法
 
 ### 3.1 宽度优先搜索（BFS）
 
@@ -2278,7 +2280,7 @@ if __name__ == '__main__':
 
 
 
-#### 3.2.3 通用深度优先搜索（depth first forest）
+### 3.3 通用深度优先搜索（depth first forest）
 
 骑士周游是深度优先搜索的一种特殊情况，它需要创建没有分支的最深深度优先搜索树。通用的深度优先搜索其实更简单，它的目标是尽可能深地搜索，尽可能多地连接图中的顶点，并且在需要的时候进行分支。
 
@@ -2354,28 +2356,38 @@ F只有C这一个相邻顶点，但是C已经被标记为黑色，因此没有�
 
 
 
-#### 3.2.4 分析深度优先搜索
+**分析深度优先搜索**
 
 一般来说，深度优先搜索的运行时间如下。在`dfs函数`中有两个循环，每个都是|V|次，所以是O(|V|)，这是由于它们针对图中的每个顶点都只执行一次。在`dfs_visit`中，循环针对当前顶点的邻接表中的每一条边都执行一次，且仅在顶点是白色时被递归调用，因此循环最多会对图中的每一条边执行一次，也就是O(|E|)。因此，深度优先搜索算法的时间复杂度是O(|V|+|E|)，与BFS一样。
 
 
 
-> 深度优先搜索树（林）的性质
->
-> 1. **顶点大小的定义：** 对于图 G 中的任意两个顶点 u 和 v，当且仅当顶点 u 的结束时间（fin）小于顶点 v 的结束时间（fin）时，称顶点 u 小于顶点 v，即符号化表示为：$∀ u, v \in G; u < v \equiv u.fin < v.fin$。
->
-> 2. **子树大小的定义：** 对于深度优先搜索树（林）中的任意两棵不相交的子树 t1 和 t2，当且仅当 t1 中的任意节点的结束时间都早于 t2 中的任意节点的开始时间时，称 t1 小于 t2，即符号化表示为：$t1 < t2 \equiv ∀u \in t1, v \in t2; u < v$。
->
-> 3. **节点间的互斥关系：** 如果 t1 小于 t2，且节点 u 属于 t1，节点 v 属于 t2，则 $u \rightarrow v$ 不存在。
->
-> 4. **节点间的关系限定：** 如果顶点 u 小于顶点 v，并且它们在同一棵树中，则只有两种可能情况：
->    - 顶点 v 是顶点 u 的祖先。
->    - 顶点 u 和 v 具有共同的祖先 t。其中，顶点 u 属于 t 的子树 t1，顶点 v 属于 t 的子树 t2。这种情况下，t1 的结束时间早于 t2 的开始时间。
->
+*深度优先搜索树（林）的性质
+
+ 1. **顶点大小的定义：** 对于图 G 中的任意两个顶点 u 和 v，当且仅当顶点 u 的结束时间（fin）小于顶点 v 的结束时间（fin）时，称顶点 u 小于顶点 v，即符号化表示为：$∀ u, v \in G; u < v \equiv u.fin < v.fin$。
+
+    
+
+    Page 608, introduction to algorithms 3rd Edition
+
+    Corollary 22.8 (Nesting of descendants’ intervals)
+    Vertex  `v` is a proper descendant of vertex `u` in the depth-first forest for a (directed
+    or undirected) graph G if and only if u.d < v.d < v.f < u.f .
+
+    
+
+ 2. **子树大小的定义：** 对于深度优先搜索树（林）中的任意两棵不相交的子树 t1 和 t2，当且仅当 t1 中的任意节点的结束时间都早于 t2 中的任意节点的开始时间时，称 t1 小于 t2，即符号化表示为：$t1 < t2 \equiv ∀u \in t1, v \in t2; u < v$。
+
+ 3. **节点间的互斥关系：** 如果 t1 小于 t2，且节点 u 属于 t1，节点 v 属于 t2，则 $u \rightarrow v$ 不存在。
+
+ 4. **节点间的关系限定：** 如果顶点 u 小于顶点 v，并且它们在同一棵树中，则只有两种可能情况：
+    - 顶点 v 是顶点 u 的祖先。
+    - 顶点 u 和 v 具有共同的祖先 t。其中，顶点 u 属于 t 的子树 t1，顶点 v 属于 t 的子树 t2。这种情况下，t1 的结束时间早于 t2 的开始时间。
 
 
 
-### 3.3 编程题目
+
+### 3.4 编程题目
 
 #### 28046: 词梯
 
@@ -3066,7 +3078,7 @@ print(count)
 
 
 
-### 3.4 笔试题目（类图 + dfs）
+### 3.5 笔试题目（类图 + dfs）
 
 #### 1 数算B-2021笔试最后一个算法题目（8分）
 
@@ -3216,13 +3228,18 @@ print(path)
 
 
 
-## 4 更多图算法
+## 4 （Week10）更多图算法
 
 接下来我们介绍更多图算法，多是构建于基本图算法BFS或者DFS之上。
 
 ### 4.1 拓扑排序
 
 ##### 4.1.1 煎松饼
+
+> Page 612, introduction to algorithms 3rd Edition
+>
+> This section shows how we can use depth-first search to perform a topological sort of a directed acyclic graph, or a “dag” as it is sometimes called. A **topological sort** of a dag G = ( V, E ) is a linear ordering of all its vertices such that if G contains an edge (u, v), then u appears before  in the ordering. (If the graph contains a cycle, then no linear ordering is possible.) We can view a topological sort of a graph as an ordering of its vertices along a horizontal line so that all directed edges go from left to right. Topological sorting is thus different from the usual kind of “sorting” studied in Part II.
+> Many applications use directed acyclic graphs to indicate precedences amongevents.
 
 为了展示计算机科学家可以将几乎所有问题都转换成图问题，让我们来考虑如何制作一批松饼。配方十分简单：一个鸡蛋、一杯松饼粉、一勺油，以及3/4杯牛奶。为了制作松饼，需要加热平底锅，并将所有原材料混合后倒入锅中。当出现气泡时，将松饼翻面，继续煎至底部变成金黄色。在享用松饼之前，还会加热一些枫糖浆。图7-18用图的形式展示了整个过程。
 
@@ -3583,7 +3600,11 @@ Topological sort order: ['cup_milk', 'heat_griddle', 'tbl_oil', 'egg', 'mix_ingr
 
 
 
-### 4.2 强连通单元（SCC）
+### 4.2 强连通单元（SCCs）
+
+> Page 615, introduction to algorithms 3rd Edition
+>
+> We now consider a classic application of depth-first search: decomposing a directed graph into its strongly connected components. This section shows how to do so using two depth-first searches. Many algorithms that work with directed graphs begin with such a decomposition. After decomposing the graph into strongly connected components, such algorithms run separately on each one and then combine the solutions according to the structure of connections among components.
 
 接下来将注意力转向规模庞大的图。我们将以互联网主机与各个网页构成的图为例，学习其他几种算法。首先讨论网页。
 
@@ -3806,7 +3827,7 @@ Strongly Connected Components:
 
 
 
-### 4.3 最短路径
+### 4.3 最短路径（Shortest Paths）
 
 当我们浏览网页、发送电子邮件，或者从校园的另一处登录实验室里的计算机时，在后台发生了很多事，信息从一台计算机传送到另一台计算机。深入地研究信息在多台计算机之间的传送过程，是计算机网络课程的主要内容。本节将适当地讨论互联网的运作机制，并以此介绍另一个非常重要的图算法。
 
@@ -4018,7 +4039,7 @@ def floyd_warshall(graph):
 
 
 
-### 4.4 最小生成树(MST) 
+### 4.4 最小生成树(MSTs) 
 
 #### 4.4.1 Prim算法
 
@@ -4746,7 +4767,7 @@ D -> E Weight:6
 
 
 
-### 4.6 小结
+### 4.6 对3.1～4.5小结
 
 介绍了图的抽象数据类型，以及一些实现方式。如果能将一个问题用图表示出来，那么就可以利用图算法加以解决。对于解决下列问题，图非常有用。
 
@@ -5306,8 +5327,6 @@ bfs, http://cs101.openjudge.cn/practice/19930
 2022年5个大题：图Dijkstra，二叉树，排序，单链表，二叉树。
 
 2021年6个大题：森林dfs、bfs，哈夫曼树，二叉树建堆，图prim，二叉树遍历，图走迷宫。
-
-
 
 
 
