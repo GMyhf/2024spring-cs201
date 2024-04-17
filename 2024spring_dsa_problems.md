@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1015 GMT+8 April 17, 2024
+Updated 1034 GMT+8 April 17, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -13356,6 +13356,56 @@ if __name__ == '__main__':
 ```
 
 
+
+```python
+# 周添 物理学院
+def knight_tour(n, sr, sc):
+    moves = [(-2, -1), (-2, 1), (-1, -2), (-1, 2),
+             (1, -2), (1, 2), (2, -1), (2, 1)]
+
+    visited = [[False] * n for _ in range(n)]
+
+    def is_valid_move(row, col):
+        return 0 <= row < n and 0 <= col < n and not visited[row][col]
+
+    def count_neighbors(row, col):
+        count = 0
+        for dr, dc in moves:
+            next_row, next_col = row + dr, col + dc
+            if is_valid_move(next_row, next_col):
+                count += 1
+        return count
+
+    def sort_moves(row, col):
+        neighbor_counts = []
+        for dr, dc in moves:
+            next_row, next_col = row + dr, col + dc
+            if is_valid_move(next_row, next_col):
+                count = count_neighbors(next_row, next_col)
+                neighbor_counts.append((count, (next_row, next_col)))
+        neighbor_counts.sort()
+        sorted_moves = [move[1] for move in neighbor_counts]
+        return sorted_moves
+
+    visited[sr][sc] = True
+    tour = [(sr, sc)]
+
+    while len(tour) < n * n:
+        current_row, current_col = tour[-1]
+        sorted_next_moves = sort_moves(current_row, current_col)
+        if not sorted_next_moves:
+            return "fail"
+        next_row, next_col = sorted_next_moves[0]
+        visited[next_row][next_col] = True
+        tour.append((next_row, next_col))
+
+    return "success"
+
+n = int(input())
+sr, sc = map(int, input().split())
+print(knight_tour(n, sr, sc)) 
+
+```
 
 
 
