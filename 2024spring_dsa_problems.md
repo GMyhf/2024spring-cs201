@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2156 GMT+8 April 16, 2024
+Updated 1015 GMT+8 April 17, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4617,72 +4617,37 @@ print(' '.join(out))
 
 
 
-```c++
-#include <iostream>
-#include <vector>
-using namespace std;
+就是按照伪满二叉树构造特点分层。遇到1标记的叶子节点就说明下一个是兄弟节点上移一层输出。
 
-struct node {
-	char ele;
-	node * l;
-	node * r;
-	node (char e) :ele(e), l(NULL), r(NULL) {}
-};
-
-node * generate() {
-	char ele;
-	int mark;
-	cin>>ele>>mark;
-	node * n = NULL;
-	if (mark == 0) {
-		n = new node(ele);
-		n->l = generate();
-		n->r = generate();
-	} else
-		if (ele != '$')
-			n = new node(ele);
-	return n;
-}
-
-void out(node * root) {
-	bool isEnd = false;
-	vector<node*> now;
-	vector<node*> next;
-	node * n = root;
-	while (n) {
-		now.push_back(n);
-		n = n->r;
-	}
-	while (!isEnd) {
-		isEnd = true;
-		for (int i=now.size()-1; i>=0; --i)
-			cout<<now[i]->ele<<" ";
-		for (int i=0; i<now.size(); ++i)
-			if (now[i]->l) {
-				n = now[i]->l;
-				while (n) {
-					next.push_back(n);
-					n = n->r;
-				}
-				isEnd = false;
-			}
-		now = next;
-		next.clear();
-	}
-
-}
-
-int main() {
-	int num;
-	cin>>num;
-
-	node * root = generate();
-	out(root);
-	cout<<endl;
-
-	return 0;
-}
+```python
+# 赵策 数学科学学院
+from collections import defaultdict
+n=int(input())
+preorder=input().split()
+root,type=list(preorder[0])
+dic={}
+nodes=[root]
+dic[root]=type
+tier=defaultdict(list)
+tier[0].append(root)
+level=0
+for i in range(1,n):
+    name,type=list(preorder[i])
+    dic[name]=type
+    if dic[nodes[-1]]=='1':
+        level-=1
+    else:
+        level+=1
+    nodes.append(name)
+    if name!='$':
+        tier[level].append(name)
+res=''
+for i in sorted(tier.items()):
+    res+=''.join(i[1])[::-1]
+print(' '.join(res))
 ```
+
+
 
 
 
