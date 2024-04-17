@@ -1,6 +1,6 @@
 # 20240409～23-Week8~10 图论
 
-Updated 1345 GMT+8 Apr 15, 2024
+Updated 1637 GMT+8 Apr 17, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1224,97 +1224,128 @@ for row in laplacianMatrix:	# 输出结果
 
 
 
+# 二、图算法
+
+## 3 基本图算法
+
+### 3.1 宽度优先搜索（BFS）
+
+我们先给出BFS搜索框架，进而学习用BFS实现词梯问题。
+
+#### 3.1.1 基本图算法：BFS框架
+
+Breadth First Search or BFS for a Graph
+
+https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/
+
+**Breadth First Search (BFS)** is a graph traversal algorithm that explores all the vertices in a graph at the current depth before moving on to the vertices at the next depth level. It starts at a specified vertex and visits all its neighbors before moving on to the next level of neighbors. **BFS** is commonly used in algorithms for pathfinding, connected components, and shortest path problems in graphs.
+
+The algorithm for the BFS:
+
+1. **Initialization:** Enqueue the starting node into a queue and mark it as visited.
+
+2. **Exploration:** 
+
+   While the queue is not empty:
+
+   - Dequeue a node from the queue and visit it (e.g., print its value).
+   - For each unvisited neighbor of the dequeued node:
+     - Enqueue the neighbor into the queue.
+     - Mark the neighbor as visited.
+
+3. **Termination:** Repeat step 2 until the queue is empty.
+
+This algorithm ensures that all nodes in the graph are visited in a breadth-first manner, starting from the starting node.
 
 
-## 3 图的遍历
-
-### 3.1 宽度优先搜索
-
-**Algorithm for BFS**
-
-How to implement Breadth First Search algorithm in Python 
-
-https://www.codespeedy.com/breadth-first-search-algorithm-in-python/
-
-BFS is one of the traversing algorithm used in graphs. This algorithm is implemented using a queue data structure. In this algorithm, the main focus is on the vertices of the graph. Select a starting node or vertex at first, mark the starting node or vertex as visited and store it in a queue. Then visit the vertices or nodes which are adjacent to the starting node, mark them as visited and store these vertices or nodes in a queue. Repeat this process until all the nodes or vertices are completely visited.
-
-**Advantages of BFS**
-
-1. It can be useful in order to find whether the graph has connected components or not.
-2. It always finds or returns the **shortest path** if there is more than one path between two vertices.
-
-
-
-**Disadvantages of BFS**
-
-1. The execution time of this algorithm is very slow because the time complexity of this algorithm is exponential.
-2. This algorithm is not useful when large graphs are used.
-
-
-
-**Implementation of BFS in Python ( Breadth First Search )**
-
-**Source Code: BFS in Python**
 
 ```python
-graph = {'A': ['B', 'C', 'E'],
-         'B': ['A','D', 'E'],
-         'C': ['A', 'F', 'G'],
-         'D': ['B'],
-         'E': ['A', 'B','D'],
-         'F': ['C'],
-         'G': ['C']}
+from collections import defaultdict, deque
 
+# Class to represent a graph using adjacency list
+class Graph:
+    def __init__(self):
+        self.adjList = defaultdict(list)
 
-def bfs(graph, initial):
-    visited = []
-    queue = [initial]
+    # Function to add an edge to the graph
+    def addEdge(self, u, v):
+        self.adjList[u].append(v)
 
-    while queue:
-        node = queue.pop(0)
-        if node not in visited:
-            visited.append(node)
-            neighbours = graph[node]
+    # Function to perform Breadth First Search on a graph represented using adjacency list
+    def bfs(self, startNode):
+        # Create a queue for BFS
+        queue = deque()
+        visited = set()
 
-            for neighbour in neighbours:
-                queue.append(neighbour)
-    return visited
+        # Mark the current node as visited and enqueue it
+        visited.add(startNode)
+        queue.append(startNode)
 
-print(bfs(graph,'A'))
+        # Iterate over the queue
+        while queue:
+            # Dequeue a vertex from queue and print it
+            currentNode = queue.popleft()
+            print(currentNode, end=" ")
+
+            # Get all adjacent vertices of the dequeued vertex currentNode
+            # If an adjacent has not been visited, then mark it visited and enqueue it
+            for neighbor in self.adjList[currentNode]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+
+# Create a graph
+graph = Graph()
+
+# Add edges to the graph
+graph.addEdge(0, 1)
+graph.addEdge(0, 2)
+graph.addEdge(1, 3)
+graph.addEdge(1, 4)
+graph.addEdge(2, 4)
+
+# Perform BFS traversal starting from vertex 0
+print("Breadth First Traversal starting from vertex 0:", end=" ")
+graph.bfs(0)
+"""
+Breadth First Traversal starting from vertex 0: 0 1 2 3 4 
+Process finished with exit code 0
+
+"""
 ```
 
+我们来分析一下时间复杂度和空间复杂度：
+
+- 时间复杂度：BFS算法的时间复杂度取决于图的顶点数和边数。在最坏情况下，每个节点和边都会被访问一次，因此时间复杂度为O(V + E)，其中V是顶点数，E是边数。
+
+- 空间复杂度：在BFS算法中，我们使用了一个队列来存储待访问的节点，以及一个集合来存储已经访问过的节点。因此，空间复杂度取决于队列的大小和集合的大小。在最坏情况下，队列的大小可以达到图的顶点数，集合的大小也可以达到图的顶点数。因此，空间复杂度为O(V)，其中V是顶点数。
+
+综上所述，这个程序的时间复杂度为O(V + E)，空间复杂度为O(V)，其中V是顶点数，E是边数。
+
+> **Time Complexity of BFS Algorithm: O(V + E)**
+>
+> - BFS explores all the vertices and edges in the graph. In the worst case, it visits every vertex and edge once. Therefore, the time complexity of BFS is O(V + E), where V and E are the number of vertices and edges in the given graph.
+>
+> **Space Complexity of BFS Algorithm: O(V)**
+>
+> - BFS uses a queue to keep track of the vertices that need to be visited. In the worst case, the queue can contain all the vertices in the graph. Therefore, the space complexity of BFS is O(V), where V and E are the number of vertices and edges in the given graph.
+
+**Applications of BFS in Graphs:**
+
+BFS has various applications in graph theory and computer science, including:
+
+- **Shortest Path Finding:** BFS can be used to find the shortest path between two nodes in an unweighted graph. By keeping track of the parent of each node during the traversal, the shortest path can be reconstructed.
+- **Cycle Detection:** BFS can be used to detect cycles in a graph. If a node is visited twice during the traversal, it indicates the presence of a cycle.
+- **Connected Components:** BFS can be used to identify connected components in a graph. Each connected component is a set of nodes that can be reached from each other.
+- **Topological Sorting:** BFS can be used to perform topological sorting on a directed acyclic graph (DAG). Topological sorting arranges the nodes in a linear order such that for any edge (u, v), u appears before v in the order.
+- **Level Order Traversal of Binary Trees:** BFS can be used to perform a level order traversal of a binary tree. This traversal visits all nodes at the same level before moving to the next level.
+- **Network Routing:** BFS can be used to find the shortest path between two nodes in a network, making it useful for routing data packets in network protocols.
 
 
-Explanation:
-
-1. Create a graph.
-2. Initialize a starting node.
-3. Send the graph and initial node as parameters to the bfs function.
-4. Mark the initial node as visited and push it into the queue.
-5. Explore the initial node and add its neighbours to the queue and remove the initial node from the queue.
-6. Check if the neighbours node of a neighbouring node is already visited.
-7. If not, visit the neighbouring node neighbours and mark them as visited.
-8. Repeat this process until all the nodes in a graph are visited and the queue becomes empty.
-
-Output:
-
-```
-['A', 'B', 'C', 'E', 'D', 'F', 'G']
-```
 
 
 
-Breadth First Search (BFS), algorithm for traversing or searching graphs
-
-O(|V| + |E|) time complexity, |V| number of nodes, |E| number of edges
-
-Applications:
-
-Shortest path between two nodes (unweighted Graph)
-
-Ford-Fulkson algorithm (Maximum Flow in a network)
-
-#### 3.1.1 词梯问题
+#### 3.1.2 词梯问题
 
 我们从词梯问题开始学习图算法。考虑这样一个任务：将单词FOOL转换成SAGE。在解决词梯问题时，必须每次只替换一个字母，并且每一步的结果都必须是一个单词，而不能是不存在的词。词梯问题由《爱丽丝梦游仙境》的作者刘易斯·卡罗尔于1878年提出。下面的单词转换序列是样例问题的一个解。
 
@@ -1596,7 +1627,7 @@ A: 建图过程中，如果桶里只有一个单词，就没有加入顶点集�
 
 
 
-#### 3.1.2 分析宽度优先搜索
+#### 3.1.3 分析宽度优先搜索
 
 在学习其他图算法之前，让我们先分析BFS的性能。
 
@@ -1627,17 +1658,72 @@ BFS 算法主体是两个循环的嵌套，while-for。while 循环对图中每�
 
 
 
-### 3.2 深度优先搜索
+### 3.2 深度优先搜索（DFS）
 
-**Algorithm for DFS**
+我们先给出DFS搜索框架，进而学习用DFS实现骑士周游问题。
 
-https://www.codespeedy.com/depth-first-search-algorithm-in-python/
+#### 3.2.1 基本图算法：DFS框架
 
-This algorithm is a recursive algorithm which follows the concept of backtracking and implemented using stack data structure. But, what is backtracking.
+Depth First Search or DFS for a Graph
 
-Backtracking:-
+https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/
 
-It means whenever a tree or a graph is moving forward and there are no nodes along the existing path, the tree moves backwards along the same path which it went forward in order to find new nodes to traverse. This process keeps on iterating until all the unvisited nodes are visited.
+**Depth First Traversal (or DFS)** for a graph is similar to [Depth First Traversal of a tree.](https://www.geeksforgeeks.org/tree-traversals-inorder-preorder-and-postorder/) The only catch here is, that, unlike trees, graphs may contain cycles (a node may be visited twice). To avoid processing a node more than once, use a boolean visited array. A graph can have more than one DFS traversal.
+
+
+
+递归实现DFS
+
+```python
+from collections import defaultdict
+
+
+class Graph:
+    def __init__(self):
+        self.graph = defaultdict(list)
+
+    def addEdge(self, u, v):
+        self.graph[u].append(v)
+
+    def DFS(self, v, visited=None):
+        if visited is None:
+            visited = set()
+        visited.add(v)
+        print(v, end=' ')
+        for neighbour in self.graph[v]:
+            if neighbour not in visited:
+                self.DFS(neighbour, visited)
+
+
+# Driver's code
+if __name__ == "__main__":
+    g = Graph()
+    g.addEdge(0, 1)
+    g.addEdge(0, 2)
+    g.addEdge(1, 2)
+    g.addEdge(2, 0)
+    g.addEdge(2, 3)
+    g.addEdge(3, 3)
+
+    print("Following is Depth First Traversal (starting from vertex 2)")
+
+    # Function call
+    g.DFS(2)
+"""
+Following is Depth First Traversal (starting from vertex 2)
+2 0 1 3 
+"""
+```
+
+在这个递归实现的深度优先搜索（DFS）算法中，让我们来分析一下时间复杂度和空间复杂度：
+
+- 时间复杂度：DFS算法的时间复杂度取决于图的顶点数和边数。在最坏情况下，每个节点和边都会被访问一次，因此时间复杂度为O(V + E)，其中V是顶点数，E是边数。
+
+- 空间复杂度：在递归实现的DFS中，我们使用了一个集合来存储已经访问过的节点。在最坏情况下，集合的大小可能会达到图的顶点数，因此空间复杂度为O(V)，其中V是顶点数。此外，由于递归调用会产生函数调用栈，因此在最坏情况下，递归调用栈的深度可能会达到图的最大深度，所以空间复杂度还会受到递归深度的影响，但通常情况下，递归深度不会超过图的顶点数，因此我们仍然将空间复杂度视为O(V)。
+
+综上所述，这个递归实现的DFS算法的时间复杂度为O(V + E)，空间复杂度为O(V)。
+
+
 
 How stack is implemented in DFS:-
 
@@ -1647,73 +1733,143 @@ How stack is implemented in DFS:-
 4. Repeat this process until all the nodes in the tree or graph are visited.
 5. Once all the nodes are visited, then pop all the elements in the stack until the stack becomes empty.
 
- 
-
- Implementation of DFS in Python
-
-**Source Code: DFS in Python**
-
 ```python
-import sys
-
-def ret_graph():
-    return {
-        'A': {'B':5.5, 'C':2, 'D':6},
-        'B': {'A':5.5, 'E':3},
-        'C': {'A':2, 'F':2.5},
-        'D': {'A':6, 'F':1.5},
-        'E': {'B':3, 'J':7},
-        'F': {'C':2.5, 'D':1.5, 'K':1.5, 'G':3.5},
-        'G': {'F':3.5, 'I':4},
-        'H': {'J':2},
-        'I': {'G':4, 'J':4},
-        'J': {'H':2, 'I':4},
-        'K': {'F':1.5}
-    }
-
-start = 'A'                 
-dest = 'J'                  
-visited = []                
-stack = []                  
-graph = ret_graph()
-path = []
+from collections import defaultdict
 
 
-stack.append(start)                  
-visited.append(start)                
-while stack:                         
-    curr = stack.pop()            
-    path.append(curr)
-    for neigh in graph[curr]:        
-        if neigh not in visited:       
-            visited.append(neigh)       
-            stack.append(neigh)         
-            if neigh == dest :            
-                print("FOUND:", neigh)
-                print(path)
-                sys.exit(0)
-print("Not found")
-print(path)
+class Graph:
+    def __init__(self):
+        self.graph = defaultdict(list)
+
+    def addEdge(self, u, v):
+        self.graph[u].append(v)
+
+    def DFS(self, v):
+        visited = set()
+        stack = [v]
+
+        while stack:
+            current = stack.pop()
+            if current not in visited:
+                print(current, end=' ')
+                visited.add(current)
+                stack.extend(reversed(self.graph[current]))
+
+
+# Driver's code
+if __name__ == "__main__":
+    g = Graph()
+    g.addEdge(0, 1)
+    g.addEdge(0, 2)
+    g.addEdge(1, 2)
+    g.addEdge(2, 0)
+    g.addEdge(2, 3)
+    g.addEdge(3, 3)
+
+    print("Following is Depth First Traversal (starting from vertex 2)")
+
+    # Function call
+    g.DFS(2)
+"""
+Following is Depth First Traversal (starting from vertex 2)
+2 0 1 3 
+"""
 ```
 
-Explanation:
-
-1. First, create a graph in a function.
-2. Intialize a starting node and destination node.
-3. Create a list for the visited nodes and stack for the next node to be visited.
-4. Call the graph function.
-5. Initially, the stack is empty.Push the starting node into the stack (stack.append(start) ).
-6. Mark the starting node as visited (visited.append(start) ).
-7. Repeat this process until all the neighbours are visited in the stack till the destination node is found.
-8. If the destination node is found exit the while loop.
-9. If the destination node is not present then “Not found” is printed.
-10. Finally, print the path from starting node to the destination node.
 
 
+> 如果需要记录路径的DFS，可以这样写
+>
+> **Algorithm for DFS**
+>
+> https://www.codespeedy.com/depth-first-search-algorithm-in-python/
+>
+> This algorithm is a recursive algorithm which follows the concept of backtracking and implemented using stack data structure. But, what is backtracking.
+>
+> Backtracking:-
+>
+> It means whenever a tree or a graph is moving forward and there are no nodes along the existing path, the tree moves backwards along the same path which it went forward in order to find new nodes to traverse. This process keeps on iterating until all the unvisited nodes are visited.
+>
+> How stack is implemented in DFS:-
+>
+> 1. Select a starting node, mark the starting node as visited and push it into the stack.
+> 2. Explore any one of adjacent nodes of the starting node which are unvisited.
+> 3. Mark the unvisited node as visited and push it into the stack.
+> 4. Repeat this process until all the nodes in the tree or graph are visited.
+> 5. Once all the nodes are visited, then pop all the elements in the stack until the stack becomes empty.
+>
+>  
+>
+>  Implementation of DFS in Python
+>
+> **Source Code: DFS in Python**
+>
+> ```python
+> import sys
+> 
+> def ret_graph():
+>     return {
+>         'A': {'B':5.5, 'C':2, 'D':6},
+>         'B': {'A':5.5, 'E':3},
+>         'C': {'A':2, 'F':2.5},
+>         'D': {'A':6, 'F':1.5},
+>         'E': {'B':3, 'J':7},
+>         'F': {'C':2.5, 'D':1.5, 'K':1.5, 'G':3.5},
+>         'G': {'F':3.5, 'I':4},
+>         'H': {'J':2},
+>         'I': {'G':4, 'J':4},
+>         'J': {'H':2, 'I':4},
+>         'K': {'F':1.5}
+>     }
+> 
+> start = 'A'
+> dest = 'J'
+> visited = []
+> stack = []
+> graph = ret_graph()
+> path = []
+> 
+> 
+> stack.append(start)
+> visited.append(start)
+> while stack:
+>     curr = stack.pop()
+>     path.append(curr)
+>     for neigh in graph[curr]:
+>         if neigh not in visited:
+>             visited.append(neigh)
+>             stack.append(neigh)
+>             if neigh == dest :
+>                 print("FOUND:", neigh)
+>                 print(path)
+>                 sys.exit(0)
+> print("Not found")
+> print(path)
+> """
+> FOUND: J
+> ['A', 'D', 'F', 'G', 'I']
+> """
+> ```
+>
+> Explanation:
+>
+> 1. First, create a graph in a function.
+> 2. Intialize a starting node and destination node.
+> 3. Create a list for the visited nodes and stack for the next node to be visited.
+> 4. Call the graph function.
+> 5. Initially, the stack is empty.Push the starting node into the stack (stack.append(start) ).
+> 6. Mark the starting node as visited (visited.append(start) ).
+> 7. Repeat this process until all the neighbours are visited in the stack till the destination node is found.
+> 8. If the destination node is found exit the while loop.
+> 9. If the destination node is not present then “Not found” is printed.
+> 10. Finally, print the path from starting node to the destination node.
+>
 
 
 
-#### 3.2.1 骑士周游问题
+
+
+#### 3.2.2 骑士周游问题
 
 骑士周游问题是经典问题，用它来说明DFS算法。为了解决骑士周游问题，取一块国际象棋棋盘和一颗骑士棋子（马）。目标是找到一系列走法，使得骑士对棋盘上的每一格刚好都只访问一次。这样的一个移动序列被称为“周游路径”。多年来，骑士周游问题吸引了众多棋手、数学家和计算机科学家。对于8×8的棋盘，周游数的上界是1.305×10^35，但死路更多。很明显，解决这个问题需要聪明人或者强大的计算能力，抑或兼具二者。
 
@@ -2122,7 +2278,7 @@ if __name__ == '__main__':
 
 
 
-#### 3.2.4 通用深度优先搜索（depth first forest）
+#### 3.2.3 通用深度优先搜索（depth first forest）
 
 骑士周游是深度优先搜索的一种特殊情况，它需要创建没有分支的最深深度优先搜索树。通用的深度优先搜索其实更简单，它的目标是尽可能深地搜索，尽可能多地连接图中的顶点，并且在需要的时候进行分支。
 
@@ -2198,7 +2354,7 @@ F只有C这一个相邻顶点，但是C已经被标记为黑色，因此没有�
 
 
 
-#### 3.2.5 分析深度优先搜索
+#### 3.2.4 分析深度优先搜索
 
 一般来说，深度优先搜索的运行时间如下。在`dfs函数`中有两个循环，每个都是|V|次，所以是O(|V|)，这是由于它们针对图中的每个顶点都只执行一次。在`dfs_visit`中，循环针对当前顶点的邻接表中的每一条边都执行一次，且仅在顶点是白色时被递归调用，因此循环最多会对图中的每一条边执行一次，也就是O(|E|)。因此，深度优先搜索算法的时间复杂度是O(|V|+|E|)，与BFS一样。
 
@@ -3060,13 +3216,13 @@ print(path)
 
 
 
-# 二、（Week9~10）图的算法
+## 4 更多图算法
 
-## 5 图的算法
+接下来我们介绍更多图算法，多是构建于基本图算法BFS或者DFS之上。
 
-### 5.1 拓扑排序
+### 4.1 拓扑排序
 
-##### 5.1.1 煎松饼
+##### 4.1.1 煎松饼
 
 为了展示计算机科学家可以将几乎所有问题都转换成图问题，让我们来考虑如何制作一批松饼。配方十分简单：一个鸡蛋、一杯松饼粉、一勺油，以及3/4杯牛奶。为了制作松饼，需要加热平底锅，并将所有原材料混合后倒入锅中。当出现气泡时，将松饼翻面，继续煎至底部变成金黄色。在享用松饼之前，还会加热一些枫糖浆。图7-18用图的形式展示了整个过程。
 
@@ -3427,7 +3583,7 @@ Topological sort order: ['cup_milk', 'heat_griddle', 'tbl_oil', 'egg', 'mix_ingr
 
 
 
-### 5.2 强连通单元（SCC）
+### 4.2 强连通单元（SCC）
 
 接下来将注意力转向规模庞大的图。我们将以互联网主机与各个网页构成的图为例，学习其他几种算法。首先讨论网页。
 
@@ -3493,7 +3649,7 @@ We formally define a **strongly connected component (SCC) **, C, of a graph G, a
 
 
 
-#### 5.2.1 Kosaraju算法
+#### 4.2.1 Kosaraju算法
 
 Kosaraju算法是一种用于在有向图中寻找强连通分量（Strongly Connected Components，SCC）的算法。它基于深度优先搜索（DFS）和图的转置操作。
 
@@ -3564,7 +3720,7 @@ Strongly Connected Components:
 
 
 
-#### *5.2.2 Tarjan算法
+#### *4.2.2 Tarjan算法
 
 Tarjan算法是一种图算法，用于查找有向图中的强连通分量。强连通分量是指在有向图中，存在一条路径可以从任意一个顶点到达另一个顶点的一组顶点。
 
@@ -3650,7 +3806,7 @@ Strongly Connected Components:
 
 
 
-### 5.3 最短路径
+### 4.3 最短路径
 
 当我们浏览网页、发送电子邮件，或者从校园的另一处登录实验室里的计算机时，在后台发生了很多事，信息从一台计算机传送到另一台计算机。深入地研究信息在多台计算机之间的传送过程，是计算机网络课程的主要内容。本节将适当地讨论互联网的运作机制，并以此介绍另一个非常重要的图算法。
 
@@ -3699,7 +3855,7 @@ Routers from One Host to the Next over the Internet
 
 
 
-#### 5.3.1 Dijkstra算法
+#### 4.3.1 Dijkstra算法
 
 > **Breadth First Search** explores equally in all directions. This is an incredibly useful algorithm, not only for regular path finding, but also for procedural map generation, flow field pathfinding, distance maps, and other types of map analysis.
 > **Dijkstra’s Algorithm** (also called Uniform Cost Search) lets us prioritize which paths to explore. Instead of exploring all possible paths equally, it favors lower cost paths. We can assign lower costs to encourage moving on roads, higher costs to avoid enemies, and more. When movement costs vary, we use this instead of Breadth First Search.
@@ -3777,13 +3933,13 @@ Dijkstra算法使用了优先级队列。你应该记得，"树"那一章讲过�
 
 
 
-#### 5.3.2 分析Dijkstra算法
+#### 4.3.2 分析Dijkstra算法
 
 最后，我们来分析Dijkstra算法的时间复杂度。开始时，要将图中的每一个顶点都添加到优先级队列中，这个操作的时间复杂度是$O(|V|)$。优先级队列构建完成之后，`while`循环针对每一个顶点都执行一次，这是由于一开始所有顶点都被添加到优先级队列中，并且只在循环时才被移除。在循环内部，每次对`pq.delete`的调用都是$O(|V| \log(|V|))$。综合起来考虑，循环和delMin调用的总时间复杂度是$O(|V| \log(|V|))$。for循环对图中的每一条边都执行一次，并且循环内部的`change_priority`调用为O(|E| log|V|)。因此，总的时间复杂度为$O((|V|+|E|) \log(|V|))$。
 
 
 
-#### *5.3.3 Bellman-Ford, SPFA算法
+#### *4.3.3 Bellman-Ford, SPFA算法
 
 在图论中，有两种常见的方法用于求解最短路径问题：**Dijkstra算法**和**Bellman-Ford算法**。这两种算法各有优劣，选择哪种算法取决于图的特性和问题要求。如果图中没有负权边，并且只需要求解单源最短路径，Dijkstra算法通常是一个较好的选择。如果图中存在负权边或需要检测负权回路，或者需要求解所有节点对之间的最短路径，可以使用Bellman-Ford算法。
 
@@ -3816,7 +3972,7 @@ SPFA算法在实际应用中通常表现出良好的性能，尤其适用于稀�
 
 
 
-#### *5.3.4 多源最短路径Floyd-Warshall算法
+#### *4.3.4 多源最短路径Floyd-Warshall算法
 
 求解所有顶点之间的最短路径可以使用**Floyd-Warshall算法**，它是一种多源最短路径算法。Floyd-Warshall算法可以在有向图或无向图中找到任意两个顶点之间的最短路径。
 
@@ -3862,9 +4018,9 @@ def floyd_warshall(graph):
 
 
 
-### 5.4 最小生成树(MST) 
+### 4.4 最小生成树(MST) 
 
-#### 5.4.1 Prim算法
+#### 4.4.1 Prim算法
 
 在学习最后一个图算法之前，先考虑网络游戏设计师和互联网广播服务提供商面临的问题。他们希望高效地把信息传递给所有人。这在网络游戏中非常重要，因为所有玩家都可以据此知道其他玩家的最近位置。互联网广播也需要做到这一点，以让所有听众都接收到所需数据。图1展示了上述广播问题。
 
@@ -3961,7 +4117,7 @@ def prim(graph,start):
 
 
 
-#### 5.4.2 Kruskal's Algorithm:
+#### 4.4.2 Kruskal's Algorithm:
 
 - Approach: Kruskal's algorithm sorts all the edges in the graph by their weights and then iteratively adds the edges with the minimum weight as long as they do not create a cycle in the MST.
 - Suitable for: Kruskal's algorithm is often used when the graph is sparse or when the number of edges is much smaller than the number of vertices. It is efficient for finding the MST in such cases.
@@ -4057,9 +4213,9 @@ Kruskal算法的时间复杂度为 O(ElogE)，其中 E 是边的数量。排序�
 
 
 
-### 5.5 Dijkstra 和 Prim实现
+### 4.5 Dijkstra 和 Prim实现
 
-#### 5.5.1 通常的Dijkstra实现
+#### 4.5.1 通常的Dijkstra实现
 
 使用 `heapq` 来实现 Dijkstra 算法的完整 Python 代码。这个实现包括了图的类表示，顶点类，以及 Dijkstra 算法的具体逻辑。
 
@@ -4202,7 +4358,7 @@ Path to F: A -> C -> B -> D -> E -> F, Distance:  9
 
 
 
-#### 5.5.2 通常的Prim实现
+#### 4.5.2 通常的Prim实现
 
 Prim's algorithm and Kruskal's algorithm are both used to find the minimum spanning tree (MST) of a connected, weighted graph. However, they have different approaches and are suitable for different scenarios. Here are the key differences and the typical use cases for each algorithm:
 
@@ -4311,7 +4467,7 @@ D -> E Weight:6
 
 
 
-#### 5.5.3 书上Dijkstra实现，不敢恭维
+#### 4.5.3 书上Dijkstra实现，不敢恭维
 
 在 `heapq` 中，直接改变一个元素的优先级并重新排序堆并不是直接支持的功能，因为 `heapq` 模块提供的是一个简单的堆实现，而不是一个优先级队列。然而，你可以通过一种变通的方法来模拟这个功能。
 
@@ -4493,7 +4649,7 @@ u    v    w    x    y    z
 
 
 
-#### 5.5.4 书上Prim实现，不敢恭维
+#### 4.5.4 书上Prim实现，不敢恭维
 
 Book_Prim.py在https://github.com/GMyhf/2024spring-cs201/tree/main/code
 
@@ -4590,7 +4746,7 @@ D -> E Weight:6
 
 
 
-### 5.6 小结
+### 4.6 小结
 
 介绍了图的抽象数据类型，以及一些实现方式。如果能将一个问题用图表示出来，那么就可以利用图算法加以解决。对于解决下列问题，图非常有用。
 
@@ -4605,7 +4761,7 @@ D -> E Weight:6
 
 
 
-### *5.7 关键路径
+### *4.7 关键路径
 
 在数据结构中，关键路径算法通常与有向加权图（有向图中每条边都有一个权重）相关。一种常用的关键路径算法是**AOV 网络关键路径算法**（Activity On Vertex Network Critical Path Algorithm），它适用于没有环路的有向加权图。
 
@@ -4637,7 +4793,7 @@ D -> E Weight:6
 
 
 
-### 5.8 编程题目
+### 4.8 编程题目
 
 
 
