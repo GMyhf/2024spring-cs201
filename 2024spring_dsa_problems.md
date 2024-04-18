@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1858 GMT+8 April 17, 2024
+Updated 1437 GMT+8 April 18, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -6755,35 +6755,52 @@ DFGEBCA
 
 
 ```python
-def build_tree(preorder):
-    if not preorder or preorder[0] == '.':
-        return None, preorder[1:]
-    root = preorder[0]
-    left, preorder = build_tree(preorder[1:])
-    right, preorder = build_tree(preorder)
-    return (root, left, right), preorder
+class BinaryTreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
 
-def inorder(tree):
-    if tree is None:
-        return ''
-    root, left, right = tree
-    return inorder(left) + root + inorder(right)
 
-def postorder(tree):
-    if tree is None:
-        return ''
-    root, left, right = tree
-    return postorder(left) + postorder(right) + root
+def build_tree(lst):
+    if not lst:
+        return None
 
-# 输入处理
-preorder = input().strip()
+    value = lst.pop(0)
+    if value == '.':
+        return None
 
-# 构建扩展二叉树
-tree, _ = build_tree(preorder)
+    root = BinaryTreeNode(value)
+    root.left = build_tree(lst)
+    root.right = build_tree(lst)
 
-# 输出结果
-print(inorder(tree))
-print(postorder(tree))
+    return root
+
+
+def inorder(root):
+    if not root:
+        return []
+
+    left = inorder(root.left)
+    right = inorder(root.right)
+    return left + [root.value] + right
+
+
+def postorder(root):
+    if not root:
+        return []
+
+    left = postorder(root.left)
+    right = postorder(root.right)
+    return left + right + [root.value]
+
+
+lst = list(input())
+root = build_tree(lst)
+in_order_result = inorder(root)
+post_order_result = postorder(root)
+print(''.join(in_order_result))
+print(''.join(post_order_result))
 ```
 
 
