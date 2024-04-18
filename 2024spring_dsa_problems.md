@@ -4218,14 +4218,14 @@ def build(seq):
 
 def cal_h_bin(node):
     if not node:
-        return 0
+         return -1
     return max(cal_h_bin(node.first_child), cal_h_bin(node.next_sib)) + 1
 
 
 seq = input()
 root, h_orig = build(seq)
 h_bin = cal_h_bin(root)
-print(f'{h_orig} => {h_bin - 1}')
+print(f'{h_orig} => {h_bin}')
 
 ```
 
