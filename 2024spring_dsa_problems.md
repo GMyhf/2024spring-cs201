@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1437 GMT+8 April 18, 2024
+Updated 2011 GMT+8 April 18, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -6766,7 +6766,7 @@ def build_tree(lst):
     if not lst:
         return None
 
-    value = lst.pop(0)
+    value = lst.pop()
     if value == '.':
         return None
 
@@ -6796,7 +6796,7 @@ def postorder(root):
 
 
 lst = list(input())
-root = build_tree(lst)
+root = build_tree(lst[::-1])
 in_order_result = inorder(root)
 post_order_result = postorder(root)
 print(''.join(in_order_result))
