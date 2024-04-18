@@ -6589,6 +6589,62 @@ for _ in range(n):
 
 
 
+```python
+from collections import deque
+
+def postorder(node, children, result):
+    if node in children:
+        for child in children[node]:
+            postorder(child, children, result)
+    result.append(node)
+
+def process_tree(tree_data):
+    nodes = deque()
+    children = {}
+    it = iter(tree_data)
+    root = next(it)
+    degree = int(next(it))
+    nodes.append((root, degree))
+    children[root] = []
+
+    while nodes:
+        current_node, degree = nodes.popleft()
+        for _ in range(degree):
+            if not it:
+                break
+            child = next(it)
+            child_degree = int(next(it))
+            if current_node not in children:
+                children[current_node] = []
+            children[current_node].append(child)
+            nodes.append((child, child_degree))
+            children[child] = []
+
+    # 后根遍历
+    result = []
+    postorder(root, children, result)
+    return result
+
+def main():
+    n = int(input().strip())
+    forest_data = []
+    for _ in range(n):
+        forest_data.append(input().strip().split())
+
+    results = []
+    for tree_data in forest_data:
+        result = process_tree(tree_data)
+        results.extend(result)
+
+    print(" ".join(results))
+
+if __name__ == "__main__":
+    main()
+
+```
+
+
+
 ## 07297: 神奇的幻方
 
 http://cs101.openjudge.cn/dsapre/07297/
