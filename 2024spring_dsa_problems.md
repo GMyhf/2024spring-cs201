@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2011 GMT+8 April 18, 2024
+Updated 2126 GMT+8 April 18, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -7082,6 +7082,107 @@ while len(l) > 1:
     heapq.heappush(l, a + b)
 
 print(ans)
+```
+
+
+
+## 18250: 冰阔落 I
+
+Disjoint set, http://cs101.openjudge.cn/practice/18250/
+
+老王喜欢喝冰阔落。
+
+初始时刻，桌面上有n杯阔落，编号为1到n。老王总想把其中一杯阔落倒到另一杯中，这样他一次性就能喝很多很多阔落，假设杯子的容量是足够大的。
+
+有m 次操作，每次操作包含两个整数x与y。
+
+若原始编号为x 的阔落与原始编号为y的阔落已经在同一杯，请输出"Yes"；否则，我们将原始编号为y 所在杯子的所有阔落，倒往原始编号为x 所在的杯子，并输出"No"。
+
+最后，老王想知道哪些杯子有冰阔落。
+
+
+
+**输入**
+
+有多组测试数据，少于 5 组。
+每组测试数据，第一行两个整数 n, m (n, m<=50000)。接下来 m 行，每行两个整数 x, y (1<=x, y<=n)。
+
+**输出**
+
+每组测试数据，前 m 行输出 "Yes" 或者 "No"。
+第 m+1 行输出一个整数，表示有阔落的杯子数量。
+第 m+2 行有若干个整数，从小到大输出这些杯子的编号。
+
+样例输入
+
+```
+3 2
+1 2
+2 1
+4 2
+1 2
+4 3
+```
+
+样例输出
+
+```
+No
+Yes
+2
+1 3 
+No
+No
+2
+1 4
+```
+
+来源
+
+Gong linyuan, Xu Yewen
+
+
+
+并查集的普遍问题：各节点的根没有及时更新到最深的根，各个节点的更新不是及时的。这道题里只有最深层的根是有效的。
+
+在并查集中，当一个节点的根节点更新为另一个节点时，如果该节点之后再次被更新为另一个节点的子节点，就会导致路径压缩未完全实现的情况。这可能会使得某些节点的根节点不是最深的根节点，而是更新过程中的某个中间节点。
+
+例如：A路径压缩更新到B，但是B后来又更新为C了，导致A的根结点不是C。
+
+
+
+```python
+def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])
+    return parent[x]
+
+def union(x, y):
+    root_x = find(x)
+    root_y = find(y)
+    if root_x != root_y:
+        parent[root_y] = root_x
+
+while True:
+    try:
+        n, m = map(int, input().split())
+        parent = list(range(n + 1))
+
+        for _ in range(m):
+            a, b = map(int, input().split())
+            if find(a) == find(b):
+                print('Yes')
+            else:
+                print('No')
+                union(a, b)
+
+        unique_parents = set(find(x) for x in range(1, n + 1))  # 获取不同集合的根节点
+        ans = sorted(unique_parents)  # 输出有冰阔落的杯子编号
+        print(len(ans))
+        print(*ans)
+
+    except EOFError:
+        break
 ```
 
 
