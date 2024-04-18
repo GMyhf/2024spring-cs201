@@ -6805,6 +6805,40 @@ print(''.join(post_order_result))
 
 
 
+```python
+def build_tree(preorder):
+    if not preorder or preorder[0] == '.':
+        return None, preorder[1:]
+    root = preorder[0]
+    left, preorder = build_tree(preorder[1:])
+    right, preorder = build_tree(preorder)
+    return (root, left, right), preorder
+
+def inorder(tree):
+    if tree is None:
+        return ''
+    root, left, right = tree
+    return inorder(left) + root + inorder(right)
+
+def postorder(tree):
+    if tree is None:
+        return ''
+    root, left, right = tree
+    return postorder(left) + postorder(right) + root
+
+# 输入处理
+preorder = input().strip()
+
+# 构建扩展二叉树
+tree, _ = build_tree(preorder)
+
+# 输出结果
+print(inorder(tree))
+print(postorder(tree))
+```
+
+
+
 递归建树，节点满载了就pop出去，最后递归得到答案
 
 ```python
