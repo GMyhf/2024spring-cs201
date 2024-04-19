@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1625 GMT+8 April 19, 2024
+Updated 2150 GMT+8 April 19, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -13349,14 +13349,14 @@ http://cs101.openjudge.cn/practice/28050/
 
 ![img](http://media.openjudge.cn/images/upload/9136/1712843793.jpg)
 
-输入
+**输入**
 
 两行。
 第一行是一个整数n，表示正方形棋盘边长，3 <= n <= 19。
 
 第二行是空格分隔的两个整数sr, sc，表示骑士的起始位置坐标。棋盘左上角坐标是 0 0。0 <= sr <= n-1, 0 <= sc <= n-1。
 
-输出
+**输出**
 
 如果是合格的周游，输出 success，否则输出 fail。
 
@@ -13594,57 +13594,47 @@ if __name__ == '__main__':
 
 
 
-这个相当于直接走一条路。这程序“只要遇到一个点u，邻居是空就fail”，没有回溯，不能保证正确，除非能证明。
+王镜廷，数学学院，发现了不能周游的规律。
 
-```python
-# 周添 物理学院
-def knight_tour(n, sr, sc):
-    moves = [(-2, -1), (-2, 1), (-1, -2), (-1, 2),
-             (1, -2), (1, 2), (2, -1), (2, 1)]
+Q: 在一个类似国际象棋棋盘上，一个棋子“马”（骑士），按照“马走日”的规则，从一个格子出发，要走遍所有棋盘格恰好一次。把一个这样的走棋序列称为一次“周游“。 
 
-    visited = [[False] * n for _ in range(n)]
+如何证明：整数n，表示正方形棋盘边长。如果n是奇数，骑士出发点坐标是(x,y)，x + y也是奇数，这样的周游不存在。
 
-    def is_valid_move(row, col):
-        return 0 <= row < n and 0 <= col < n and not visited[row][col]
+A: 证明这个问题的方法主要基于对棋盘的二分色彩与骑士跳跃特性的分析。我们可以将这个问题简化如下：
 
-    def count_neighbors(row, col):
-        count = 0
-        for dr, dc in moves:
-            next_row, next_col = row + dr, col + dc
-            if is_valid_move(next_row, next_col):
-                count += 1
-        return count
+1. **棋盘的着色**: 首先，我们可以将一个 n x n 的棋盘视为黑白相间的格子，类似于国际象棋棋盘。如果 n 是奇数，棋盘会有 (n^2) 个格子，因为 n^2 也是奇数，所以黑白格子数量不相等。具体来说，其中一种颜色的格子将比另一种多一个。
 
-    def sort_moves(row, col):
-        neighbor_counts = []
-        for dr, dc in moves:
-            next_row, next_col = row + dr, col + dc
-            if is_valid_move(next_row, next_col):
-                count = count_neighbors(next_row, next_col)
-                neighbor_counts.append((count, (next_row, next_col)))
-        neighbor_counts.sort()
-        sorted_moves = [move[1] for move in neighbor_counts]
-        return sorted_moves
+2. **骑士的跳跃**: 骑士（马）的移动可以看作是在这样的格子间的跳跃。每次移动，骑士从一个颜色的格子跳到另一个颜色的格子。具体来说，如果它在一个黑色格子上，下一步必然是白色格子，反之亦然。
 
-    visited[sr][sc] = True
-    tour = [(sr, sc)]
+3. **起始点的颜色与奇数特性**: 如果骑士起始点的坐标 (x, y) 满足 x + y 为奇数，在标准黑白棋盘上，这意味着骑士位于一种特定颜色的格子上（比如说白格）。由于总格子数为奇数，且黑白格子数目不相等，假设黑格比白格多一个。因此，如果骑士始终从白格跳到黑格，那么它无法再次跳回到黑格，因为最终会有一个黑格没有白格可供跳转。
 
-    while len(tour) < n * n:
-        current_row, current_col = tour[-1]
-        sorted_next_moves = sort_moves(current_row, current_col)
-        if not sorted_next_moves:
-            return "fail"
-        next_row, next_col = sorted_next_moves[0]
-        visited[next_row][next_col] = True
-        tour.append((next_row, next_col))
+4. **周游的可能性**: 周游意味着每个格子都恰好走一次，没有遗漏也没有重复。如果棋盘的一个颜色的格子比另一个多，那么从总格数为奇数的格子颜色开始的周游是不可能的，因为骑士将无法找到足够的跳转点完成最后一步。
 
-    return "success"
+结合以上几点，可以得出结论：在一个奇数边长的棋盘上，如果骑士起始点的坐标 (x, y) 使得 x + y 为奇数，那么无法实现一个完整的周游，因为从颜色较少的格子开始，最终将无法匹配到足够的颜色格子完成最后一跳。因此，这样的周游不存在。
 
-n = int(input())
-sr, sc = map(int, input().split())
-print(knight_tour(n, sr, sc)) 
+
+
+为了更好地理解这一概念，让我们考虑一个具体的例子，以 5x5 的棋盘为例。**5x5 棋盘的着色**，B 代表黑色格，W 代表白色格
 
 ```
+B W B W B
+W B W B W
+B W B W B
+W B W B W
+B W B W B
+```
+
+**一个不可能完成周游的例子**，骑士的起始点到 (3, 2)：**颜色**：白色（W），**坐标和 (x + y)**：3 + 2 = 5 (奇数)
+
+在这种情况下，因为 5 是奇数，我们预计无法完成周游。理由是起始于白色格子，并且由于黑色格子（13个）比白色格子（12个）多一个，所以最终将会有一个黑色格子无法被访问完成最后一步跳跃。
+
+**验证理论**
+
+尝试规划一个从 (3, 2) 开始的骑士周游路径会发现，由于棋盘的不对称性（黑格多于白格），骑士最终将被迫尝试从一个黑格跳至另一个黑格，这违反了骑士的跳跃规则（每次跳跃必须从一种颜色的格子跳到另一种颜色的格子），从而导致周游失败。
+
+此理论和例子展示了如何使用棋盘的二分色彩性质以及格子数量的奇偶性来分析和判断骑士周游的可能性。在任何边长为奇数的棋盘上，如果起始点的坐标和为奇数，则无法完成周游，因为总会有多出的一个同色格子无法被合规跳跃覆盖。
+
+
 
 
 
