@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2126 GMT+8 April 18, 2024
+Updated 1625 GMT+8 April 19, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -13593,6 +13593,8 @@ if __name__ == '__main__':
 ```
 
 
+
+这个相当于直接走一条路。这程序“只要遇到一个点u，邻居是空就fail”，没有回溯，不能保证正确，除非能证明。
 
 ```python
 # 周添 物理学院
