@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2239 GMT+8 April 19, 2024
+Updated 2253 GMT+8 April 19, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -13338,6 +13338,42 @@ if result:
 else:
     print("NO")
 ```
+
+
+
+焦晨航 数学科学学院：最最最高兴的一集！零碎看了一天，看了题解没直接ctrl c+ctrl v，而是狠狠洞察思路用计概手段拿下！长度短，能看懂，好操作，爽完了。
+
+```python
+# 焦晨航 数学科学学院
+from collections import defaultdict
+dic=defaultdict(list)
+n,lis=int(input()),[]
+for i in range(n):
+    lis.append(input())
+for word in lis:
+    for i in range(len(word)):
+        bucket=word[:i]+'_'+word[i+1:]
+        dic[bucket].append(word)
+def bfs(start,end,dic):
+    queue=[(start,[start])]
+    visited=[start]
+    while queue:
+        currentword,currentpath=queue.pop(0)
+        if currentword==end:
+            return ' '.join(currentpath)
+        for i in range(len(currentword)):
+            bucket=currentword[:i]+'_'+currentword[i+1:]
+            for nbr in dic[bucket]:
+                if nbr not in visited:
+                    visited.append(nbr)
+                    newpath=currentpath+[nbr]
+                    queue.append((nbr,newpath))
+    return 'NO'
+start,end=map(str,input().split())    
+print(bfs(start,end,dic))
+```
+
+
 
 
 
