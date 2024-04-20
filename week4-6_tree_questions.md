@@ -1,6 +1,6 @@
 # 20240312\~26-Week4~6-植树节（Arbor day）
 
-Updated 1834 GMT+8 March 27, 2024
+Updated 2128 GMT+8 Apr 20, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1196,6 +1196,79 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+
+
+#### 08581: 扩展二叉树
+
+http://cs101.openjudge.cn/dsapre/08581/
+
+由于先序、中序和后序序列中的任一个都不能唯一确定一棵二叉树，所以对二叉树做如下处理，将二叉树的空结点用·补齐，如图所示。我们把这样处理后的二叉树称为原二叉树的扩展二叉树，扩展二叉树的先序和后序序列能唯一确定其二叉树。 现给出扩展二叉树的先序序列，要求输出其中序和后序序列。
+
+![img](http://media.openjudge.cn/images/upload/1440300244.png)
+
+**输入**
+
+扩展二叉树的先序序列（全部都由大写字母或者.组成）
+
+**输出**
+
+第一行：中序序列
+第二行：后序序列
+
+样例输入
+
+```
+ABD..EF..G..C..
+```
+
+样例输出
+
+```
+DBFEGAC
+DFGEBCA
+```
+
+
+
+嵌套括号表示法Nested parentheses representation。直接用元组（root, left, right）来代表一棵树。
+
+ABD..EF..G..C..
+('A', ('B', ('D', None, None), ('E', ('F', None, None), ('G', None, None))), ('C', None, None))
+
+```python
+def build_tree(preorder):
+    if not preorder or preorder[0] == '.':
+        return None, preorder[1:]
+    root = preorder[0]
+    left, preorder = build_tree(preorder[1:])
+    right, preorder = build_tree(preorder)
+    return (root, left, right), preorder
+
+def inorder(tree):
+    if tree is None:
+        return ''
+    root, left, right = tree
+    return inorder(left) + root + inorder(right)
+
+def postorder(tree):
+    if tree is None:
+        return ''
+    root, left, right = tree
+    return postorder(left) + postorder(right) + root
+
+# 输入处理
+preorder = input().strip()
+
+# 构建扩展二叉树
+tree, _ = build_tree(preorder)
+
+# 输出结果
+print(inorder(tree))
+print(postorder(tree))
+```
+
+
 
 
 
