@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2253 GMT+8 April 19, 2024
+Updated 1938 GMT+8 April 20, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4508,7 +4508,7 @@ print(" ".join([x.value for x in lst1]))
 一步一步来。先把前序输入+内外节点的信息转成二叉树，第二步是把二叉树转成原来的树，第三步是bfs镜像输出。
 
 ```python
-# 叶晨曦 化学与分子工程
+# 叶晨熙 化学与分子工程
 class Noden:
     def __init__(self, value):
         self.child = []
