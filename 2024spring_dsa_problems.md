@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1938 GMT+8 April 20, 2024
+Updated 1945 GMT+8 April 20, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8799,6 +8799,34 @@ while True:
 ```
 
  
+
+```python
+pig, pigmin = [], []
+while True:
+    try:
+        *line, = input().split()
+        if "pop" in line:
+            if len(pig) == 0:
+                continue
+
+            val = pig.pop()
+            if len(pigmin) > 0 and val == pigmin[-1]:
+                pigmin.pop()
+        elif "push" in line:
+            val = int(line[1])
+            pig.append(val)
+            if len(pigmin) == 0 or val <= pigmin[-1]:
+                pigmin.append(val)
+        elif "min" in line:
+            if len(pig) == 0:
+                continue
+            else:
+                print(pigmin[-1])
+    except EOFError:
+        break
+```
+
+
 
 字典标记，懒删除
 
