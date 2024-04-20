@@ -6861,6 +6861,11 @@ print(''.join(post_order_result))
 
 
 
+嵌套括号表示法Nested parentheses representation。直接用元组（root, left, right）来代表一棵树。
+
+ABD..EF..G..C..
+('A', ('B', ('D', None, None), ('E', ('F', None, None), ('G', None, None))), ('C', None, None))
+
 ```python
 def build_tree(preorder):
     if not preorder or preorder[0] == '.':
