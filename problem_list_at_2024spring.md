@@ -26,31 +26,11 @@ http://cs101.openjudge.cn/practice/05907/
 
 Assignment #A: 图论：算法，树算及栈
 
-20743: 整人的提词本
+20743: 整人的提词本	02255: 重建二叉树
 
-http://cs101.openjudge.cn/practice/20743/
+01426: Find The Multiple	04115: 鸣人和佐助
 
-02255: 重建二叉树
-
-http://cs101.openjudge.cn/practice/02255/
-
-01426/428:Find The Multiple
-
-http://cs101.openjudge.cn/practice/01426/
-
-要求用bfs实现
-
-04115: 鸣人和佐助
-
-bfs, http://cs101.openjudge.cn/practice/04115/
-
-20106: 走山路
-
-Dijkstra, http://cs101.openjudge.cn/routine/20106/
-
-05442: 兔子与星空
-
-Prim, http://cs101.openjudge.cn/practice/05442/
+20106: 走山路	05442: 兔子与星空
 
 
 
