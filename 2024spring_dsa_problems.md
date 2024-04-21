@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1945 GMT+8 April 20, 2024
+Updated 1627 GMT+8 April 21, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -6718,6 +6718,99 @@ while val <= (2*N-1)**2:
 for row in mat:
     print(*row)
 ```
+
+
+
+## 07734: 虫子的生活
+
+disjoint set, http://cs101.openjudge.cn/practice/07734/
+
+Hopper 博士正在研究一种罕见种类的虫子的性行为。他假定虫子只表现为两种性别，并且虫子只与异性进行交互。在他的实验中，不同的虫子个体和虫子的交互行为很容易区分开来，因为这些虫子的背上都被标记有一些标号。
+
+现在给定一系列的虫子的交互，现在让你判断实验的结果是否验证了他的关于没有同性恋的虫子的假设或者是否存在一些虫子之间的交互证明假设是错的。
+
+**输入**
+
+输入的第一行包含实验的组数。每组实验数据第一行是虫子的个数（至少1个，最多2000个) 和交互的次数 (最多1000000次) ，以空格间隔. 在下面的几行中,每次交互通过给出交互的两个虫子的标号来表示，标号之间以空格间隔。已知虫子从1开始连续编号。
+
+**输出**
+
+每组测试数据的输出为2行，第一行包含 "Scenario #i:", 其中 i 是实验数据组数的标号，从1开始,第二行为 "No suspicious bugs found!" 如果实验结果和博士的假设相符,或 "Suspicious bugs found!" 如果Hopper的博士的假设是错误的
+
+样例输入
+
+```
+2
+3 3
+1 2
+2 3
+1 3
+4 2
+1 2
+3 4
+```
+
+样例输出
+
+```
+Scenario #1:
+Suspicious bugs found!
+
+Scenario #2:
+No suspicious bugs found!
+```
+
+
+
+注意每组数据中间有个空行
+
+```python
+class UnionFind:
+    def __init__(self, size):
+        self.parent = list(range(size))
+
+    def find(self, x):
+        if x != self.parent[x]:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        rootX = self.find(x)
+        rootY = self.find(y)
+        if rootX != rootY:
+            self.parent[rootY] = rootX
+
+    def is_connected(self, x, y):
+        return self.find(x) == self.find(y)
+
+
+def solve_bug_life(scenarios):
+    for i in range(1, scenarios + 1):
+        n, m = map(int, input().split())
+        uf = UnionFind(2 * n + 1)  # 为每个虫子创建两个节点表示其可能的两种性别
+        suspicious = False
+        for _ in range(m):
+            u, v = map(int, input().split())
+            if suspicious:
+                continue
+
+            if uf.is_connected(u, v):
+                suspicious = True
+            uf.union(u, v + n)  # 将u的一种性别与v的另一种性别关联
+            uf.union(u + n, v)  # 同理
+
+
+        print(f'Scenario #{i}:')
+        print('Suspicious bugs found!' if suspicious else 'No suspicious bugs found!')
+        print()
+
+
+# 读取场景数量并解决问题
+scenarios = int(input())
+solve_bug_life(scenarios)
+```
+
+
 
 
 
