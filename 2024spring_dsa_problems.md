@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2114 GMT+8 April 21, 2024
+Updated 0920 GMT+8 April 22, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -13297,6 +13297,9 @@ https://runestone.academy/ns/books/published/pythonds/Graphs/TheWordLadderProble
 
 
 
+按照单词随机替换一个字母建立桶，构建桶内各单词的联系，然后从起点广度优先遍历和起点相连的
+点，过程中记录每个词的前一个词，直至遇到终止词，然后倒序往前追溯即可
+
 ```python
 import sys
 from collections import deque
@@ -13588,6 +13591,9 @@ success
 https://runestone.academy/ns/books/published/pythonds/Graphs/TheKnightsTourProblem.html
 
 
+
+和马走日思路一样，不过需要优化搜索算法，先找到当前点能够走的所有下一个点，然后计算每个下一
+个点能走的下下一个点数量，优先搜索数量少的，一旦发现一条周游路径就返回True。
 
 ```python
 import sys
