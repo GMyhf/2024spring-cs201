@@ -923,6 +923,39 @@ if __name__ == "__main__":
 
 
 
+先把输入变成奇数，除掉的2的数量，在最后用'0'补全，然后用bfs从0开始逐位添加0或者1，查找可以整除的数
+
+```python
+# 钟明衡 物理学院
+def bfs(n):
+    l = [0]
+    s, e = 0, 1
+    while s != e:
+        for i in range(s, e):
+            for j in (0, 1):
+                x = l[i]*10+j
+                if x:
+                    if x % n:
+                        l.append(x)
+                    else:
+                        return str(x)
+        s, e = e, len(l)
+    return ''
+
+
+while (n := int(input())):
+    c = 0
+    while (n+1) % 2:
+        n //= 2
+        c += 1
+    print(bfs(n)+'0'*c)
+
+```
+
+
+
+
+
 ## 01611: The Suspects
 
 http://cs101.openjudge.cn/dsapre/01611/
