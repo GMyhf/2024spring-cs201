@@ -1,4 +1,4 @@
-# Assignment #A: 图论：遍历，树算及栈
+# Assignment #A: 图论：算法，树算及栈
 
 Updated 2018 GMT+8 Apr 21, 2024
 
