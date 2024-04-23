@@ -7028,6 +7028,8 @@ DFGEBCA
 
 
 
+由于二叉树的空结点都用.补齐了，直接进行递归就可以得到唯一确定的树。
+
 ```python
 class BinaryTreeNode:
     def __init__(self, value):
