@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 0920 GMT+8 April 22, 2024
+Updated 2132 GMT+8 April 23, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -950,6 +950,36 @@ while (n := int(input())):
         c += 1
     print(bfs(n)+'0'*c)
 
+```
+
+
+
+思路：比较偏bfs的想法。从位数小起步，如果找不到的话，在后面加0或者1。一个简化算法的方式是，如果有mod相同的可以剔掉
+
+```python
+#2200015507 王一粟
+from collections import deque
+def find(n):
+    if n == 1:
+        return 1
+    queue = deque([10,11])
+    mylist = [1]
+    while queue:
+        element = queue.popleft()
+        t = element % n
+        if t == 0:
+            return str(element)
+        else:
+            if t not in mylist:
+                mylist.append(t)
+                queue.append(element*10+1)
+                queue.append(element*10)
+while True:
+    n = int(input())
+    if n == 0:
+        break
+    else:
+        print(find(n))
 ```
 
 
