@@ -4305,6 +4305,65 @@ print(tree_heights(s))
 
 
 
+
+
+思路：我写的方法还是分别建起来两个树，其中左儿子右兄弟方法建树还挺麻烦的，但是后来一想，每一个节点都是左儿子右兄弟方法建树，那不就是递归吗。
+
+```python
+# 蔡嘉华 物理学院
+class TreeNode:
+    def __init__(self):
+        self.children = []
+        self.left = None
+        self.right = None
+
+def height1(root):
+    if not root:
+        return -1
+    elif not root.children:
+        return 0
+    h = 0
+    for child in root.children:
+        h = max(h, height1(child))
+    return h + 1
+
+def height2(root):
+    if not root:
+        return -1
+    elif not root.left and not root.right:
+        return 0
+    return 1 + max(height2(root.left), height2(root.right))
+
+root = TreeNode()
+nodes = [root]
+steps = list(input())
+for step in steps:
+    if step == 'd':
+        node = TreeNode()
+        nodes[-1].children.append(node)
+        nodes.append(node)
+    else:
+        nodes.pop()
+
+def prase_tree(root: TreeNode):
+    if root.children:
+        root.left = prase_tree(root.children.pop(0))
+        cur = root.left
+        while root.children:
+            cur.right = prase_tree(root.children.pop(0))
+            cur = cur.right
+    return root
+
+h1 = height1(root)
+root0 = prase_tree(root)
+h2 = height2(root0)
+print(f'{h1} => {h2}')
+```
+
+
+
+
+
 ```c++
 #include <iostream>
 #include <stack>
