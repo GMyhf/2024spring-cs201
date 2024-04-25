@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2132 GMT+8 April 23, 2024
+Updated 1049 GMT+8 April 25, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4331,6 +4331,33 @@ def tree_heights(s):
 
 s = input().strip()
 print(tree_heights(s))
+```
+
+
+
+思路：根据dfs序列递归建树，但并不需要把树转换为实体二叉树，可以递归地求高度(Height)和转换后高度(NewH)。
+
+```python
+# 卢卓然 生命科学学院
+class Node:
+    def __init__(self):
+        self.child = []
+    
+    def getHeight(self):
+        return 1 + max([nd.getHeight() for nd in self.child], default=-1)
+    
+    def getNewH(self):
+        return 1 + max([nd.getNewH() + i for i, nd in enumerate(self.child)], default=-1)
+
+def call():
+    res = Node()
+    while s and s.pop() == 'd':
+        res.child.append(call())
+    return res
+    
+s = list(input())[::-1]
+root = call()
+print(f"{root.getHeight()} => {root.getNewH()}")
 ```
 
 
