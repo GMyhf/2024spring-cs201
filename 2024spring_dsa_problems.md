@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1049 GMT+8 April 25, 2024
+Updated 1704 GMT+8 April 25, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -14617,6 +14617,188 @@ print(evaluate_expression(expression))
 http://cs101.openjudge.cn/practice/20576/
 
 
+
+# 落谷
+
+
+
+
+
+## P1528 切蛋糕
+
+https://www.luogu.com.cn/problem/P1528
+
+
+
+Facer今天买了 $n$ 块蛋糕，不料被信息组中球球等好吃懒做的家伙发现了，没办法，只好浪费一点来填他们的嘴巴。他答应给每个人留一口，然后量了量每个人口的大小。Facer 有把刀，可以切蛋糕，但他不能把两块蛋糕拼起来，但是他又不会给任何人两块蛋糕。现在问你，facer 怎样切蛋糕，才能满足最多的人。（facer 的刀很强，切的时候不会浪费蛋糕）。
+
+**输入**
+
+第一行 $n$，facer 有 $n$ 个蛋糕。接下来 $n$ 行，每行表示一个蛋糕的大小。再一行一个数 $m$，为信息组的人数，然后 $m$ 行，每行一个数，为一个人嘴的大小。$(1\le n\le 50$，$ 1\le m\le 1024)$
+
+**输出**
+
+一行，facer最多可以填多少张嘴巴。
+
+
+
+Sample Input
+
+```
+4
+30
+40
+50
+25
+10
+15
+16
+17
+18
+19
+20
+21
+25
+24
+30
+```
+
+Sample Output
+
+```
+7
+```
+
+
+
+```python
+import sys
+sys.setrecursionlimit(1000000)
+def sub_DFS(toTest, origin, cake, mouth, totalCake, needCake, wasteCake, MIN_NEED, n):
+    if toTest < 1:
+        return True
+    if totalCake - wasteCake < needCake:
+        return False
+
+    flag = False
+    for i in range(origin, n + 1):
+        if cake[i] >= mouth[toTest]:
+            needCake -= mouth[toTest]
+            totalCake -= mouth[toTest]
+            cake[i] -= mouth[toTest]
+
+            wasted = False
+            if cake[i] < MIN_NEED:
+                wasteCake += cake[i]
+                wasted = True
+
+            if mouth[toTest] == mouth[toTest - 1]:
+                if sub_DFS(toTest - 1, i, cake, mouth, totalCake, needCake, wasteCake, MIN_NEED, n):
+                    flag = True
+            else:
+                if sub_DFS(toTest - 1, 1, cake, mouth, totalCake, needCake, wasteCake, MIN_NEED, n):
+                    flag = True
+
+            if wasted:
+                wasteCake -= cake[i]
+            cake[i] += mouth[toTest]
+            totalCake += mouth[toTest]
+            needCake += mouth[toTest]
+
+            if flag:
+                return True
+
+    return False
+
+
+def DFS(toTest, cake, mouth, allCake, prefixSum):
+    totalCake = allCake
+    needCake = prefixSum[toTest]
+    wasteCake = 0
+    MIN_NEED = mouth[1]
+    n = len(cake) - 1
+
+    return sub_DFS(toTest, 1, cake, mouth, totalCake, needCake, wasteCake, MIN_NEED, n)
+
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = list(map(int, input().split()))
+
+    n = data[0]
+    cake = [0] + data[1:n + 1]
+    m = data[n + 1]
+    mouth = [0] + data[n + 2:n + 2 + m]
+
+    maxCake = max(cake)
+    allCake = sum(cake)
+
+    mouth.sort()
+    prefixSum = [0] * (m + 1)
+    for i in range(1, m + 1):
+        prefixSum[i] = prefixSum[i - 1] + mouth[i]
+
+    l, r = 1, m
+    while mouth[r] > maxCake and r > 0:
+        r -= 1
+
+    result = 0
+    while l <= r:
+        mid = (l + r) // 2
+        if DFS(mid, cake[:], mouth, allCake, prefixSum):
+            result = mid
+            l = mid + 1
+        else:
+            r = mid - 1
+
+    print(result)
+
+
+if __name__ == "__main__":
+    main()
+
+```
+
+
+
+主要是通过递归深度优先搜索 (DFS) 和二分搜索来解决一个特定的蛋糕分配问题。具体目标是在给定的蛋糕和人群中，找出最大数量的人，使得每个人都至少能得到他们口中大小的蛋糕部分。以下是程序的具体解读：
+
+**主要组件和流程**
+
+1. **输入读取和初始化**：
+   - 首先读取输入数据，包括蛋糕数量、每块蛋糕的大小、人数以及每个人口中的大小。
+   - 初始化蛋糕数组 `cake` 和需求数组 `mouth`，同时计算蛋糕总和 `allCake` 和每块蛋糕的最大值 `maxCake`。
+
+2. **排序和前缀和计算**：
+   - 对需求数组 `mouth` 进行排序，这样可以优先满足较小的需求，提高蛋糕的利用率。
+   - 计算 `mouth` 数组的前缀和 `prefixSum`，用于快速获取前 k 个需求的总和。
+
+3. **二分搜索**：
+   - 使用二分搜索来确定可以被满足的最大人数。搜索范围是从 1 到 m（其中 m 是人数，也是 `mouth` 数组的长度）。
+   - 在每次迭代中，计算中间值 `mid`，并使用 `DFS` 函数来验证是否可以满足 `mid` 个人的需求。
+
+4. **DFS 函数**：
+   - `DFS` 函数尝试满足 `toTest`（即当前二分的中间值 `mid`）个人的需求。它递归地尝试将蛋糕分配给每个人。
+   - 使用 `sub_DFS` 进行实际的递归搜索，它通过改变蛋糕数组和需求来试图找到一个可行的分配方案。
+   - 处理包括浪费蛋糕和递归回溯（即恢复蛋糕和需求状态）。
+
+5. **优化处理**：
+   - 通过判断当前最大蛋糕 `maxCake` 来调整搜索范围，以避免无意义的搜索。如果某人的需求大于任何一块蛋糕，那么直接排除这部分人。
+
+
+
+**关键函数和概念**
+
+- **`sub_DFS`**：核心的递归函数，负责尝试各种分配方案，以满足尽可能多的人。
+- **二分搜索**：在可能的人数范围内使用二分搜索，快速找到可以被满足的最大人数。
+- **优化**：通过前缀和快速计算需求总和，通过排序确保贪心策略的有效性。
+
+
+
+**总结**
+
+这个程序的效率依赖于递归搜索和二分搜索的结合，适用于问题规模较小的情况（蛋糕数量 n <= 50，人数 m <= 1024）。对于更大的数据集，可能需要进一步的优化或改进算法来避免性能瓶颈。
 
 
 
