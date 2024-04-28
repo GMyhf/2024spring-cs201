@@ -1,6 +1,6 @@
 # 编程题目
 
-Updated 2016 GMT+8 Apr 21, 2024
+Updated 1539 GMT+8 Apr 28, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -16,11 +16,31 @@ Todo:
 
 
 
+Assignment #B: 图论和树算
+
+28170:算鹰
+
+dfs, http://cs101.openjudge.cn/practice/28170/
+
+02754:八皇后
+
+dfs, http://cs101.openjudge.cn/practice/02754/
+
+03151:Pots
+
+bfs, http://cs101.openjudge.cn/2024sp_routine/03151/
+
 05907: 二叉树的操作
 
-http://cs101.openjudge.cn/practice/05907/
+http://cs101.openjudge.cn/dsapre/05907/
 
+18250: 冰阔落 I
 
+Disjoint set, http://cs101.openjudge.cn/practice/18250/
+
+05443: 兔子与樱花
+
+http://cs101.openjudge.cn/practice/05443/
 
 
 
