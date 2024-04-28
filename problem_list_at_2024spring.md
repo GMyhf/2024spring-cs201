@@ -18,15 +18,15 @@ Todo:
 
 Assignment #B: 图论和树算
 
-28170:算鹰
+28170: 算鹰
 
 dfs, http://cs101.openjudge.cn/practice/28170/
 
-02754:八皇后
+02754: 八皇后
 
 dfs, http://cs101.openjudge.cn/practice/02754/
 
-03151:Pots
+03151: Pots
 
 bfs, http://cs101.openjudge.cn/2024sp_routine/03151/
 
