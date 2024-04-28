@@ -1,6 +1,6 @@
-# Assignment #A: 图论和树算
+# Assignment #B: 图论和树算
 
-Updated 1600 GMT+8 Apr 28, 2024
+Updated 1709 GMT+8 Apr 28, 2024
 
 2024 spring, Complied by ==同学的姓名、院系==
 
@@ -82,7 +82,7 @@ dfs, http://cs101.openjudge.cn/practice/02754/
 
 ### 03151: Pots
 
-bfs, http://cs101.openjudge.cn/2024sp_routine/03151/
+bfs, http://cs101.openjudge.cn/practice/03151/
 
 
 
@@ -107,7 +107,7 @@ bfs, http://cs101.openjudge.cn/2024sp_routine/03151/
 
 ### 05907: 二叉树的操作
 
-http://cs101.openjudge.cn/dsapre/05907/
+http://cs101.openjudge.cn/practice/05907/
 
 
 
