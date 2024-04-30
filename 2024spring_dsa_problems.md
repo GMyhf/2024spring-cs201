@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2044 GMT+8 April 29, 2024
+Updated 0857 GMT+8 April 30, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -12,9 +12,9 @@ Updated 2044 GMT+8 April 29, 2024
 
 2024/2/18:
 
-1）数算课程在春季学期开，前一年计算概论课程结束，正值寒假，同学建议每日推出少许题目练习，因此成为“**数算pre每日选做**”。
+1）数算课程在春季学期开，适逢秋季计算概论课程结束，正值寒假，同学建议每日推出少许题目练习，因此创立此题集。
 
-2）为避免重复，如果题目出现在  https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md，会给出指引。
+2）为避免重复，如果题目出现在  https://github.com/GMyhf/2020fall-cs101 计概题集 2020fall_cs101.openjudge.cn_problems.md，会给出指引。如果计概题集中有明显数算题目，也会移过来。
 
 3）有同学假期时候完成了这些题目，放在 gitbub上面，可以参考
 
@@ -8921,6 +8921,9 @@ openjudge
 
 
 use a stack to keep track of the characters inside each pair of parentheses. When you encounter a closing parenthesis, you pop characters from the stack and reverse them until you reach an opening parenthesis, then push the reversed characters back onto the stack. Continue this process until you've processed the entire string. Finally, join the characters in the stack to form the final string.
+
+用stack做，碰到后括号说明到了一层结尾了，进栈，用temp做反向处理，然后去掉头括号，合并
+stack，继续，最后弹出
 
 ```python
 def reverse_parentheses(s):
