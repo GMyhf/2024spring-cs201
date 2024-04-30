@@ -6514,6 +6514,46 @@ m<=100
 
 
 
+思路：建树，注意交换节点的时候搞清楚哪个变量在引用什么，否则容易出现死循环之类的
+
+```python
+# 夏天明 元培学院
+class Node:
+    def __init__(self, name):
+        self.name = name
+        self.child = [None, None]
+        self.parent = None
+    
+    def findLef(self):
+        curr = self
+        while (lef := nodes[curr.child[0]]):
+            curr = lef
+        return curr.name
+
+for o in range(int(input())):
+    n, m = map(int, input().split())
+    nodes = [Node(i) for i in range(n)] + [None]
+    for o in range(n):
+        x, *idx = map(int, input().split())
+        nodes[x].child = idx
+        for i in [0,1]:
+            if idx[i] != -1:
+                nodes[idx[i]].parent = (nodes[x],i) 
+    for o in range(m):
+        token, *idx = map(int, input().split())
+        if token == 1:
+            p = [nodes[i].parent for i in idx]
+            for i in [0,1]:
+                p[i][0].child[p[i][1]] = idx[1-i]
+                nodes[idx[i]].parent = p[1-i]
+        else:
+            print(nodes[idx[0]].findLef())
+```
+
+
+
+
+
 思路：没有特别的操作。20min。
 
 ```python
