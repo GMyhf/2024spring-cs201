@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1219 GMT+8 April 30, 2024
+Updated 2214 GMT+8 April 30, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -6470,6 +6470,62 @@ m<=100
 4
 2
 ```
+
+
+
+思路：没有特别的操作。20min。
+
+```python
+# 谭琳诗倩、2200013722
+class BinaryTree:
+    def __init__(self,root):
+        self.root = root
+        self.left = None
+        self.right = None
+        self.father = None
+
+for _ in range(int(input())):
+    n,m = map(int,input().split())
+    tree_list = list(BinaryTree(i) for i in range(n))
+
+    for __ in range(n):
+        root,left,right = map(int,input().split())
+        if left != -1:
+            tree_list[root].left = tree_list[left]
+            tree_list[left].father = tree_list[root]
+        if right != -1:
+            tree_list[root].right = tree_list[right]
+            tree_list[right].father = tree_list[root]
+
+    for __ in range(m):
+        type,*tu = map(int,input().split())
+
+        if type == 1: # swap
+            x,y = tu
+            tree1,tree2 = tree_list[x],tree_list[y]
+            father1 = tree1.father
+            father2 = tree2.father
+            if father2 is father1:
+                father2.left,father2.right = father2.right,father2.left
+
+            else:
+                if father1.left == tree1:
+                    father1.left = tree2
+                else: father1.right = tree2
+
+                if father2.left == tree2:
+                    father2.left = tree1
+                else: father2.right = tree1
+                tree1.father,tree2.father = father2,father1
+
+        elif type == 2:
+            node = tree_list[tu[0]]
+            while node.left:
+                node = node.left
+            print(node.root)
+```
+
+
 
 
 
