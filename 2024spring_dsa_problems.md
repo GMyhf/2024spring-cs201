@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 0857 GMT+8 April 30, 2024
+Updated 1219 GMT+8 April 30, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -5931,7 +5931,7 @@ print(expression_value)
 
 ## 05442: 兔子与星空
 
-http://cs101.openjudge.cn/dsapre/05442/
+prim, kruskal, http://cs101.openjudge.cn/dsapre/05442/
 
 很久很久以前，森林里住着一群兔子。兔子们无聊的时候就喜欢研究星座。如图所示，天空中已经有了n颗星星，其中有些星星有边相连。兔子们希望删除掉一些边，然后使得保留下的边仍能是n颗星星连通。他们希望计算，保留的边的权值之和最小是多少？
 
@@ -6017,6 +6017,58 @@ def solve():
 
 solve()
 ```
+
+
+
+思路：用的kruskal，这个算法比那些用图的算法看起来明白多了
+
+kruskal适配这种vertex.key连续变化的情况，因为并查集建立还有find方法中都要用到列表的有序性。
+
+```python
+# 蔡嘉华 物理学院
+class DisjSet:
+    def __init__(self, n):
+        self.parent = [i for i in range(n)]
+        self.rank = [0]*n
+    
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+    
+    def union(self, x, y):
+        xset, yset = self.find(x), self.find(y)
+        if self.rank[xset] > self.rank[yset]:
+            self.parent[yset] = xset
+        else:
+            self.parent[xset] = yset
+            if self.rank[xset] == self.rank[yset]:
+                self.rank[yset] += 1
+
+def kruskal(n, edges):
+    dset = DisjSet(n)
+    edges.sort(key = lambda x:x[2])
+    sol = 0
+    for u, v, w in edges:
+        u, v = ord(u)-65, ord(v)-65
+        if dset.find(u) != dset.find(v):
+            dset.union(u, v)
+            sol += w
+    if len(set(dset.find(i) for i in range(n))) > 1:
+        return -1
+    return sol
+
+n = int(input())
+edges = []
+for _ in range(n-1):
+    arr = input().split()
+    root, m = arr[0], int(arr[1])
+    for i in range(m):
+        edges.append((root, arr[2+2*i], int(arr[3+2*i])))
+print(kruskal(n, edges))
+```
+
+
 
 
 
