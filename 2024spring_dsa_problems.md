@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2214 GMT+8 April 30, 2024
+Updated 2030 GMT+8 May 1, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -6511,6 +6511,138 @@ m<=100
 4
 2
 ```
+
+
+
+用字典+列表的确比类方便
+
+```python
+# 数学科学学院 王镜廷 2300010724
+def find_leftmost_node(son, u):
+    while son[u][0] != -1:
+        u = son[u][0]
+    return u
+
+def main():
+    t = int(input())
+    for _ in range(t):
+        n, m = map(int, input().split())
+
+        son = [-1] * (n + 1)  # 存储每个节点的子节点
+        parent = {}  # 存储每个节点的父节点和方向，{节点: (父节点, 方向)}
+
+        for _ in range(n):
+            i, u, v = map(int, input().split())
+            son[i] = [u, v]
+            parent[u] = (i, 0)  # 左子节点
+            parent[v] = (i, 1)  # 右子节点
+
+        for _ in range(m):
+            s = input().split()
+            if s[0] == "1":
+                u, v = map(int, s[1:])
+                fu, diru = parent[u]
+                fv, dirv = parent[v]
+                son[fu][diru] = v
+                son[fv][dirv] = u
+                parent[v] = (fu, diru)
+                parent[u] = (fv, dirv)
+            elif s[0] == "2":
+                u = int(s[1])
+                root = find_leftmost_node(son, u)
+                print(root)
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+OOP方式
+
+```python
+class TreeNode:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+        self.parent = None
+
+class BinaryTree:
+    def __init__(self, n):
+        self.root = TreeNode(0)
+        self.node_dict = {0: self.root}
+        self.build_tree(n)
+
+    def build_tree(self, n):
+        for _ in range(n):
+            idx, left, right = map(int, input().split())
+            if idx not in self.node_dict:
+                self.node_dict[idx] = TreeNode(idx)
+            node = self.node_dict[idx]
+            if left != -1:
+                if left not in self.node_dict:
+                    self.node_dict[left] = TreeNode(left)
+                left_node = self.node_dict[left]
+                node.left = left_node
+                left_node.parent = node
+            if right != -1:
+                if right not in self.node_dict:
+                    self.node_dict[right] = TreeNode(right)
+                right_node = self.node_dict[right]
+                node.right = right_node
+                right_node.parent = node
+
+    def swap_nodes(self, x, y):
+        node_x = self.node_dict[x]
+        node_y = self.node_dict[y]
+        px, py = node_x.parent, node_y.parent
+
+        if px == py:
+            px.left, px.right = px.right, px.left
+            return
+
+        # Swap in the parent's children references
+        if px.left == node_x:
+            px.left = node_y
+        else:
+            px.right = node_y
+
+        if py.left == node_y:
+            py.left = node_x
+        else:
+            py.right = node_x
+
+        # Swap their parent references
+        node_x.parent, node_y.parent = py, px
+
+    def find_leftmost_child(self, x):
+        node = self.node_dict[x]
+        while node.left:
+            node = node.left
+        return node.val
+
+def main():
+    t = int(input())
+    for _ in range(t):
+        n, m = map(int, input().split())
+        tree = BinaryTree(n)
+        for _ in range(m):
+            op, *args = map(int, input().split())
+            if op == 1:
+                x, y = args
+                tree.swap_nodes(x, y)
+            elif op == 2:
+                x, = args
+                print(tree.find_leftmost_child(x))
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+
 
 
 
