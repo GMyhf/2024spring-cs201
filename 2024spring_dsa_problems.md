@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2030 GMT+8 May 1, 2024
+Updated 2101 GMT+8 May 1, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -6558,7 +6558,7 @@ if __name__ == "__main__":
 
 
 
-OOP方式
+OOP方式。同一个parent要特殊考虑。否则同一个 parent，48行相当于又交换。
 
 ```python
 class TreeNode:
