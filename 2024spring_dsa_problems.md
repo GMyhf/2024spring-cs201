@@ -3722,6 +3722,102 @@ print(ans)
 
 
 
+## 03151: Pots
+
+bfs, http://cs101.openjudge.cn/practice/03151/
+
+You are given two pots, having the volume of **A** and **B** liters respectively. The following operations can be performed:
+
+1. FILL(i)    fill the pot **i** (1 ≤ **i** ≤ 2) from the tap;
+
+2. DROP(i)   empty the pot **i** to the drain;
+
+3. POUR(i,j)  pour from pot **i** to pot **j**; after this operation either the pot **j** is full (and there may be some water left in the pot **i**), or the pot **i** is empty (and all its contents have been moved to the pot **j**).
+
+   
+
+Write a program to find the shortest possible sequence of these operations that will yield exactly **C** liters of water in one of the pots.
+
+**输入**
+
+On the first and only line are the numbers **A**, **B**, and **C**. These are all integers in the range from 1 to 100 and **C**≤max(**A**,**B**).
+
+**输出**
+
+The first line of the output must contain the length of the sequence of operations **K**. The following **K** lines must each describe one operation. If there are several sequences of minimal length, output any one of them. If the desired result can’t be achieved, the first and only line of the file must contain the word ‘**impossible**’.
+
+样例输入
+
+```
+3 5 4
+```
+
+样例输出
+
+```
+6
+FILL(2)
+POUR(2,1)
+DROP(1)
+POUR(2,1)
+FILL(2)
+POUR(2,1)
+```
+
+
+
+```python
+# 23生科崔灏梵
+def bfs(A, B, C):
+    start = (0, 0)
+    visited = set()
+    visited.add(start)
+    queue = [(start, [])]
+
+    while queue:
+        (a, b), actions = queue.pop(0)
+
+        if a == C or b == C:
+            return actions
+
+        next_states = [(A, b), (a, B), (0, b), (a, 0), (min(a + b, A),\
+                max(0, a + b - A)), (max(0, a + b - B), min(a + b, B))]
+
+        for i in next_states:
+            if i not in visited:
+                visited.add(i)
+                new_actions = actions + [get_action(a, b, i)]
+                queue.append((i, new_actions))
+
+    return ["impossible"]
+
+
+def get_action(a, b, next_state):
+    if next_state == (A, b):
+        return "FILL(1)"
+    elif next_state == (a, B):
+        return "FILL(2)"
+    elif next_state == (0, b):
+        return "DROP(1)"
+    elif next_state == (a, 0):
+        return "DROP(2)"
+    elif next_state == (min(a + b, A), max(0, a + b - A)):
+        return "POUR(2,1)"
+    else:
+        return "POUR(1,2)"
+
+
+A, B, C = map(int, input().split())
+solution = bfs(A, B, C)
+
+if solution == ["impossible"]:
+    print(solution[0])
+else:
+    print(len(solution))
+    for i in solution:
+        print(i)
+```
+
 
 
 ## 03720: 文本二叉树
