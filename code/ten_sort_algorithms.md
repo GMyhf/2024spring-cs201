@@ -2,7 +2,7 @@
 
 # Python十大排序算法源码
 
-Updated 1312 GMT+8 Apr 13 2024
+Updated 2312 GMT+8 May 3 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -12,7 +12,7 @@ Logs:
 
 2024/4/13 取自, https://blog.csdn.net/wtandyn/article/details/119577831
 
-还未详细验证。
+还未详细验证。算法逻辑没问题，但是具体实现不一样的话，笔试就不好做了。
 
 
 
@@ -140,9 +140,37 @@ if __name__ == "__main__":
     print(arr_out)
 ```
 
-时间复杂度：O(n^2)
-空间复杂度：O(1)
+时间复杂度：$O(n^2)$
+空间复杂度：$O(1)$
 稳定排序
+
+
+
+上面代码并没有在找到正确位置后立即停止循环，而是一直循环直到内部的 for 循环完成。
+
+改进后的插入排序应该在找到正确位置后立即停止循环。要实现这一点，可以在内部的 for 循环中添加一个判断条件来判断是否需要继续交换。如果当前元素已经大于（或等于）前一个元素，就可以停止内部的循环了。
+
+下面是一个修正过的版本：
+
+```python
+def InsertSort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and key < arr[j]:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+    return arr
+
+if __name__ == "__main__":
+    arr_in = [6, 5, 18, 2, 16, 15, 19, 13, 10, 12, 7, 9, 4, 4, 8, 1, 11, 14, 3, 20, 17, 10]
+    print(arr_in)
+    arr_out = InsertSort(arr_in)
+    print(arr_out)
+```
+
+这个版本的插入排序算法在找到正确位置后会立即停止内部的循环，从而提高了效率。
 
 
 
