@@ -2,7 +2,7 @@
 
 # Python十大排序算法源码
 
-Updated 2312 GMT+8 May 3 2024
+Updated 2318 GMT+8 May 3 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -10,9 +10,11 @@ Updated 2312 GMT+8 May 3 2024
 
 Logs:
 
+2024/5/3 增加了改进冒泡排序，增加了改进的插入排序，增加了双指针实现的快排。
+
 2024/4/13 取自, https://blog.csdn.net/wtandyn/article/details/119577831
 
-还未详细验证。算法逻辑没问题，但是具体实现不一样的话，笔试就不好做了。
+还未完全详细验证。算法逻辑没问题，但是具体实现不一样的话，笔试就不好做了。
 
 
 
@@ -75,9 +77,33 @@ if __name__ == "__main__":
     print(arr_out)
 ```
 
-时间复杂度：O(n^2)
-空间复杂度：O(1)
+时间复杂度：$O(n^2)$
+空间复杂度：$O(1)$
 稳定排序
+
+
+
+改进后的冒泡排序是对原始冒泡排序的一种优化。原始冒泡排序的基本思想是依次比较相邻的两个元素，如果它们的顺序错误就交换它们，直到没有需要交换的元素为止。这样的算法效率较低，因为即使序列已经有序，它仍然需要进行多轮的比较和交换。
+
+改进后的冒泡排序通过增加一个标志位来优化。在每一轮比较中，如果没有发生任何交换，说明序列已经有序，不需要再进行后续的比较，因此可以提前结束排序过程。
+
+改进后的冒泡排序的伪代码如下所示：
+
+```python
+function improved_bubble_sort(array A)
+    n = length(A)
+    flag = true
+    for i from 0 to n - 1
+        flag = false
+        for j from 0 to n - 1 - i
+            if A[j] > A[j + 1]
+                swap(A[j], A[j + 1])
+                flag = true
+        if flag == false
+            break
+```
+
+在这个改进后的冒泡排序算法中，如果在一轮比较中没有发生任何交换，就将标志位 `flag` 设置为 `false`，并提前跳出循环，从而减少了不必要的比较次数，提高了效率。
 
 
 
@@ -284,6 +310,43 @@ if __name__ == "__main__":
 时间复杂度：平均情况下为O(n log n)，最坏情况下为O(n^2)（当数组已经有序时）
 空间复杂度：平均情况下为O(log n)，最坏情况下为O(n)（递归调用栈的深度）
 不稳定排序
+
+
+
+如果用双指针实现，在partition函数中用两个指针 `i` 和 `j` 的方式实现。
+
+```python
+def quicksort(arr, left, right):
+    if left < right:
+        partition_pos = partition(arr, left, right)
+        quicksort(arr, left, partition_pos - 1)
+        quicksort(arr, partition_pos + 1, right)
+
+
+def partition(arr, left, right):
+    i = left
+    j = right - 1
+    pivot = arr[right]
+    while i <= j:
+        while i <= right and arr[i] < pivot:
+            i += 1
+        while j >= left and arr[j] >= pivot:
+            j -= 1
+        if i < j:
+            arr[i], arr[j] = arr[j], arr[i]
+    if arr[i] > pivot:
+        arr[i], arr[right] = arr[right], arr[i]
+    return i
+
+
+arr = [22, 11, 88, 66, 55, 77, 33, 44]
+quicksort(arr, 0, len(arr) - 1)
+print(arr)
+
+# [11, 22, 33, 44, 55, 66, 77, 88]
+```
+
+
 
 
 
