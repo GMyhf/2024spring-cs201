@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1606 GMT+8 May 2, 2024
+Updated 1146 GMT+8 May 4, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -12908,6 +12908,89 @@ n = int(input())
 # Generate and print the Cantor set
 print(print_cantor_set(n))
 ```
+
+
+
+
+
+## 27205: 护林员盖房子 加强版
+
+monotonous stack, http://cs101.openjudge.cn/practice/27205
+
+在一片保护林中，护林员想要盖一座房子来居住，但他不能砍伐任何树木。
+现在请你帮他计算：保护林中所能用来盖房子的矩形空地的最大面积。
+
+**输入**
+保护林用一个二维矩阵来表示，长宽都不超过20（即<=20）。
+第一行是两个正整数m,n，表示矩阵有m行n列。
+然后是m行，每行n个整数，用1代表树木，用0表示空地。
+
+**输出**
+一个正整数，表示保护林中能用来盖房子的最大矩形空地面积。
+
+样例输入
+
+```
+4 5
+0 1 0 1 1
+0 1 0 0 1
+0 0 0 0 0
+0 1 1 0 1
+```
+
+样例输出
+
+```
+5
+```
+
+提示
+
+子矩阵边长可以为1，也就是说：
+0 0 0 0 0
+依然是一个可以盖房子的子矩阵。
+
+
+
+看成是以不同的底竖直摆放的矩形的高度。
+
+```python
+# ref: https://zhuanlan.zhihu.com/p/162834671
+
+def maximalRectangle(matrix) -> int:
+    # 求出行数n和列数m
+    n = len(matrix)
+    if n == 0:
+        return 0
+
+    m = len(matrix[0])
+    # 存储每一层的高度
+    height = [0 for _ in range(m+1)]
+    res = 0
+    # 遍历以哪一层作为底层
+    for i in range(n):
+        sk = [-1]
+        for j in range(m+1):
+            # 计算j位置的高度，如果遇到0则置为0，否则递增
+            h = 0 if j == m or matrix[i][j] == '1' else height[j] + 1
+            height[j] = h
+            # 单调栈维护长度
+            while len(sk) > 1 and h < height[sk[-1]]:
+                res = max(res, (j-sk[-2]-1) * height[sk[-1]])
+                sk.pop()
+            sk.append(j)
+    return res
+    
+    
+m, n = map(int, input().split())
+a = []
+for i in range(m):
+    a.extend([input().split()])
+
+print(maximalRectangle(a))
+```
+
+
 
 
 
