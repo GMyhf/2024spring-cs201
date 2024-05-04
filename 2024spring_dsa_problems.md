@@ -12955,39 +12955,34 @@ monotonous stack, http://cs101.openjudge.cn/practice/27205
 看成是以不同的底竖直摆放的矩形的高度。
 
 ```python
-# ref: https://zhuanlan.zhihu.com/p/162834671
-
 def maximalRectangle(matrix) -> int:
-    # 求出行数n和列数m
-    n = len(matrix)
-    if n == 0:
+    if (rows := len(matrix)) == 0:
         return 0
 
-    m = len(matrix[0])
+    cols = len(matrix[0])
     # 存储每一层的高度
-    height = [0 for _ in range(m+1)]
+    height = [0 for _ in range(cols + 1)]
     res = 0
-    # 遍历以哪一层作为底层
-    for i in range(n):
-        sk = [-1]
-        for j in range(m+1):
+
+    for i in range(rows):  # 遍历以哪一层作为底层
+        stack = [-1]
+        for j in range(cols + 1):
             # 计算j位置的高度，如果遇到0则置为0，否则递增
-            h = 0 if j == m or matrix[i][j] == '1' else height[j] + 1
+            h = 0 if j == cols or matrix[i][j] == '1' else height[j] + 1
             height[j] = h
             # 单调栈维护长度
-            while len(sk) > 1 and h < height[sk[-1]]:
-                res = max(res, (j-sk[-2]-1) * height[sk[-1]])
-                sk.pop()
-            sk.append(j)
+            while len(stack) > 1 and h < height[stack[-1]]:
+                res = max(res, (j - stack[-2] - 1) * height[stack[-1]])
+                stack.pop()
+            stack.append(j)
     return res
-    
-    
-m, n = map(int, input().split())
-a = []
-for i in range(m):
-    a.extend([input().split()])
+
+
+rows, _ = map(int, input().split())
+a = [input().split() for _ in range(rows)]
 
 print(maximalRectangle(a))
+
 ```
 
 
