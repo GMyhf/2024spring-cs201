@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2145 GMT+8 May 4, 2024
+Updated 2209 GMT+8 May 4, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -6470,6 +6470,57 @@ for _ in range(int(input())):
         s += f'->({graph[current][i]})->{i}'
         current = i
     print(s)
+```
+
+
+
+思路：用 $\text{Floyd}$​ 算法很容易求多源汇最短路径长度，本题重点是记录具体路径。此外可以将每个顶点都哈希以便后续的 dp 操作。
+
+简单讲解该算法：$dp[k][x][y]$ 的含义是只允许用节点 $1\sim k$ 作为中间点时节点 $x$ 到节点 $y$ 的最短路长度；很显然 $dp[n][x][y]$ 就是节点 $x$ 到节点 $y$ 的最短路长度。然后根据经过 $k$ 点和不经过 $k$ 点两种情况分类，可以得到转移方程：
+
+$$dp[k][x][y] = min(dp[k-1][x][y], dp[k-1][x][k]+dp[k-1][k][y]).$$​
+
+再做滚动数组优化去掉第一维即可。
+
+```python
+# 物理学院 罗熙佑
+from functools import lru_cache
+
+
+@lru_cache(None)
+def get_path(i, j):
+    if i == j:
+        return f'{rhs[i]}'
+
+    return get_path(i, path[i][j]) + f'->({dp[path[i][j]][j]})->{rhs[j]}'
+
+
+p = int(input())
+hs = {input(): i for i in range(p)}
+rhs = {i: name for name, i in hs.items()}
+
+dp = [[0 if i == j else float('inf') for j in range(p)] for i in range(p)]
+path = [[i for j in range(p)] for i in range(p)]  # 从i到j经过的最后一个中转点, 不中转时为起点
+q = int(input())
+for _ in range(q):
+    a, b, w = input().split()
+    a, b, w = hs[a], hs[b], int(w)
+    dp[a][b] = w
+    dp[b][a] = w
+
+for k in range(p):
+    for i in range(p):
+        for j in range(p):
+            dist = dp[i][k] + dp[k][j]
+            if dist < dp[i][j]:
+                dp[i][j] = dist
+                path[i][j] = k  # 因为k是从小往大迭代的, 所以最后记录到的是最后一个中转点
+
+r = int(input())
+for _ in range(r):
+    a, b = map(lambda x: hs[x], input().split())
+    print(get_path(a, b))
+    
 ```
 
 
