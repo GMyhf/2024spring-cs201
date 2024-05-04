@@ -12967,7 +12967,7 @@ def maximalRectangle(matrix) -> int:
     for i in range(rows):  # 遍历以哪一层作为底层
         stack = [-1]
         for j in range(cols + 1):
-            # 计算j位置的高度，如果遇到0则置为0，否则递增
+            # 计算j位置的高度，如果遇到1则置为0，否则递增
             h = 0 if j == cols or matrix[i][j] == '1' else height[j] + 1
             height[j] = h
             # 单调栈维护长度
@@ -12982,6 +12982,7 @@ rows, _ = map(int, input().split())
 a = [input().split() for _ in range(rows)]
 
 print(maximalRectangle(a))
+
 
 ```
 
