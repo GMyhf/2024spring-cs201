@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1146 GMT+8 May 4, 2024
+Updated 1816 GMT+8 May 4, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -12953,6 +12953,8 @@ monotonous stack, http://cs101.openjudge.cn/practice/27205
 
 
 看成是以不同的底竖直摆放的矩形的高度。
+
+LeetCode 85 | 如何从矩阵当中找到数字围成的最大矩形的面积？https://zhuanlan.zhihu.com/p/162834671
 
 ```python
 def maximalRectangle(matrix) -> int:
