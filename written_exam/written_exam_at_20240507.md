@@ -467,7 +467,7 @@ def heap_sort(arr):
             arr[s], arr[i] = arr[i], arr[s] # 【2 分】
             goDown(s)
 
-    def heapify():
+    def heapify():	# 将列表 a 变成一个堆
         for k in range(len(arr) // 2 - 1, -1, -1): # 【1 分】
             goDown(k)
 
