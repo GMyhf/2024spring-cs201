@@ -140,7 +140,7 @@ mindmap
       *Segment Tree
 ```
 
-树的知识图谱
+<center>树的知识图谱</center>
 
 
 
