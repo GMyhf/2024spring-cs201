@@ -1,6 +1,6 @@
 # 数算B各班进度
 
-Updated 1956 GMT+8 Apr 28, 2024
+Updated 2102 GMT+8 May 7, 2024
 2024 spring, Complied by Hongfei Yan
 
 
@@ -27,9 +27,9 @@ Yanhf（12班）: http://cs101.openjudge.cn hw9 图，hw8 图，hw6 树
 Dly: http://xlxxsjjg.openjudge.cn 
 ​	hw5 树、bfs，hw4 递归、KMP，hw3 栈、链表、递归，hw2 像计概，有dp，字符串
 
-Huw（6班）: http://forhuwei.openjudge.cn hw3 树，hw2 栈, BFS
+Huw（6班）: http://forhuwei.openjudge.cn hw4 树，hw3 树，hw2 栈, BFS
 Wangz（2班）: http://sydsb.openjudge.cn 
-​	hw7 树、并查集，hw6 树， hw5.Supplementary，greedy, 字符串, hw5 栈、队列、递归
+​	hw8 散列、hw7 树、并查集，hw6 树， hw5.Supplementary，greedy, 字符串, hw5 栈、队列、递归
 
 Zhaohy（9班）：http://dsaex.openjudge.cn hw9 树、并查集、bfs，hw8 树，hw7 并查集，hw6 树，hw5 树，hw4 像计概, hw3 队列
 Zhangsl: http://ssbzsl.openjudge.cn week9 并查集、bfs，week8 树，week7 排序、优先级队列，week5 dp，week4 bfs, 栈
