@@ -14332,6 +14332,91 @@ print(x)
 
 
 
+## 27947: 动态中位数
+
+http://cs101.openjudge.cn/practice/27947/
+
+依次读入一个整数序列，每当已经读入的整数个数为奇数时，输出已读入的整数构成的序列的中位数。
+
+**输入**
+
+第一行输入一个整数 T（1<=T<=100），代表后面数据集的个数。
+接下来每行一个数据集，包含 M 个空格分隔的整数。1<=M<=99999 且所有 M 相加之和不超过500000。
+
+**输出**
+
+对于每个数据集输出两行，第一行输出中位数的个数N。
+
+第二行输出空格分隔的N个整数，表示中位数。
+
+样例输入
+
+```
+3
+1 2 3 4 5 6 7 8 9
+9 8 7 6 5 4 3 2 1
+23 41 13 22 -3 24 -31 -11 -8 -7 3 5 103 211 -311 -45 -67 -73 -81 -99 -33 24 56
+```
+
+样例输出
+
+```
+5
+1 2 3 4 5
+5
+9 8 7 6 5
+12
+23 23 22 22 13 3 5 5 3 -3 -7 -3
+```
+
+提示
+
+tags: heap
+
+来源
+
+AcWing 106, https://www.acwing.com/problem/content/description/108/
+
+
+
+```python
+import heapq
+
+def dynamic_median(nums):
+    # 维护小根和大根堆（对顶），保持中位数在大根堆的顶部
+    min_heap = []  # 存储较大的一半元素，使用最小堆
+    max_heap = []  # 存储较小的一半元素，使用最大堆
+
+    median = []
+    for i, num in enumerate(nums):
+        # 根据当前元素的大小将其插入到对应的堆中
+        if not max_heap or num <= -max_heap[0]:
+            heapq.heappush(max_heap, -num)
+        else:
+            heapq.heappush(min_heap, num)
+
+        # 调整两个堆的大小差，使其不超过 1
+        if len(max_heap) - len(min_heap) > 1:
+            heapq.heappush(min_heap, -heapq.heappop(max_heap))
+        elif len(min_heap) > len(max_heap):
+            heapq.heappush(max_heap, -heapq.heappop(min_heap))
+
+        if i % 2 == 0:
+            median.append(-max_heap[0])
+
+    return median
+
+T = int(input())
+for _ in range(T):
+    #M = int(input())
+    nums = list(map(int, input().split()))
+    median = dynamic_median(nums)
+    print(len(median))
+    print(*median)
+```
+
+
+
 
 
 ## 27948: FBI树
@@ -15266,6 +15351,141 @@ for i in range(10):
             result += 1
             dfs(i,j)
 print(result)
+```
+
+
+
+
+
+## 28190: 奶牛排队
+
+http://cs101.openjudge.cn/practice/28190/
+
+奶牛在熊大妈的带领下排成了一条直队。显然，不同的奶牛身高不一定相同……
+
+现在，奶牛们想知道，如果找出一些连续的奶牛，要求最左边的奶牛 A 是最矮的，最右边的 B 是最高的，且 B 高于 A 奶牛。中间如果存在奶牛，则身高不能和 A,B 奶牛相同。问这样的奶牛最多会有多少头？
+
+从左到右给出奶牛的身高，请告诉它们符合条件的最多的奶牛数（答案可能是 0,2，但不会是 1）。
+
+
+
+**输入**
+
+第一行一个正整数 N，表示奶牛的头数。(2<=N<=10000)
+
+接下来 N 行，每行一个正整数，从上到下表示从左到右奶牛的身高 hi (1<=hi<=50000000) 。
+
+**输出**
+
+一行一个整数，表示最多奶牛数。
+
+样例输入
+
+```
+sample input1:
+5
+1
+2
+3
+4
+1
+
+sample output1:
+4
+
+#取第 1 头到第 4 头奶牛，满足条件且为最多。
+```
+
+样例输出
+
+```
+sample input2:
+10
+15
+15
+2
+13
+7
+4
+11
+5
+11
+12
+
+sample output2:
+5
+```
+
+提示
+
+tags: monotonous-stack
+
+来源
+
+hhy, https://www.luogu.com.cn/problem/P6510
+
+
+
+```python
+"""
+https://www.luogu.com.cn/problem/solution/P6510
+简化题意：求一个区间，使得区间左端点最矮，区间右端点最高，且区间内不存在与两端相等高度的奶牛，输出这个区间的长度。
+我们设左端点为 A ,右端点为 B
+因为 A 是区间内最矮的，所以 [A.B]中，都比 A 高。所以只要 A 右侧第一个 ≤A的奶牛位于 B 的右侧，则 A 合法
+同理，因为B是区间内最高的，所以 [A.B]中，都比 B 矮。所以只要 B 左侧第一个 ≥B 的奶牛位于 A的左侧，则 B合法
+对于 “ 左/右侧第一个 ≥/≤ ” 我们可以使用单调栈维护。用单调栈预处理出 zz数组表示左，r 数组表示右。
+然后枚举右端点 B寻找 A，更新 ans 即可。
+
+这个算法的时间复杂度为 O(n)，其中 n 是奶牛的数量。
+"""
+
+N = int(input())
+heights = [int(input()) for _ in range(N)]
+
+left_bound = [-1] * N
+right_bound = [N] * N
+
+stack = []  # 单调栈，存储索引
+
+# 求左侧第一个≥h[i]的奶牛位置
+for i in range(N):
+    while stack and heights[stack[-1]] < heights[i]:
+        stack.pop()
+
+    if stack:
+        left_bound[i] = stack[-1]
+
+    stack.append(i)
+
+stack = []  # 清空栈以供寻找右边界使用
+
+# 求右侧第一个≤h[i]的奶牛位
+for i in range(N-1, -1, -1):
+    while stack and heights[stack[-1]] > heights[i]:
+        stack.pop()
+
+    if stack:
+        right_bound[i] = stack[-1]
+
+    stack.append(i)
+
+ans = 0
+
+# for i in range(N-1, -1, -1):  # 从大到小枚举是个技巧
+#     for j in range(left_bound[i] + 1, i):
+#         if right_bound[j] > i:
+#             ans = max(ans, i - j + 1)
+#             break
+#
+#     if i <= ans:
+#         break
+
+for i in range(N):  # 枚举右端点 B寻找 A，更新 ans
+    for j in range(left_bound[i] + 1, i):
+        if right_bound[j] > i:
+            ans = max(ans, i - j + 1)
+            break
+print(ans)
 ```
 
 
