@@ -13573,6 +13573,41 @@ print("loop:yes" if has_loop else "loop:no")
 
 
 
+这题一个dfs就够了
+
+判断连通就是单纯dfs，每个节点拓展出没去过的节点递归，cnt这个集合记录去过的节点
+
+判断成环可以同步进行，只是我们的dfs需要而外记录一下父亲节点，于是只要当前节点能够去到一个已经遍历过的节点，并且这个节点不是父亲节点，那么必然成环——这是因为我们的dfs是单源的遍历，不妨说那个已经遍历的非父亲节点是x，这次dfs的源头是root，当前节点是cur，那么x一定存在一条不经过cur到达root的路径（因为不会遍历去过的节点，所以cur是第一次到，之前遍历到x一定是没到过cur的），而现在cur能到x，说明有一条经过cur到达root的路径，而且x不是父亲节点，于是这两条路径通过root形成了一个环，并且由于不是父亲节点，所以这个环上的节点数>2，于是就必然是环了——这个想法说实话临时想是有点绕的。
+
+还有一个性质，一旦连通，必然成环也判断完毕了，一旦成环，也意味着连通必然判断完毕了，所以两个break都是正确的。
+
+```python
+# 熊江凯、元培学院
+n,m=list(map(int,input().split()))
+edge=[[]for _ in range(n)]
+for _ in range(m):
+    a,b=list(map(int,input().split()))
+    edge[a].append(b)
+    edge[b].append(a)
+cnt,ok=set(),0
+def dfs(x,y):
+    global cnt,ok
+    cnt.add(x)
+    for i in edge[x]:
+        if i not in cnt:dfs(i,x)
+        elif y!=i:ok=1
+for i in range(n):
+    cnt.clear()
+    dfs(i,-1)
+    if len(cnt)==n:break
+    if ok:break
+print("connected:"+("yes"if len(cnt)==n else "no")+'\n'+"loop:"+('yes'if ok else 'no'))
+```
+
+
+
+
+
 ## 27637: 括号嵌套二叉树
 
 http://cs101.openjudge.cn/practice/27637/
@@ -15525,6 +15560,32 @@ for i in range(N):  # 枚举右端点 B寻找 A，更新 ans
         if right_bound[j] > i:
             ans = max(ans, i - j + 1)
             break
+print(ans)
+```
+
+
+
+
+
+因为有单调栈的提示，所以优先思考单调栈的性质：能够找到（向左）一个最长的区间，其上面的值都比当前位置要小，于是当前位置就是这个区间的最大值——这算是想到了一半；
+
+后一半就着重解决最左端最小值的性质，其实和前面是对称的想法，我要找到一个位置，这个位置必须要前面最长的区间内，且是区间最小值，这利用了单调栈中的另一个性质：单调栈内的元素，是单调的，意味着每个元素都是其到下一个元素之间的最小值——而最小值是具有传递性的，也就是每个元素是该位置当前遍历到的位置之间的最小值——恰好满足我们的要求。
+
+于是我们只要找第一步中区间是否包含第二步中单调栈的元素即可（这里可以选择线性遍历或者二分，二分查找是因为单调栈是单调的），选择被包含元素中最左端的元素，就是以当前遍历到的位置为最大值的最长连续区间。
+
+综上，我们只需要两个单调栈，一个是递增栈，一个是非增栈就好了。
+
+```python
+# 熊江凯、元培学院
+from bisect import bisect_right as bl
+lis,q1,q2,ans=[int(input())for _ in range(int(input()))],[-1],[-1],0
+for i in range(len(lis)):
+    while len(q1)>1 and lis[q1[-1]]>=lis[i]:q1.pop()
+    while len(q2)>1 and lis[q2[-1]]<lis[i]:q2.pop()
+    id=bl(q1,q2[-1])
+    if id<len(q1):ans=max(ans,i-q1[id]+1)
+    q1.append(i)
+    q2.append(i)
 print(ans)
 ```
 
