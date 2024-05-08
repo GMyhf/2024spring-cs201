@@ -1,6 +1,6 @@
 # 20240507 数算B-12班-笔试（模考）
 
-Updated 1936 GMT+8 May 4, 2024
+Updated 1921 GMT+8 May 8, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -257,22 +257,22 @@ def topoSort(G):    # G 是邻接表，顶点从 0 开始编号
 
     for i in range(n):
         for e in G[i]:
-            inDegree[e.v] += 1  # 【1 分】
+            _______________  # 【1 分】
 
     for i in range(n):
         if inDegree[i] == 0:
-            q.put(i)    # 【1 分】
+            _______________    # 【1 分】
 
     seq = []
     while not q.empty():
         k = q.get()
         seq.append(k)   # 【1 分】
         for e in G[k]:
-            inDegree[e.v] -= 1  # 【1 分】
+            _______________  # 【1 分】
             if inDegree[e.v] == 0:
-                q.put(e.v)  # 【1 分】
+                _______________  # 【1 分】
 
-    if len(seq) != n:   # 【1 分】
+    if _______________:   # 【1 分】
         return None
     else:
         return seq
@@ -325,19 +325,19 @@ a = list(map(int, input().split()))
 head = Node(a[0])
 p = head
 for x in a[1:]:
-    p.next = Node(x)    # 【2 分】
+    _______________    # 【2 分】
     p = p.next
 
 p = head
 while p:
-    while p.next and p.data == p.next.data: # 【2 分】
-        p.next = p.next.next    #【1 分】
+    while _______________ and p.data == p.next.data: # 【2 分】
+        _______________    #【1 分】
     p = p.next
 
 p = head
 while p:
     print(p.data, end=" ")
-    p = p.next  # 【2 分】
+    _______________  # 【2 分】
 
 ```
 
@@ -384,7 +384,7 @@ def isConnected(G): # G 是邻接表,顶点编号从 0 开始，判断是否连�
                 dfs(u)
 
     dfs(0)
-    return total == n      # 【2 分】
+    return _______________      # 【2 分】
 
 def hasLoop(G): # G 是邻接表,顶点编号从 0 开始，判断有无回路
     n = len(G)
@@ -394,15 +394,15 @@ def hasLoop(G): # G 是邻接表,顶点编号从 0 开始，判断有无回路
         visited[v] = True
         for u in G[v]:
             if visited[u] == True:
-                if u != x: # 【2 分】
+                if _______________: # 【2 分】
                     return True
             else:
-                if dfs(u, v):   # 【2 分】
+                if _______________:   # 【2 分】
                     return True
         return False
 
     for i in range(n):
-        if not visited[i]:  # 【1 分】
+        if _______________:  # 【1 分】
             if dfs(i, -1):
                 return True
     return False
@@ -458,13 +458,13 @@ def heap_sort(arr):
             return
         L, R = i * 2 + 1, i * 2 + 2
 
-        if R >= heap_size or arr[L] > arr[R]:   # 【1 分】
+        if _______________:   # 【1 分】
             s = L
         else:
             s = R
 
         if arr[s] > arr[i]:
-            arr[s], arr[i] = arr[i], arr[s] # 【2 分】
+            _______________ # 【2 分】
             goDown(s)
 
     def heapify():	# 将列表 a 变成一个堆
@@ -473,9 +473,9 @@ def heap_sort(arr):
 
     heapify()
     for i in range(len(arr) - 1, -1, -1):
-        arr[0], arr[i] = arr[i], arr[0] # 【1 分】
+        _______________ # 【1 分】
         heap_size -= 1
-        goDown(0)   # 【1 分】
+        _______________   # 【1 分】
 
 
 a = list(map(int, input().split()))
