@@ -14,6 +14,42 @@ at "homework" folder, https://github.com/GMyhf/2024spring-cs201/
 
 Todo: 
 
+Assignment #D: May月考
+
+02808: 校门外的树
+
+http://cs101.openjudge.cn/practice/02808/
+
+20449: 是否被5整除
+
+http://cs101.openjudge.cn/practice/20449/
+
+
+
+01258: Agri-Net
+
+http://cs101.openjudge.cn/practice/01258/
+
+
+
+27635:判断无向图是否连通有无回路(同23163)
+
+http://cs101.openjudge.cn/practice/27635/
+
+
+
+27947:动态中位数
+
+http://cs101.openjudge.cn/practice/27947/
+
+
+
+28190:奶牛排队
+
+http://cs101.openjudge.cn/practice/28190/
+
+
+
 
 
 Assignment #B: 图论和树算
