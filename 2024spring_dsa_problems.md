@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1901 GMT+8 May 6, 2024
+Updated 0954 GMT+8 May 8, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8408,6 +8408,71 @@ while len(l) > 1:
 
 print(ans)
 ```
+
+
+
+## 17968: 整型关键字的散列映射
+
+http://cs101.openjudge.cn/practice/17968/
+
+给定一系列整型关键字和素数P，用除留余数法定义的散列函数H（key)=key%M，将关键字映射到长度为M的散列表中，用线性探查法解决冲突
+
+**输入**
+
+输入第一行首先给出两个正整数N（N<=1000）和M（>=N的最小素数），分别为待插入的关键字总数以及散列表的长度。
+第二行给出N个整型的关键字。数字之间以空格分隔。
+
+**输出**
+
+在一行内输出每个整型关键字的在散列表中的位置。数字间以空格分隔。
+
+样例输入
+
+```
+4 5
+24 13 66 77
+```
+
+样例输出
+
+```
+4 3 1 2
+```
+
+
+
+这个题目的输入数据可能不是标准形式，特殊处理，整体读入 sys.stdin.read
+
+```python
+import sys
+input = sys.stdin.read
+
+data = input().split()
+index = 0
+N = int(data[index])
+index += 1
+M = int(data[index])
+index += 1
+
+
+k = [0.5] * M
+l = list(map(int, data[index:index + N]))
+
+ans = []
+for u in l:
+    t = u % M
+    i = t
+    while True:
+        if k[i] == 0.5 or k[i] == u:
+            ans.append(i)
+            k[i] = u
+            break
+        i = (i + 1) % M
+
+print(*ans)
+```
+
+
 
 
 
