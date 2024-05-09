@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2051 GMT+8 May 8, 2024
+Updated 2030 GMT+8 May 9, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -7359,6 +7359,115 @@ try:
 except (TypeError, AssertionError):
     print(-1)
 ```
+
+
+
+## 06263: 布尔表达式
+
+http://cs101.openjudge.cn/practice/06263/
+
+输入一个布尔表达式，请你输出它的真假值。
+比如：( V | V ) & F & ( F | V )
+V表示true，F表示false，&表示与，|表示或，!表示非。
+上式的结果是F
+
+**输入**
+
+输入包含多行，每行一个布尔表达式，表达式中可以有空格，总长度不超过1000
+
+**输出**
+
+对每行输入，如果表达式为真，输出"V",否则出来"F"
+
+样例输入
+
+```
+( V | V ) & F & ( F| V)
+!V | V & V & !F & (F | V ) & (!F | F | !V & V)
+(F&F|V|!V&!F&!(F|F&V))
+```
+
+样例输出
+
+```
+F
+V
+V
+```
+
+
+
+```python
+#23n2300010834 焦晨航
+while True:
+    try:
+        s=input()
+    except EOFError:
+        break
+    s=s.replace('V','True').replace('F','False')
+    s=s.replace('&',' and ').replace('|',' or ').replace('!',' not ')
+    if eval(s):
+        print('V')
+    else:
+        print('F')
+```
+
+
+
+
+
+```python
+# 23n2300011119(武)
+def ShuntingYard(l:list):
+    stack,output=[],[]
+    for i in l:
+        if i==" ":continue
+        if i in 'VF':output.append(i)
+        elif i=='(':stack.append(i)
+        elif i in '&|!':
+            while True:
+                if i=='!':break
+                elif not stack:break
+                elif stack[-1]=="(":
+                    break
+                else:output.append(stack.pop())
+            stack.append(i)
+        elif i==')':
+            while stack[-1]!='(':
+                output.append(stack.pop())
+            stack.pop()
+    if stack:output.extend(reversed(stack))
+    return output
+
+def Bool_shift(a):
+    if a=='V':return True
+    elif a=='F':return False
+    elif a==True:return 'V'
+    elif a==False:return 'F'
+
+def cal(a,operate,b=None):
+    if operate=="&":return Bool_shift(Bool_shift(a) and Bool_shift(b))
+    if operate=="|":return Bool_shift(Bool_shift(a) or Bool_shift(b))
+    if operate=="!":return Bool_shift(not Bool_shift(a))
+
+def post_cal(l:list):
+    stack=[]
+    for i in l:
+        if i in 'VF':stack.append(i)
+        elif i in "&|!":
+            if i=="!":
+                stack.append(cal(stack.pop(),'!'))
+            else:
+                a,b=stack.pop(),stack.pop()
+                stack.append(cal(a,i,b))
+    return stack[0]
+
+while True:
+    try:print(post_cal(ShuntingYard(list(input()))))
+    except EOFError:break
+```
+
+
 
 
 
