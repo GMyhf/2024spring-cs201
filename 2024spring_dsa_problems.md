@@ -8189,6 +8189,100 @@ print(' '.join(map(str, sorted_numbers)))
 
 
 
+## 07576: 败方树
+
+http://cs101.openjudge.cn/practice/07576/
+
+给定一个整数数组，要求对数组中的元素构建败方树（数组相邻元素两两比较，从第一个元素开始）。之后修改数组中的元素，要求输出初始构建以及修改后得到的败方树的所有内部结点代表的整数(从左到右从上到下输出）
+
+**输入**
+
+第一行为数组的元素个数n和修改的次数m。
+第二行为n个整数，即数组的元素。
+接下来m行代表m次修改操作，每次操作修改数组中的一个元素，每一行包括两个整数，第一个为被修改元素在数组中的标号，第二个为修改之后的元素值。
+
+**输出**
+
+输出m+1行。
+第一行为初始构建的败方树的所有内部结点代表的整数(按照树的结点从左到右从上到下的顺序输出）
+接下来m行为接下来m次修改后得到的败方树的所有内部结点代表的整数(按照树的结点从左到右从上到下的顺序输出）
+
+样例输入
+
+```
+8 1
+10 9 20 6 16 12 90 17
+3 15
+```
+
+样例输出
+
+```
+6 12 9 17 10 20 16 90
+9 12 15 17 10 20 16 90
+```
+
+
+
+从Python 3.7开始，提供了一个新的内置装饰器——`@dataclass`
+
+`@dataclass` 自动为 `Product` 类生成了几种基础方法。例如，用于初始化对象的 `__init__` 方法、用于生成对象的字符串表示形式的 `__repr__` 方法，以及用于比较对象相等性的 `__eq__` 方法。
+
+```python
+from collections import deque
+from dataclasses import dataclass
+
+@dataclass
+class TreeNode:
+    value: int
+    min_win: int
+    left: 'TreeNode' = None
+    right: 'TreeNode' = None
+
+def build_tree(values):
+    stack = deque(TreeNode(value, value) for value in values)
+    while len(stack) > 1:
+        left_node = stack.popleft()
+        right_node = stack.popleft()
+        new_node = TreeNode(max(left_node.min_win, right_node.min_win),
+                            min(left_node.min_win, right_node.min_win))
+        new_node.left, new_node.right = left_node, right_node
+        stack.append(new_node)
+
+    root = TreeNode(stack[0].min_win, stack[0].min_win)
+    root.left = stack[0]
+    return root
+
+def show(n, root):
+    stack = deque([root])
+    result = []
+    while stack:
+        if len(result) == n:
+            print(*result)
+            return
+        current_node = stack.popleft()
+        result.append(current_node.value)
+        if current_node.left:
+            stack.append(current_node.left)
+        if current_node.right:
+            stack.append(current_node.right)
+
+
+n, m = map(int, input().split())
+initial_values = list(map(int, input().split()))
+root = build_tree(initial_values)
+show(n, root)
+for _ in range(m):
+    position, value = map(int, input().split())
+    initial_values[position] = value
+    root = build_tree(initial_values)
+    show(n, root)
+```
+
+
+
+
+
 ## 08581: 扩展二叉树
 
 http://cs101.openjudge.cn/dsapre/08581/
