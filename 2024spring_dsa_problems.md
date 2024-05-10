@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2030 GMT+8 May 9, 2024
+Updated 1451 GMT+8 May 10, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8619,6 +8619,101 @@ for u in l:
         i = (i + 1) % M
 
 print(*ans)
+```
+
+
+
+## 17975: 用二次探查法建立散列表
+
+http://cs101.openjudge.cn/practice/17975/
+
+给定一系列整型关键字和素数P，用除留余数法定义的散列函数H（key)=key%M，将关键字映射到长度为M的散列表中，用二次探查法解决冲突.
+
+本题不涉及删除，且保证表长不小于关键字总数的2倍，即没有插入失败的可能。
+
+**输入**
+
+输入第一行首先给出两个正整数N（N<=1000）和M（一般为>=2N的最小素数），分别为待插入的关键字总数以及散列表的长度。
+第二行给出N个整型的关键字。数字之间以空格分隔。
+
+**输出**
+
+在一行内输出每个整型关键字的在散列表中的位置。数字间以空格分隔。
+
+样例输入
+
+```
+5 11
+24 13 35 15 14
+```
+
+样例输出
+
+```
+2 3 1 4 7 
+```
+
+提示
+
+探查增量序列依次为：$1^2，-1^2，2^2 ，-2^2，....,^2$表示平方
+
+
+
+需要用这样接收数据。因为输入数据可能分行了，不是题面描述的形式。OJ上面有的题目是给C++设计的，细节考虑不周全。
+
+```python
+import sys
+input = sys.stdin.read
+data = input().split()
+index = 0
+n = int(data[index])
+index += 1
+m = int(data[index])
+index += 1
+num_list = [int(i) for i in data[index:index+n]]
+```
+
+
+
+```python
+# 2200015507 王一粟
+# n, m = map(int, input().split())
+# num_list = [int(i) for i in input().split()]
+import sys
+input = sys.stdin.read
+data = input().split()
+index = 0
+n = int(data[index])
+index += 1
+m = int(data[index])
+index += 1
+num_list = [int(i) for i in data[index:index+n]]
+
+mylist = [0.5] * m
+
+def generate_result():
+    for num in num_list:
+        pos = num % m
+        current = mylist[pos]
+        if current == 0.5 or current == num:
+            mylist[pos] = num
+            yield pos
+        else:
+            sign = 1
+            cnt = 1
+            while True:
+                now = pos + sign * (cnt ** 2)
+                current = mylist[now % m]
+                if current == 0.5 or current == num:
+                    mylist[now % m] = num
+                    yield now % m
+                    break
+                sign *= -1
+                if sign == 1:
+                    cnt += 1
+
+result = generate_result()
+print(*result)
 ```
 
 
