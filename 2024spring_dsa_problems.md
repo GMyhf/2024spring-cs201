@@ -8228,6 +8228,8 @@ http://cs101.openjudge.cn/practice/07576/
 
 `@dataclass` 自动为 `Product` 类生成了几种基础方法。例如，用于初始化对象的 `__init__` 方法、用于生成对象的字符串表示形式的 `__repr__` 方法，以及用于比较对象相等性的 `__eq__` 方法。
 
+因此，任何时候只要需要定义主要用于存储数据的类时，请不要忘记利用 `@dataclass`装饰器的强大功能。
+
 ```python
 from collections import deque
 from dataclasses import dataclass
