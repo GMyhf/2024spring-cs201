@@ -14103,6 +14103,79 @@ print(f"{height} {leaves}")
 
 
 
+## 27653:Fraction类
+
+http://cs101.openjudge.cn/2024sp_routine/27653/
+
+实现用户定义的类，一个常用的例子是构建实现抽象数据类型Fraction的类。我们已经看到，Python提供了很多数值类。但是在有些时候，需要创建“看上去很像”分数的数据对象。
+
+像 3/5 这样的分数由两部分组成。斜线左侧的值称作分子，可以是任意整数。斜线右侧的值称作分母，可以是任意大于0的整数（负的分数带有负的分子）。尽管可以用浮点数来近似表示分数，但我们在此希望能精确表示分数的值。
+
+Fraction对象的表现应与其他数值类型一样，针对分数进行加、减、乘、除等运算，也能够使用标准的斜线形式来显示分数，比如3/5。此外，所有的分数方法都应该返回结果的最简形式。这样一来，不论进行何种运算，最后的结果都是最简分数。
+
+**出于练习考虑，只需要支持一种分数加运算。**
+
+**输入**
+
+空格分割的一行字符串。第一个分数的分子 第一个分数的分母 第二个分数的分子 第二个分数的分母
+
+**输出**
+
+输出相加的结果。使用标准的斜线形式来显示分数，并且要求是最简分数。
+
+样例输入
+
+```
+1 4 1 2
+```
+
+样例输出
+
+```
+3/4
+```
+
+来源
+
+https://runestone.academy/ns/books/published/pythonds/index.html
+
+
+
+```python
+def gcd(a, b):
+    while b != 0:
+        a, b = b, a % b
+    return a
+
+class Fraction:
+    def __init__(self, numerator, denominator):
+        self.numerator = numerator
+        self.denominator = denominator
+        self.simplify()
+
+    def simplify(self):
+        common = gcd(self.numerator, self.denominator)
+        self.numerator //= common
+        self.denominator //= common
+
+    def __add__(self, other):
+        numerator = self.numerator * other.denominator + self.denominator * other.numerator
+        denominator = self.denominator * other.denominator
+        return Fraction(numerator, denominator)
+
+    def __str__(self):
+        return f"{self.numerator}/{self.denominator}"
+
+a, b, c, d = map(int, input().split())
+x = Fraction(a, b)
+y = Fraction(c, d)
+print(x+y)
+```
+
+
+
+
+
 ## 27862: 博弈树分析与最优策略确定:获得最大收益的抉择路径
 
 http://cs101.openjudge.cn/practice/27862/
