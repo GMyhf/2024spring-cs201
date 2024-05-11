@@ -2591,8 +2591,12 @@ A: 2	B: 3	**C: 4**	D:5
 
 
 
-**Q:** 为了实现一个循环队列（或称环形队列），采用数组 Q[0..m-1]作为存储结构,其中变量 rear 表示这个循环队列中队尾元素的实际位置，添加结点时按 rear=(rear+1) % m 进行指针移动，变量length 表示当前队列中的元素个数，请问这个循环队列的队列首位元素的实际位置是（ C ）。
-A：rear-length	B：(1+rear+m-length) % m	**C：(rear-length+m) % m**	D：m-length
+**Q:** 为了实现一个循环队列（或称环形队列），采用数组 Q[0..m-1]作为存储结构,其中变量 rear 表示这个循环队列中队尾元素的实际位置，添加结点时按 rear=(rear+1) % m 进行指针移动，变量length 表示当前队列中的元素个数，请问这个循环队列的队列首位元素的实际位置是（ B ）。
+A：rear-length	**B：(1+rear+m-length) % m**	C：(rear-length+m) % m	D：m-length
+
+
+
+length = rear - head + 1，再对环形队列的特点做调整，得到B。 
 
 
 
