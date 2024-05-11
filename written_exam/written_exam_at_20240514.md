@@ -35,40 +35,46 @@ Updated 1510 GMT+8 May 11, 2024
 
    
 
-   假设链表是 ![$A <-> B <-> C$](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)*A*<−>*B*<−>*C*，要在 B 前插入 Q，那么会得到 ![$A <-> Q <-> B <-> C $](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)*A*<−>*Q*<−>*B*<−>*C*的链表。这是在结点 B 前插入 Q 结点的步骤：
+   #假设链表是 ![$A <-> B <-> C$](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)*A*<−>*B*<−>*C*，要在 B 前插入 Q，那么会得到 ![$A <-> Q <-> B <-> C $](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)*A*<−>*Q*<−>*B*<−>*C*的链表。这是在结点 B 前插入 Q 结点的步骤：
 
    1. `p.prev.next = q;` 这一步是把 p 的前一个结点的 next 指针指向 q。在例子中，是把 A 的 next 指针指向 Q。
    2. `q.next = p;` 这一步是把 q 的 next 指针指向 p。在例子中，是把 Q 的 next 指针指向 B。
    3. `q.prev = p.prev;` 这一步是把 q 的 prev 指针指向 p 的前一个结点。在例子中，是把 Q 的 prev 指针指向 A。
    4. `p.prev = q;` 这一步是把 p 的 prev 指针指向 q。在例子中，是把 B 的 prev 指针指向 Q。
 
-2. 给定一个 N 个相异元素构成的有序数列，设计一个递归算法实现数列的二分查找，考察递归过程中栈的使用情况，请问这样一个递归调用栈的最小容量应为（ C ）。
+2. 给定一个 N 个相异元素构成的有序数列，设计一个递归算法实现数列的二分查找，考察递归过程中栈的使用情况，请问这样一个递归调用栈的最小容量应为（ D ）。
    A：N	B：N/2	C：$\lceil \log_{2}(N) \rceil$	D：$\lceil \log_{2}(N+1) \rceil$​
 
    
 
-   解释：对于二分查找的递归实现，每次递归调用都会将问题规模减半，因此递归的深度就是问题规模的对数级别。在最坏情况下，递归的深度达到log2(N)。每次递归调用会占用栈空间，而栈的使用情况可以通过递归调用的最大深度来估计。因此，递归调用栈的最小容量应为最大递归深度的值。
+   #当N=2时， 需要两个帧：[rec(2)]  ｜ [rec(1)]。rec(1)是一次递归调用，但是rec(2)的帧也是算的。所以C错误。
 
-   根据给定的有序数列，共有N个相异元素，二分查找的递归深度为log2(N)。但是栈的容量必须能够容纳递归深度的最大值，所以栈的最小容量应为「上取整」，答案是C。
+   对于二分查找的递归实现，每次递归调用都会将问题规模减半，因此递归的深度就是问题规模的对数级别。在最坏情况下，递归的深度达到log2(N)。每次递归调用会占用栈空间，而栈的使用情况可以通过递归调用的最大深度来估计。因此，递归调用栈的最小容量应为最大递归深度的值。
+
+   根据给定的有序数列，共有N个相异元素，二分查找的递归深度为log2(N)。但是栈的容量必须能够容纳递归深度的最大值，所以栈的最小容量应为「上取整」。
+
+   
 
 3. 数据结构有三个基本要素:逻辑结构、存储结构以及基于结构定义的行为(运算)。下列概念中( B )属于存储结构。
    A:线性表	B:**链表**	C:字符串	D:二叉树
 
    
 
-   解释：在这些选项中，有些描述的是数据的逻辑结构，而有些是存储结构。逻辑结构指的是数据对象中数据元素之间的相互关系，而存储结构是指数据结构在计算机中的表示（也就是内存中的存储形式）。
+   #在这些选项中，有些描述的是数据的逻辑结构，而有些是存储结构。逻辑结构指的是数据对象中数据元素之间的相互关系，而存储结构是指数据结构在计算机中的表示（也就是内存中的存储形式）。
 
    A: **线性表** - 这是一种逻辑结构，它描述元素按线性顺序排列的规则。
    B: 链表 - 这是一种存储结构，它是线性表的链式存储方式，通过节点的相互链接来实现。
 
    正确答案是 B: 链表，因为它指的是数据的物理存储方式，即内存中的链式存储结构。
 
+   
+
 4. 为了实现一个循环队列（或称环形队列），采用数组 Q[0..m-1]作为存储结构,其中变量 rear 表示这个循环队列中队尾元素的实际位置，添加结点时按 rear=(rear+1) % m 进行指针移动，变量length 表示当前队列中的元素个数，请问这个循环队列的队列首位元素的实际位置是（ B ）。
    A：rear-length	B：(1+rear+m-length) % m	C：(rear-length+m) % m	D：m-length
 
    
 
-   length = rear - head + 1，再对环形队列的特点做调整，得到B。 
+   #length = rear - head + 1，再对环形队列的特点做调整，得到B。 
 
 5. 给定一个二叉树，若前序遍历序列与中序遍历序列相同，则二叉树是（ D ）。
    A：根结点无左子树的二叉树
@@ -76,14 +82,16 @@ Updated 1510 GMT+8 May 11, 2024
    C：只有根结点的二叉树或非叶子结点只有左子树的二叉树
    **D：**只有根结点的二叉树或非叶子结点只有右子树的二叉树
 
-   因为在前序遍历中，根节点总是首先访问的，而在中序遍历中，根节点必然在中间。
+   
+
+   #因为在前序遍历中，根节点总是首先访问的，而在中序遍历中，根节点必然在中间。
 
 6. 用 Huffman 算法构造一个最优二叉编码树，待编码的字符权值分别为{3，4，5，6，8，9，11，12}，请问该最优二叉编码树的带权外部路径长度为（ B ）。（补充说明：树的带权外部路径长度定义为树中所有叶子结点的带权路径长度之和；其中，结点的带权路径长度定义为该结点到树根之间的路径长度与该结点权值的乘积）（ B ）
    A：58	B：169	C：72	D：18
 
    
 
-   解释：为了构造哈夫曼树，我们遵循一个重复的选择过程，每次选择两个最小的权值创建一个新的节点，直到只剩下一个节点为止。我们可以按照以下步骤操作：
+   #为了构造哈夫曼树，我们遵循一个重复的选择过程，每次选择两个最小的权值创建一个新的节点，直到只剩下一个节点为止。我们可以按照以下步骤操作：
 
    1. 将给定的权值排序：{3, 4, 5, 6, 8, 9, 11, 12}。
 
@@ -147,7 +155,7 @@ Updated 1510 GMT+8 May 11, 2024
 
    
 
-   解释：对于这种情况，最适合的排序算法是归并排序（B）。
+   #对于这种情况，最适合的排序算法是归并排序（B）。
 
    归并排序是一种外部排序算法，它的主要思想是将数据分成较小的块，然后逐步合并这些块以获得有序的结果。由于主存储器的可用空间有限，归并排序非常适合这种情况，因为它可以在有限的主存中进行部分排序，并将排序好的部分写入外部存储（磁盘）中。然后再将不同部分进行合并，直到得到完全排序的结果。
 
@@ -157,17 +165,29 @@ Updated 1510 GMT+8 May 11, 2024
 
    插入排序（D）的时间复杂度较低，但它需要频繁地移动数据，这可能导致频繁的磁盘访问，也不适合主存储器有限的情况。
 
+   
+
 8. 已知一个无向图 G 含有 18 条边，其中度数为 4 的顶点个数为 3，度数为 3 的顶点个数为 4，其他顶
    点的度数均小于 3，请问图 G 所含的顶点个数至少是（ C ）。
    A: 10    B: 11    C: 13    D: 15
+
+   
+
+   #一条边贡献两个度数
+
+   
 
 9. 给定一个无向图 G，从顶点 V0 出发进行无向图 G 的深度优先遍历，访问的边集合为： {(V0,V1),
    (V0,V4), (V1,V2), (V1,V3), (V4,V5), (V5,V6)}，则下面哪条边（ C ）不能出现在 G 中？
    A: (V0, V2)      B: (V4, V6)
    C: (V4, V3)      D: (V0, V6)
 
+   
+
+   #在生成树中，跨两颗子树的边会与DFS过程产生矛盾。
+
 10. 已知一个有向图 G 的邻接入边表（或称逆邻接表）如下图所示，从顶点 v0 出发对该图 G 进行深度
-    优先周游，得到的深度优先周游结点序列为（ B ）。
+    优先周游，得到的深度优先周游结点序列为（ A ）。
     A： V0V1V4V3V2   B：V0V1V2V3V4    C：V0V1V3V2V4. D：V0V2V1V3V4
 
     <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240511155818050.png" alt="image-20240511155818050" style="zoom:50%;" />
@@ -179,7 +199,7 @@ Updated 1510 GMT+8 May 11, 2024
 
     
 
-    解释：根据排序算法的稳定性，如果需要选择一个不稳定排序算法，选项D：希尔排序是正确的选项。
+    #根据排序算法的稳定性，如果需要选择一个不稳定排序算法，选项D：希尔排序是正确的选项。
 
     稳定排序算法是指，当有两个相等的元素A和B，且在排序前A出现在B的前面，在排序后A仍然会出现在B的前面。而不稳定排序算法则无法保证这种相对顺序。
 
@@ -194,7 +214,7 @@ Updated 1510 GMT+8 May 11, 2024
 
     
 
-    解释：选项C：快速排序和选择排序中的两个排序算法的最坏情况下时间复杂度的大 O 表示相同。
+    #选项C：快速排序和选择排序中的两个排序算法的最坏情况下时间复杂度的大 O 表示相同。
 
     快速排序和选择排序都属于不同的排序算法，但它们的最坏情况下的时间复杂度都是O(n^2)。
 
@@ -206,8 +226,20 @@ Updated 1510 GMT+8 May 11, 2024
     A：X 是 Y 的左兄弟    B：X 是 Y 的右兄弟
     C：X 是 Y 的祖先    D：X 是 Y 的后裔
 
-14. 考虑一个森林 F，其中每个结点的子结点个数均不超过 2。如果森林 F 中叶子结点的总个数为 L，度数为 2 结点（子结点个数为 2）的总个数为 N，那么当前森林 F 中树的个数为（ B ）。
+    
+
+    #如果X和Y分属不交的子树，那么他们在先根和后根周游中的前后关系是一致的。出现反转的话，他们只能是祖先/后裔关系。
+
+    
+
+14. 考虑一个森林 F，其中每个结点的子结点个数均不超过 2。如果森林 F 中叶子结点的总个数为 L，度数为 2 结点（子结点个数为 2）的总个数为 N，那么当前森林 F 中树的个数为（ C ）。
     A：L-N-1    B：无法确定    C：L-N    D：N-L
+
+    
+
+    #一棵树中，叶节点比二度节点数量多一。
+
+    
 
 15. 回溯法是一类广泛使用的算法，以下叙述中不正确的是（ C ）。
     A：回溯法可以系统地搜索一个问题的所有解或者任意解
@@ -223,16 +255,40 @@ Updated 1510 GMT+8 May 11, 2024
 
 （10 分，每小题 1 分；对填写“Y”, 错填写“N” ）
 
-1. （ ）按照前序、中序、后序方式周游一棵二叉树，分别得到不同的结点周游序列，然而三种不同的周游序列中，叶子结点都将以相同的顺序出现。
-2. （ ）构建一个含 N 个结点的（二叉）最小值堆，时间效率最优情况下的时间复杂度大 O 表示为 O (N Log N)。
-3. （ ）对任意一个连通的无向图，如果存在一个环，且这个环中的一条边的权值不小于该环中任意一个其它的边的权值，那么这条边一定不会是该无向图的最小生成树中的边。
-4. （ ）通过树的周游可以求得树的高度，若采取深度优先遍历方式设计求解树高度问题的算法，算法空间复杂度大 O 表示为 O（树的高度）。
-5. （ ）树可以等价转化二叉树，树的先序遍历序列与其相应的二叉树的前序遍历序列相同。
-6. （ ）如果一个连通无向图 G 中所有边的权值均不同，则 G 具有唯一的最小生成树。
-7. （ ）求解最小生成树问题的 Prim 算法是一种贪心算法。
-8. （ ）使用线性探测法处理散列表碰撞问题，若表中仍有空槽（空单元），插入操作一定成功。
-9. （ ）从链表中删除某个指定值的结点，其时间复杂度是 O(1)。
-10. （ ）Dijkstra 算法的局限性是无法正确求解带有负权值边的图的最短路径。
+1. （ Y ）对任意一个连通的、无环的无向图，从图中移除任何一条边得到的图均不连通。
+
+2. （ Y ）给定一棵二叉树，前序周游序列和中序周游序列分别是 HGEDBFCA 和 EGBDHFAC 时，其
+   后序周游序列必是 EBDGACFH。
+
+3. （ N ）假设一棵二叉搜索树的结点数值在 1 到 1000 之间，现在查找数值为 363 的结点。以下三个
+   序列皆有可能是查过的序列：A). 2, 252, 401, 398, 330, 344, 397, 363; B). 925, 202, 911, 240, 912, 245,
+   363; C). 935, 278, 347, 621, 299, 392, 358, 363。
+
+   #911子树左子节点240的右子节点912，不能比911大
+
+4. （ N ）构建一个含 N 个结点的（二叉）最小值堆，建堆的时间复杂度大 O 表示为 $O(Nlog_2N)$。
+
+5. （ Y ）队列是动态集合，其定义的出队列操作所移除的元素总是在集合中存在时间最长的元素。
+
+6. （ N ）任一有向图的拓扑序列既可以通过深度优先搜索求解，也可以通过宽度优先搜索求解。
+
+   #必须是DAG
+
+7. （ Y ）对任一连通无向图 G，其中 E 是唯一权值最小的边，那么 E 必然属于任何一个最小生成树。
+
+8. （ N ）对一个包含负权值边的图，迪杰斯特拉(Dijkstra)算法能够给出最短路径问题的正确答案。
+
+9. （ N ）分治算法通常将原问题分解为几个规模较小但类似于原问题的子问题，并要求算法实现写成
+   某种递归形式，递归地求解这些子问题，然后再合并这些子问题的解来建立原问题的解。
+
+   #递归的求解子问题，最后子问题足够小可以直接求解，形式不一定是递归。
+
+   #分治和动态规划都是将问题分解为子问题，然后合并子问题的解得到原问题的解。但是不同的是，分治法分解出的子问题是不重叠的，因此分治法解决的问题不拥有重叠子问题，而动态规划解决的问题拥有重叠子问题。
+
+10. （ Y ）考察某个具体问题是否适合应用动态规划算法，必须判定它是否具有最优子结构性质。
+
+    #如果一个问题的最优解可以由其子问题的最优解有效地构造出来，那么称这个问题拥有**最优子结构(Optimal Substructure)**。最优子结构保证了动态规划中原问题的最优解可以由子问题的最优解推导而来。因此，一个问题必须拥有最优子结构，才能使用动态规划去解决。例如数塔问题中，每一个位置的 dp 值都可以由它的两个子问题推导得到。
+    至此，重叠子问题和最优子结构的内容已介绍完毕。需要指出，**一个问题必须拥有重叠子问题和最优子结构，才能使用动态规划去解决**。
 
 
 
@@ -240,410 +296,333 @@ Updated 1510 GMT+8 May 11, 2024
 
 # 三．填空（20 分，每题 2 分）
 
-1. 定义二叉树中一个结点的度数为其子结点的个数。现有一棵结点总数为 101 的二叉树，其中度数为 1 的结点数有 30 个，则度数为 0 结点有 _ _ _ _ 个。
+1. 目标串长是 n，模式串长是 m，朴素模式匹配算法思想为：从目标串第一个字符开始，依次与模式串字符匹配；若匹配失败，则尝试匹配的目标串起始字符位置往后移一位，重新开始依次和模式串字符匹配；……. ；直到匹配成功或遍历完整个目标串为止。则该算法中字符的最多比较次数是 _ _ _ _ （使用大 O 表示法）。
 
-2. 定义完全二叉树的根结点所在层为第一层。如果一个完全二叉树的第六层有 23 个叶结点，则它的总结 点数可能为 _ _ _ _ （请填写所有 3 个可能的结点数，写对 1 个得 1 分，2 个得 1.5 分，写 错 1 个不得分）。
+2. 在一棵含有 n 个结点的树中，只有度（树节点的度指子节点数量）为 k 的分支结点和度为 0 的终端（叶子）结点，则该树中含有的终端（叶子）结点的数目为： _ _ _ _ 。
 
-3. 对于初始排序码序列（51, 41, 31, 21, 61, 71, 81, 11, 91），用双指针原地交换实现，第 1 趟快速排序（以第一个数字为中值）的结果是： _ _ _ _ 
+3. 对一组记录进行非递减排序，其关键码为[46，70，56，38，40，80]，则利用快速排序的方法，以第一个记录为基准得到的第一次划分结果为 _ _ _ _ 
 
-4. 如果输入序列是已经正序，在(改进)冒泡排序、直接插入排序和直接选择排序算算法中， _ _ _ _ 算法最慢结束。
+4. 对长度为 3 的顺序表进行查找，若查找第一个元素的概率为 1/2，查找第二个元素的概率为 1/4，查找第三个元素的概率为 1/8，则执行任意查找需要比较元素的平均个数为 _ _ _ _ 。
 
-5. 已知某二叉树的先根周游序列为 ( A，B，D，E，C，F，G )，中根周游序列为 ( D，B，E，A，C，G，F )，则该二叉树的后根次序周游序列(  _ _ _ _  )。
+5. 设有一组记录的关键字为{19，14，23，1，68，20，84，27，55，11，10，79}，用链地址法（拉链法）
+   构造散列表，散列函数为 H(key)=key MOD 13, 散列地址为 1 的链中有 _ _ _ _  个记录。
 
-6. 使用栈计算后缀表达式 (操作数均为一位数) “1 2 3 + 4 * 5 + 3 + −” ，当扫描到第二个+号但还未对该+号进行运算时，栈的内容 (以栈底到栈顶从左往右的顺序书写) 为 _ _ _ _ 。
+6. 删除长度为 n 的顺序表的第 i 个数据元素需要移动表中的  _ _ _ _ 个数据元素。（1<=i<=n）
 
-7. 51 个顶点的连通图 G 有 50 条边，其中权值为 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 的边各 5 条，则连通图 G 的最小生成树各边的权值之和为 _ _ _ _ _ 。
+7. 已知以数组表示的小根堆为[8，15，10，21，34，16，12]，删除关键字 8 之后需要重新建堆，在此过程中，关键字的比较次数是 _ _ _ _ _ 。
 
-8. 包含 n 个顶点无向图的邻接表存储结构中，所有顶点的边表中最多有 _ _ _ _ 个结点。具有 n 个顶点的有向图，顶点入度和出度之和最大值不超过 _ _ _ _ 。
+8. 在广度优先遍历、拓扑排序、求最短路径三种算法中，可以判断出一个有向图是否有环（回路）的是 _ _ _ _ 。
 
-9. 给定一个长度为 7 的空散列表，采用双散列法解决冲突，两个散列函数分别为：h1(key) = key % 7，h2(key) = key%5 + 1 请向散列表依次插入关键字为 30, 58, 65 的集合元素，插入完成后 65 在散列表中存储地址为 _ _ _ _ _ 。
+9. 有 n（n>=2）个顶点的有向强连通图最少有 _ _ _ _ _ 条边。
 
-10. 阅读算法 ABC，回答问题。
+10. 若栈 S1 中保存整数，栈 S2 中保存运算符，函数 F() 依次执行下述各步操作：
+    ①从 S1 中依次弹出两个操作数 a 和 b (先弹出 a，再弹出 b)；
+    ②从 S2 中弹出一个运算符 op;
+    ③执行相应的运算 b op a;
+    ④将运算结果压入 S1 中。
+    假定 S1 中的操作数依次是 5，8，3，2（2 在栈顶），S2 中的运算符依次是*，-，//（//在栈顶）。调用三次 F() 后，S1 栈顶保存的值是 _ _ _ _ 。
 
-    ```python
-    def ABC(n):
-      k, m = 2, int(n**0.5)
-      while (k <= m) and (n %k != 0):
-        k += 1
-      return k > m
-    ```
-
-    1）算法的功能是：_ _ _ _ 。
-
-    2）算法的时间复杂度是O( _ _ _ _ )。
+    
 
 
 
 
 
-# 四．简答（3题，共14分）
+# 四．简答（3题，共20分）
 
-1. （4 分）字符串匹配算法从长度为 n 的文本串 S 中查找长度为 m 的模式串 P 的首次出现。
+1. （7 分）试用 Dijkstra 算法求出下图中顶点 1 到其余各顶点的最短路径，写出算法执行过程中各步
+   的状态，填入下表。
 
-  a）字符串匹配的朴素算法使用暴力搜索，大致过程如下：对于 P 在 S 中可能出现的 n-m+1 个位置，比对此位置时 P 和 S 中对应子串是否相等。其时间复杂度 O((n-m+1)m)。请举例说明算法时间复杂度一种最坏情况（注：例子中请只出现 a 和 b 两种字符）。（1分）
 
-  b）已知字符串 S 为“abaabaabaabcc”，模式串 t 为“abaabc”。采用朴素算法进行查找，请写出字符比对的总次数和查找结果。（2 分）
-
-  c）朴素算法存在很大的改进空间，说明在上述(b)步骤中，第一次出现不匹配（s[i+j] != t[j]）时（i=0, j=5），为了避免冗余比对，则下次比对时，i 和 j 的值可以分别调整为多少？（1分）
-
-  
-
-  字符串匹配的朴素算法：
 
   ```python
-  def issubstring(s, t):
-      for i in range(len(s)):
-          for j in range(len(t)):
-              if s[i + j] != t[j]:
-                  break
-          else:
-              return True
-      return False
+  
   ```
 
   
 
-2. （5 分）有八项活动，每项活动标记为 V+编号 n(0<=n<=7)，每项活动要求的前驱如下:
-
-  | 活动 | V0     | V1   | V2   | V3     | V4   | V5     | V6   | V7     |
-  | ---- | ------ | ---- | ---- | ------ | ---- | ------ | ---- | ------ |
-  | 前驱 | 无前驱 | V0   | V0   | V0, V2 | V1   | V2, V4 | V3   | V5, V6 |
-
-  （1）画出相应的 AOV（Active On Vertex）网络（即节点为活动，边为先后关系的有向图），
-  （2）并给出一个拓扑排序序列，如存在多种，则按照编号从小到大排序，输出最小的一种。
-
-
-
-3. （5 分）简要回答下列 BST 树以及 BST 树更新过程的相关问题。
-   （1）请简述什么是二叉查找树（BST）（1 分）
-   （2）请图示 2,1,6,4,5,3 按顺序插入一棵 BST 树的中间过程和最终形态（2 分）
-   （3）请图示以上 BST 树，依次删除节点 4 和 2 的过程和树的形态（2 分）
-
-
-
-
-
-# 五．算法填空（4题，共26分）
-
-1. （6 分）拓扑排序：给定一个有向图，求拓扑排序序列。
-
-输入：第一行是整数 n，表示图有 n 顶点 (1<=n<=100)，编号 1 到 n。接下来 n 行，第 i 行列了顶点 i 的所有邻点，以 0 结尾。没有邻点的顶点，对应行就是单独一个0。
-
-输出：一个图的拓扑排序序列。如果图中有环，则输出“Loop”。
-
-样例输入 (#及其右边的文字是说明，不是输入的一部分)：
-
-  ```
-  5 					#5 个顶点
-  0 					#1 号顶点无邻点
-  4 5 1 0 		#2 号顶点有邻点 4 5 1
-  1 0
-  5 3 0
-  3 0
-  ```
-
-样例输出
-
-  ```
-  2 4 5 3 1
-  ```
-
-请对下面的解题程序进行填空
-
-
-
-```python
-class Edge: # 表示邻接表中的图的边,v 是终点
-    def __init__(self, v):
-        self.v = v
-
-
-def topoSort(G):    # G 是邻接表，顶点从 0 开始编号
-    # G[i][j]是 Edge 对象，代表边 <i, G[i][j].v>
-    n = len(G)
-    import queue
-    inDegree = [0] * n  # inDegree[i]是顶点 i 的入度
-    q = queue.Queue()
-    # q 是队列, q.put(x)可以将 x 加入队列，q.get()取走并返回对头元素
-    # q.empty()返回队列是否为空
-
-    for i in range(n):
-        for e in G[i]:
-            _______________  # 【1 分】
-
-    for i in range(n):
-        if inDegree[i] == 0:
-            _______________    # 【1 分】
-
-    seq = []
-    while not q.empty():
-        k = q.get()
-        seq.append(k)   # 【1 分】
-        for e in G[k]:
-            _______________  # 【1 分】
-            if inDegree[e.v] == 0:
-                _______________  # 【1 分】
-
-    if _______________:   # 【1 分】
-        return None
-    else:
-        return seq
-
-
-n = int(input())
-G = [[] for _ in range(n)]  # 邻接表
-for i in range(n):
-    lst = list(map(int, input().split()))
-    print(lst)
-    G[i] = [Edge(x - 1) for x in lst[:-1]]
-    print(G[i])
-
-result = topoSort(G)
-if result is not None:
-    for x in result:
-        print(x + 1, end=" ")
-else:
-    print("Loop")
-
-```
-
-
-
-2. （7 分）链表操作：读入一个从小到大排好序的整数序列到链表，然后在链表中删除重复的元素，使得重复的元素只保留 1 个，然后将整个链表内容输出。
-
-输入样例：
-
-  ```
-  1 2 2 2 3 3 4 4 6
-  ```
-
-输出样例:
-
-  ```
-  1 2 3 4 6
-  ```
-
-请对程序填空:
-
-
-
-```python
-class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-
-a = list(map(int, input().split()))
-head = Node(a[0])
-p = head
-for x in a[1:]:
-    _______________    # 【2 分】
-    p = p.next
-
-p = head
-while p:
-    while _______________ and p.data == p.next.data: # 【2 分】
-        _______________    #【1 分】
-    p = p.next
-
-p = head
-while p:
-    print(p.data, end=" ")
-    _______________  # 【2 分】
-
-```
-
-
-
-3. （7 分）无向图判定：给定一个无向图，判断是否连通，是否有回路。
-输入：第一行两个整数 n,m，分别表示顶点数和边数。顶点编号从 0 到 n-1。 (1<=n<=110, 1<=m<= 10000) 接下来 m 行，每行两个整数 u 和 v，表示顶点 u 和 v 之间有边。
-
-输出:
-如果图是连通的，则在第一行输出“connected:yes",否则第一行输出“connected:no"。
-如果图中有回路，则在第二行输出“loop:yes ",否则第二行输出“loop:no"。
-
-样例输入
-
-  ```
-  3 2
-  0 1
-  0 2
-  ```
-
-样例输出
-
-  ```
-  connected:yes
-  loop:no
-  ```
-
-请进行程序填空：
-
-
-
-```python
-def isConnected(G): # G 是邻接表,顶点编号从 0 开始，判断是否连通
-    n = len(G)
-    visited = [False for _ in range(n)]
-    total = 0
-
-    def dfs(v):
-        nonlocal total
-        visited[v] = True
-        total += 1
-        for u in G[v]:
-            if not visited[u]:
-                dfs(u)
-
-    dfs(0)
-    return _______________      # 【2 分】
-
-def hasLoop(G): # G 是邻接表,顶点编号从 0 开始，判断有无回路
-    n = len(G)
-    visited = [False for _ in range(n)]
-
-    def dfs(v, x): # 返回值表示本次 dfs 是否找到回路,x 是深度优先搜索树上 v 的父结点
-        visited[v] = True
-        for u in G[v]:
-            if visited[u] == True:
-                if _______________: # 【2 分】
-                    return True
-            else:
-                if _______________:   # 【2 分】
-                    return True
-        return False
-
-    for i in range(n):
-        if _______________:  # 【1 分】
-            if dfs(i, -1):
-                return True
-    return False
-
-n, m = map(int, input().split())
-G = [[] for _ in range(n)]
-for _ in range(m):
-    u, v = map(int, input().split())
-    G[u].append(v)
-    G[v].append(u)
-
-if isConnected(G):
-    print("connected:yes")
-else:
-    print("connected:no")
-
-if hasLoop(G):
-    print("loop:yes")
-else:
-    print("loop:no")
-
-```
-
-
-
-
-
-4. （6 分）堆排序：输入若干个整数，下面的程序使用堆排序算法对这些整数从小到大排序，请填空。
-程序中建立的堆是大顶堆（最大元素在堆顶）
-
-输入样例：
-
-  ```
-  1 3 43 8 7
-  ```
-
-输出样例:
-
-  ```
-  1 3 7 8 43
-  ```
-
-请进行程序填空：
-
-
-
-```python
-def heap_sort(arr):
-    heap_size = len(arr)
-
-    def goDown(i):
-        if i * 2 + 1 >= heap_size:  # a[i]没有儿子
-            return
-        L, R = i * 2 + 1, i * 2 + 2
-
-        if _______________:   # 【1 分】
-            s = L
-        else:
-            s = R
-
-        if arr[s] > arr[i]:
-            _______________ # 【2 分】
-            goDown(s)
-
-    def heapify():	# 将列表 a 变成一个堆
-        for k in range(len(arr) // 2 - 1, -1, -1): # 【1 分】
-            goDown(k)
-
-    heapify()
-    for i in range(len(arr) - 1, -1, -1):
-        _______________ # 【1 分】
-        heap_size -= 1
-        _______________   # 【1 分】
-
-
-a = list(map(int, input().split()))
-heap_sort(a)
-for x in a:
-    print(x, end=" ")
-
-```
-
-
-
-卷面写法怪异，正常写法应该是
-
-```python
-def heapify(arr, n, i):
-    largest = i  # 将当前节点标记为最大值
-    left = 2 * i + 1  # 左子节点的索引
-    right = 2 * i + 2  # 右子节点的索引
-
-    # 如果左子节点存在且大于根节点，则更新最大值索引
-    if left < n and arr[i] < arr[left]:
-        largest = left
-
-    # 如果右子节点存在且大于根节点或左子节点，则更新最大值索引
-    if right < n and arr[largest] < arr[right]:
-        largest = right
-
-    # 如果最大值索引发生了变化，则交换根节点和最大值，并递归地堆化受影响的子树
-    if largest != i:
-        arr[i], arr[largest] = arr[largest], arr[i]
-        heapify(arr, n, largest)
-
-
-def buildMaxHeap(arr):
-    n = len(arr)
-
-    # 从最后一个非叶子节点开始进行堆化
-    for i in range(n // 2 - 1, -1, -1):
-        heapify(arr, n, i)
-
-
-def heapSort(arr):
-    n = len(arr)
-
-    buildMaxHeap(arr)  # 构建大顶堆
-
-    # 逐步取出堆顶元素（最大值），并进行堆化调整
-    for i in range(n - 1, 0, -1):
-        arr[i], arr[0] = arr[0], arr[i]  # 交换堆顶元素和当前最后一个元素
-        heapify(arr, i, 0)  # 对剩余的元素进行堆化
-
-    return arr
-
-a = list(map(int, input().split()))
-heapSort(a)
-for x in a:
-    print(x, end=" ")
-```
-
+2. （6 分）给定一组记录的关键码集合为{18，73，5，10，68，99，27}，回答下列 3 个问题：
+   a) 画出按照记录顺序构建形成的二叉排序（搜索）树（2 分）；
+   b) 画出删除关键码为 73 后的二叉排序树（2 分）。
+   c) 画出令原关键码集合（未删除 73 前）查询效率最高的最优二叉排序树（仅需考虑关键码查询成功时的效率，且集合内每个关键码被查询概率相等）（2 分）。
+
+
+
+3. （7 分）
+   
+4. 奇偶交换排序如下所述：对于原始记录序列 {a1, a2, a3, ……, an}，第一趟对所有奇数 i，将ai 和 ai+1 进行比较，若 ai > ai+1，则将二者交换；第二趟对所有偶数 i；第三趟对所有奇数 i;第四趟对所有偶数 i，…，依次类推直到整个记录序列有序为止。伪代码如下：
+
+   ```python
+   def ExSort(a, n):  # a[1..n]为待排序记录，n为记录数目
+   
+       change1 = change2 = True  # 标志变量, bool型
+       if n <= 0:
+           return "Error"
+       while (change1 or change2):
+   
+           change1 = False  # 奇数，
+           for i in range(1, n, 2):
+               if a[i] > a[i+1]:
+                  a[i], a[i+1] = a[i+1], a[i]
+                  change1 = True
+   
+           if not change1 and not change2:
+               break
+   
+           change2 = False  # 偶数
+           for i in range(2, n, 2):
+               if a[i] > a[i+1]:
+                   a[i], a[i+1] = a[i+1], a[i]
+                   change2 = True
+   ```
+
+   a) 请写出序列 {18，73，5，10，68，99，27，10} 在前 4 趟排序中每趟排序后的结果。（2 分）
+   b) 奇偶交换排序是否是稳定的排序？（1 分）
+   c) 在序列为初始状态为“正序”和“逆序”两种情况下，试给出序列长度为 n 的情况下，排序过程所需进行的关键码比较次数和记录的交换次数？（4 分）
+
+   
+
+   a) 序列 {18, 73, 5, 10, 68, 99, 27, 10} 在前4趟排序中每趟排序后的结果如下：
+
+   ```python
+   def ExSort(a, n):  # a[1..n]为待排序记录，n为记录数目
+       change1 = change2 = True  # 标志变量, bool型
+       if n <= 0:
+           return "Error"
+       cnt = 0
+       while (change1 or change2):
+           change1 = False  # 奇数，
+           for i in range(1, n, 2):
+               if a[i] > a[i+1]:
+                  a[i], a[i+1] = a[i+1], a[i]
+                  change1 = True
+   
+           cnt += 1; print(f"pass {cnt}: {a[1:]}")
+           if not change1 and not change2:
+               break
+   
+           change2 = False  # 偶数
+           for i in range(2, n, 2):
+               if a[i] > a[i+1]:
+                   a[i], a[i+1] = a[i+1], a[i]
+                   change2 = True
+   
+           cnt += 1; print(f"pass {cnt}: {a[1:]}")
+           if cnt == 4:
+               break
+   
+   # 题面是奇数第一趟，偶数是第二趟，这也没有都都比较，才一半，怎么算一趟？题面有问题吧
+   a = [0] + [18, 73, 5, 10, 68, 99, 27, 10]
+   ExSort(a, len(a)-1)
+   """
+   pass 1: [18, 73, 5, 10, 68, 99, 10, 27]
+   pass 2: [18, 5, 73, 10, 68, 10, 99, 27]
+   pass 3: [5, 18, 10, 73, 10, 68, 27, 99]
+   pass 4: [5, 10, 18, 10, 73, 27, 68, 99]
+   """
+   ```
+
+   
+
+   b) 奇偶交换排序是稳定的排序。稳定排序是指如果两个元素相等，在排序后它们的相对顺序仍然保持不变。奇偶交换排序在交换过程中只涉及相邻的两个元素，因此相等元素之间的相对顺序不会改变。
+
+   c) 在初始状态为“正序”和“逆序”两种情况下，奇偶交换排序的关键码比较次数和记录交换次数如下：
+
+   - 正序情况下：
+     关键码比较次数：每趟排序将比较 ![$n/2 $](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)*n*/2 
+     记录交换次数：0。由于序列已经有序，不需要进行交换，
+
+   - 逆序情况下：
+     关键码比较次数：每趟排序将比较 ![$n/2 $](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)*n*/2 
+     记录交换次数：n/2
+
+   
+
+
+
+
+
+# 五．算法填空（2题，共20分）
+
+1. 填空完成下列程序：读入一个整数序列，用单链表存储之，然后将该单链表颠倒后输出该单链表内容。算法输入的一行行是 n 个整数，即要存入单链表的整数序列。
+
+   样例输入
+   1 2 3 4 5
+   样例输出
+   5 4 3 2 1
+
+   ![image-20240229230534964](https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240229230534964.png)
+
+   
+
+   ```python
+   class Node:
+       def __init__(self, data, next = None):
+           self.data, self.next = data, next
+   
+   class LinkedList:
+       def __init__(self, lst):
+           self.head = Node(lst[0])
+           p = self.head
+           for i in lst[1:]:
+               p.next = Node(i)    # 等号右侧填空（1分）
+               p = p.next  				# 等号右侧填空（2分）
+   
+       def reverse(self): # 把head当pre用，天才 said by 胡睿诚
+           p = self.head.next
+           self.head.next = None   # 等号右侧填空（2分）
+           while p is not None:
+               q = p
+               p = p.next  				# 等号右侧填空（1分）
+               q.next = self.head  # 等号右侧填空（2分）
+               self.head = q    		# 留空行，此行代码需要填写（2分）
+   
+       def reverse_3p(self): # 常规思维：三个指针来反转链表的指针指向关系
+           prev = None
+           current = self.head
+           while current:
+               next_node = current.next
+               current.next = prev
+               prev = current
+               current = next_node
+           self.head = prev
+   
+       def print_list(self):
+           p = self.head
+           while p:
+               print(p.data, end=" ")
+               p = p.next
+           print()
+   
+   #a = list(map(int, input().split()))
+   a = [1, 2, 3, 4, 5]
+   b = a.copy()
+   a = LinkedList(a)
+   b = LinkedList(b)
+   a.reverse()
+   b.reverse_3p()
+   a.print_list()
+   b.print_list()
+   """
+   5 4 3 2 1 
+   5 4 3 2 1 
+   """
+   
+   """
+   5 4 3 2 1 
+   """
+   ```
+
+   
+
+2. 填空完成下列程序：输入一棵二叉树的扩充二叉树的先根周游（前序遍历）序列，构建该二叉树，并输出它的中根周游（中序遍历）序列。这里定义一棵扩充二叉树是指将原二叉树中的所有空引用增加一个表示为@的虚拟叶结点。譬如下图所示的一棵二叉树，
+   输入样例：
+   ABD@G@@@CE@@F@@
+   输出样例：
+   DGBAECF
+
+   
+
+   <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403090101091.png" alt="image-20240309010107665" style="zoom: 50%;" />
+
+   
+
+   ```python
+   s = input()
+   ptr = 0
+   
+   class BinaryTree:
+       def __init__(self, data, left=None, right=None):
+           self.data, self.left, self.right = data, left, right
+   
+       def addLeft(self, tree):
+           self.left = tree
+   
+       def addRight(self, tree):
+           self.right = tree
+   
+       def inorderTraversal(self):
+           if self.left:
+               self.left.inorderTraversal()    # (1分) 
+           print(self.data, end="")
+           if self.right:
+               self.right.inorderTraversal()   # (1分) 
+   
+   def buildTree():
+       global ptr
+       if s[ptr] == "@":
+           ptr += 1
+           return None             # (2分) 
+       tree = BinaryTree(s[ptr])   # (1分) 
+       ptr += 1
+       tree.addLeft(buildTree())   # (2分) 
+       tree.addRight(buildTree())  # (2分) 
+   
+       return tree
+   
+   tree = buildTree()
+   tree.inorderTraversal()
+   
+   """
+   sample input:
+   ABD@G@@@CE@@F@@
+   
+   sample output:
+   DGBAECF
+   """
+   ```
+
+   
+
+   笔试中，对于程序阅读理解，要求还是挺高的。因为AC的代码通常有多种写法，如果考出来写的不规范代码，就有点难受。例如：上面程序，递归程序带着全局变量，难受。
+
+   较好的写法是：
+
+   ```python
+   class TreeNode:
+       def __init__(self, data):
+           self.data = data
+           self.left = None
+           self.right = None
+   
+   def buildTree(preorder):
+       if not preorder:
+           return None
+   
+       data = preorder.pop(0)
+       if data == "@":
+           return None
+   
+       node = TreeNode(data)
+       node.left = buildTree(preorder)
+       node.right = buildTree(preorder)
+   
+       return node
+   
+   def inorderTraversal(node):
+       if node is None:
+           return []
+   
+       result = []
+       result.extend(inorderTraversal(node.left))
+       result.append(node.data)
+       result.extend(inorderTraversal(node.right))
+   
+       return result
+   
+   preorder = input()
+   tree = buildTree(list(preorder))
+   
+   inorder = inorderTraversal(tree)
+   print(''.join(inorder))
+   
+   """
+   sample input:
+   ABD@G@@@CE@@F@@
+   
+   sample output:
+   DGBAECF
+   """
+   ```
+
+   
