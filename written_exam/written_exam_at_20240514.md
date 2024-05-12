@@ -1,6 +1,6 @@
 # 20240514 数算B-12班-笔试（模考）
 
-Updated 1510 GMT+8 May 11, 2024
+Updated 1616 GMT+8 May 12, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -257,12 +257,9 @@ Updated 1510 GMT+8 May 11, 2024
 
 1. （ Y ）对任意一个连通的、无环的无向图，从图中移除任何一条边得到的图均不连通。
 
-2. （ Y ）给定一棵二叉树，前序周游序列和中序周游序列分别是 HGEDBFCA 和 EGBDHFAC 时，其
-   后序周游序列必是 EBDGACFH。
+2. （ Y ）给定一棵二叉树，前序周游序列和中序周游序列分别是 HGEDBFCA 和 EGBDHFAC 时，其后序周游序列必是 EBDGACFH。
 
-3. （ N ）假设一棵二叉搜索树的结点数值在 1 到 1000 之间，现在查找数值为 363 的结点。以下三个
-   序列皆有可能是查过的序列：A). 2, 252, 401, 398, 330, 344, 397, 363; B). 925, 202, 911, 240, 912, 245,
-   363; C). 935, 278, 347, 621, 299, 392, 358, 363。
+3. （ N ）假设一棵二叉搜索树的结点数值在 1 到 1000 之间，现在查找数值为 363 的结点。以下三个序列皆有可能是查过的序列：A). 2, 252, 401, 398, 330, 344, 397, 363; B). 925, 202, 911, 240, 912, 245,363; C). 935, 278, 347, 621, 299, 392, 358, 363。
 
    #911子树左子节点240的右子节点912，不能比911大
 
@@ -278,8 +275,9 @@ Updated 1510 GMT+8 May 11, 2024
 
 8. （ N ）对一个包含负权值边的图，迪杰斯特拉(Dijkstra)算法能够给出最短路径问题的正确答案。
 
-9. （ N ）分治算法通常将原问题分解为几个规模较小但类似于原问题的子问题，并要求算法实现写成
-   某种递归形式，递归地求解这些子问题，然后再合并这些子问题的解来建立原问题的解。
+9. （ N ）分治算法通常将原问题分解为几个规模较小但类似于原问题的子问题，并要求算法实现写成某种递归形式，递归地求解这些子问题，然后再合并这些子问题的解来建立原问题的解。
+
+   
 
    #递归的求解子问题，最后子问题足够小可以直接求解，形式不一定是递归。
 
@@ -304,9 +302,8 @@ Updated 1510 GMT+8 May 11, 2024
 
 4. 对长度为 3 的顺序表进行查找，若查找第一个元素的概率为 1/2，查找第二个元素的概率为 1/4，查找第三个元素的概率为 1/8，则执行任意查找需要比较元素的平均个数为 _ _ _ _ 。
 
-5. 设有一组记录的关键字为{19，14，23，1，68，20，84，27，55，11，10，79}，用链地址法（拉链法）
-   构造散列表，散列函数为 H(key)=key MOD 13, 散列地址为 1 的链中有 _ _ _ _  个记录。
-
+5. 设有一组记录的关键字为{19，14，23，1，68，20，84，27，55，11，10，79}，用链地址法（拉链法）构造散列表，散列函数为 H(key)=key MOD 13, 散列地址为 1 的链中有 _ _ _ _  个记录。
+   
 6. 删除长度为 n 的顺序表的第 i 个数据元素需要移动表中的  _ _ _ _ 个数据元素。（1<=i<=n）
 
 7. 已知以数组表示的小根堆为[8，15，10，21，34，16，12]，删除关键字 8 之后需要重新建堆，在此过程中，关键字的比较次数是 _ _ _ _ _ 。
@@ -330,14 +327,42 @@ Updated 1510 GMT+8 May 11, 2024
 
 # 四．简答（3题，共20分）
 
-1. （7 分）试用 Dijkstra 算法求出下图中顶点 1 到其余各顶点的最短路径，写出算法执行过程中各步
-   的状态，填入下表。
+1. （7 分）试用 Dijkstra 算法求出下图中顶点 1 到其余各顶点的最短路径，写出算法执行过程中各步的状态，填入下表。
+   
+   
+   
+   
+   
+   ```mermaid
+   graph LR
+       1((1)) --> |30|2((2)); 1--> |10|5((5)); 1 --> |60|4((4))
+       2((2)) --> |20|3((3))
+       3((3)) --> |15|4((4))
+       5((5)) --> |15|2; 5 --> |7|6((6))
+       6((6)) --> |3|2; 6 --> |16|3; 6 --> |8|7
+       7((7)) --> |6|3; 7 --> |3|4; 7 --> |10|8((8))
+       8 --> |6|4
+   ```
+   
 
 
 
-  ```python
-  
-  ```
+
+
+<p align="right">顶点1到其他顶点的最短路径长度</p>
+
+| 所选顶点 | U(已确定最短路径的顶点集合) | (未确定最短路径的顶点集合) | 2    | 3    | 4    | 5    | 6    | 7    | 8    |
+| -------- | --------------------------- | -------------------------- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| 初态     | {1}                         | {2, 3, 4, 5, 6, 7, 8}      | 30   | ∞    | 60   | 10   | ∞    | ∞    | ∞    |
+| 第1步    | {1, 5}                      | {2, 3, 4, 6, 7, 8}         | 25   | ∞    | 60   | -    | 17   | ∞    | ∞    |
+| 第2步    | {1, 5, 6}                   | {2, 3, 4, 7, 8}            | 20   | 33   | 60   | -    | -    | 25   | ∞    |
+| 第3步    | {1, 5, 6, 2}                | {3, 4, 7, 8}               | -    | 33   | 60   | -    | -    | 25   | ∞    |
+| 第4步    | {1, 5, 6, 2, 7}             | {3, 4, 8}                  | -    | 31   | 28   | -    | -    | -    | 35   |
+| 第5步    | {1, 5, 6, 7, 2, 4}          | {3, 8}                     | -    | 31   | -    | -    | -    | -    | 36   |
+| 第6步    | {1, 5, 6, 7, 2, 4, 3}       | {8}                        | -    | -    | -    | -    | -    | -    | 36   |
+|          |                             |                            |      |      |      |      |      |      |      |
+
+
 
   
 
@@ -348,10 +373,67 @@ Updated 1510 GMT+8 May 11, 2024
 
 
 
-3. （7 分）
-   
-4. 奇偶交换排序如下所述：对于原始记录序列 {a1, a2, a3, ……, an}，第一趟对所有奇数 i，将ai 和 ai+1 进行比较，若 ai > ai+1，则将二者交换；第二趟对所有偶数 i；第三趟对所有奇数 i;第四趟对所有偶数 i，…，依次类推直到整个记录序列有序为止。伪代码如下：
+#二叉排序树是一种特殊的二叉树，它具有以下性质：
 
+1. 对于树中的每个节点，其左子树中的所有节点的关键码值小于该节点的关键码值。
+2. 对于树中的每个节点，其右子树中的所有节点的关键码值大于该节点的关键码值。
+3. 左右子树也是二叉排序树。
+
+在构建二叉排序树时，我们按照以下原理：
+
+- 从根节点开始，依次遍历关键码集合中的每个关键码。
+- 对于每个关键码，如果树为空，则将关键码作为树的根节点。如果树不为空，则按照二叉排序树的性质，找到适当的位置插入关键码，以保持二叉排序树的性质不变。
+
+具体来说，在插入关键码时，我们从根节点开始，逐级比较关键码值，并根据比较结果决定向左子树或右子树移动，直到找到合适的插入位置。如果待插入的关键码已经存在于树中，则不执行任何操作（可以视为树中已经存在该关键码）。
+
+这样，通过按照关键码集合中记录的顺序依次插入节点，就可以构建出一个二叉排序树。
+
+
+
+让我们逐个回答这些问题：
+
+a) 二叉排序树构建过程如下：
+
+```
+           18
+          /  \
+        5     73
+         \    / \
+         10  68 99
+              /
+            27
+```
+
+
+
+b) 删除关键码为 73 后的二叉排序树：
+
+```
+           18
+          /  \
+        5     68
+         \    / \
+         10  27 99
+```
+
+c) 查询效率最高的最优二叉排序树：
+
+由于关键码集合内每个关键码被查询概率相等，最优二叉排序树应该是平衡树，即左右子树高度差不超过1。因此，我们可以构建一个高度平衡的二叉排序树。
+
+```
+           27
+          /  \
+        10    73
+       /  \   / \
+      5   18 68 99
+```
+
+这是一棵高度平衡的二叉排序树，查询效率最高，因为平衡树的查找时间复杂度是 O(log n)。
+
+
+
+3. （7 分）奇偶交换排序如下所述：对于原始记录序列 {a1, a2, a3, ……, an}，第一趟对所有奇数 i，将ai 和 ai+1 进行比较，若 ai > ai+1，则将二者交换；第二趟对所有偶数 i；第三趟对所有奇数 i;第四趟对所有偶数 i，…，依次类推直到整个记录序列有序为止。代码如下：
+   
    ```python
    def ExSort(a, n):  # a[1..n]为待排序记录，n为记录数目
    
@@ -375,15 +457,17 @@ Updated 1510 GMT+8 May 11, 2024
                    a[i], a[i+1] = a[i+1], a[i]
                    change2 = True
    ```
-
+   
    a) 请写出序列 {18，73，5，10，68，99，27，10} 在前 4 趟排序中每趟排序后的结果。（2 分）
    b) 奇偶交换排序是否是稳定的排序？（1 分）
    c) 在序列为初始状态为“正序”和“逆序”两种情况下，试给出序列长度为 n 的情况下，排序过程所需进行的关键码比较次数和记录的交换次数？（4 分）
-
    
-
+   
+   
+   #
+   
    a) 序列 {18, 73, 5, 10, 68, 99, 27, 10} 在前4趟排序中每趟排序后的结果如下：
-
+   
    ```python
    def ExSort(a, n):  # a[1..n]为待排序记录，n为记录数目
        change1 = change2 = True  # 标志变量, bool型
@@ -421,21 +505,21 @@ Updated 1510 GMT+8 May 11, 2024
    pass 4: [5, 10, 18, 10, 73, 27, 68, 99]
    """
    ```
-
    
-
+   
+   
    b) 奇偶交换排序是稳定的排序。稳定排序是指如果两个元素相等，在排序后它们的相对顺序仍然保持不变。奇偶交换排序在交换过程中只涉及相邻的两个元素，因此相等元素之间的相对顺序不会改变。
-
+   
    c) 在初始状态为“正序”和“逆序”两种情况下，奇偶交换排序的关键码比较次数和记录交换次数如下：
-
+   
    - 正序情况下：
      关键码比较次数：每趟排序将比较 ![$n/2 $](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)*n*/2 
      记录交换次数：0。由于序列已经有序，不需要进行交换，
-
+   
    - 逆序情况下：
      关键码比较次数：每趟排序将比较 ![$n/2 $](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC)*n*/2 
      记录交换次数：n/2
-
+   
    
 
 
@@ -444,7 +528,7 @@ Updated 1510 GMT+8 May 11, 2024
 
 # 五．算法填空（2题，共20分）
 
-1. 填空完成下列程序：读入一个整数序列，用单链表存储之，然后将该单链表颠倒后输出该单链表内容。算法输入的一行行是 n 个整数，即要存入单链表的整数序列。
+1. 填空完成下列程序：读入一个整数序列，用单链表存储之，然后将该单链表颠倒后输出该单链表内容。算法输入的一行是 n 个整数，即要存入单链表的整数序列。
 
    样例输入
    1 2 3 4 5
@@ -513,7 +597,30 @@ Updated 1510 GMT+8 May 11, 2024
    """
    ```
 
-   
+
+
+
+`reverse_3p`这段代码是用来反转一个链表的指针指向关系的。下面是对代码的逐行解释：
+
+1. `prev = None`: 初始化一个变量`prev`，用于保存当前节点的前一个节点，初始值为`None`。
+
+2. `current = self.head`: 初始化一个变量`current`，指向链表的头节点。
+
+3. `while current:`: 进入一个循环，只要`current`不为空（即还有节点未遍历）就继续执行。
+
+4. `next_node = current.next`: 将`current`节点的下一个节点保存到`next_node`中，以备后续使用。
+
+5. `current.next = prev`: 将`current`节点的指针指向前一个节点`prev`，实现了反转指针的方向。
+
+6. `prev = current`: 将`prev`更新为当前节点`current`，为下一轮循环做准备。
+
+7. `current = next_node`: 将`current`更新为下一个节点`next_node`，继续遍历链表。
+
+8. `self.head = prev`: 最后将链表的头节点更新为反转后的链表的头节点`prev`，完成整个链表的反转。
+
+这段代码使用了三个指针：`prev`、`current`、`next_node`，通过不断更新它们的指向关系，实现了链表的反转。
+
+
 
 2. 填空完成下列程序：输入一棵二叉树的扩充二叉树的先根周游（前序遍历）序列，构建该二叉树，并输出它的中根周游（中序遍历）序列。这里定义一棵扩充二叉树是指将原二叉树中的所有空引用增加一个表示为@的虚拟叶结点。譬如下图所示的一棵二叉树，
    输入样例：
@@ -521,108 +628,107 @@ Updated 1510 GMT+8 May 11, 2024
    输出样例：
    DGBAECF
 
-   
 
-   <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403090101091.png" alt="image-20240309010107665" style="zoom: 50%;" />
 
-   
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202403090101091.png" alt="image-20240309010107665" style="zoom: 50%;" />
 
-   ```python
-   s = input()
-   ptr = 0
-   
-   class BinaryTree:
-       def __init__(self, data, left=None, right=None):
-           self.data, self.left, self.right = data, left, right
-   
-       def addLeft(self, tree):
-           self.left = tree
-   
-       def addRight(self, tree):
-           self.right = tree
-   
-       def inorderTraversal(self):
-           if self.left:
-               self.left.inorderTraversal()    # (1分) 
-           print(self.data, end="")
-           if self.right:
-               self.right.inorderTraversal()   # (1分) 
-   
-   def buildTree():
-       global ptr
-       if s[ptr] == "@":
-           ptr += 1
-           return None             # (2分) 
-       tree = BinaryTree(s[ptr])   # (1分) 
-       ptr += 1
-       tree.addLeft(buildTree())   # (2分) 
-       tree.addRight(buildTree())  # (2分) 
-   
-       return tree
-   
-   tree = buildTree()
-   tree.inorderTraversal()
-   
-   """
-   sample input:
-   ABD@G@@@CE@@F@@
-   
-   sample output:
-   DGBAECF
-   """
-   ```
 
-   
 
-   笔试中，对于程序阅读理解，要求还是挺高的。因为AC的代码通常有多种写法，如果考出来写的不规范代码，就有点难受。例如：上面程序，递归程序带着全局变量，难受。
+```python
+s = input()
+ptr = 0
 
-   较好的写法是：
+class BinaryTree:
+    def __init__(self, data, left=None, right=None):
+        self.data, self.left, self.right = data, left, right
 
-   ```python
-   class TreeNode:
-       def __init__(self, data):
-           self.data = data
-           self.left = None
-           self.right = None
-   
-   def buildTree(preorder):
-       if not preorder:
-           return None
-   
-       data = preorder.pop(0)
-       if data == "@":
-           return None
-   
-       node = TreeNode(data)
-       node.left = buildTree(preorder)
-       node.right = buildTree(preorder)
-   
-       return node
-   
-   def inorderTraversal(node):
-       if node is None:
-           return []
-   
-       result = []
-       result.extend(inorderTraversal(node.left))
-       result.append(node.data)
-       result.extend(inorderTraversal(node.right))
-   
-       return result
-   
-   preorder = input()
-   tree = buildTree(list(preorder))
-   
-   inorder = inorderTraversal(tree)
-   print(''.join(inorder))
-   
-   """
-   sample input:
-   ABD@G@@@CE@@F@@
-   
-   sample output:
-   DGBAECF
-   """
-   ```
+    def addLeft(self, tree):
+        self.left = tree
 
-   
+    def addRight(self, tree):
+        self.right = tree
+
+    def inorderTraversal(self):
+        if self.left:
+            self.left.inorderTraversal()    # (1分) 
+        print(self.data, end="")
+        if self.right:
+            self.right.inorderTraversal()   # (1分) 
+
+def buildTree():
+    global ptr
+    if s[ptr] == "@":
+        ptr += 1
+        return None             # (2分) 
+    tree = BinaryTree(s[ptr])   # (1分) 
+    ptr += 1
+    tree.addLeft(buildTree())   # (2分) 
+    tree.addRight(buildTree())  # (2分) 
+
+    return tree
+
+tree = buildTree()
+tree.inorderTraversal()
+
+"""
+sample input:
+ABD@G@@@CE@@F@@
+
+sample output:
+DGBAECF
+"""
+```
+
+
+
+笔试中，对于程序阅读理解，要求还是挺高的。因为AC的代码通常有多种写法，如果考出来写的不规范代码，就有点难受。例如：上面程序，递归程序带着全局变量，难受。
+
+较好的写法是：
+
+```python
+class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def buildTree(preorder):
+    if not preorder:
+        return None
+
+    data = preorder.pop(0)
+    if data == "@":
+        return None
+
+    node = TreeNode(data)
+    node.left = buildTree(preorder)
+    node.right = buildTree(preorder)
+
+    return node
+
+def inorderTraversal(node):
+    if node is None:
+        return []
+
+    result = []
+    result.extend(inorderTraversal(node.left))
+    result.append(node.data)
+    result.extend(inorderTraversal(node.right))
+
+    return result
+
+preorder = input()
+tree = buildTree(list(preorder))
+
+inorder = inorderTraversal(tree)
+print(''.join(inorder))
+
+"""
+sample input:
+ABD@G@@@CE@@F@@
+
+sample output:
+DGBAECF
+"""
+```
+
