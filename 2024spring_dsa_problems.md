@@ -16447,6 +16447,8 @@ hhy, https://www.luogu.com.cn/problem/P6510
 
 
 
+利用单调栈， left_bound用于记录以当前点为最右端，满足条件的最左端的索引减1； right_bound用于记录以当前节点为最左端，满足条件的最右端的索引加1，最终答案就是两段拼起来之后的最长长度。
+
 ```python
 """
 https://www.luogu.com.cn/problem/solution/P6510
