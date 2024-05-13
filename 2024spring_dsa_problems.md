@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1125 GMT+8 May 13, 2024
+Updated 2321 GMT+8 May 13, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9086,6 +9086,123 @@ laplacianMatrix = constructLaplacianMatrix(n, edges)	# 构建拉普拉斯矩阵
 
 for row in laplacianMatrix:	# 输出结果
     print(' '.join(map(str, row)))
+```
+
+
+
+## 20018: 蚂蚁王国的越野跑
+
+http://cs101.openjudge.cn/practice/20018
+
+为了促进蚂蚁家族身体健康，提高蚁族健身意识，蚂蚁王国举行了越野跑。假设越野跑共有N个蚂蚁参加，在一条笔直的道路上进行。N个蚂蚁在起点处站成一列，相邻两个蚂蚁之间保持一定的间距。比赛开始后，N个蚂蚁同时沿着道路向相同的方向跑去。换句话说，这N个蚂蚁可以看作x轴上的N个点，在比赛开始后，它们同时向X轴正方向移动。假设越野跑的距离足够远，这N个蚂蚁的速度有的不相同有的相同且保持匀速运动，那么会有多少对参赛者之间发生“赶超”的事件呢？此题结果比较大，需要定义long long类型。请看备注。
+
+![img](http://media.openjudge.cn/images/upload/1576506586.jpg)
+
+**输入**
+
+第一行1个整数N。
+第2… N +1行：N 个非负整数，按从前到后的顺序给出每个蚂蚁的跑步速度。对于50%的数据，2<=N<=1000。对于100%的数据，2<=N<=100000。
+
+**输出**
+
+一个整数，表示有多少对参赛者之间发生赶超事件。
+
+样例输入
+
+```
+5
+1
+5
+10
+7
+6
+
+5
+1
+5
+5
+7
+6
+```
+
+样例输出
+
+```
+7
+
+8
+```
+
+提示
+
+我们把这5个蚂蚁依次编号为A,B,C,D,E，假设速度分别为1,5,5,7,6。在跑步过程中：B,C,D,E均会超过A，因为他们的速度都比A快；D,E都会超过B,C，因为他们的速度都比B,C快；D,E之间不会发生赶超，因为速度快的起跑时就在前边；B,C之间不会发生赶超，因为速度一样，在前面的就一直在前面。
+
+考虑归并排序的思想。
+
+此题结果比较大，需要定义long long类型，其输出格式为printf("%lld",x);
+long long，有符号 64位整数，所占8个字节(Byte)
+-9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+
+
+
+出题人太随意了。题目中的样例数据是 2 组样例数据吧。
+
+```python
+#23n2300011505(12号娱乐选手)
+def merge_sort(l):
+    if len(l) <= 1:
+        return l, 0
+    mid = len(l) // 2
+    left, left_count = merge_sort(l[:mid])
+    right, right_count = merge_sort(l[mid:])
+    l, merge_count = merge(left, right)
+    return l, left_count + right_count + merge_count
+
+
+def merge(left, right):
+    merged = []
+    left_index, right_index = 0, 0
+    count = 0
+    while left_index < len(left) and right_index < len(right):
+        if left[left_index] >= right[right_index]:
+            merged.append(left[left_index])
+            left_index += 1
+        else:
+            merged.append(right[right_index])
+            right_index += 1
+            count += len(left) - left_index
+    merged += left[left_index:]+right[right_index:]
+    return merged, count
+
+
+n = int(input())
+l = []
+for i in range(n):
+    l.append(int(input()))
+l, ans = merge_sort(l)
+print(ans)
+```
+
+
+
+```python
+#23n2300011042(Apocalypse)
+import bisect
+
+while True:
+    try:
+        n = int(input())
+        ans = 0
+        l = []
+        for _ in range(n):
+            t = int(input())
+            dx = len(l) - (bisect.bisect_right(l, -t))
+            ans += dx
+            bisect.insort_right(l, -t)
+        print(ans)
+        input()
+    except EOFError:
+        break
 ```
 
 
