@@ -11426,14 +11426,12 @@ def find_critical_activities(n, m, edges):
     return T, critical_activities
 
 
-# 读取输入
 n, m = map(int, input().split())
 edges = [list(map(int, input().split())) for _ in range(m)]
 
 # 求解关键活动
 T, critical_activities = find_critical_activities(n, m, edges)
 
-# 输出结果
 print(T)
 for activity in critical_activities:
     print(*activity)
