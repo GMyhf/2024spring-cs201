@@ -1,6 +1,6 @@
 # 数算B各班进度
 
-Updated 2102 GMT+8 May 7, 2024
+Updated 0119 GMT+8 May 14, 2024
 2024 spring, Complied by Hongfei Yan
 
 
@@ -18,21 +18,21 @@ Updated 2102 GMT+8 May 7, 2024
 
 
 ## Python
-Guow: http://dsbpython.openjudge.cn hw9 bfs, hw8 图，hw7 树，hw6 树、堆，hw5 树
-Liuyh: http://lyhdsa.openjudge.cn hw7 计概 hw6 递归，hw5 链表，hw4 栈、队列，hw3 栈
+Guow: http://dsbpython.openjudge.cn hw10 关键路径，hw9 bfs, hw8 图，hw7 树，hw6 树、堆，hw5 树
+Liuyh: http://lyhdsa.openjudge.cn hw8 树，hw7 计概 hw6 递归，hw5 链表，hw4 栈、队列，hw3 栈
 Xiezm: http://xzmdsa.openjudge.cn hw4 二分搜索、分治、bfs、dfs，hw3 递归与dp，hw2 线性表
-Yanhf（12班）: http://cs101.openjudge.cn hw9 图，hw8 图，hw6 树
+Yanhf（12班）: http://cs101.openjudge.cn hwD，hw9 图，hw8 图，hw6 树
 
 ## C/C++
 Dly: http://xlxxsjjg.openjudge.cn 
-​	hw5 树、bfs，hw4 递归、KMP，hw3 栈、链表、递归，hw2 像计概，有dp，字符串
+​	5月7日 期中模拟，hw5 树、bfs，hw4 递归、KMP，hw3 栈、链表、递归，hw2 像计概，有dp，字符串
 
 Huw（6班）: http://forhuwei.openjudge.cn hw4 树，hw3 树，hw2 栈, BFS
 Wangz（2班）: http://sydsb.openjudge.cn 
 ​	hw8 散列、hw7 树、并查集，hw6 树， hw5.Supplementary，greedy, 字符串, hw5 栈、队列、递归
 
-Zhaohy（9班）：http://dsaex.openjudge.cn hw9 树、并查集、bfs，hw8 树，hw7 并查集，hw6 树，hw5 树，hw4 像计概, hw3 队列
-Zhangsl: http://ssbzsl.openjudge.cn week9 并查集、bfs，week8 树，week7 排序、优先级队列，week5 dp，week4 bfs, 栈
+Zhaohy（9班）：http://dsaex.openjudge.cn hw10 图，hw9 树、并查集、bfs，hw8 树，hw7 并查集，hw6 树，hw5 树，hw4 像计概, hw3 队列
+Zhangsl: http://ssbzsl.openjudge.cn week10 树，week9 并查集、bfs，week8 树，week7 排序、优先级队列，week5 dp，week4 bfs, 栈
 Zouyz: http://hxsjjg.openjudge.cn hw5 集合、词典，hw4 树，hw3 栈、队列
 
 
@@ -45,3 +45,21 @@ http://dsb.openjudge.cn
 
 http://dsa.openjudge.cn
 http://dsalgo.openjudge.cn
+
+
+
+# 24年春季期末机考需求
+
+| 任课教师 | 考试日期（月日） | 考试时间（时分） | 机房号        | 班号 | 网络需求                                    | 备注              |
+| -------- | ---------------- | ---------------- | ------------- | ---- | ------------------------------------------- | ----------------- |
+|          |                  |                  |               |      |                                             |                   |
+| 闫宏飞   | 6月5日           | 15:08～17:00     | 7号、8号      | 12   | 仅能访问[openjudge.cn](http://openjudge.cn) | 周三数算B12班机考 |
+| 邹艳珍   | 5月29日，5月22日 | 13:00~15:00      | 5号、6号      | 3    | 仅能访问[openjudge.cn](http://openjudge.cn) |                   |
+|          |                  |                  |               |      |                                             |                   |
+| 谢正茂   | 6月6日           | 13:00～15:00     | 7号、8号      | 5    | 仅能访问[openjudge.cn](http://openjudge.cn) | 周四数算B5班机考  |
+| 张史梁   | 5月29日，6月5日  | 13:00～15:00     | 7号           | 4    | 仅能访问[openjudge.cn](http://openjudge.cn) |                   |
+| 郭炜     | 6月6日           | 19:30 ~ 21:30    | 7号，8号      | 7    | 仅能访问[openjudge.cn](http://openjudge.cn) | 数算B7班机考      |
+| 胡玮     | 6月6日           | 15:00～17:00     | 5号、6号      | 6    | 仅能访问[openjudge.cn](http://openjudge.cn) | 数算B6班机考      |
+|          |                  |                  |               |      |                                             |                   |
+| 赵海燕   | 5月31日          | 13:00～15:00     | 5号、6号      | 9    | 仅能访问[openjudge.cn](http://openjudge.cn) | 数算B9 机考       |
+| 王昭     | 5月31日，5月24日 | 17:30~20:30      | 4号、5号、6号 | 2    | 仅能访问[openjudge.cn](http://openjudge.cn) | 数算B 2班机考     |
