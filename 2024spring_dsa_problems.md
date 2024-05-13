@@ -11439,6 +11439,78 @@ for activity in critical_activities:
 
 
 
+```python
+from collections import deque, defaultdict
+from dataclasses import dataclass
+
+
+@dataclass
+class Edge:
+    end: int
+    weight: int
+
+
+def topo_sort(graph, in_degrees, n):
+    queue = deque([i for i in range(n) if in_degrees[i] == 0])
+    topo_order = []
+    while queue:
+        node = queue.popleft()
+        topo_order.append(node)
+        for edge in graph[node]:
+            in_degrees[edge.end] -= 1
+            if in_degrees[edge.end] == 0:
+                queue.append(edge.end)
+    return topo_order
+
+
+def find_critical_activities(n, m, edges):
+    graph = defaultdict(list)
+    in_degrees = [0] * n
+    for u, v, w in edges:
+        graph[u - 1].append(Edge(v - 1, w))
+        in_degrees[v - 1] += 1
+
+    topo_order = topo_sort(graph, in_degrees[:], n)
+    if not topo_order:
+        return ["No"]
+
+    est = [0] * n
+    for node in topo_order:
+        for edge in graph[node]:
+            est[edge.end] = max(est[edge.end], est[node] + edge.weight)
+
+    T = max(est)
+
+    # 计算最晚开始时间
+    lst = [T] * n
+    for node in reversed(topo_order):
+        for edge in graph[node]:
+            lst[node] = min(lst[node], lst[edge.end] - edge.weight)
+
+    # 确定关键事件
+    critical_events = [i for i in range(n) if est[i] == lst[i]]
+
+    # 确定关键活动
+    critical_activities = []
+    for node in critical_events:
+        for edge in graph[node]:
+            # 关键活动通常指的是导致关键事件发生的活动，而不是所有指向关键事件的活动都是关键活动。
+            if edge.end in critical_events and est[node] == est[edge.end] - edge.weight:
+                critical_activities.append((node + 1, edge.end + 1))
+
+    # critical_activities.sort()
+
+    return T, ["{} {}".format(u, v) for u, v in critical_activities]
+
+
+n, m = map(int, input().split())
+edges = [tuple(map(int, input().split())) for _ in range(m)]
+T, critical_activities = find_critical_activities(n, m, edges)
+print(T)
+print('\n'.join(critical_activities))
+
+```
+
 
 
 ## 22509: 解方程
