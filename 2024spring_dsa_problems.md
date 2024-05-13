@@ -579,6 +579,41 @@ USACO 102
 
 
 
+经典Prim算法
+
+```python
+#王昊 光华管理学院
+from heapq import heappop, heappush
+
+
+while True:
+    try:
+        n = int(input())
+    except:
+        break
+    mat, cur = [], 0
+    for i in range(n):
+        mat.append(list(map(int, input().split())))
+    d, v, q, cnt = [100000 for i in range(n)], set(), [], 0
+    d[0] = 0
+    heappush(q, (d[0], 0))
+    while q:
+        x, y = heappop(q)
+        if y in v:
+            continue
+        v.add(y)
+        cnt += d[y]
+        for i in range(n):
+            if d[i] > mat[y][i]:
+                d[i] = mat[y][i]
+                heappush(q, (d[i], i))
+    print(cnt)
+```
+
+
+
+
+
 ```python
 """
 The problem described is a classic example of finding the Minimum Spanning Tree
@@ -14042,6 +14077,43 @@ loop:no
 来源
 
 http://dsbpython.openjudge.cn/dspythonbook/P1040/
+
+
+
+dfs能直接判断是否连通，过程中记录父亲节点，只要当前节点能够去到一个已经遍历过的节点，并且这个节点不是父亲节点，那么必然成环，以及连通和成环是可以同时判断的
+
+```python
+#王昊 光华管理学院
+n, m = list(map(int, input().split()))
+edge = [[]for _ in range(n)]
+for _ in range(m):
+    a, b = list(map(int, input().split()))
+    edge[a].append(b)
+    edge[b].append(a)
+cnt, flag = set(), False
+
+
+def dfs(x, y):
+    global cnt, flag
+    cnt.add(x)
+    for i in edge[x]:
+        if i not in cnt:
+            dfs(i, x)
+        elif y != i:
+            flag = True
+
+
+for i in range(n):
+    cnt.clear()
+    dfs(i, -1)
+    if len(cnt) == n:
+        break
+    if flag:
+        break
+
+print("connected:"+("yes" if len(cnt) == n else "no"))
+print("loop:"+("yes" if flag else 'no'))
+```
 
 
 
