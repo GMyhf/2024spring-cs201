@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2321 GMT+8 May 13, 2024
+Updated 0059 GMT+8 May 16, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3936,6 +3936,98 @@ else:
     for i in solution:
         print(i)
 ```
+
+
+
+## 03424: Candies
+
+http://cs101.openjudge.cn/practice/03424/
+
+During the kindergarten days, flymouse was the monitor of his class. Occasionally the head-teacher brought the kids of flymouse’s class a large bag of candies and had flymouse distribute them. All the kids loved candies very much and often compared the numbers of candies they got with others. A kid A could had the idea that though it might be the case that another kid B was better than him in some aspect and therefore had a reason for deserving more candies than he did, he should never get a certain number of candies fewer than B did no matter how many candies he actually got, otherwise he would feel dissatisfied and go to the head-teacher to complain about flymouse’s biased distribution.
+
+snoopy shared class with flymouse at that time. flymouse always compared the number of his candies with that of snoopy’s. He wanted to make the difference between the numbers as large as possible while keeping every kid satisfied. Now he had just got another bag of candies from the head-teacher, what was the largest difference he could make out of it?
+
+**输入**
+
+The input contains a single test cases. The test cases starts with a line with two integers *N* and *M*not exceeding 30 000 and 150 000 respectively. *N* is the number of kids in the class and the kids were numbered 1 through *N*. snoopy and flymouse were always numbered 1 and *N*. Then follow *M*lines each holding three integers *A*, *B* and *c* in order, meaning that kid *A* believed that kid *B*should never get over *c* candies more than he did.
+
+**输出**
+
+Output one line with only the largest difference desired. The difference is guaranteed to be finite.
+
+样例输入
+
+```
+2 2
+1 2 5
+2 1 4
+```
+
+样例输出
+
+```
+5
+```
+
+提示
+
+32-bit signed integer type is capable of doing all arithmetic.
+
+来源
+
+POJ Monthly--2006.12.31, Sempr
+
+
+
+参考：https://blog.csdn.net/Maxwei_wzj/article/details/60464314
+
+题目大意：幼儿园一个班里有N个小朋友（标号为1~N），一个小朋友flymouse（为N号）被校长指定去发糖，有M个条件，每个条件三个参数A,B,c，表示小朋友A不希望小朋友B有比他多超过c个的糖，班里还有另一个小朋友snoopy（为1号），flymouse希望自己得到的糖果比snoopy的尽量多，求最大的差值。
+
+做法：这里引入一个叫差分约束系统的东西，大概就是给定一系列这样形式的不等式：xi-xj<=bk，然后求某两个xa和xb的差的最大值，即max(xa-xb)。正确的方法是，如果存在一个xi-xj<=bk这样的不等式，就从j引一条指向i的边权为bk的有向边，这样就可以构成一个有向图，然后求max(xa-xb)就是求从b到a的最短路径。为什么呢？因为我们看任意一条简单路径：b,s1,s2,...,sn,a，其中相邻两点间边权依次为b0,b1,...,bn，所以xs1-xb<=b0,xs2-xs1<=b1,...,xa-xsn<=bn,所以xa-xb=(xa-xsn)+...+(xs2-xs1)+(xs1-xb)<=b0+b1+...+bn，所以我们可以得到xa-xb必定不超过任意从b到a的简单路径上边权的和，也就是说任何一条路径都是一个上界，所以要求最大值也就是求最小的上界，也就是求最短路了。
+
+而这一题模型比较简单，构图很容易，对于每个条件直接连A->B，边权为c即可，然后求从1到N的最短路。
+
+```python
+import heapq
+
+class Edge:
+    def __init__(self, k=0, w=0):
+        self.k, self.w = k, w  # 有向边的终点和边权值，或当前k到源点的距离
+
+    def __lt__(self, other):
+        return self.w < other.w
+
+
+def dijkstra(N, G):
+    bUsed = [False] * (N + 1)  # bUsed[i]为True表示源到i的最短路已经求出
+    INF = float('inf')
+    pq = []
+    heapq.heappush(pq, Edge(1, 0))  # 源点是1号点,1号点到自己的距离是0
+    while pq:
+        p = heapq.heappop(pq)
+        if bUsed[p.k]:  # 已经求出了最短路
+            continue
+        bUsed[p.k] = True
+        if p.k == N:  # 因只要求1-N的最短路，所以要break
+            break
+        for edge in G[p.k]:
+            if not bUsed[edge.k]:
+                heapq.heappush(pq, Edge(edge.k, p.w + edge.w))
+    return p.w
+
+
+N, M = map(int, input().split())
+G = [[] for _ in range(N + 1)]
+for _ in range(M):
+    s, e, w = map(int, input().split())
+    G[s].append(Edge(e, w))
+
+shortest_distance = dijkstra(N, G)
+print(shortest_distance)
+
+```
+
+
 
 
 
@@ -8633,6 +8725,147 @@ for i in range(n - 1, -1, -1):
     add(idx + 1, -1)
 print(ans)
 ```
+
+
+
+## 09202: 舰队、海域出击！
+
+http://cs101.openjudge.cn/practice/09202/
+
+作为一名海军提督，Pachi将指挥一支舰队向既定海域出击！
+Pachi已经得到了海域的地图，地图上标识了一些既定目标和它们之间的一些单向航线。如果我们把既定目标看作点、航线看作边，那么海域就是一张有向图。不幸的是，Pachi是一个会迷路的提督QAQ，所以他在包含环(圈)的海域中必须小心谨慎，而在无环的海域中则可以大展身手。
+受限于战时的消息传递方式，海域的地图只能以若干整数构成的数据的形式给出。作为舰队的通讯员，在出击之前，请你告诉提督海域中是否包含环。
+
+例如下面这个海域就是无环的：
+
+![img](http://media.openjudge.cn/images/upload/1450686482.png)
+
+而下面这个海域则是有环的（C-E-G-D-C）：
+
+![img](http://media.openjudge.cn/images/upload/1450686544.png)
+
+
+
+**输入**
+
+每个测试点包含多组数据，每组数据代表一片海域，各组数据之间无关。
+第一行是数据组数T。
+每组数据的第一行两个整数N，M，表示海域中既定目标数、航线数。
+接下来M行每行2个不相等的整数x,y，表示从既定目标x到y有一条单向航线（所有既定目标使用1~N的整数表示）。
+描述中的图片仅供参考，其顶点标记方式与本题数据无关。
+
+1<=N<=100000，1<=M<=500000，1<=T<=5
+注意：输入的有向图不一定是连通的。
+
+**输出**
+
+输出包含T行。
+对于每组数据，输出Yes表示海域有环，输出No表示无环。
+
+样例输入
+
+```
+2
+7 6
+1 2
+1 3
+2 4
+2 5
+3 6
+3 7
+12 13
+1 2
+2 3
+2 4
+3 5
+5 6
+4 6
+6 7
+7 8
+8 4
+7 9
+9 10
+10 11
+10 12
+```
+
+样例输出
+
+```
+No
+Yes
+```
+
+提示
+
+输入中的两张图就是描述中给出的示例图片。
+
+
+
+可以dfs完成对一个节点的所有邻居的访问后，将这个节点标记为已完全访问（color[node] = 2）。这意味着我们已经探索了从这个节点出发可以到达的所有节点，而且没有发现环。
+
+```python
+from collections import defaultdict
+
+def dfs(node, color):
+    color[node] = 1
+    for neighbour in graph[node]:
+        if color[neighbour] == 1:
+            return True
+        if color[neighbour] == 0 and dfs(neighbour, color):
+            return True
+    color[node] = 2
+    return False
+
+T = int(input())
+for _ in range(T):
+    N, M = map(int, input().split())
+    graph = defaultdict(list)
+    for _ in range(M):
+        x, y = map(int, input().split())
+        graph[x].append(y)
+    color = [0] * (N + 1)
+    is_cyclic = False
+    for node in range(1, N + 1):
+        if color[node] == 0:
+            if dfs(node, color):
+                is_cyclic = True
+                break
+    print("Yes" if is_cyclic else "No")
+```
+
+
+
+拓扑排序检查有向图是否存在环。它的基本思想是通过计算每个顶点的入度，并从入度为 0 的顶点开始进行深度优先搜索（DFS）。在 DFS 过程中，每遍历到一个顶点时，将其标记为已访问，并将其所有邻居的入度减一。如果邻居的入度减为 0，则继续对邻居进行 DFS。如果最终所有顶点都被访问到，则图中不存在环；否则，存在环。
+
+```python
+from collections import defaultdict
+
+def dfs(p):
+    vis[p] = True
+    for q in graph[p]:
+        in_degree[q] -= 1
+        if in_degree[q] == 0:
+            dfs(q)
+
+for _ in range(int(input())):
+    n, m = map(int, input().split())
+    graph = defaultdict(list)
+    in_degree = [0] * (n + 1)
+    vis = [False] * (n + 1) 
+    for _ in range(m):
+        x, y = map(int, input().split())
+        graph[x].append(y)
+        in_degree[y] += 1
+    for k in range(1, n + 1):  
+        if in_degree[k] == 0 and not vis[k]:  
+            dfs(k)
+    flag = any(not vis[i] for i in range(1, n + 1))  
+    print('Yes' if flag else 'No')
+
+```
+
+
 
 
 
