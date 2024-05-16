@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 0059 GMT+8 May 16, 2024
+Updated 2302 GMT+8 May 16, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3986,6 +3986,45 @@ POJ Monthly--2006.12.31, Sempr
 做法：这里引入一个叫差分约束系统的东西，大概就是给定一系列这样形式的不等式：xi-xj<=bk，然后求某两个xa和xb的差的最大值，即max(xa-xb)。正确的方法是，如果存在一个xi-xj<=bk这样的不等式，就从j引一条指向i的边权为bk的有向边，这样就可以构成一个有向图，然后求max(xa-xb)就是求从b到a的最短路径。为什么呢？因为我们看任意一条简单路径：b,s1,s2,...,sn,a，其中相邻两点间边权依次为b0,b1,...,bn，所以xs1-xb<=b0,xs2-xs1<=b1,...,xa-xsn<=bn,所以xa-xb=(xa-xsn)+...+(xs2-xs1)+(xs1-xb)<=b0+b1+...+bn，所以我们可以得到xa-xb必定不超过任意从b到a的简单路径上边权的和，也就是说任何一条路径都是一个上界，所以要求最大值也就是求最小的上界，也就是求最短路了。
 
 而这一题模型比较简单，构图很容易，对于每个条件直接连A->B，边权为c即可，然后求从1到N的最短路。
+
+
+
+标准的Dijkstra就可以。
+
+```python
+import heapq
+
+def dijkstra(N, G, start):
+    INF = float('inf')
+    dist = [INF] * (N + 1)  # 存储源点到各个节点的最短距离
+    dist[start] = 0  # 源点到自身的距离为0
+    pq = [(0, start)]  # 使用优先队列，存储节点的最短距离
+    while pq:
+        d, node = heapq.heappop(pq)  # 弹出当前最短距离的节点
+        if d > dist[node]:  # 如果该节点已经被更新过了，则跳过
+            continue
+        for neighbor, weight in G[node]:  # 遍历当前节点的所有邻居节点
+            new_dist = dist[node] + weight  # 计算经当前节点到达邻居节点的距离
+            if new_dist < dist[neighbor]:  # 如果新距离小于已知最短距离，则更新最短距离
+                dist[neighbor] = new_dist
+                heapq.heappush(pq, (new_dist, neighbor))  # 将邻居节点加入优先队列
+    return dist
+
+
+
+N, M = map(int, input().split())
+G = [[] for _ in range(N + 1)]  # 图的邻接表表示
+for _ in range(M):
+    s, e, w = map(int, input().split())
+    G[s].append((e, w))
+
+
+start_node = 1  # 源点
+shortest_distances = dijkstra(N, G, start_node)  # 计算源点到各个节点的最短距离
+print(shortest_distances[-1])  # 输出结果
+```
+
+
 
 ```python
 import heapq
