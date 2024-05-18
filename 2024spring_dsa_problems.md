@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1914 GMT+8 May 18, 2024
+Updated 1921 GMT+8 May 18, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3080,6 +3080,10 @@ if __name__ == "__main__":
 ## 02442: Sequence
 
 http://cs101.openjudge.cn/practice/02442/
+
+中文版是 http://cs101.openjudge.cn/dsapre/06648/
+
+
 
 Given m sequences, each contains n non-negative integer. Now we may select one number from each sequence to form a sequence with m integers. It's clear that we may get n ^ m this kind of sequences. Then we can calculate the sum of numbers in each sequence, and get n ^ m values. What we need is the smallest n sums. Could you help us?
 
@@ -8095,6 +8099,10 @@ print(ans)
 ## 06648: Sequence
 
 http://cs101.openjudge.cn/dsapre/06648/
+
+英文版，http://cs101.openjudge.cn/practice/02442/
+
+
 
 给定m个数字序列，每个序列包含n个非负整数。我们从每一个序列中选取一个数字组成一个新的序列，显然一共可以构造出n^m个新序列。接下来我们对每一个新的序列中的数字进行求和，一共会得到n^m个和，请找出最小的n个和
 
