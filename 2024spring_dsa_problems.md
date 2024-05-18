@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1421 GMT+8 May 18, 2024
+Updated 1914 GMT+8 May 18, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3073,6 +3073,72 @@ if __name__ == "__main__":
     sys.setrecursionlimit(1000000)
     euler_path = EulerPath()
     euler_path.solve()
+```
+
+
+
+## 02442: Sequence
+
+http://cs101.openjudge.cn/practice/02442/
+
+Given m sequences, each contains n non-negative integer. Now we may select one number from each sequence to form a sequence with m integers. It's clear that we may get n ^ m this kind of sequences. Then we can calculate the sum of numbers in each sequence, and get n ^ m values. What we need is the smallest n sums. Could you help us?
+
+输入
+
+The first line is an integer T, which shows the number of test cases, and then T test cases follow. The first line of each case contains two integers m, n (0 < m <= 100, 0 < n <= 2000). The following m lines indicate the m sequence respectively. No integer in the sequence is greater than 10000.
+
+输出
+
+For each test case, print a line with the smallest n sums in increasing order, which is separated by a space.
+
+样例输入
+
+```
+1
+2 3
+1 2 3
+2 2 3
+```
+
+样例输出
+
+```
+3 3 4
+```
+
+来源
+
+POJ Monthly,Guang Lin
+
+
+
+参考链接：https://blog.csdn.net/liuwei_nefu/article/details/5645528
+题意是  给出  m组数，每组 n个数  然后从m组中 每组选出一个进行求和 ，然后取其中前n小的数输出。 选择的总数自然是 n的m次方，暴力法自然是超时的。
+
+一个简单的思路是，从第一组到第m组依次处理。
+首先第一组的n个数自然是最小的n个数，  然后这n个数和第二组的n个组进行组合，形成n×n个数，保留其前n个数，再处理第三组，依次类推直到第m组。
+
+为什么保留前n个数就可以了呢？   我们以第一组和第二组例所得的n×n个数为例，假设保留n+1个数，且这第n+1个数加上第三组的某个数x的和  在下一步中需要保留（即在下一步操作中属于前n小的数之一），然而前n个数中的任意一个数+x  < 第n+1个数+x  ，此时得出矛盾， 由此可知，每次处理后的n×n个数中只需保留前n个数即可
+
+```python
+import heapq
+
+t = int(input())
+for _ in range(t):
+    m, n = map(int, input().split())
+    ans = sorted(map(int, input().split()))
+    for _ in range(m - 1):
+        l = sorted(map(int, input().split()))
+        heap = [(ans[j] + l[0], j, 0) for j in range(n)]
+        heapq.heapify(heap)
+        res = []
+        for _ in range(n):
+            num, x, y = heapq.heappop(heap)
+            res.append(num)
+            if y + 1 < len(l):
+                heapq.heappush(heap, (ans[x] + l[y + 1], x, y + 1))
+        ans = res
+    print(*ans)
 ```
 
 
