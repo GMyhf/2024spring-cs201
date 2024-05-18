@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2302 GMT+8 May 16, 2024
+Updated 1421 GMT+8 May 18, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1494,6 +1494,135 @@ for _ in range(T):
 ```
 
 这段代码首先读取测试用例数量 `T`，然后对每个测试用例执行 `solve` 函数，该函数首先创建一个并查集实例，然后根据输入的操作和案件编号更新并查集，并根据并查集的当前状态回答查询。
+
+
+
+## 01724: ROADS
+
+dfs with pruning, http://cs101.openjudge.cn/2024sp_routine/01724/
+
+N cities named with numbers 1 ... N are connected with one-way roads. Each road has two parameters associated with it : the road length and the toll that needs to be paid for the road (expressed in the number of coins). 
+Bob and Alice used to live in the city 1. After noticing that Alice was cheating in the card game they liked to play, Bob broke up with her and decided to move away - to the city N. He wants to get there as quickly as possible, but he is short on cash. 
+
+We want to help Bob to find **the shortest path** from the city 1 to the city N **that he can afford**with the amount of money he has. 
+
+**输入**
+
+The first line of the input contains the integer K, 0 <= K <= 10000, maximum number of coins that Bob can spend on his way. 
+The second line contains the integer N, 2 <= N <= 100, the total number of cities. 
+
+The third line contains the integer R, 1 <= R <= 10000, the total number of roads. 
+
+Each of the following R lines describes one road by specifying integers S, D, L and T separated by single blank characters : 
+
+- S is the source city, 1 <= S <= N 
+- D is the destination city, 1 <= D <= N 
+- L is the road length, 1 <= L <= 100 
+- T is the toll (expressed in the number of coins), 0 <= T <=100
+
+Notice that different roads may have the same source and destination cities. 
+
+**输出**
+
+The first and the only line of the output should contain the total length of the shortest path from the city 1 to the city N whose total toll is less than or equal K coins. 
+If such path does not exist, only number -1 should be written to the output. 
+
+样例输入
+
+```
+5
+6
+7
+1 2 2 3
+2 4 3 3
+3 4 2 4
+1 3 4 1
+4 6 2 1
+3 5 2 0
+5 4 3 2
+```
+
+样例输出
+
+```
+11
+```
+
+来源
+
+CEOI 1998
+
+
+
+从城市 1开始深度优先遍历整个图，找到所有能过到达 N 的走法，选一个最优的。《算法基础与在线实践》有讲到。
+
+1）可行性剪枝：
+
+提前预判出一条路走下去不可能走到终点，于是就不走了。在本题中，可行性剪枝十分直观，即发现如果往前走一步到达城市i，花掉的路费就会超过总钱数K那么就不去城市i。
+
+2）最优性剪枝：
+
+在用深搜的方法寻找最优路径（代价最小路径）时，“最优性剪枝”是最常用的方法。思想是，如果提前预判出一条路走下去即便能到终点也不可能是最优的，那就不走了。具体实现的办法是，记下已经找到的起点到终点的目前最优路径的代价C，那么在后续搜索其他路径的过程中，如果走到某个结点k时，发现从起点走到k所花的代价已经大于或等于C，那么就应该立即回退，而不是从k出发继续往前走——因为即便再走下去能够到达终点，所花的代价也一定大于或等于C，相当于徒劳地走。
+
+3）处处最优剪枝：
+
+有时仅仅用上述的可行性剪枝和最优性剪枝还是不够高效。还有一种更强的最优性剪枝方案，是记下从起点到每一个结点V的当前最优路径的代价C。下次探索新路径走到V时如果发现所花的代价已经大于或等于C，则这条新路径就没必要从V再走下去了，应立即回退。这又是用空间换时间的技巧。不妨称这种最优性剪枝为“处处最优剪枝”。
+
+在本题中，仅用可行性剪枝和简单的最优性剪枝是不够的，需要用“处处最优剪枝”。本题中路径的“代价”，实际上就是路径的长度。最优路径就是长度最短的路径。但是由于还有过路费的问题，所以不能直接使用“处处最优剪枝”。因为，同是从起点到达结点V的两条路，长的路不一定就比短的路差。有可能长的那条路花费少，往下走可以走到终点，而短的那条路花费太多，往下走走不到终点。
+将过路费考虑进去，可以用 min_lengths\[i][j]记录，表示走到城市i时，在已花掉的过路费为j的条件下，从城市1到i的最优路径的长度。若在后续的搜索中再次走到i时，已花掉的过路费恰好为 j，且此时的路径长度已经超过 min_lengths\[i][j]，则不必再走下去了。
+
+
+
+```python
+class Road:
+    def __init__(self,d,L,t):
+       self.d,self.L,self.t = d,L,t
+
+
+def dfs(s, total_cost, total_length, visited, city_map, min_lengths, k):
+    global min_length
+    if s == n:
+        min_length = min(min_length, total_length)
+        return
+    for i in range(len(city_map[s])):
+        d, L, t = city_map[s][i].d, city_map[s][i].L, city_map[s][i].t
+        if visited[d]:
+            continue
+        cost = t + total_cost
+        length = L + total_length
+        if cost > k :   # 可行性剪枝：超过预算
+            continue
+        if (length >= min_length or # 最优性剪枝：超过当前最优解
+                length >= min_lengths[d][cost]): # 处处最优性剪枝：超过已经搜索到的最优解
+            continue
+        min_lengths[d][cost] = length
+        visited[d] = True
+        dfs(d, cost, length, visited, city_map, min_lengths, k)
+        visited[d] = False
+
+
+k,n,r = int(input()),int(input()),int(input())
+city_map = [[] for i in range(n+1)] #邻接表。city_map[i]是从点i有路连到的城市集合
+for _ in range(r):
+    r = Road(0, 0, 0)
+    s, r.d, r.L, r.t = map(int, input().split())
+    if s != r.d:
+        city_map[s].append(r)
+INF = float('inf')
+min_length = INF
+
+#min_lengths[i][j]表示从1到i点，花销为j的最短路径的长度
+min_lengths = [[INF] * (k + 1) for _ in range(n + 1)]
+visited = [False] * (n + 1)
+visited[1] = True
+dfs(1, 0, 0, visited, city_map, min_lengths, k)
+if min_length < INF:
+    print(min_length)
+else:
+    print(-1)
+
+
+```
 
 
 
