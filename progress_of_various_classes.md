@@ -1,11 +1,13 @@
 # 数算B各班进度
 
-Updated 0119 GMT+8 May 14, 2024
+Updated 1635 GMT+8 May 19, 2024
 2024 spring, Complied by Hongfei Yan
 
 
 
 **Logs:**
+
+2024/5/19 有5/10班级讲到图了
 
 2024/4/16 有2/10个班到图了：Guow, Yanhf
 
@@ -19,21 +21,21 @@ Updated 0119 GMT+8 May 14, 2024
 
 ## Python
 Guow: http://dsbpython.openjudge.cn hw10 关键路径，hw9 bfs, hw8 图，hw7 树，hw6 树、堆，hw5 树
-Liuyh: http://lyhdsa.openjudge.cn hw8 树，hw7 计概 hw6 递归，hw5 链表，hw4 栈、队列，hw3 栈
-Xiezm: http://xzmdsa.openjudge.cn hw4 二分搜索、分治、bfs、dfs，hw3 递归与dp，hw2 线性表
-Yanhf（12班）: http://cs101.openjudge.cn hwD，hw9 图，hw8 图，hw6 树
+Liuyh: http://lyhdsa.openjudge.cn hw10 图，hw8～9 树，hw7 计概 hw6 递归，hw5 链表，hw4 栈、队列，hw3 栈
+Xiezm: http://xzmdsa.openjudge.cn hw5 树，hw4 二分搜索、分治、bfs、dfs，hw3 递归与dp，hw2 线性表
+Yanhf（12班）: http://cs101.openjudge.cn hwE 笔试，hwD 机考，hwC 笔试，hwA~B 图，hw8～9 图，hw7 机考，hw6 树
 
 ## C/C++
 Dly: http://xlxxsjjg.openjudge.cn 
-​	5月7日 期中模拟，hw5 树、bfs，hw4 递归、KMP，hw3 栈、链表、递归，hw2 像计概，有dp，字符串
+​	5月7日 期中模拟，hw5～6 树、bfs，hw4 递归、KMP，hw3 栈、链表、递归，hw2 像计概，有dp，字符串
 
 Huw（6班）: http://forhuwei.openjudge.cn hw4 树，hw3 树，hw2 栈, BFS
 Wangz（2班）: http://sydsb.openjudge.cn 
-​	hw8 散列、hw7 树、并查集，hw6 树， hw5.Supplementary，greedy, 字符串, hw5 栈、队列、递归
+​	hw9 计概，hw8 散列，hw7 树、并查集，hw6 树， hw5.Supplementary，greedy, 字符串, hw5 栈、队列、递归
 
-Zhaohy（9班）：http://dsaex.openjudge.cn hw10 图，hw9 树、并查集、bfs，hw8 树，hw7 并查集，hw6 树，hw5 树，hw4 像计概, hw3 队列
-Zhangsl: http://ssbzsl.openjudge.cn week10 树，week9 并查集、bfs，week8 树，week7 排序、优先级队列，week5 dp，week4 bfs, 栈
-Zouyz: http://hxsjjg.openjudge.cn hw5 集合、词典，hw4 树，hw3 栈、队列
+Zhaohy（9班）：http://dsaex.openjudge.cn hw10~11 图，hw9 树、并查集、bfs，hw8 树，hw7 并查集，hw6 树，hw5 树，hw4 像计概, hw3 队列
+Zhangsl: http://ssbzsl.openjudge.cn week11 并查集，week10 树，week9 并查集、bfs，week8 树，week7 排序、优先级队列，week5 dp，week4 bfs, 栈
+Zouyz: http://hxsjjg.openjudge.cn hw6 图，hw5 集合、词典，hw4 树，hw3 栈、队列
 
 
 
