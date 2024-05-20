@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1328 GMT+8 May 20, 2024
+Updated 2130 GMT+8 May 20, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -15157,6 +15157,34 @@ print("connected:"+("yes"if len(cnt)==n else "no")+'\n'+"loop:"+('yes'if ok else
 ```
 
 
+
+```python
+# 2100017777 李鹏辉
+# pylint: skip-file
+
+n, m = map(int, input().split())
+p = [i for i in range(n)]
+
+def find(i):
+    if p[i] != i:
+        p[i] = find(p[i])
+    return p[i]
+
+def union(x, y):
+    p[find(x)] = find(y)
+
+l = False
+for _ in range(m):
+    x, y = map(int, input().split())
+    if find(x) == find(y):
+        l = True
+    else:
+        union(x, y)
+p = [find(i) for i in range(n)]
+p = set(p)
+print('connected:yes' if len(p) == 1 else 'connected:no')
+print('loop:yes' if l else 'loop:no')
+```
 
 
 
