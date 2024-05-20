@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1244 GMT+8 May 20, 2024
+Updated 1328 GMT+8 May 20, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -12244,6 +12244,103 @@ print(T)
 print('\n'.join(critical_activities))
 
 ```
+
+
+
+## 22485: 升空的焰火，从侧面看
+
+http://cs101.openjudge.cn/practice/22485/
+
+生态文明建设是关系中华民族永续发展的根本大计。近年来，为了响应环保号召，商家们研制出了环保烟花。这类烟花在烟花配方中不采用含有重金属和硫元素的物质，从而减少了硫化物的生成。
+
+为了庆祝院庆，A大学计算机院燃放了一批环保烟花。从正面看，烟花的构成了二叉树的形状。那么从侧面看，烟花又是什么样子的呢？
+
+对于一个二叉树形状的烟花，它有N个节点，每个节点都有一个1~N之间的颜色编号，不同节点的编号互不相同。除了根节点的编号固定为1，其他节点的编号都是随机分配的。
+
+我们需要按照从顶部到底部的顺序，输出从右侧能看到的节点的颜色编号，即**输出广度优先搜索中每一层最后一个节点**。
+
+
+
+例如对于如下的二叉树烟花，从右侧看到的结果为[1, 3, 4]。
+
+![img](http://media.openjudge.cn/images/upload/5167/1622035106.png)
+
+再如，对于如下的二叉树烟花，从右侧看到的结果为[1, 7, 5, 6, 2]。
+
+![img](http://media.openjudge.cn/images/upload/6408/1622728596.png)
+
+**输入**
+
+输入共N+1行。
+第1行为一个整数N（1<=N<=1000），表示二叉树中的节点个数。这N个节点的颜色编号分别为1到N，其中1号节点为根节点。
+接下来N行每行有两个整数，分别为1~N号节点的左子节点和右子节点的颜色编号，如果子节点为空，则用-1表示。
+
+**输出**
+
+按从顶到底的顺序，输出从右侧看二叉树看到的各个节点的颜色编号（即广度优先搜索中每一层最后一个节点），每个编号之间用空格隔开。
+
+样例输入
+
+```
+5
+2 3
+-1 5
+-1 4
+-1 -1
+-1 -1
+```
+
+样例输出
+
+```
+1 3 4
+```
+
+提示
+
+（1）一种处理本题的输入形式的方式：可先开辟一个大小为N的数组，存储这N个二叉树节点，然后根据每行输入，将相关节点用左右子节点指针连接起来。
+（2）BFS可以借助队列实现，可以使用STL
+
+来源
+
+TA Zhang C.
+
+
+
+This problem is about traversing a binary tree in a breadth-first manner and printing the last node of each level when viewed from the right side. 
+
+Here is a Python solution using a queue for the breadth-first traversal:
+
+```python
+from collections import deque
+
+def right_view(n, tree):
+    queue = deque([(1, tree[1])])  # start with root node
+    right_view = []
+
+    while queue:
+        level_size = len(queue)
+        for i in range(level_size):
+            node, children = queue.popleft()
+            if children[0] != -1:
+                queue.append((children[0], tree[children[0]]))
+            if children[1] != -1:
+                queue.append((children[1], tree[children[1]]))
+        right_view.append(node)
+
+    return right_view
+
+n = int(input())
+tree = {1: [-1, -1] for _ in range(n+1)}  # initialize tree with -1s
+for i in range(1, n+1):
+    left, right = map(int, input().split())
+    tree[i] = [left, right]
+
+result = right_view(n, tree)
+print(' '.join(map(str, result)))
+```
+
+This script first reads the number of nodes and the tree structure from the input. It then calls the `right_view` function to compute the right view of the tree. The `right_view` function uses a queue to perform a breadth-first traversal of the tree. It processes all nodes at the current level before moving on to the next level. After processing all nodes at a level, it appends the last node of the level to the `right_view` list. Finally, it prints the right view of the tree.
 
 
 
