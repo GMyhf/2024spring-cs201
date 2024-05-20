@@ -1,4 +1,4 @@
-# Assignment #F: Programming Practice
+# Assignment #F: All-Killed 满分
 
 Updated 1844 GMT+8 May 20, 2024
 
