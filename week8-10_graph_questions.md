@@ -4615,6 +4615,55 @@ D -> E Weight:6
 
 
 
+有些题目，直接使用邻接表表示图，代码更简短
+
+Prim.py 程序在 https://github.com/GMyhf/2024spring-cs201/tree/main/code
+
+```python
+# 01258: Agri-Net
+# http://cs101.openjudge.cn/practice/01258/
+from heapq import heappop, heappush, heapify
+
+def prim(graph, start_node):
+    mst = set()
+    visited = set([start_node])
+    edges = [
+        (cost, start_node, to)
+        for to, cost in graph[start_node].items()
+    ]
+    heapify(edges)
+
+    while edges:
+        cost, frm, to = heappop(edges)
+        if to not in visited:
+            visited.add(to)
+            mst.add((frm, to, cost))
+            for to_next, cost2 in graph[to].items():
+                if to_next not in visited:
+                    heappush(edges, (cost2, to, to_next))
+
+    return mst
+
+
+while True:
+    try:
+        N = int(input())
+    except EOFError:
+        break
+
+    graph = {i: {} for i in range(N)}
+    for i in range(N):
+        for j, cost in enumerate(map(int, input().split())):
+            graph[i][j] = cost
+
+    mst = prim(graph, 0)
+    total_cost = sum(cost for frm, to, cost in mst)
+    print(total_cost)
+
+```
+
+
+
 #### 4.5.3 书上Dijkstra实现，不敢恭维
 
 在 `heapq` 中，直接改变一个元素的优先级并重新排序堆并不是直接支持的功能，因为 `heapq` 模块提供的是一个简单的堆实现，而不是一个优先级队列。然而，你可以通过一种变通的方法来模拟这个功能。
@@ -5411,9 +5460,26 @@ print(kruskal(n, edges))
 
 
 
+#### 01258: Agri-Net
+prime, http://cs101.openjudge.cn/practice/01258/
+
+
+
+#### 04084: 拓扑排序
+
+http://cs101.openjudge.cn/practice/04084/
+
+
+
 #### 20106: 走山路
 
 bfs + heap, Dijkstra, http://cs101.openjudge.cn/routine/20106/
+
+
+
+#### 01724: ROADS
+
+Dijkstra, http://cs101.openjudge.cn/2024sp_routine/01724/
 
 
 
@@ -5457,33 +5523,13 @@ bfs, http://cs101.openjudge.cn/practice/19930
 
 
 
+选择（30分，每题2分）
 
+判断（10分，每题1分）
 
-## 选择（30分，每题2分）
+填空（20分，每题2分）
 
-**Q:** 
-
-
-
-## 判断（10分，每题1分）
-
-对填写"Y"，错填写"N"
-
-**Q:** （Y）
-
-
-
-## 填空（20分，每题2分）
-
-**Q:** 
-
-
-
-## 简答（24分，每题6分）
-
-**Q:** 
-
-
+简答、算法填空（40分）
 
 
 
