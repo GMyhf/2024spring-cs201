@@ -12,6 +12,34 @@ at "homework" folder, https://github.com/GMyhf/2024spring-cs201/
 
 
 
+Assignment #F: Programming Practice 
+
+22485: 升空的焰火，从侧面看
+
+http://cs101.openjudge.cn/practice/22485/
+
+28203:【模板】单调栈
+
+http://cs101.openjudge.cn/practice/28203/
+
+09202: 舰队、海域出击！
+
+http://cs101.openjudge.cn/practice/09202/
+
+04135: 月度开销
+
+http://cs101.openjudge.cn/practice/04135/
+
+07735: 道路
+
+http://cs101.openjudge.cn/practice/07735/
+
+01182: 食物链
+
+http://cs101.openjudge.cn/practice/01182/
+
+
+
 Todo: 
 
 Assignment #D: May月考
