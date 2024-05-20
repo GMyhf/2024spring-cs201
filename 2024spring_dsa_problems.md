@@ -1499,7 +1499,7 @@ for _ in range(T):
 
 ## 01724: ROADS
 
-dfs with pruning, http://cs101.openjudge.cn/2024sp_routine/01724/
+Dijkstra, dfs with pruning, http://cs101.openjudge.cn/2024sp_routine/01724/
 
 N cities named with numbers 1 ... N are connected with one-way roads. Each road has two parameters associated with it : the road length and the toll that needs to be paid for the road (expressed in the number of coins). 
 Bob and Alice used to live in the city 1. After noticing that Alice was cheating in the card game they liked to play, Bob broke up with her and decided to move away - to the city N. He wants to get there as quickly as possible, but he is short on cash. 
