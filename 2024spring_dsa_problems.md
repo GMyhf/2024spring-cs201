@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1749 GMT+8 May 19, 2024
+Updated 1244 GMT+8 May 20, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1551,6 +1551,52 @@ If such path does not exist, only number -1 should be written to the output.
 来源
 
 CEOI 1998
+
+
+
+Dijkstra
+
+```python
+# 23n2310307206
+import heapq
+class edge:
+    def __init__(self,start,end,length,money):
+        self.start = start
+        self.end = end
+        self.money = money
+        self.length = length
+k = int(input())
+n = int(input())
+r = int(input())
+graph = {i:[] for i in range(1,n+1)}
+for i in range(r):
+    s,d,l,t = map(int,input().split())
+    graph[s].append(edge(s,d,l,t))
+def dijskra():
+    visited=[0]*(n+1)
+    ans=-1
+    priorQueue=[]
+    heapq.heappush(priorQueue,(0,0,1))#length,money,pos
+    while priorQueue:
+        length,money,pos = heapq.heappop(priorQueue)
+        visited[pos] = 1
+        if pos == n and money<=k:
+            ans=length
+            break
+        if money > k:
+
+            continue
+        for road in graph[pos]:
+            pos1 = road.end
+            m1 = road.money+money
+            l1 = road.length+length
+            if m1<=k and visited[pos1] != 1:
+                heapq.heappush(priorQueue,(l1,m1,pos1))
+        visited[pos] = 0
+
+    print(ans)
+dijskra()
+```
 
 
 
