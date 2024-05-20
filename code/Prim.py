@@ -1,5 +1,5 @@
 # 01258: Agri-Net
-# http://cs101.openjudge.cn/dsapre/01258/
+# http://cs101.openjudge.cn/practice/01258/
 from heapq import heappop, heappush, heapify
 
 def prim(graph, start_node):
