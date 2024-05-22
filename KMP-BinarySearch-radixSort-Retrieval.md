@@ -1082,14 +1082,6 @@ print(btree.root.keys)
 
 # 参考
 
-Python数据结构与算法分析(第2版)，布拉德利·米勒 戴维·拉努姆/吕能,刁寿钧译，出版时间:2019-09
+20231107_KMP.md
 
-Brad Miller and David Ranum, Problem Solving with Algorithms and Data Structures using Python, https://runestone.academy/ns/books/published/pythonds/index.html
-
-
-
-https://github.com/wesleyjtann/Problem-Solving-with-Algorithms-and-Data-Structures-Using-Python
-
-
-
-数据结构（C语言版 第2版） (严蔚敏)
+principal.md
