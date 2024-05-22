@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2249 GMT+8 May 22, 2024
+Updated 0043 GMT+8 May 23, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -14657,6 +14657,153 @@ for length in range(1,n):
             dp[i][j] = min(dp[i+1][j],dp[i][j-1],dp[i+1][j-1])+1
 print(dp[0][-1])
 ```
+
+
+
+
+
+26518: 最大无环图扩展
+
+http://hxsjjg.openjudge.cn/2024finaltest/6/
+
+给定一个有向无环图（DAG），你的任务是在保持图的有向无环性质的前提下，尽可能多地添加边，使得加完边之后的图仍然是一个有向无环图。
+
+**输入**
+
+输入包含两部分：
+第一部分是两个整数 n，m，n表示图中节点的总数（1 ≤ n ≤ 10），m表示边的总数（1 ≤ m ≤ 100）。
+第二部分有m行，每行的两个数a，b表示存在一条从节点 a 指向节点 b 的有向边（0 ≤ a, b < n）。
+重边算做一条。
+
+**输出**
+
+输出一个整数k，表示添加的边的数量
+
+样例输入
+
+```
+6 6
+5 2
+5 0
+4 0
+4 1
+2 3
+3 1
+```
+
+样例输出
+
+```
+9
+```
+
+提示
+
+拓扑排序！
+
+
+
+Python实现
+
+```python
+from collections import deque
+
+def max_dag(n, edges):
+    adj = [[] for _ in range(n)]
+    indegree = [0]*n
+    for a, b in edges:
+        adj[a].append(b)
+        indegree[b] += 1
+
+    topo_order = []
+    queue = deque([i for i in range(n) if indegree[i] == 0])
+    while queue:
+        node = queue.popleft()
+        topo_order.append(node)
+        for neighbor in adj[node]:
+            indegree[neighbor] -= 1
+            if indegree[neighbor] == 0:
+                queue.append(neighbor)
+
+    added_edges = 0
+    for i in range(n):
+        for j in range(i+1, n):
+            if topo_order[j] not in adj[topo_order[i]]:
+                added_edges += 1
+
+    return added_edges
+
+n, m = map(int, input().split())
+edges = [list(map(int, input().split())) for _ in range(m)]
+print(max_dag(n, edges))
+```
+
+
+
+C++实现
+
+```c++
+#include <iostream>
+#include <vector>
+#include <deque>
+#include <algorithm>
+
+using namespace std;
+
+int max_dag(int n, vector<vector<int>>& edges) {
+    vector<vector<int>> adj(n);
+    vector<int> indegree(n, 0);
+
+    for (auto& edge : edges) {
+        int a = edge[0];
+        int b = edge[1];
+        adj[a].push_back(b);
+        indegree[b]++;
+    }
+
+    vector<int> topo_order;
+    deque<int> queue;
+    for (int i = 0; i < n; ++i) {
+        if (indegree[i] == 0)
+            queue.push_back(i);
+    }
+
+    while (!queue.empty()) {
+        int node = queue.front();
+        queue.pop_front();
+        topo_order.push_back(node);
+        for (int neighbor : adj[node]) {
+            indegree[neighbor]--;
+            if (indegree[neighbor] == 0)
+                queue.push_back(neighbor);
+        }
+    }
+
+    int added_edges = 0;
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (find(adj[topo_order[i]].begin(), adj[topo_order[i]].end(), topo_order[j]) == adj[topo_order[i]].end())
+                added_edges++;
+        }
+    }
+
+    return added_edges;
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> edges(m, vector<int>(2));
+    for (int i = 0; i < m; ++i) {
+        cin >> edges[i][0] >> edges[i][1];
+    }
+    cout << max_dag(n, edges) << endl;
+    return 0;
+}
+
+```
+
+
 
 
 
