@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1106 GMT+8 May 22, 2024
+Updated 1710 GMT+8 May 22, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -21,6 +21,8 @@ Updated 1106 GMT+8 May 22, 2024
 Wangjie Su's GitHub,  https://github.com/csxq0605/CS101-spring
 
 Zixuan Jiang's summary, https://github.com/GMyhf/2024spring-cs201/blob/main/cheatsheet/DataStructuresAndAlgorithms-WinterBreak-20240214-JIANGZixuan.md
+
+Deng Jinwen's summary, https://github.com/JinwenDeng/DSA-Summary
 
 
 
