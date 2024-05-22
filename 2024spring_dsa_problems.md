@@ -1559,7 +1559,7 @@ CEOI 1998
 Dijkstra
 
 ```python
-#23n2300011072(X)
+#23n23000111119(武)
 from heapq import heappop, heappush
 from collections import defaultdict
 
