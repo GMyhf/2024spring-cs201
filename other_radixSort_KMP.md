@@ -1,6 +1,6 @@
-# 202404~05-Other
+# KMP-BinarySearch-radixSort-Retrieval
 
-Updated 2359 GMT+8 Apr 6, 2024
+Updated 1657 GMT+8 May 22, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8,76 +8,13 @@ Updated 2359 GMT+8 Apr 6, 2024
 
 **Logs：**
 
-
-
-
-
-# 一、基数排序
-
-基数排序是一种非比较型整数排序算法，其原理是将整数按位数切割成不同的数字，然后按每个位数分别比较。由于整数也可以表达字符串（比如名字或日期）和特定格式的浮点数，所以基数排序也不是只能使用于整数。
-
-
-
-```python
-def radixSort(arr):
-    max_value = max(arr)
-    digit = 1
-    while digit <= max_value:
-        temp = [[] for _ in range(10)]
-        for i in arr:
-            t = i // digit % 10
-            temp[t].append(i)
-        arr.clear()
-        for bucket in temp:
-            arr.extend(bucket)
-        digit *= 10
-    return arr
-
-arr = [170, 45, 75, 90, 802, 24, 2, 66]
-ans = radixSort(arr)
-print(*ans)
-
-# Output:
-# 2 24 45 66 75 90 170 802
-```
-
-
-
-这个程序是一个实现基数排序（Radix Sort）的函数。基数排序是一种非比较型的排序算法，它根据数字的位数来对数字进行排序。
-
-下面是对程序的解读：
-
-1. `radixSort` 函数接受一个整数列表 `arr` 作为输入，并返回排序后的列表。
-2. 在函数中，首先找出列表中的最大值 `max_value`，以确定需要排序的数字的最大位数。
-3. 然后，通过 `digit` 变量来表示当前处理的位数，初始化为 1。在每次迭代中，`digit` 的值会乘以 10，以处理下一个更高位的数字。
-4. 在每次迭代中，创建一个包含 10 个空列表的临时列表 `temp`，用于存储每个数字在当前位数上的分组情况。
-5. 对于列表中的每个数字 `i`，计算其在当前位数上的值 `t`（通过取整除和取模操作），然后将数字 `i` 存入对应的桶中。
-6. 在填充完所有桶之后，将桶中的数字按照顺序取出，重新放入原始列表 `arr` 中。这样就完成了对当前位数的排序。
-7. 继续迭代，直到处理完所有位数为止。
-8. 最后，返回排序后的列表 `arr`。
-
-通过基数排序，可以有效地对整数列表进行排序，时间复杂度为 O(d * (n + k))，其中 d 是最大位数，n 是数字个数，k 是基数（这里是 10）。
-
-
-
-**Complexity Analysis of Radix Sort**
-
-Time Complexity:
-
-- Radix sort is a non-comparative integer sorting algorithm that sorts data with integer keys by grouping the keys by the individual digits which share the same significant position and value. It has a time complexity of O(d \* (n + b)), where d is the number of digits, n is the number of elements, and b is the base of the number system being used.
-- In practical implementations, radix sort is often faster than other comparison-based sorting algorithms, such as quicksort or merge sort, for large datasets, especially when the keys have many digits. However, its time complexity grows linearly with the number of digits, and so it is not as efficient for small datasets.
-
-Auxiliary Space:
-
-- Radix sort also has a space complexity of O(n + b), where n is the number of elements and b is the base of the number system. This space complexity comes from the need to create buckets for each digit value and to copy the elements back to the original array after each digit has been sorted.
+created on Apr 6, 2024
 
 
 
 
 
-
-
-# 二、KMP（Knuth-Morris-Pratt）
+# 一、KMP（Knuth-Morris-Pratt）
 
 
 
@@ -190,7 +127,584 @@ print("pos matched：", index)
 
 
 
-# 三、字典与检索
+## 关于 kmp 算法中 next 数组的周期性质
+
+参考：https://www.acwing.com/solution/content/4614/
+
+引理：
+对于某一字符串 S[1～i]，在它众多的next[i]的“候选项”中，如果存在某一个next[i]，使得: i%(i-nex[i])==0，那么 S[1～ (i−next[i])] 可以为 S[1～i] 的循环元而 i/(i−next[i]) 即是它的循环次数 K。
+
+证明如下：
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20231107111654773.png" alt="image-20231107111654773" style="zoom: 50%;" />
+
+如果在紧挨着之前框选的子串后面再框选一个长度为 m 的小子串(绿色部分)，同样的道理，
+
+可以得到：S[m～b]=S[b～c]
+又因为：S[1～m]=S[m～b]
+所以：S[1～m]=S[m～b]=S[b～c]
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/5c8ef2df2845d.png" alt="img" style="zoom:75%;" />
+
+如果一直这样框选下去，无限推进，总会有一个尽头。当满足 i % m==0 时，刚好可以分出 K 个这样的小子串，且形成循环(K=i/m)。
+
+
+
+### 02406: 字符串乘方
+
+http://cs101.openjudge.cn/practice/02406/
+
+给定两个字符串a和b,我们定义`a*b`为他们的连接。例如，如果a=”abc” 而b=”def”， 则`a*b=”abcdef”`。 如果我们将连接考虑成乘法，一个非负整数的乘方将用一种通常的方式定义：a^0^=””(空字符串)，a^(n+1)^=a*(a^n^)。
+
+**输入**
+
+每一个测试样例是一行可打印的字符作为输入，用s表示。s的长度至少为1，且不会超过一百万。最后的测试样例后面将是一个点号作为一行。
+
+**输出**
+
+对于每一个s，你应该打印最大的n，使得存在一个a，让$s=a^n$
+
+样例输入
+
+```
+abcd
+aaaa
+ababab
+.
+```
+
+样例输出
+
+```
+1
+4
+3
+```
+
+提示: 本问题输入量很大，请用scanf代替cin，从而避免超时。
+
+来源: Waterloo local 2002.07.01
+
+
+
+```python
+'''
+gpt
+使用KMP算法的部分知识，当字符串的长度能被提取的"base字符串"的长度整除时，
+即可判断s可以被表示为a^n的形式，此时的n就是s的长度除以"base字符串"的长度。
+
+'''
+
+import sys
+while True:
+    s = sys.stdin.readline().strip()
+    if s == '.':
+        break
+    len_s = len(s)
+    next = [0] * len(s)
+    j = 0
+    for i in range(1, len_s):
+        while j > 0 and s[i] != s[j]:
+            j = next[j - 1]
+        if s[i] == s[j]:
+            j += 1
+        next[i] = j
+    base_len = len(s)-next[-1]
+    if len(s) % base_len == 0:
+        print(len_s // base_len)
+    else:
+        print(1)
+
+```
+
+
+
+### 01961: 前缀中的周期
+
+http://cs101.openjudge.cn/practice/01961/
+
+http://poj.org/problem?id=1961
+
+For each prefix of a given string S with N characters (each character has an ASCII code between 97 and 126, inclusive), we want to know whether the prefix is a periodic string. That is, for each $i \ (2 \le i \le N)$ we want to know the largest K > 1 (if there is one) such that the prefix of S with length i can be written as $A^K$ ,that is A concatenated K times, for some string A. Of course, we also want to know the period K.
+
+
+
+一个字符串的前缀是从第一个字符开始的连续若干个字符，例如"abaab"共有5个前缀，分别是a, ab, aba, abaa,  abaab。
+
+我们希望知道一个N位字符串S的前缀是否具有循环节。换言之，对于每一个从头开始的长度为 i （i 大于1）的前缀，是否由重复出现的子串A组成，即 AAA...A （A重复出现K次，K 大于 1）。如果存在，请找出最短的循环节对应的K值（也就是这个前缀串的所有可能重复节中，最大的K值）。
+
+**输入**
+
+输入包括多组测试数据。每组测试数据包括两行。
+第一行包括字符串S的长度N（2 <= N <= 1 000 000）。
+第二行包括字符串S。
+输入数据以只包括一个0的行作为结尾。
+
+**输出**
+
+对于每组测试数据，第一行输出 "Test case #“ 和测试数据的编号。
+接下来的每一行，输出前缀长度i和重复测数K，中间用一个空格隔开。前缀长度需要升序排列。
+在每组测试数据的最后输出一个空行。
+
+样例输入
+
+```
+3
+aaa
+12
+aabaabaabaab
+0
+```
+
+样例输出
+
+```
+Test case #1
+2 2
+3 3
+
+Test case #2
+2 2
+6 2
+9 3
+12 4
+```
+
+
+
+【POJ1961】period，https://www.cnblogs.com/ve-2021/p/9744139.html
+
+如果一个字符串S是由一个字符串T重复K次构成的，则称T是S的循环元。使K出现最大的字符串T称为S的最小循环元，此时的K称为最大循环次数。
+
+现在给定一个长度为N的字符串S，对S的每一个前缀S[1~i],如果它的最大循环次数大于1，则输出该循环的最小循环元长度和最大循环次数。
+
+
+
+题解思路：
+1）与自己的前缀进行匹配，与KMP中的next数组的定义相同。next数组的定义是：字符串中以i结尾的子串与该字符串的前缀能匹配的最大长度。
+2）将字符串S与自身进行匹配，对于每个前缀，能匹配的条件即是：S[i-next[i]+1 \~ i]与S[1~next[i]]是相等的，并且不存在更大的next满足条件。
+3）当i-next[i]能整除i时，S[1 \~ i-next[i]]就是S[1 ~ i]的最小循环元。它的最大循环次数就是i/(i - next[i])。
+
+
+
+这是刘汝佳《算法竞赛入门经典训练指南》上的原题（p213），用KMP构造状态转移表。在3.3.2 KMP算法。
+
+```python
+'''
+gpt
+这是一个字符串匹配问题，通常使用KMP算法（Knuth-Morris-Pratt算法）来解决。
+使用了 Knuth-Morris-Pratt 算法来寻找字符串的所有前缀，并检查它们是否由重复的子串组成，
+如果是的话，就打印出前缀的长度和最大重复次数。
+'''
+
+# 得到字符串s的前缀值列表
+def kmp_next(s):
+  	# kmp算法计算最长相等前后缀
+    next = [0] * len(s)
+    j = 0
+    for i in range(1, len(s)):
+        while s[i] != s[j] and j > 0:
+            j = next[j - 1]
+        if s[i] == s[j]:
+            j += 1
+        next[i] = j
+    return next
+
+
+def main():
+    case = 0
+    while True:
+        n = int(input().strip())
+        if n == 0:
+            break
+        s = input().strip()
+        case += 1
+        print("Test case #{}".format(case))
+        next = kmp_next(s)
+        for i in range(2, len(s) + 1):
+            k = i - next[i - 1]		# 可能的重复子串的长度
+            if (i % k == 0) and i // k > 1:
+                print(i, i // k)
+        print()
+
+
+if __name__ == "__main__":
+    main()
+
+```
+
+
+
+
+
+# 二、二分法
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20231212104106505.png" alt="image-20231212104106505" style="zoom:50%;" />
+
+数院胡睿诚：这就是个求最小值的最大值或者最大值的最小值的一个套路。
+
+求最值转化为判定对不对，判定问题是可以用贪心解决的，然后用二分只用判定log次。
+
+
+
+## 08210: 河中跳房子/石头
+
+binary search/greedy, http://cs101.openjudge.cn/practice/08210
+
+每年奶牛们都要举办各种特殊版本的跳房子比赛，包括在河里从一个岩石跳到另一个岩石。这项激动人心的活动在一条长长的笔直河道中进行，在起点和离起点L远 (1 ≤ *L*≤ 1,000,000,000) 的终点处均有一个岩石。在起点和终点之间，有*N* (0 ≤ *N* ≤ 50,000) 个岩石，每个岩石与起点的距离分别为$Di (0 < Di < L)$。
+
+在比赛过程中，奶牛轮流从起点出发，尝试到达终点，每一步只能从一个岩石跳到另一个岩石。当然，实力不济的奶牛是没有办法完成目标的。
+
+农夫约翰为他的奶牛们感到自豪并且年年都观看了这项比赛。但随着时间的推移，看着其他农夫的胆小奶牛们在相距很近的岩石之间缓慢前行，他感到非常厌烦。他计划移走一些岩石，使得从起点到终点的过程中，最短的跳跃距离最长。他可以移走除起点和终点外的至多*M* (0 ≤ *M* ≤ *N*) 个岩石。
+
+请帮助约翰确定移走这些岩石后，最长可能的最短跳跃距离是多少？
+
+
+
+**输入**
+
+第一行包含三个整数L, N, M，相邻两个整数之间用单个空格隔开。
+接下来N行，每行一个整数，表示每个岩石与起点的距离。岩石按与起点距离从近到远给出，且不会有两个岩石出现在同一个位置。
+
+**输出**
+
+一个整数，最长可能的最短跳跃距离。
+
+样例输入
+
+```
+25 5 2
+2
+11
+14
+17
+21
+```
+
+样例输出
+
+```
+4
+```
+
+提示：在移除位于2和14的两个岩石之后，最短跳跃距离为4（从17到21或从21到25）。
+
+
+
+二分法思路参考：https://blog.csdn.net/gyxx1998/article/details/103831426
+
+**用两分法去推求最长可能的最短跳跃距离**。
+最初，待求结果的可能范围是[0，L]的全程区间，因此暂定取其半程(L/2)，作为当前的最短跳跃距离，以这个标准进行岩石的筛选。
+**筛选过程**是：
+先以起点为基点，如果从基点到第1块岩石的距离小于这个最短跳跃距离，则移除第1块岩石，再看接下来那块岩石（原序号是第2块），如果还够不上最小跳跃距离，就继续移除。。。直至找到一块距离基点超过最小跳跃距离的岩石，保留这块岩石，并将它作为新的基点，再重复前面过程，逐一考察和移除在它之后的那些距离不足的岩石，直至找到下一个基点予以保留。。。
+当这个筛选过程最终结束时，那些幸存下来的基点，彼此之间的距离肯定是大于当前设定的最短跳跃距离的。
+这个时候要看一下被移除岩石的总数：
+
+- 如果总数>M，则说明被移除的岩石数量太多了（已超过上限值），进而说明当前设定的最小跳跃距离(即L/2)是过大的，其真实值应该是在[0, L/2]之间，故暂定这个区间的中值(L/4)作为接下来的最短跳跃距离，并以其为标准重新开始一次岩石筛选过程。。。
+- 如果总数≤M，则说明被移除的岩石数量并未超过上限值，进而说明当前设定的最小跳跃距离(即L/2)很可能过小，准确值应该是在[L/2, L]之间，故暂定这个区间的中值(3/4L)作为接下来的最短跳跃距离
+
+```python
+L,n,m = map(int,input().split())
+rock = [0]
+for i in range(n):
+    rock.append(int(input()))
+rock.append(L)
+
+def check(x):
+    num = 0
+    now = 0
+    for i in range(1, n+2):
+        if rock[i] - now < x:
+            num += 1
+        else:
+            now = rock[i]
+            
+    if num > m:
+        return True
+    else:
+        return False
+
+# https://github.com/python/cpython/blob/main/Lib/bisect.py
+'''
+2022fall-cs101，刘子鹏，元培。
+源码的二分查找逻辑是给定一个可行的下界和不可行的上界，通过二分查找，将范围缩小同时保持下界可行而区间内上界不符合，
+但这种最后print(lo-1)的写法的基础是最后夹出来一个不可行的上界，但其实L在这种情况下有可能是可行的
+（考虑所有可以移除所有岩石的情况），所以我觉得应该将上界修改为不可能的 L+1 的逻辑才是正确。
+例如：
+25 5 5
+1
+2
+3
+4
+5
+
+应该输出 25
+'''
+# lo, hi = 0, L
+lo, hi = 0, L+1
+ans = -1
+while lo < hi:
+    mid = (lo + hi) // 2
+    
+    if check(mid):
+        hi = mid
+    else:               # 返回False，有可能是num==m
+        ans = mid       # 如果num==m, mid就是答案
+        lo = mid + 1
+        
+#print(lo-1)
+print(ans)
+```
+
+
+
+
+
+## 04135: 月度开销
+
+binary search/greedy , http://cs101.openjudge.cn/practice/04135
+
+农夫约翰是一个精明的会计师。他意识到自己可能没有足够的钱来维持农场的运转了。他计算出并记录下了接下来 *N* (1 ≤ *N* ≤ 100,000) 天里每天需要的开销。
+
+约翰打算为连续的*M* (1 ≤ *M* ≤ *N*) 个财政周期创建预算案，他把一个财政周期命名为fajo月。每个fajo月包含一天或连续的多天，每天被恰好包含在一个fajo月里。
+
+约翰的目标是合理安排每个fajo月包含的天数，使得开销最多的fajo月的开销尽可能少。
+
+**输入**
+
+第一行包含两个整数N,M，用单个空格隔开。
+接下来N行，每行包含一个1到10000之间的整数，按顺序给出接下来N天里每天的开销。
+
+**输出**
+
+一个整数，即最大月度开销的最小值。
+
+样例输入
+
+```
+7 5
+100
+400
+300
+100
+500
+101
+400
+```
+
+样例输出
+
+```
+500
+```
+
+提示：若约翰将前两天作为一个月，第三、四两天作为一个月，最后三天每天作为一个月，则最大月度开销为500。其他任何分配方案都会比这个值更大。
+
+
+
+在所给的N天开销中寻找连续M天的最小和，即为最大月度开销的最小值。
+
+与 `OJ08210：河中跳房子`  一样都是二分+贪心判断，但注意这道题目是最大值求最小。
+
+参考 bisect 源码的二分查找写法，https://github.com/python/cpython/blob/main/Lib/bisect.py ，两个题目的代码均进行了规整。
+因为其中涉及到 num==m 的情况，有点复杂。二者思路一样，细节有点不一样。
+
+```python
+n,m = map(int, input().split())
+expenditure = []
+for _ in range(n):
+    expenditure.append(int(input()))
+
+def check(x):
+    num, s = 1, 0
+    for i in range(n):
+        if s + expenditure[i] > x:
+            s = expenditure[i]
+            num += 1
+        else:
+            s += expenditure[i]
+    
+    return [False, True][num > m]
+
+# https://github.com/python/cpython/blob/main/Lib/bisect.py
+lo = max(expenditure)
+# hi = sum(expenditure)
+hi = sum(expenditure) + 1
+ans = 1
+while lo < hi:
+    mid = (lo + hi) // 2
+    if check(mid):      # 返回True，是因为num>m，是确定不合适
+        lo = mid + 1    # 所以lo可以置为 mid + 1。
+    else:
+        ans = mid    # 如果num==m, mid就是答案
+        hi = mid
+        
+#print(lo)
+print(ans)
+```
+
+
+
+为了练习递归，写出了下面代码
+
+```python
+n, m = map(int, input().split())
+expenditure = [int(input()) for _ in range(n)]
+
+left,right = max(expenditure), sum(expenditure)
+
+def check(x):
+    num, s = 1, 0
+    for i in range(n):
+        if s + expenditure[i] > x:
+            s = expenditure[i]
+            num += 1
+        else:
+            s += expenditure[i]
+    
+    return [False, True][num > m]
+
+res = 0
+
+def binary_search(lo, hi):
+    if lo >= hi:
+        global res
+        res = lo
+        return
+    
+    mid = (lo + hi) // 2
+    #print(mid)
+    if check(mid):
+        lo = mid + 1
+        binary_search(lo, hi)
+    else:
+        hi = mid
+        binary_search(lo, hi)
+        
+binary_search(left, right)
+print(res)
+```
+
+
+
+2021fall-cs101，郑天宇。
+
+一开始难以想到用二分法来解决此题，主要是因为长时间被从正面直接解决问题的思维所禁锢，忘记了**==对于有限的问题，其实可以采用尝试的方法来解决==**。这可能就是“计算思维”的生动体现吧，也可以说是计算概论课教会我们的一个全新的思考问题的方式。
+
+2021fall-cs101，韩萱。居然还能这么做...自己真的想不出来，还是“先完成，再完美”，直接看题解比较好，不然自己想是真的做不完的。
+
+2021fall-cs101，欧阳韵妍。
+
+解题思路：这道题前前后后花了大概3h+（如果考试碰到这种题希望我能及时止损马上放弃），看到老师分享的叶晨熙同学的作业中提到“两球之间的最小磁力”问题的题解有助于理解二分搜索，去找了这道题的题解，看完之后果然有了一点思路，体会到了二分搜索其实就相当于一个往空隙里“插板”的问题，只不过可以运用折半的方法代替一步步挪动每个板子，从而降低时间复杂度。不过虽然有了大致思路但是还是不知道怎么具体实现，于是去仔仔细细地啃了几遍题解。def 的check 函数就是得出在确定了两板之间最多能放多少开销后的一种插板方法；两板之间能放的开销的最大值的最大值（maxmax）一开始为开销总和，两板之间能放的开销的最大值的最小值minmax）一开始为开销中的最大值，我们的目标就是尽可能缩小这个maxmax。如果通过每次减去1 来缩小maxmax 就会超时，那么这时候就使用二分方法，看看  (maxmax+minmax)//2 能不能行，如果可以，大于  (maxmax+minmax)//2的步骤就能全部省略了，maxmax 直接变为  (maxmax+minmax)//2；如果不可以，那么让minmax 变成  (maxmax+minmax)//2+1，同样可以砍掉一半【为什么可以砍掉一半可以这样想：按照check（）的定义，如果输出了False 代表板子太多了，那么“两板之间能放的开销的最大值”（这里即middle）太小了，所以最后不可能采用小于middle 的开销，即maxmax不可能为小于middle 的值，那么这时候就可以把小于middle 的值都砍掉】
+
+感觉二分法是用于在一个大范围里面通过范围的缩小来定位的一种缩短搜素次数的方法。
+
+2021fall-cs101，王紫琪。【月度开销】强烈建议把 欧阳韵妍 同学的思路放进题解！对于看懂代码有很大帮助（拯救了我的头发）
+
+```python
+n, m = map(int, input().split())
+L = list(int(input()) for x in range(n))
+
+def check(x):
+    num, cut = 1, 0
+    for i in range(n):
+        if cut + L[i] > x:
+            num += 1
+            cut = L[i]  #在L[i]左边插一个板，L[i]属于新的fajo月
+        else:
+            cut += L[i]
+    
+    if num > m:
+        return False
+    else:
+        return True
+
+maxmax = sum(L)
+minmax = max(L)
+while minmax < maxmax:
+    middle = (maxmax + minmax) // 2
+    if check(middle):   #表明这种插法可行，那么看看更小的插法可不可以
+        maxmax = middle
+    else:
+        minmax = middle + 1#这种插法不可行，改变minmax看看下一种插法可不可以
+
+print(maxmax)
+```
+
+
+
+
+
+
+
+# 三、基数排序
+
+基数排序是一种非比较型整数排序算法，其原理是将整数按位数切割成不同的数字，然后按每个位数分别比较。由于整数也可以表达字符串（比如名字或日期）和特定格式的浮点数，所以基数排序也不是只能使用于整数。
+
+
+
+```python
+def radixSort(arr):
+    max_value = max(arr)
+    digit = 1
+    while digit <= max_value:
+        temp = [[] for _ in range(10)]
+        for i in arr:
+            t = i // digit % 10
+            temp[t].append(i)
+        arr.clear()
+        for bucket in temp:
+            arr.extend(bucket)
+        digit *= 10
+    return arr
+
+arr = [170, 45, 75, 90, 802, 24, 2, 66]
+ans = radixSort(arr)
+print(*ans)
+
+# Output:
+# 2 24 45 66 75 90 170 802
+```
+
+
+
+这个程序是一个实现基数排序（Radix Sort）的函数。基数排序是一种非比较型的排序算法，它根据数字的位数来对数字进行排序。
+
+下面是对程序的解读：
+
+1. `radixSort` 函数接受一个整数列表 `arr` 作为输入，并返回排序后的列表。
+2. 在函数中，首先找出列表中的最大值 `max_value`，以确定需要排序的数字的最大位数。
+3. 然后，通过 `digit` 变量来表示当前处理的位数，初始化为 1。在每次迭代中，`digit` 的值会乘以 10，以处理下一个更高位的数字。
+4. 在每次迭代中，创建一个包含 10 个空列表的临时列表 `temp`，用于存储每个数字在当前位数上的分组情况。
+5. 对于列表中的每个数字 `i`，计算其在当前位数上的值 `t`（通过取整除和取模操作），然后将数字 `i` 存入对应的桶中。
+6. 在填充完所有桶之后，将桶中的数字按照顺序取出，重新放入原始列表 `arr` 中。这样就完成了对当前位数的排序。
+7. 继续迭代，直到处理完所有位数为止。
+8. 最后，返回排序后的列表 `arr`。
+
+通过基数排序，可以有效地对整数列表进行排序，时间复杂度为 O(d * (n + k))，其中 d 是最大位数，n 是数字个数，k 是基数（这里是 10）。
+
+
+
+**Complexity Analysis of Radix Sort**
+
+Time Complexity:
+
+- Radix sort is a non-comparative integer sorting algorithm that sorts data with integer keys by grouping the keys by the individual digits which share the same significant position and value. It has a time complexity of O(d \* (n + b)), where d is the number of digits, n is the number of elements, and b is the base of the number system being used.
+- In practical implementations, radix sort is often faster than other comparison-based sorting algorithms, such as quicksort or merge sort, for large datasets, especially when the keys have many digits. However, its time complexity grows linearly with the number of digits, and so it is not as efficient for small datasets.
+
+Auxiliary Space:
+
+- Radix sort also has a space complexity of O(n + b), where n is the number of elements and b is the base of the number system. This space complexity comes from the need to create buckets for each digit value and to copy the elements back to the original array after each digit has been sorted.
+
+
+
+
+
+# *四、字典与检索
 
 ## 06640: 倒排索引
 
@@ -405,7 +919,7 @@ for result in results:
 
 
 
-# 四、B-trees
+# *五、B-trees
 
 2-3 树、2-3-4 树、B 树和 B+ 树
 
