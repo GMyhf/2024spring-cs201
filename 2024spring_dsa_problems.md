@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1710 GMT+8 May 22, 2024
+Updated 2249 GMT+8 May 22, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -12386,6 +12386,93 @@ http://cs101.openjudge.cn/dsapre/22509/
 题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
 的 Optional problems
+
+
+
+## 22510: 皮卡丘的冒险
+
+http://dsbpython.openjudge.cn/2024hw12/002/
+
+某天火箭队终于成功抓到了皮卡丘，但是因为主角光环加身，他又双叒叕逃脱了。他想赶紧回到
+小智身边，但是前面有一片森林挡住了去路。
+用一张地图表示这片森林，其中顶点代表森林的隘口，隘口之间有路相连，皮卡丘想要穿过隘口
+就必须打败这里的宝可梦（只用打败一次就可以，第二次再来的时候不用再打），打败宝可梦需
+要时间，在路上跑也需要花费时间，假设小智一直在原地等待，皮卡丘想知道他最短需要花费多
+长时间才能和小智重逢。
+
+**输入**
+
+输入的第一行为整数N（1≤N≤2000）和整数M（2≤M≤5000），用空格分开，分别代表隘口的数量和路的数量，隘口的编号为2..N+1，编号0和1用来分别代表皮卡丘和小智所在的位置。
+输入的第2..N+1行为一个自然数，表示击败该编号对应的隘口的宝可梦需要的时间。
+接下来M行，每行三个自然数，用空格分开，代表一条路两端的顶点编号和经过这条路需要的时间。路是双向的。
+
+**输出**
+
+输出一行，即皮卡丘和小智重逢所需的最短时间。测试用例保证皮卡丘和小智一定能再次相逢。
+
+样例输入
+
+```
+2 5
+1
+1
+0 2 4
+3 0 1
+2 3 1
+2 1 2
+1 3 5
+```
+
+样例输出
+
+```
+6
+```
+
+来源
+
+刘宇航
+
+
+
+copilot把击败时间直接建图的花费里面了，挺方便
+
+```python
+# GitHub Copilot
+# 22510皮卡丘的冒险, http://dsbpython.openjudge.cn/2024hw12/002/
+import heapq
+
+def dijkstra(graph, start):
+    N = len(graph)
+    dist = [float('inf')] * N
+    dist[start] = 0
+    queue = [(0, start)]
+
+    while queue:
+        v_dist, v = heapq.heappop(queue)
+        if v_dist != dist[v]:
+            continue
+        for w, w_dist in graph[v]:
+            if dist[v] + w_dist < dist[w]:
+                dist[w] = dist[v] + w_dist
+                heapq.heappush(queue, (dist[w], w))
+    return dist
+
+N, M = map(int, input().split())
+N += 2
+graph = [[] for _ in range(N)]
+time_to_defeat = [0, 0] + [int(input()) for _ in range(N-2)]
+
+for _ in range(M):
+    u, v, t = map(int, input().split())
+    graph[u].append((v, t + time_to_defeat[v]))
+    graph[v].append((u, t + time_to_defeat[u]))
+
+distances = dijkstra(graph, 0)
+print(distances[1])
+```
+
+
 
 
 
