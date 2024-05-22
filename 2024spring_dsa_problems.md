@@ -14807,6 +14807,125 @@ int main() {
 
 
 
+
+
+## 26495: 素数和
+
+http://hxsjjg.openjudge.cn/2024finaltest/7/
+
+给定 n 个整数和一个整数 k（k < n）. 从这 n 个整数中任选 k 个整数相加，可分别得到一系列的和。现在，要求你计算出和为素数共有多少种。
+
+**输入**
+
+输入包含两行内容
+第一行两个空格隔开的整数 n 和 k. (1 ≤ n ≤ 20, k < n)
+第二行有 n 个整数，每个整数的大小范围 [1, 5×10^6]，可能存在相同的整数
+
+**输出**
+
+输出一个整数，表示和为素数的情况共有多少种
+
+样例输入
+
+```
+4 3
+3 7 12 19
+```
+
+样例输出
+
+```
+1
+```
+
+
+
+Python实现
+
+```python
+import itertools
+
+def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+def count_prime_sums(nums, k):
+    count = 0
+    for combination in itertools.combinations(nums, k):
+        if is_prime(sum(combination)):
+            count += 1
+    return count
+
+n, k = map(int, input().split())
+nums = list(map(int, input().split()))
+print(count_prime_sums(nums, k))
+```
+
+
+
+C++实现
+
+```c++
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+
+// 辅助函数：判断一个数是否为素数
+bool isPrime(int num) {
+    if (num <= 1) return false;
+    if (num == 2) return true;
+    if (num % 2 == 0) return false;
+    int sqrt_n = static_cast<int>(sqrt(num));
+    for (int i = 3; i <= sqrt_n; i += 2) {
+        if (num % i == 0) return false;
+    }
+    return true;
+}
+
+// 递归函数：生成所有组合并计算和
+void findCombinations(const vector<int>& numbers, int k, int start, int current_sum, int& prime_count, vector<int>& combination) {
+    if (combination.size() == k) {
+        if (isPrime(current_sum)) {
+            prime_count++;
+        }
+        return;
+    }
+
+    for (int i = start; i < numbers.size(); ++i) {
+        combination.push_back(numbers[i]);
+        findCombinations(numbers, k, i + 1, current_sum + numbers[i], prime_count, combination);
+        combination.pop_back();
+    }
+}
+
+int main() {
+    int n, k;
+    cin >> n >> k;
+    vector<int> numbers(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> numbers[i];
+    }
+
+    int prime_count = 0;
+    vector<int> combination;
+    findCombinations(numbers, k, 0, 0, prime_count, combination);
+
+    cout << prime_count << endl;
+    return 0;
+}
+```
+
+
+
+
+
 ## 26572: 多余的括号
 
 http://cs101.openjudge.cn/dsapre/26572/
