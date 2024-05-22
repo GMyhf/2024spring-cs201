@@ -9251,6 +9251,114 @@ for _ in range(int(input())):
 
 
 
+## 01376: Robot
+
+bfs, http://cs101.openjudge.cn/dsapre/01376/
+
+洛谷上有中文题面。机器人搬重物，https://www.luogu.com.cn/problem/P1126
+
+The Robot Moving Institute is using a robot in their local store to transport different items. Of course the robot should spend only the minimum time necessary when travelling from one place in the store to another. The robot can move only along a straight line (track). All tracks form a rectangular grid. Neighbouring tracks are one meter apart. The store is a rectangle N x M meters and it is entirely covered by this grid. The distance of the track closest to the side of the store is exactly one meter. The robot has a circular shape with diameter equal to 1.6 meter. The track goes through the center of the robot. The robot always faces north, south, west or east. The tracks are in the south-north and in the west-east directions. The robot can move only in the direction it faces. The direction in which it faces can be changed at each track crossing. Initially the robot stands at a track crossing. The obstacles in the store are formed from pieces occupying 1m x 1m on the ground. Each obstacle is within a 1 x 1 square formed by the tracks. The movement of the robot is controlled by two commands. These commands are GO and TURN. 
+The GO command has one integer parameter n in {1,2,3}. After receiving this command the robot moves n meters in the direction it faces. 
+
+The TURN command has one parameter which is either left or right. After receiving this command the robot changes its orientation by 90o in the direction indicated by the parameter. 
+
+The execution of each command lasts one second. 
+
+Help researchers of RMI to write a program which will determine the minimal time in which the robot can move from a given starting point to a given destination.
+
+**输入**
+
+The input consists of blocks of lines. The first line of each block contains two integers M <= 50 and N <= 50 separated by one space. In each of the next M lines there are N numbers one or zero separated by one space. One represents obstacles and zero represents empty squares. (The tracks are between the squares.) The block is terminated by a line containing four positive integers B1 B2 E1 E2 each followed by one space and the word indicating the orientation of the robot at the starting point. B1, B2 are the coordinates of the square in the north-west corner of which the robot is placed (starting point). E1, E2 are the coordinates of square to the north-west corner of which the robot should move (destination point). The orientation of the robot when it has reached the destination point is not prescribed. We use (row, column)-type coordinates, i.e. the coordinates of the upper left (the most north-west) square in the store are 0,0 and the lower right (the most south-east) square are M - 1, N - 1. The orientation is given by the words north or west or south or east. The last block contains only one line with N = 0 and M = 0.
+
+**输出**
+
+The output contains one line for each block except the last block in the input. The lines are in the order corresponding to the blocks in the input. The line contains minimal number of seconds in which the robot can reach the destination point from the starting point. If there does not exist any path from the starting point to the destination point the line will contain -1. 
+![img](http://media.openjudge.cn/images/g378/1376_1.jpg)
+
+样例输入
+
+```
+9 10
+0 0 0 0 0 0 1 0 0 0
+0 0 0 0 0 0 0 0 1 0
+0 0 0 1 0 0 0 0 0 0
+0 0 1 0 0 0 0 0 0 0
+0 0 0 0 0 0 1 0 0 0
+0 0 0 0 0 1 0 0 0 0
+0 0 0 1 1 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+1 0 0 0 0 0 0 0 1 0
+7 2 2 7 south
+0 0
+```
+
+样例输出
+
+```
+12
+```
+
+来源
+
+Central Europe 1996
+
+
+
+```python
+from collections import deque
+
+# Directions: north(0), east(1), south(2), west(3)
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
+
+def bfs(sx, sy, ex, ey, sdir):
+    queue = deque([(sx, sy, 0, sdir)])
+    visited = [[[0]*4 for _ in range(m+1)] for _ in range(n+1)]
+    visited[sx][sy][sdir] = 1
+
+    while queue:
+        x, y, time, dir = queue.popleft()
+        for i in range(1, 4):  # 1, 2, 3 steps
+            nx, ny = x + dx[dir]*i, y + dy[dir]*i
+            if nx < 1 or nx >= n or ny < 1 or ny >= m or grid[nx][ny] or grid[nx+1][ny] or grid[nx][ny+1] or grid[nx+1][ny+1]:
+                break
+            if not visited[nx][ny][dir]:
+                visited[nx][ny][dir] = 1
+                if nx == ex and ny == ey:
+                    return time + 1
+                queue.append((nx, ny, time + 1, dir))
+        for i in range(4):
+            if abs(dir - i) == 2:  # Don't go back
+                continue
+            if not visited[x][y][i]:  # Turn in place, no need to check boundaries
+                visited[x][y][i] = 1
+                queue.append((x, y, time + 1, i))
+    return -1
+
+while True:
+    n, m = map(int, input().split())
+    if n == 0 and m == 0:
+        break
+
+    grid = [[0]*(m+2) for _ in range(n+2)]
+    for i in range(1, n+1):
+        grid[i] = [0] + list(map(int, input().split())) + [0]
+
+    sx, sy, ex, ey, sdir = input().split()
+    sx, sy, ex, ey = map(int, [sx, sy, ex, ey])
+    sdir = {'n': 0, 'e': 1, 's': 2, 'w': 3}[sdir[0]]
+
+    if sx == ex and sy == ey:
+        print(0)
+        continue
+
+    print(bfs(sx, sy, ex, ey, sdir))
+```
+
+
+
+
+
 ## 14683: 合并果子
 
 http://cs101.openjudge.cn/dsapre/14683/
@@ -9303,6 +9411,10 @@ while len(l) > 1:
 
 print(ans)
 ```
+
+
+
+
 
 
 
