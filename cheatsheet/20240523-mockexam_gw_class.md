@@ -818,7 +818,6 @@ Guo Wei
 
 ```python
 #2300011335	邓锦文
-010：
 class UnionFind:
     def __init__(self, n):
         self.parent = list(range(n))
@@ -925,7 +924,6 @@ Guo Wei
 
 ```python
 #2300011335	邓锦文
-011：
 n, m = map(int, input().split())
 graph = {i: [] for i in range(n)}
 for _ in range(m):
