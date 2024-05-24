@@ -540,6 +540,231 @@ print(minmove)
 
 
 
+## 01182: 食物链
+
+并查集, http://cs101.openjudge.cn/practice/01182
+
+动物王国中有三类动物A,B,C，这三类动物的食物链构成了有趣的环形。A吃B， B吃C，C吃A。
+现有N个动物，以1－N编号。每个动物都是A,B,C中的一种，但是我们并不知道它到底是哪一种。
+有人用两种说法对这N个动物所构成的食物链关系进行描述：
+第一种说法是"1 X Y"，表示X和Y是同类。
+第二种说法是"2 X Y"，表示X吃Y。
+此人对N个动物，用上述两种说法，一句接一句地说出K句话，这K句话有的是真的，有的是假的。当一句话满足下列三条之一时，这句话就是假话，否则就是真话。
+1） 当前的话与前面的某些真的话冲突，就是假话；
+2） 当前的话中X或Y比N大，就是假话；
+3） 当前的话表示X吃X，就是假话。
+你的任务是根据给定的N（1 <= N <= 50,000）和K句话（0 <= K <= 100,000），输出假话的总数。
+
+**输入**
+
+第一行是两个整数N和K，以一个空格分隔。
+以下K行每行是三个正整数 D，X，Y，两数之间用一个空格隔开，其中D表示说法的种类。
+若D=1，则表示X和Y是同类。
+若D=2，则表示X吃Y。
+
+**输出**
+
+只有一个整数，表示假话的数目。
+
+样例输入
+
+```
+100 7
+1 101 1 
+2 1 2
+2 2 3 
+2 3 3 
+1 1 3 
+2 3 1 
+1 5 5
+```
+
+样例输出
+
+```
+3
+```
+
+来源
+
+Noi 01
+
+
+
+```python
+class DisjointSet:
+    def __init__(self, n):
+        #设[1,n] 区间表示同类，[n+1,2*n]表示x吃的动物，[2*n+1,3*n]表示吃x的动物。
+        self.parent = [i for i in range(3 * n + 1)] # 每个动物有三种可能的类型，用 3 * n 来表示每种类型的并查集
+        self.rank = [0] * (3 * n + 1)
+
+    def find(self, u):
+        if self.parent[u] != u:
+            self.parent[u] = self.find(self.parent[u])
+        return self.parent[u]
+
+    def union(self, u, v):
+        pu, pv = self.find(u), self.find(v)
+        if pu == pv:
+            return False
+        if self.rank[pu] > self.rank[pv]:
+            self.parent[pv] = pu
+        elif self.rank[pu] < self.rank[pv]:
+            self.parent[pu] = pv
+        else:
+            self.parent[pv] = pu
+            self.rank[pu] += 1
+        return True
+
+
+def is_valid(n, k, statements):
+    dsu = DisjointSet(n)
+
+    def find_disjoint_set(x):
+        if x > n:
+            return False
+        return True
+
+    false_count = 0
+    for d, x, y in statements:
+        if not find_disjoint_set(x) or not find_disjoint_set(y):
+            false_count += 1
+            continue
+        if d == 1:  # X and Y are of the same type
+            if dsu.find(x) == dsu.find(y + n) or dsu.find(x) == dsu.find(y + 2 * n):
+                false_count += 1
+            else:
+                dsu.union(x, y)
+                dsu.union(x + n, y + n)
+                dsu.union(x + 2 * n, y + 2 * n)
+        else:  # X eats Y
+            if dsu.find(x) == dsu.find(y) or dsu.find(x + 2*n) == dsu.find(y):
+                false_count += 1
+            else: #[1,n] 区间表示同类，[n+1,2*n]表示x吃的动物，[2*n+1,3*n]表示吃x的动物
+                dsu.union(x + n, y)
+                dsu.union(x, y + 2 * n)
+                dsu.union(x + 2 * n, y + n)
+
+    return false_count
+
+
+if __name__ == "__main__":
+    N, K = map(int, input().split())
+    statements = []
+    for _ in range(K):
+        D, X, Y = map(int, input().split())
+        statements.append((D, X, Y))
+    result = is_valid(N, K, statements)
+    print(result)
+
+```
+
+
+
+《挑战程序设计竞赛（第2版）》的2.4.4并查集，也有讲到。
+
+```python
+# 并查集，https://zhuanlan.zhihu.com/p/93647900/
+'''
+我们设[0,n)区间表示同类，[n,2*n)区间表示x吃的动物，[2*n,3*n)表示吃x的动物。
+
+如果是关系1：
+　　将y和x合并。将y吃的与x吃的合并。将吃y的和吃x的合并。
+如果是关系2：
+　　将y和x吃的合并。将吃y的与x合并。将y吃的与吃x的合并。
+原文链接：https://blog.csdn.net/qq_34594236/article/details/72587829
+'''
+# p = [0]*150001
+
+def find(x):	# 并查集查询
+    if p[x] == x:
+        return x
+    else:
+        p[x] = find(p[x])	# 父节点设为根节点。目的是路径压缩。
+        return p[x]
+
+n,k = map(int, input().split())
+
+p = [0]*(3*n + 1)
+for i in range(3*n+1):	#并查集初始化
+    p[i] = i
+
+ans = 0
+for _ in range(k):
+    a,x,y = map(int, input().split())
+    if x>n or y>n:
+        ans += 1; continue
+    
+    if a==1:
+        if find(x+n)==find(y) or find(y+n)==find(x):
+            ans += 1; continue
+        
+        # 合并
+        p[find(x)] = find(y)				
+        p[find(x+n)] = find(y+n)
+        p[find(x+2*n)] = find(y+2*n)
+    else:
+        if find(x)==find(y) or find(y+n)==find(x):
+            ans += 1; continue
+        p[find(x+n)] = find(y)
+        p[find(y+2*n)] = find(x)
+        p[find(x+2*n)] = find(y+n)
+
+print(ans)
+```
+
+
+
+
+
+思路：本题用时较长，经过多次思绪打结重写后，找到的一种思路为：为每一个动物分配一个环形食物链`Circle`类，每个动物为自己的食物环的A种动物，并且该食物环的根为该动物，若`D=1`，两个动物所在食物环的根不同，那么经过适当旋转后，合并两个食物环；两个动物所在的食物环相同，但两个动物种类不同，则为假话。若`D=2`，两个动物所在食物环的根不同，那么经过适当旋转后，合并两个食物环；两个动物所在的食物环相同，但两个动物种类不满足A吃B，B吃C，C吃A，则为假话。为什么没有为每一个动物分配一个动物类？因为处理很多未知种类的动物之间的吃与被吃关系让人头大。
+
+```python
+# 宋昕杰 物理学院
+class Circle:
+    def __init__(self, root):
+        self.kinds = {root: 0}
+        self.root = root
+
+    def join(self, circle, rotate):
+        for idx, kind in circle.kinds.items():
+            self.kinds[idx] = (kind - rotate) % 3
+            ls[idx] = self.root
+
+
+n, k = map(int, input().split())
+ls = [i for i in range(n)]
+circles = [Circle(i) for i in range(n)]
+ans = 0
+
+for _ in range(k):
+    d, x, y = map(int, input().split())
+    if x > n or y > n or (d == 2 and x == y):
+        ans += 1
+        continue
+    x -= 1
+    y -= 1
+
+    idx_x = circles[ls[x]].kinds[x]
+    idx_y = circles[ls[y]].kinds[y]
+    if d == 1:
+        if ls[x] != ls[y]:
+            circles[ls[x]].join(circles[ls[y]], (idx_y - idx_x) % 3)
+        else:
+            if idx_x != idx_y:
+                ans += 1
+        continue
+
+    if ls[x] != ls[y]:
+        circles[ls[x]].join(circles[ls[y]], (idx_y - idx_x - 1) % 3)
+    elif (idx_y - idx_x - 1) % 3 != 0:
+        ans += 1
+
+print(ans)
+```
+
+
+
 
 
 ## 01258: Agri-Net
