@@ -1382,6 +1382,43 @@ if __name__ == "__main__":
 
 
 
+```python
+#2200015507 王一粟
+def find(x):
+    if parent[x] == x:
+        return parent[x]
+    else:
+        parent[x] = find(parent[x])
+        return parent[x]
+def disjoint(x,y):
+    rep_x,rep_y = find(x),find(y)
+    if rep_x != rep_y:
+        if rank[rep_x] < rank[rep_y]:
+            parent[rep_x] = rep_y
+        elif rank[rep_x] > rank[rep_y]:
+            parent[rep_y] = rep_x
+        else:
+            parent[rep_y] = rep_x
+            rank[rep_x] += 1
+def joint(mylist):
+    node = mylist[0]
+    for element in mylist[1:]:
+        disjoint(node,element)
+while True:
+    n,m = [int(i) for i in input().split()]
+    if n == 0 and m == 0:
+        break
+    parent = [i for i in range(n)]
+    rank = [0 for i in range(n)]
+    for i in range(m):
+        s = [int(i) for i in input().split()]
+        joint(s[1:])
+    rep_0 = find(0)
+    print(len([i for i in parent if find(i) == rep_0]))
+```
+
+
+
 ## 01703: 发现它，抓住它
 
 http://cs101.openjudge.cn/practice/01703/
