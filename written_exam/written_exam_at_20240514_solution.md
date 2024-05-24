@@ -1,6 +1,6 @@
 # 20240514 数算B-12班-笔试（模考）
 
-Updated 2051 GMT+8 May 17, 2024
+Updated 1548 GMT+8 May 24, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -405,11 +405,13 @@ a) 二叉排序树构建过程如下：
 b) 删除关键码为 73 后的二叉排序树：
 
 ```
-           18
-          /  \
-        5     68
-         \    / \
-         10  27 99
+           18												18
+          /  \										/			\
+        5     68				或者			5				99
+         \    / \									\			/
+         10  27 99								10	68
+         															/
+         														27
 ```
 
 c) 查询效率最高的最优二叉排序树：
@@ -668,7 +670,7 @@ def buildTree():
 
     return tree
 
-tree = buildTree()
+tree = buildTree()	# (1分) 
 tree.inorderTraversal()
 
 """
