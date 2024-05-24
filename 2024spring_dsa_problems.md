@@ -4663,123 +4663,6 @@ if __name__ == "__main__":
 
 
 
-### 04078: 实现堆结构
-
-http://cs101.openjudge.cn/2024sp_routine/04078/
-
-定义一个数组，初始化为空。在数组上执行两种操作：
-
-1、增添1个元素，把1个新的元素放入数组。
-
-2、输出并删除数组中最小的数。
-
-使用堆结构实现上述功能的高效算法。
-
-**输入**
-
-第一行输入一个整数n，代表操作的次数。
-每次操作首先输入一个整数type。
-当type=1，增添操作，接着输入一个整数u，代表要插入的元素。
-当type=2，输出删除操作，输出并删除数组中最小的元素。
-1<=n<=100000。
-
-**输出**
-
-每次删除操作输出被删除的数字。
-
-样例输入
-
-```
-4
-1 5
-1 1
-1 7
-2
-```
-
-样例输出
-
-```
-1
-```
-
-提示
-
-每组测试数据的复杂度为O(nlogn)的算法才能通过本次，否则会返回TLE(超时)
-需要使用最小堆结构来实现本题的算法
-
-
-
-这题目本意是练习自己写个BinHeap。当然机考时候，如果遇到这样题目，直接import heapq。
-
-手搓栈、队列、堆、AVL等，考试前需要搓个遍。
-
-```python
-class BinHeap:
-    def __init__(self):
-        self.heapList = [0]
-        self.currentSize = 0
-
-    def percUp(self, i):
-        while i // 2 > 0:
-            if self.heapList[i] < self.heapList[i // 2]:
-                tmp = self.heapList[i // 2]
-                self.heapList[i // 2] = self.heapList[i]
-                self.heapList[i] = tmp
-            i = i // 2
-
-    def insert(self, k):
-        self.heapList.append(k)
-        self.currentSize = self.currentSize + 1
-        self.percUp(self.currentSize)
-
-    def percDown(self, i):
-        while (i * 2) <= self.currentSize:
-            mc = self.minChild(i)
-            if self.heapList[i] > self.heapList[mc]:
-                tmp = self.heapList[i]
-                self.heapList[i] = self.heapList[mc]
-                self.heapList[mc] = tmp
-            i = mc
-
-    def minChild(self, i):
-        if i * 2 + 1 > self.currentSize:
-            return i * 2
-        else:
-            if self.heapList[i * 2] < self.heapList[i * 2 + 1]:
-                return i * 2
-            else:
-                return i * 2 + 1
-
-    def delMin(self):
-        retval = self.heapList[1]
-        self.heapList[1] = self.heapList[self.currentSize]
-        self.currentSize = self.currentSize - 1
-        self.heapList.pop()
-        self.percDown(1)
-        return retval
-
-    def buildHeap(self, alist):
-        i = len(alist) // 2
-        self.currentSize = len(alist)
-        self.heapList = [0] + alist[:]
-        while (i > 0):
-            #print(f'i = {i}, {self.heapList}')
-            self.percDown(i)
-            i = i - 1
-        #print(f'i = {i}, {self.heapList}')
-
-
-n = int(input().strip())
-bh = BinHeap()
-for _ in range(n):
-    inp = input().strip()
-    if inp[0] == '1':
-        bh.insert(int(inp.split()[1]))
-    else:
-        print(bh.delMin())
-```
-
 
 
 ##  04078: 实现堆结构
@@ -14761,11 +14644,126 @@ print(dp[0][-1])
 
 
 
+## 26495: 素数和
+
+http://hxsjjg.openjudge.cn/2024finaltest/7/
+
+给定 n 个整数和一个整数 k（k < n）. 从这 n 个整数中任选 k 个整数相加，可分别得到一系列的和。现在，要求你计算出和为素数共有多少种。
+
+**输入**
+
+输入包含两行内容
+第一行两个空格隔开的整数 n 和 k. (1 ≤ n ≤ 20, k < n)
+第二行有 n 个整数，每个整数的大小范围 [1, 5×10^6]，可能存在相同的整数
+
+**输出**
+
+输出一个整数，表示和为素数的情况共有多少种
+
+样例输入
+
+```
+4 3
+3 7 12 19
+```
+
+样例输出
+
+```
+1
+```
 
 
-26518: 最大无环图扩展
 
-http://hxsjjg.openjudge.cn/2024finaltest/6/
+Python实现
+
+```python
+import itertools
+
+def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+def count_prime_sums(nums, k):
+    count = 0
+    for combination in itertools.combinations(nums, k):
+        if is_prime(sum(combination)):
+            count += 1
+    return count
+
+n, k = map(int, input().split())
+nums = list(map(int, input().split()))
+print(count_prime_sums(nums, k))
+```
+
+
+
+C++实现
+
+```c++
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+
+// 辅助函数：判断一个数是否为素数
+bool isPrime(int num) {
+    if (num <= 1) return false;
+    if (num == 2) return true;
+    if (num % 2 == 0) return false;
+    int sqrt_n = static_cast<int>(sqrt(num));
+    for (int i = 3; i <= sqrt_n; i += 2) {
+        if (num % i == 0) return false;
+    }
+    return true;
+}
+
+// 递归函数：生成所有组合并计算和
+void findCombinations(const vector<int>& numbers, int k, int start, int current_sum, int& prime_count, vector<int>& combination) {
+    if (combination.size() == k) {
+        if (isPrime(current_sum)) {
+            prime_count++;
+        }
+        return;
+    }
+
+    for (int i = start; i < numbers.size(); ++i) {
+        combination.push_back(numbers[i]);
+        findCombinations(numbers, k, i + 1, current_sum + numbers[i], prime_count, combination);
+        combination.pop_back();
+    }
+}
+
+int main() {
+    int n, k;
+    cin >> n >> k;
+    vector<int> numbers(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> numbers[i];
+    }
+
+    int prime_count = 0;
+    vector<int> combination;
+    findCombinations(numbers, k, 0, 0, prime_count, combination);
+
+    cout << prime_count << endl;
+    return 0;
+}
+```
+
+
+
+
+
+## 26518: 最大无环图扩展
+
+http://cs101.openjudge.cn/practice/28334/
 
 给定一个有向无环图（DAG），你的任务是在保持图的有向无环性质的前提下，尽可能多地添加边，使得加完边之后的图仍然是一个有向无环图。
 
@@ -14902,125 +14900,6 @@ int main() {
     return 0;
 }
 
-```
-
-
-
-
-
-
-
-## 26495: 素数和
-
-http://hxsjjg.openjudge.cn/2024finaltest/7/
-
-给定 n 个整数和一个整数 k（k < n）. 从这 n 个整数中任选 k 个整数相加，可分别得到一系列的和。现在，要求你计算出和为素数共有多少种。
-
-**输入**
-
-输入包含两行内容
-第一行两个空格隔开的整数 n 和 k. (1 ≤ n ≤ 20, k < n)
-第二行有 n 个整数，每个整数的大小范围 [1, 5×10^6]，可能存在相同的整数
-
-**输出**
-
-输出一个整数，表示和为素数的情况共有多少种
-
-样例输入
-
-```
-4 3
-3 7 12 19
-```
-
-样例输出
-
-```
-1
-```
-
-
-
-Python实现
-
-```python
-import itertools
-
-def is_prime(n):
-    if n < 2:
-        return False
-    for i in range(2, int(n**0.5) + 1):
-        if n % i == 0:
-            return False
-    return True
-
-def count_prime_sums(nums, k):
-    count = 0
-    for combination in itertools.combinations(nums, k):
-        if is_prime(sum(combination)):
-            count += 1
-    return count
-
-n, k = map(int, input().split())
-nums = list(map(int, input().split()))
-print(count_prime_sums(nums, k))
-```
-
-
-
-C++实现
-
-```c++
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <algorithm>
-
-using namespace std;
-
-// 辅助函数：判断一个数是否为素数
-bool isPrime(int num) {
-    if (num <= 1) return false;
-    if (num == 2) return true;
-    if (num % 2 == 0) return false;
-    int sqrt_n = static_cast<int>(sqrt(num));
-    for (int i = 3; i <= sqrt_n; i += 2) {
-        if (num % i == 0) return false;
-    }
-    return true;
-}
-
-// 递归函数：生成所有组合并计算和
-void findCombinations(const vector<int>& numbers, int k, int start, int current_sum, int& prime_count, vector<int>& combination) {
-    if (combination.size() == k) {
-        if (isPrime(current_sum)) {
-            prime_count++;
-        }
-        return;
-    }
-
-    for (int i = start; i < numbers.size(); ++i) {
-        combination.push_back(numbers[i]);
-        findCombinations(numbers, k, i + 1, current_sum + numbers[i], prime_count, combination);
-        combination.pop_back();
-    }
-}
-
-int main() {
-    int n, k;
-    cin >> n >> k;
-    vector<int> numbers(n);
-    for (int i = 0; i < n; ++i) {
-        cin >> numbers[i];
-    }
-
-    int prime_count = 0;
-    vector<int> combination;
-    findCombinations(numbers, k, 0, 0, prime_count, combination);
-
-    cout << prime_count << endl;
-    return 0;
-}
 ```
 
 
@@ -15984,7 +15863,7 @@ print(f"{height} {leaves}")
 
 
 
-## 27653:Fraction类
+## 27653: Fraction类
 
 http://cs101.openjudge.cn/2024sp_routine/27653/
 
