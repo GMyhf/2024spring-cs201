@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 0043 GMT+8 May 23, 2024
+Updated 0921 GMT+8 May 24, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1503,6 +1503,8 @@ for _ in range(T):
 
 Dijkstra, dfs with pruning, http://cs101.openjudge.cn/2024sp_routine/01724/
 
+同 07735: 道路，http://cs101.openjudge.cn/practice/07735/
+
 N cities named with numbers 1 ... N are connected with one-way roads. Each road has two parameters associated with it : the road length and the toll that needs to be paid for the road (expressed in the number of coins). 
 Bob and Alice used to live in the city 1. After noticing that Alice was cheating in the card game they liked to play, Bob broke up with her and decided to move away - to the city N. He wants to get there as quickly as possible, but he is short on cash. 
 
@@ -1586,6 +1588,37 @@ def Dijkstra(graph):
 print(Dijkstra(graph))
 
 ```
+
+
+
+visited记录上次访问时所花费的money，由于我们利用优先队列实现了短的路径优先弹出，如果再次遇到了之前访问过的点，那路径一定更长，因此只有在花费的money更少并且不超出K的情况下才考虑入队，循环操作直至第一次遇到目的地
+
+```python
+# 王昊 光华管理学院
+import heapq
+
+
+K, N, R = map(int, [input() for _ in range(3)])
+graph = {i: [] for i in range(1, N+1)}
+visited = {i: float('inf') for i in range(1, N+1)}
+for _ in range(R):
+    S, D, L, T = map(int, input().split())
+    graph[S].append((D, L, T))
+
+queue, ans = [(0, 0, 1)], -1
+while queue:
+    l, t, s = heapq.heappop(queue)
+    if s == N:
+        ans = l
+        break
+    visited[s] = t
+    for d, z, w in graph[s]:
+        if t+w < visited[d] and t+w <= K:
+            heapq.heappush(queue, (l+z, t+w, d))
+print(ans)
+```
+
+
 
 
 
@@ -8641,6 +8674,16 @@ solve_bug_life(scenarios)
 
 
 
+## 07735: 道路
+
+http://cs101.openjudge.cn/practice/07735/
+
+同 01724: ROADS，
+
+Dijkstra, dfs with pruning, http://cs101.openjudge.cn/2024sp_routine/01724/
+
+
+
 ## 07745: 整数奇偶排序
 
 http://cs101.openjudge.cn/dsapre/07745/
@@ -12486,6 +12529,29 @@ print(' '.join(map(str, result)))
 ```
 
 This script first reads the number of nodes and the tree structure from the input. It then calls the `right_view` function to compute the right view of the tree. The `right_view` function uses a queue to perform a breadth-first traversal of the tree. It processes all nodes at the current level before moving on to the next level. After processing all nodes at a level, it appends the last node of the level to the `right_view` list. Finally, it prints the right view of the tree.
+
+
+
+```python
+# 蒋子轩 工院
+def dfs(node,level):
+    if ans[level]==0:
+        ans[level]=node
+    for next in tree[node][::-1]:
+        if next!=-1:
+            dfs(next,level+1)
+n=int(input())
+tree={}
+ans=[0]*n
+for i in range(n):
+    tree[i+1]=list(map(int,input().split()))
+dfs(1,0)
+res=[]
+for i in ans:
+    if i: res.append(i)
+    else: break
+print(*res)
+```
 
 
 
