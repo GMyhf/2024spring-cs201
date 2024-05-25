@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 0837 GMT+8 Apr 17, 2024
+Updated 1018 GMT+8 May 35, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3697,9 +3697,7 @@ def BFS(x, y):
             for i in range(MAXD):
                 nextX = front[0] + dx[i]
                 nextY = front[1] + dy[i]
-                if dx[i] == -1 and dy[i] == -1: #如果dx=-1，-1//2=-1，期望得到0
-                    footX, footY = front[0], front[1]
-                elif dx[i] == -1 and dy[i] != -1:
+                if dx[i] == -1 and dy[i] != -1: #如果dx=-1，-1//2=-1，期望得到0
                     footX, footY = front[0], front[1] + dy[i] // 2
                 elif dx[i] != -1 and dy[i] == -1:
                     footX, footY = front[0] + dx[i] // 2, front[1]
