@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2006 GMT+8 May 25, 2024
+Updated 2200 GMT+8 May 25, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8691,23 +8691,25 @@ http://cs101.openjudge.cn/practice/07206/
 这个搜索的题目还挺难，就是数据弱。
 
 ```python
-#23n2000012515(heol) 熊江凯
+# 23n2000012515(heol) 熊江凯
 from collections import deque
 
 sx, sy = map(int, input().split())
 ex, ey = map(int, input().split())
-#blocks = set(tuple(map(int, input().split())) for _ in range(int(input())))
+# blocks = set(tuple(map(int, input().split())) for _ in range(int(input())))
 blocks = set()
 for _ in range(int(input())):
     coordinates = tuple(map(int, input().split()))
     blocks.add(coordinates)
 
 MAXD = 8
-dx = [-2,-2,-1,1,2,2,1,-1]
-dy = [1,-1,-2,-2,-1,1,2,2]
+dx = [-2, -2, -1, 1, 2, 2, 1, -1]
+dy = [1, -1, -2, -2, -1, 1, 2, 2]
 
 q = deque()
 q.append((sx, sy, f'({sx},{sy})'))
+inQueue = set()
+inQueue.add((sx, sy))
 ans = 0
 cur_path = ''
 
@@ -8723,11 +8725,13 @@ while q:
         for i in range(MAXD):
             nx, ny = x + dx[i], y + dy[i]
             hx, hy = x + wx[i//2], y + wy[i//2]
-            if (nx, ny) != (sx, sy) and (hx, hy) not in blocks:
+            if (nx, ny) not in inQueue and (hx, hy) not in blocks:
                 tmp.append((nx, ny, path + f'-({nx},{ny})'))
+
+        inQueue.add((nx, ny))	# 避免重复入队列
     if ans:
         break
-    q = tmp
+    q = tmp	# 等价于q.extend(tmp)
 
 print(cur_path if ans == 1 else ans)
 ```
