@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 0921 GMT+8 May 24, 2024
+Updated 2006 GMT+8 May 25, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8647,6 +8647,92 @@ if __name__ == "__main__":
     main()
 
 ```
+
+
+
+## 07206: 我是最快的马
+
+http://cs101.openjudge.cn/practice/07206/
+
+我们都知道，在中国象棋中，马是走日字步的。现给定马的起始坐标与终点坐标，求出马最快能到达的路线。如果有多条路线都是步数最少的，则输出路线的数目
+注意，此时棋盘上可能会有一些其它的棋子，这些棋子是会憋马脚的，注意！
+
+**输入**
+
+前两行为起点坐标与终点坐标，第三行为一个数字M，之后的M行为棋盘上其它棋子的坐标(M<32,坐标行列值<=10)
+
+**输出**
+
+如果最快路线唯一，则输出路线。否则只输出一个数字，为最快路线的数目N
+
+样例输入
+
+```
+0 0
+2 4
+1
+1 1
+```
+
+样例输出
+
+```
+(0,0)-(1,2)-(2,4)
+```
+
+
+
+<img src="/Users/hfyan/Library/Application Support/typora-user-images/image-20240525200326139.png" alt="image-20240525200326139" style="zoom: 50%;" />
+
+
+
+不用维护访问过的点，因为当层访问，可能有多条最快路线。
+
+这个搜索的题目还挺难，就是数据弱。
+
+```python
+#23n2000012515(heol) 熊江凯
+from collections import deque
+
+sx, sy = map(int, input().split())
+ex, ey = map(int, input().split())
+#blocks = set(tuple(map(int, input().split())) for _ in range(int(input())))
+blocks = set()
+for _ in range(int(input())):
+    coordinates = tuple(map(int, input().split()))
+    blocks.add(coordinates)
+
+MAXD = 8
+dx = [-2,-2,-1,1,2,2,1,-1]
+dy = [1,-1,-2,-2,-1,1,2,2]
+
+q = deque()
+q.append((sx, sy, f'({sx},{sy})'))
+ans = 0
+cur_path = ''
+
+while q:
+    tmp = deque()
+    while q:
+        x, y, path = q.popleft()
+        wx, wy = [-1, 0, 1, 0], [0, -1, 0, 1]
+        if x == ex and y == ey:
+            ans += 1
+            if ans == 1:
+                cur_path = path
+        for i in range(MAXD):
+            nx, ny = x + dx[i], y + dy[i]
+            hx, hy = x + wx[i//2], y + wy[i//2]
+            if (nx, ny) != (sx, sy) and (hx, hy) not in blocks:
+                tmp.append((nx, ny, path + f'-({nx},{ny})'))
+    if ans:
+        break
+    q = tmp
+
+print(cur_path if ans == 1 else ans)
+```
+
+
 
 
 
