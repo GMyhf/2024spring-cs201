@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1018 GMT+8 May 35, 2024
+Updated 2012 GMT+8 May 25, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3668,6 +3668,63 @@ for row in minStep:
 共`3`行`3`列，“马”在第`2`行第`1`列的位置，障碍棋子在第`1`行第`2`列的位置，由此可得“马”能够前进的路线如下图所示。
 
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/f005a3c6-b042-471b-b10f-26daf7ff97fb.png" alt="中国象棋-马-有障碍_样例.png" style="zoom:67%;" />
+
+
+
+<img src="/Users/hfyan/Library/Application Support/typora-user-images/image-20240525200326139.png" alt="image-20240525200326139" style="zoom: 50%;" />
+
+```python
+from collections import deque
+
+MAXD = 8
+dx = [-2,-2,-1,1,2,2,1,-1]
+dy = [1,-1,-2,-2,-1,1,2,2]
+
+
+def canVisit(x, y):
+    return x >= 0 and x < n and y >= 0 and y < m and not isBlock.get((x, y), False) and not inQueue[x][y]
+
+
+def BFS(x, y):
+    minStep = [[-1] * m for _ in range(n)]
+    queue = deque()
+    queue.append((x, y))
+    inQueue[x][y] = True
+    minStep[x][y] = 0
+    step = 0
+    while queue:
+        cnt = len(queue)
+        for _ in range(cnt):
+            front = queue.popleft()
+            wx, wy = [-1, 0, 1, 0], [0, -1, 0, 1]
+            for i in range(MAXD):
+                nextX = front[0] + dx[i]
+                nextY = front[1] + dy[i]
+                footX, footY = front[0] + wx[i//2], front[1] + wy[i//2]
+
+                if canVisit(nextX, nextY) and not isBlock.get((footX, footY), False):
+                    inQueue[nextX][nextY] = True
+                    minStep[nextX][nextY] = step + 1
+                    queue.append((nextX, nextY))
+
+
+        step += 1
+    return minStep
+
+n, m, x, y = map(int, input().split())
+inQueue = [[False] * m for _ in range(n)]
+isBlock = {}
+
+k = int(input())
+for _ in range(k):
+    blockX, blockY = map(int, input().split())
+    isBlock[(blockX - 1, blockY - 1)] = True
+
+minStep = BFS(x - 1, y - 1)
+
+for row in minStep:
+    print(' '.join(map(str, row)))
+```
 
 
 
