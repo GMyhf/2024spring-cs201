@@ -14,66 +14,47 @@ at "homework" folder, https://github.com/GMyhf/2024spring-cs201/
 
 Assignment #F: Programming Practice 
 
-22485: 升空的焰火，从侧面看
+22485: 升空的焰火，从侧面看	binary tree, bfs
 
-http://cs101.openjudge.cn/practice/22485/
-
-28203:【模板】单调栈
-
+28203:【模板】单调栈	monotonous stack
 http://cs101.openjudge.cn/practice/28203/
 
-09202: 舰队、海域出击！
-
+09202: 舰队、海域出击！	topological sort
 http://cs101.openjudge.cn/practice/09202/
 
-04135: 月度开销
-
+04135: 月度开销	binary search
 http://cs101.openjudge.cn/practice/04135/
 
-07735: 道路
-
+07735: 道路	Dijkstra
 http://cs101.openjudge.cn/practice/07735/
 
-01182: 食物链
-
+01182: 食物链	disjoint set
 http://cs101.openjudge.cn/practice/01182/
 
 
 
-Todo: 
-
 Assignment #D: May月考
 
-02808: 校门外的树
-
+02808: 校门外的树	计概题目
 http://cs101.openjudge.cn/practice/02808/
 
-20449: 是否被5整除
-
+20449: 是否被5整除	计概题目
 http://cs101.openjudge.cn/practice/20449/
 
 
-
-01258: Agri-Net
-
+01258: Agri-Net	Minimus Spanning Tree
 http://cs101.openjudge.cn/practice/01258/
 
 
-
-27635:判断无向图是否连通有无回路(同23163)
-
+27635:判断无向图是否连通有无回路(同23163)	dfs
 http://cs101.openjudge.cn/practice/27635/
 
 
-
-27947:动态中位数
-
+27947:动态中位数	two heaps
 http://cs101.openjudge.cn/practice/27947/
 
 
-
-28190:奶牛排队
-
+28190:奶牛排队	monotonous stack
 http://cs101.openjudge.cn/practice/28190/
 
 
@@ -83,110 +64,185 @@ http://cs101.openjudge.cn/practice/28190/
 Assignment #B: 图论和树算
 
 28170: 算鹰
-
 dfs, http://cs101.openjudge.cn/practice/28170/
 
 02754: 八皇后
-
 dfs, http://cs101.openjudge.cn/practice/02754/
 
 03151: Pots
-
 bfs, http://cs101.openjudge.cn/2024sp_routine/03151/
 
-05907: 二叉树的操作
-
+05907: 二叉树的操作	字典+列表建树方便
 http://cs101.openjudge.cn/dsapre/05907/
 
 18250: 冰阔落 I
-
 Disjoint set, http://cs101.openjudge.cn/practice/18250/
 
-05443: 兔子与樱花
-
+05443: 兔子与樱花	multi-objective shortest path
 http://cs101.openjudge.cn/practice/05443/
 
 
 
 Assignment #A: 图论：算法，树算及栈
 
-20743: 整人的提词本	02255: 重建二叉树
+20743: 整人的提词本	stack
 
-01426: Find The Multiple	04115: 鸣人和佐助
+02255: 重建二叉树	已知前序中序求后序遍历
 
-20106: 走山路	05442: 兔子与星空
+01426: Find The Multiple	bfs
+
+04115: 鸣人和佐助	bfs
+
+20106: 走山路	Dijkstra
+
+05442: 兔子与星空	Minimum Spanning Tree
 
 
 
 Assignment #9: 图论：遍历，及 树算
 
-04081: 树的转换	08581: 扩展二叉树
+04081: 树的转换	多叉树转二叉树，就树的高度
 
-22067: 快速堆猪，辅助栈	04123: 马走日，dfs
+08581: 扩展二叉树	建树，然后遍历
 
-28046: 词梯，bfs	28050: 骑士周游，dfs
+22067: 快速堆猪，辅助栈	
+
+04123: 马走日，dfs
+
+28046: 词梯，bfs	
+
+28050: 骑士周游，dfs
 
 
 
 Assignment #8: 图论：概念、遍历，及 树算
 
-19943: 图的拉普拉斯矩阵	18160: 最大连通域面积
+19943: 图的拉普拉斯矩阵	图概念
 
-sy383: 最大权值连通块	03441: 4 Values whose Sum is 0
+18160: 最大连通域面积	dfs
 
-04089: 电话号码		04082: 树的镜面映射
+sy383: 最大权值连通块	Krusal算法，或者dfs
+
+03441: 4 Values whose Sum is 0	字典
+
+04089: 电话号码		字典树（Trie）
+
+04082: 树的镜面映射	implementation
 
 
 
 Assignment #7 **寒食节月考**
 
-E27706: 逐词倒放	E27951:机器翻译
+E27706: 逐词倒放	比签到题目还简单
 
-M27932:Less or Equal	M27948:FBI树
+E27951:机器翻译	签到, implementation
 
-T27925:小组队列	T27928:遍历树
+M27932:Less or Equal	计概题目，sortings
+
+M27948:FBI树	binary tree
+
+T27925:小组队列	queue
+
+T27928:遍历树	tree, sortings, dfs
 
 
 
 Assignment #6: "树"算：Huffman,BinHeap,BST,AVL,DisjointSet
 
-​	22275: 二叉搜索树的遍历, 05455: 二叉搜索树的层次遍历
+​	22275: 二叉搜索树的遍历	implementation
 
-​	04078:实现堆结构, 22161: 哈夫曼编码树
+​	05455: 二叉搜索树的层次遍历	implementation
 
-​	晴问9.5: 平衡二叉树的建立, 02524/1526: 宗教信仰
+​	04078: 实现堆结构	implementation
+
+​	22161: 哈夫曼编码树	implementation
+
+​	晴问sy359: 平衡二叉树的建立	AVL树
+​	https://sunnywhy.com/sfbj/9/5/359
+
+​	02524/1526: 宗教信仰	disjoint set
 
 
 
 Assignment #5: "树"算：概念、表示、解析、遍历
 
-​	27638: 求二叉树的高度和叶子数目, 24729: 括号嵌套树, 02775: 文件结构“图”
+​	27638: 求二叉树的高度和叶子数目, 	implementation
 
-​	25140: 根据后序表达式建立队列表达式, 24750: 根据二叉树中后序序列建树, 22158: 根据二叉树前中序序列建树
+​	24729: 括号嵌套树, 	解析树，stack
+
+​	02775: 文件结构“图”	把目录看成节点，包含子目录列表和子文件列表
+
+​	25140: 根据后序表达式建立队列表达式, 	queue, bfs
+
+​	24750: 根据二叉树中后序序列建树, 	implementation
+
+​	22158: 根据二叉树前中序序列建树	implementation
+
+
 
 Assignment #4 排序、栈、队列和树
 
-​	05902: 双端队列, 02694: 波兰表达式, 24591: 中序表达式转后序表达式
+​	05902: 双端队列, 	练习OOP写法
 
-​	22068: 合法出栈序列, 06646: 二叉树的深度, 02299: Ultra-QuickSort
+​	02694: 波兰表达式, 	递归，栈
+
+​	24591: 中序表达式转后序表达式	Shunting yard algorightm（调度场算法）
+
+​	22068: 合法出栈序列, 	implementation，注意接收不定行数据用try...except
+
+​	06646: 二叉树的深度, 	implementation
+
+​	02299: Ultra-QuickSort	归并排序
+
+
 
 Assignment #3 **March 月考**
 
-​	02945: 拦截导弹, 04147: 汉诺塔问题, 03253: 约瑟夫问题No.2,
+​	02945: 拦截导弹, 	dp
 
-​	21554:排队做实验 (greedy)v0.2, 19963:买学区房, 27300: 模型整理
+​	04147: 汉诺塔问题, 	递归
+
+​	03253: 约瑟夫问题No.2,	stack
+
+​	21554:排队做实验,	greedy 
+
+​	19963:买学区房, 	sortings
+
+​	27300: 模型整理	string, sort
+
+
 
 Assignment #2 编程练习
 
-​	27653: Fraction类, 04110: 圣诞老人的礼物, 18182: 打怪兽,
+​	27653: Fraction类, 	练习OOP
 
-​	CF230B. T-primes, CF1364A. XXXXX, 18176: 2050年成绩计算
+​	04110: 圣诞老人的礼物, 	greedy，技巧：w = [1,2,3]; sum(w[:6])
+
+​	18182: 打怪兽,	from collections import defaultdict
+
+​	CF230B. T-primes, 	打表
+
+​	CF1364A. XXXXX, 	前缀和、后缀和
+
+​	18176: 2050年成绩计算	打表、from math import sqrt
+
+
 
 Assignment #1 拉齐大家Python编程水平
 
-​	20742: 泰波拿契數, CF58A. Chat room, CF118A. String Task,
+​	20742: 泰波拿契數, 	dp
 
-​	22359: Goldbach Conjecture, 23563: 多项式时间复杂度, 24684: 直播计票 
+​	CF58A. Chat room, 	strings
+
+​	CF118A. String Task,	implementation/strings
+
+​	22359: Goldbach Conjecture, 	math
+
+​	23563: 多项式时间复杂度, 	string
+
+​	24684: 直播计票 	dict, sortings
+
+
 
 Assignment #P: 课程大作业
 
