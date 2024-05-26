@@ -3643,7 +3643,7 @@ for m in range(1, n + 1):
 
 ## 02524: 宗教信仰
 
-http://cs101.openjudge.cn/dsapre/02524/
+disjoint set, http://cs101.openjudge.cn/dsapre/02524/
 
 世界上有许多宗教，你感兴趣的是你学校里的同学信仰多少种宗教。
 
@@ -7360,6 +7360,100 @@ for start, end in requests:
     print(output)
 
 ```
+
+
+
+## 05455: 二叉搜索树的层次遍历
+
+http://cs101.openjudge.cn/practice/05455/
+
+二叉搜索树在动态查表中有特别的用处，一个无序序列可以通过构造一棵二叉搜索树变成一个有序序列，
+
+构造树的过程即为对无序序列进行排序的过程。每次插入的新的结点都是二叉搜索树上新的叶子结点，在进行
+
+插入操作时，不必移动其它结点，只需改动某个结点的指针，由空变为非空即可。
+
+这里，我们想探究二叉树的建立和层次输出。
+
+**输入**
+
+只有一行，包含若干个数字，中间用空格隔开。（数字可能会有重复，对于重复的数字，只计入一个）
+
+**输出**
+
+输出一行，对输入数字建立二叉搜索树后进行按层次周游的结果。
+
+样例输入
+
+```
+51 45 59 86 45 4 15 76 60 20 61 77 62 30 2 37 13 82 19 74 2 79 79 97 33 90 11 7 29 14 50 1 96 59 91 39 34 6 72 7
+```
+
+样例输出
+
+```
+51 45 59 4 50 86 2 15 76 97 1 13 20 60 77 90 11 14 19 30 61 82 96 7 29 37 62 79 91 6 33 39 74 34 72
+```
+
+提示
+
+输入输出的最后都不带空格和回车换行
+
+
+
+The problem is asking to construct a binary search tree (BST) from a sequence of numbers and then perform a level order traversal (also known as breadth-first search) on the BST.
+
+Here is a step-by-step plan:
+
+1. Create a TreeNode class to represent each node in the tree.
+2. Create a function `insert` that takes a node and a value as input and inserts the value into the BST rooted at the node.
+3. Create a function `level_order_traversal` that takes the root of the tree as input and returns the level order traversal of the tree.
+   - Use a queue to store the nodes to be visited.
+   - While the queue is not empty, dequeue a node, visit it, and enqueue its children.
+4. Read the sequence of numbers from the input, construct the BST, perform the level order traversal, and output the result.
+
+Here is the Python code that implements this plan:
+
+```python
+class TreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+def insert(node, value):
+    if node is None:
+        return TreeNode(value)
+    if value < node.value:
+        node.left = insert(node.left, value)
+    elif value > node.value:
+        node.right = insert(node.right, value)
+    return node
+
+def level_order_traversal(root):
+    queue = [root]
+    traversal = []
+    while queue:
+        node = queue.pop(0)
+        traversal.append(node.value)
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+    return traversal
+
+numbers = list(map(int, input().strip().split()))
+numbers = list(dict.fromkeys(numbers))  # remove duplicates
+root = None
+for number in numbers:
+    root = insert(root, number)
+traversal = level_order_traversal(root)
+print(' '.join(map(str, traversal)))
+```
+
+This code reads the sequence of numbers from the input, removes duplicates, constructs the BST, performs the level order traversal, and prints the result.
+
+
 
 
 
