@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2020 GMT+8 May 26, 2024
+Updated 2021 GMT+8 May 26, 2024
 
 2024 spring, Complied by Hongfei Yan
 
