@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2200 GMT+8 May 25, 2024
+Updated 0914 GMT+8 May 26, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -16455,6 +16455,102 @@ for _ in range(k):
     a,b,c=map(int,input().split())
     leaf[a]=(b,c)
 print(*f(1,1))
+```
+
+
+
+## 27880: 繁忙的厦门
+
+MST, http://cs101.openjudge.cn/2024sp_routine/27880/
+
+城市 XM 是一个非常繁忙的大都市，城市中的道路十分的拥挤，于是市长决定对其中的道路进行改造。城市 XM 的道路是这样分布的：城市中有 *n* 个交叉路口，有些交叉路口之间有道路相连，两个交叉路口之间最多有一条道路相连接。这些道路是双向的，且把所有的交叉路口直接或间接的连接起来了。每条道路都有一个分值，分值越小表示这个道路越繁忙，越需要进行改造。但是市政府的资金有限，市长希望进行改造的道路越少越好，于是他提出下面的要求：
+
+1. **改造的那些道路能够把所有的交叉路口直接或间接的连通起来。**
+2. **在满足要求 1 的情况下，改造的道路尽量少。**
+3. **在满足要求 1、2 的情况下，改造的那些道路中分值最大的道路分值尽量小。**
+
+**任务：作为市规划局的你，应当作出最佳的决策，选择哪些道路应当被修建。**
+
+输入
+
+第一行有两个整数 n,m 表示城市有 n 个交叉路口，m 条道路。
+
+接下来 m 行是对每条道路的描述，u,v,c 表示交叉路口 u 和 v 之间有道路相连，分值为 c。
+
+输出
+
+两个整数 s,max，表示你选出了几条道路，分值最大的那条道路的分值是多少。
+
+样例输入
+
+```
+4 5
+1 2 3
+1 4 5
+2 4 7
+2 3 6
+3 4 8
+```
+
+样例输出
+
+```
+3 6
+```
+
+提示
+
+对于全部数据，满足 1≤ n ≤300，1≤ c ≤10^4，1≤ m ≤8000。
+
+
+
+```python
+import sys
+
+class UnionFind:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        px, py = self.find(x), self.find(y)
+        if px != py:
+            if self.rank[px] > self.rank[py]:
+                self.parent[py] = px
+            else:
+                self.parent[px] = py
+                if self.rank[px] == self.rank[py]:
+                    self.rank[py] += 1
+
+def kruskal(n, edges):
+    uf = UnionFind(n)
+    edges.sort(key=lambda x: x[2])
+    mst, max_edge = 0, 0
+    for u, v, w in edges:
+        if uf.find(u) != uf.find(v):
+            uf.union(u, v)
+            mst += 1
+            max_edge = max(max_edge, w)
+            if mst == n - 1:
+                break
+    return mst, max_edge
+
+def main():
+    n, m = map(int, sys.stdin.readline().split())
+    edges = []
+    for _ in range(m):
+        u, v, c = map(int, sys.stdin.readline().split())
+        edges.append((u - 1, v - 1, c))
+    mst, max_edge = kruskal(n, edges)
+    print(f"{mst} {max_edge}")
+
+if __name__ == "__main__":
+    main()
 ```
 
 
