@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 0914 GMT+8 May 26, 2024
+Updated 1540 GMT+8 May 26, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3536,19 +3536,21 @@ import heapq
 t = int(input())
 for _ in range(t):
     m, n = map(int, input().split())
-    ans = sorted(map(int, input().split()))
+    seq1 = sorted(map(int, input().split()))
     for _ in range(m - 1):
-        l = sorted(map(int, input().split()))
-        heap = [(ans[j] + l[0], j, 0) for j in range(n)]
-        heapq.heapify(heap)
-        res = []
+        seq2 = sorted(map(int, input().split()))
+
+        # 使用最小堆存储可能的最小和以及对应的索引
+        min_heap = [(seq1[i] + seq2[0], i, 0) for i in range(n)]
+        heapq.heapify(min_heap)
+        result = []
         for _ in range(n):
-            num, x, y = heapq.heappop(heap)
-            res.append(num)
-            if y + 1 < len(l):
-                heapq.heappush(heap, (ans[x] + l[y + 1], x, y + 1))
-        ans = res
-    print(*ans)
+            current_sum, i, j = heapq.heappop(min_heap)
+            result.append(current_sum)
+            if j + 1 < len(seq2):
+                heapq.heappush(min_heap, (seq1[i] + seq2[j + 1], i, j + 1))
+        seq1 = result
+    print(*seq1)
 ```
 
 
@@ -8422,7 +8424,7 @@ http://cs101.openjudge.cn/dsapre/06648/
 
 
 
-给定m个数字序列，每个序列包含n个非负整数。我们从每一个序列中选取一个数字组成一个新的序列，显然一共可以构造出n^m个新序列。接下来我们对每一个新的序列中的数字进行求和，一共会得到n^m个和，请找出最小的n个和
+给定m个数字序列，每个序列包含n个非负整数。我们从每一个序列中选取一个数字组成一个新的序列，显然一共可以构造出`n^m`个新序列。接下来我们对每一个新的序列中的数字进行求和，一共会得到`n^m`个和，请找出最小的n个和
 
 **输入**
 
@@ -8461,6 +8463,33 @@ http://cs101.openjudge.cn/dsapre/06648/
 4. 重复这个过程，直到我们找到了n个最小的和。
 
 以下是一个更为内存效率的Python代码解决方案：
+
+
+
+```python
+import heapq
+
+t = int(input())
+for _ in range(t):
+    m, n = map(int, input().split())
+    seq1 = sorted(map(int, input().split()))
+    for _ in range(m - 1):
+        seq2 = sorted(map(int, input().split()))
+
+        # 使用最小堆存储可能的最小和以及对应的索引
+        min_heap = [(seq1[i] + seq2[0], i, 0) for i in range(n)]
+        heapq.heapify(min_heap)
+        result = []
+        for _ in range(n):
+            current_sum, i, j = heapq.heappop(min_heap)
+            result.append(current_sum)
+            if j + 1 < len(seq2):
+                heapq.heappush(min_heap, (seq1[i] + seq2[j + 1], i, j + 1))
+        seq1 = result
+    print(*seq1)
+```
+
+
 
 ```python
 import heapq
