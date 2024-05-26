@@ -16987,7 +16987,7 @@ if __name__ == "__main__":
 
 http://cs101.openjudge.cn/practice/27932/
 
-给定一个长度为n和整数k的整数序列。请你打印出[1,10^9]范围内的**最小整数**x(即1≤x≤10^9)，使得给定序列中恰好有k个元素**小于或等于x**。
+给定一个长度为n和整数k的整数序列。请你打印出`[1,10^9]`范围内的**最小整数**x(即1≤x≤10^9)，使得给定序列中恰好有k个元素**小于或等于x**。
 
 注意，序列可以包含相等的元素。
 如果没有这样的x，打印"-1"(不带引号)。
@@ -17026,11 +17026,11 @@ sample2 output:
 
 提示
 
-tags: sorting, *1200
+tags: sortings, *1200
 
 来源
 
-https://codeforces.com/contest/977/problem/C，略作改动
+tcy, https://codeforces.com/contest/977/problem/C，略作改动
 
 
 
