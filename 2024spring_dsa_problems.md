@@ -14892,6 +14892,8 @@ Here is a step-by-step plan:
 4.For each postfix expression, construct the tree, perform the level order traversal, reverse the result, and output it.
 
 ```python
+from collections import deque
+
 class TreeNode:
     def __init__(self, value):
         self.value = value
@@ -14909,15 +14911,15 @@ def build_tree(postfix):
     return stack[0]
 
 def level_order_traversal(root):
-    queue = [root]
+    dq = [root]
     traversal = []
-    while queue:
-        node = queue.pop(0)
+    while dq:
+        node = dq.pop(0)
         traversal.append(node.value)
         if node.left:
-            queue.append(node.left)
+            dq.append(node.left)
         if node.right:
-            queue.append(node.right)
+            dq.append(node.right)
     return traversal
 
 n = int(input().strip())
