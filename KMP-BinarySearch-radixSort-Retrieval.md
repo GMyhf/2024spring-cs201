@@ -67,6 +67,22 @@ Benefits of the KMP algorithm
 - We search for lps in subpatterns. More clearly we ==focus on sub-strings of patterns that are both prefix and suffix==.
 - For each sub-pattern pat[0..i] where i = 0 to m-1, lps[i] stores the length of the maximum matching proper prefix which is also a suffix of the sub-pattern pat[0..i].
 
+>   lps[i] = the longest proper prefix of pat[0..i] which is also a suffix of pat[0..i]. 
+
+**Note:** lps[i] could also be defined as the longest prefix which is also a proper suffix. We need to use it properly in one place to make sure that the whole substring is not considered.
+
+Examples of lps[] construction:
+
+> For the pattern “AAAA”, lps[] is [0, 1, 2, 3]
+>
+> For the pattern “ABCDE”, lps[] is [0, 0, 0, 0, 0]
+>
+> For the pattern “AABAACAABAA”, lps[] is [0, 1, 0, 1, 2, 0, 1, 2, 3, 4, 5]
+>
+> For the pattern “AAACAAAAAC”, lps[] is [0, 1, 2, 0, 1, 2, 3, 3, 3, 4] 
+>
+> For the pattern “AAABAAA”, lps[] is [0, 1, 2, 0, 1, 2, 3]
+
 
 
 KMP（Knuth-Morris-Pratt）算法是一种利用双指针和动态规划的字符串匹配算法。
