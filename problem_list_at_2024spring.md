@@ -1,6 +1,6 @@
-# cs101 数算编程题目分类
+# cs101 数算编程题目
 
-Updated 0940 GMT+8 May 27, 2024
+Updated 1114 GMT+8 May 27, 2024
 
 2024 spring, Complied by Hongfei Yan
 
