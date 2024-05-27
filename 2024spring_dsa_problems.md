@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2021 GMT+8 May 26, 2024
+Updated 1530 GMT+8 May 27, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -590,6 +590,14 @@ print(minmove)
 Noi 01
 
 
+
+动物王国中有三类动物A,B,C，这三类动物的食物链构成了有趣的环形。A吃B， B吃C，C吃A。
+意思就是所有的种类只有A,B,C三种，只有三个关系A吃B， B吃C，C吃A。
+思路：创建3个分组i-A,i-B,i-C。
+如果x和y是同类，正确则合并x-A和y-A、x-B和y-B、x-C和y-C。
+　　　　　　　　当存在x吃y或者y吃x时不正确。
+如果x吃y，正确则合并x-A和y-B、x-B和y-C、x-C和y-A。
+　　　　　　当存在x和y是同类或者y吃x时不正确。
 
 ```python
 class DisjointSet:
