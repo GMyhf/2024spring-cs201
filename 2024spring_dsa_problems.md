@@ -599,6 +599,8 @@ Noi 01
 如果x吃y，正确则合并x-A和y-B、x-B和y-C、x-C和y-A。
 　　　　　　当存在x和y是同类或者y吃x时不正确。
 
+这题还有一个特殊之处，在于当两个的吃与被吃关系定下来，由于环形结构，另一个的吃与被吃关系就确定了，因此需要合并三次。
+
 ```python
 class DisjointSet:
     def __init__(self, n):
