@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2137 GMT+8 May 28, 2024
+Updated 2244 GMT+8 May 28, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9049,6 +9049,39 @@ http://cs101.openjudge.cn/practice/07735/
 同 01724: ROADS，
 
 Dijkstra, dfs with pruning, http://cs101.openjudge.cn/2024sp_routine/01724/
+
+
+
+思路：要在Dijkstra算法的基础上实现剪枝，我们用一个数组记录到当前节点的最小费用（初始为无穷大），若优先队列弹出的元素满足费用大于最小费用，则该节点之前一定被访问过，且存在一种走法比当前走法费用和长度都小。故这个元素一定是无效的，可以舍去，从而实现了剪枝。
+
+题解中直接删去visited检查也可以。但理论上内存应该会更大。
+
+```python
+# 应硕丞 数学科学学院
+import heapq
+k = int(input())
+n = int(input())
+r = int(input())
+graph = {i:[] for i in range(1, n+1)}
+for _ in range(r):
+    s, d, dl, dt = map(int, input().split())
+    graph[s].append((dl,dt,d))
+que = [(0,0,1)]
+fee = [10000]*101
+def dijkstra(g):
+    while que:
+        l, t, d = heapq.heappop(que)
+        if d == n:
+            return l
+        if t>fee[d]:
+            continue
+        fee[d] = t
+        for dl, dt, next_d in g[d]:
+            if t+dt <= k:
+                heapq.heappush(que,(l+dl, t+dt, next_d))
+    return -1
+print(dijkstra(graph))
+```
 
 
 
