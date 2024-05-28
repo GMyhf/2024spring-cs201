@@ -1,6 +1,6 @@
 # cs201 数算编程题目
 
-Updated 1114 GMT+8 May 27, 2024
+Updated 2359 GMT+8 May 28, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -247,6 +247,14 @@ at http://cs101.openjudge.cn
 
 
 ### ==2024/5/31
+
+
+
+02488:A Knight's Journey
+
+01094:Sorting It All Out
+
+28334:最大无环图扩展
 
 27880:繁忙的厦门
 
