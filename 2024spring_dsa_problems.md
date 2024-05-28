@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2244 GMT+8 May 28, 2024
+Updated 2359 GMT+8 May 28, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3567,7 +3567,7 @@ for _ in range(t):
 
 ## 02488: A Knight's Journey
 
-http://cs101.openjudge.cn/dsapre/02488/
+http://cs101.openjudge.cn/practice/02488/
 
 **Background**
 The knight is getting bored of seeing the same black and white squares again and again and has decided to make a journey
