@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1530 GMT+8 May 27, 2024
+Updated 2137 GMT+8 May 28, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -12994,6 +12994,32 @@ for i in ans:
     else: break
 print(*res)
 ```
+
+
+
+直接每次把下一层的入栈，输出最后一个即可
+
+```python
+# 童溯 数学科学学院
+n = int(input())
+tree = [0]
+for i in range(n):
+    tree.append(list(map(int, input().split())))
+stack = [1]
+ans = []
+while stack:
+    ans.append(str(stack[-1]))
+    temp = []
+    for x in stack:
+        if tree[x][0] != -1:
+            temp.append(tree[x][0])
+        if tree[x][1] != -1:
+            temp.append(tree[x][1])
+    stack = temp
+print(" ".join(ans))
+```
+
+
 
 
 
