@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2359 GMT+8 May 28, 2024
+Updated 1210 GMT+8 May 29, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1827,6 +1827,50 @@ If such path does not exist, only number -1 should be written to the output.
 来源
 
 CEOI 1998
+
+
+
+```python
+import heapq
+from collections import defaultdict
+
+MAX_COINS = int(input())  # 最大金币数
+CITY_COUNT = int(input())  # 城市数目
+ROAD_COUNT = int(input())
+
+# 存储道路信息的字典，使用 defaultdict 初始化
+roads = defaultdict(list)
+
+for _ in range(ROAD_COUNT):
+    start, end, length, money = map(int, input().split())
+    start, end = start - 1, end - 1
+    roads[start].append((end, length, money))
+
+
+def bfs(start, end, max_coins):
+    queue = [(0, max_coins, start)]  # (距离, 剩余金币, 当前城市)
+    visited = set()
+
+    while queue:
+        distance, coins, city = heapq.heappop(queue)
+
+        if city == end:
+            return distance
+
+        visited.add((city, coins))
+
+        for next_city, road_length, road_money in roads[city]:
+            if coins >= road_money:
+                new_distance = distance + road_length
+                if (next_city, coins - road_money) not in visited:
+                    heapq.heappush(queue, (new_distance, coins - road_money, next_city))
+
+    return -1
+
+
+print(bfs(0, CITY_COUNT - 1, MAX_COINS))
+
+```
 
 
 
@@ -9046,9 +9090,46 @@ solve_bug_life(scenarios)
 
 http://cs101.openjudge.cn/practice/07735/
 
-同 01724: ROADS，
+同 01724: ROADS，Dijkstra, dfs with pruning, http://cs101.openjudge.cn/2024sp_routine/01724/
 
-Dijkstra, dfs with pruning, http://cs101.openjudge.cn/2024sp_routine/01724/
+```python
+import heapq
+from collections import defaultdict
+
+MAX_COINS = int(input())  # 最大金币数
+CITY_COUNT = int(input())  # 城市数目
+ROAD_COUNT = int(input())
+
+# 存储道路信息的字典，使用 defaultdict 初始化
+roads = defaultdict(list)
+
+for _ in range(ROAD_COUNT):
+    start, end, length, money = map(int, input().split())
+    start, end = start - 1, end - 1
+    roads[start].append((end, length, money))
+
+def bfs(start, end, max_coins):
+    queue = [(0, max_coins, start)]  # (距离, 剩余金币, 当前城市)
+    visited = set()
+
+    while queue:
+        distance, coins, city = heapq.heappop(queue)
+
+        if city == end:
+            return distance
+
+        visited.add((city, coins))
+
+        for next_city, road_length, road_money in roads[city]:
+            if coins >= road_money:
+                new_distance = distance + road_length
+                if (next_city, coins - road_money) not in visited:
+                    heapq.heappush(queue, (new_distance, coins - road_money, next_city))
+
+    return -1
+
+print(bfs(0, CITY_COUNT - 1, MAX_COINS))
+```
 
 
 
