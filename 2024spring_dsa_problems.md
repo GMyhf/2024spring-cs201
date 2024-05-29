@@ -4462,6 +4462,146 @@ int main()
 
 
 
+## 02815: 城堡问题
+
+http://cs101.openjudge.cn/practice/02815/
+
+```
+     1   2   3   4   5   6   7  
+   #############################
+ 1 #   |   #   |   #   |   |   #
+   #####---#####---#---#####---#
+ 2 #   #   |   #   #   #   #   #
+   #---#####---#####---#####---#
+ 3 #   |   |   #   #   #   #   #
+   #---#########---#####---#---#
+ 4 #   #   |   |   |   |   #   #
+   #############################
+           (图 1)
+
+   #  = Wall   
+   |  = No wall
+   -  = No wall
+```
+
+图1是一个城堡的地形图。请你编写一个程序，计算城堡一共有多少房间，最大的房间有多大。城堡被分割成m×n(m≤50，n≤50)个方块，每个方块可以有0~4面墙。
+
+**输入**
+
+程序从标准输入设备读入数据。第1、2行每行1个整数，分别是南北向、东西向的方块数。在接下来的输入行里，每个方块用一个数字(0≤p≤50)描述。用一个数字表示方块周围的墙，1表示西墙，2表示北墙，4表示东墙，8表示南墙。每个方块用代表其周围墙的数字之和表示。城堡的内墙被计算两次，方块(1,1)的南墙同时也是方块(2,1)的北墙。输入的数据保证城堡至少有两个房间。
+
+**输出**
+
+输出2行，每行一个数，表示城堡的房间数、城堡中最大房间所包括的方块数。结果显示在标准输出设备上。
+
+样例输入
+
+```
+4 
+7 
+11 6 11 6 3 10 6 
+7 9 6 13 5 15 5 
+1 10 12 7 13 7 5 
+13 11 10 8 10 12 13 
+```
+
+样例输出
+
+```
+5
+9
+```
+
+来源
+
+1164
+
+
+
+```python
+#杜浦阳2100015426
+def dfs(x, y):
+    stack = [(x, y)]
+    room_size = 0
+    while stack:
+        cx, cy = stack.pop()
+        if visited[cx][cy]:
+            continue
+        visited[cx][cy] = True
+        room_size += 1
+
+        if not (castle[cx][cy] & 1):  # 没有西墙
+            stack.append((cx, cy - 1))
+        if not (castle[cx][cy] & 2):  # 没有北墙
+            stack.append((cx - 1, cy))
+        if not (castle[cx][cy] & 4):  # 没有东墙
+            stack.append((cx, cy + 1))
+        if not (castle[cx][cy] & 8):  # 没有南墙
+            stack.append((cx + 1, cy))
+    return room_size
+
+
+
+m = int(input())
+n = int(input())
+castle = []
+for _ in range(m):
+    castle.append(list(map(int, input().split())))
+
+visited = [[False] * n for _ in range(m)]
+room_sizes = []
+max_room_size = 0
+
+for i in range(m):
+    for j in range(n):
+        if not visited[i][j]:
+            size = dfs(i, j)
+            room_sizes.append(size)
+            max_room_size = max(max_room_size, size)
+
+print(len(room_sizes))
+print(max_room_size)
+```
+
+
+
+```python
+# 23n2300011075(才疏学浅)
+roomarea=0
+def dfs(i,j):
+    global roomarea
+    if colors[i][j]:
+        return
+    roomarea+=1
+    colors[i][j]=color
+    if not (rooms[i][j]&1):
+        dfs(i,j-1)
+    if not (rooms[i][j]&2):
+        dfs(i-1,j)
+    if not (rooms[i][j]&4):
+        dfs(i,j+1)
+    if not (rooms[i][j]&8):
+        dfs(i+1,j)
+
+n=int(input())
+m=int(input())
+rooms,color,maxn=[],0,0
+colors=[[0]*m for _ in range(n)]
+for _ in range(n):
+    rooms.append([int(i) for i in input().split()])
+for i in range(n):
+    for j in range(m):
+        if not colors[i][j]:
+            color+=1
+            roomarea=0
+            dfs(i,j)
+            maxn=max(maxn,roomarea)
+print(color)
+print(maxn)
+```
+
+
+
 
 
 ## 02945: 拦截导弹
