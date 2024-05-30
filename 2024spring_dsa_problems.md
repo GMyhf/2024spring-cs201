@@ -3693,6 +3693,92 @@ for m in range(1, n + 1):
 
 
 
+## 02502: Subway
+
+dijkstra, http://cs101.openjudge.cn/practice/02502/
+
+You have just moved from a quiet Waterloo neighbourhood to a big, noisy city. Instead of getting to ride your bike to school every day, you now get to walk and take the subway. Because you don't want to be late for class, you want to know how long it will take you to get to school. 
+You walk at a speed of 10 km/h. The subway travels at 40 km/h. Assume that you are lucky, and whenever you arrive at a subway station, a train is there that you can board immediately. You may get on and off the subway any number of times, and you may switch between different subway lines if you wish. All subway lines go in both directions.
+
+**输入**
+
+Input consists of the x,y coordinates of your home and your school, followed by specifications of several subway lines. Each subway line consists of the non-negative integer x,y coordinates of each stop on the line, in order. You may assume the subway runs in a straight line between adjacent stops, and the coordinates represent an integral number of metres. Each line has at least two stops. The end of each subway line is followed by the dummy coordinate pair -1,-1. In total there are at most 200 subway stops in the city. 
+
+**输出**
+
+Output is the number of minutes it will take you to get to school, rounded to the nearest minute, taking the fastest route.
+
+样例输入
+
+```
+0 0 10000 1000
+0 200 5000 200 7000 200 -1 -1 
+2000 600 5000 600 10000 600 -1 -1
+```
+
+样例输出
+
+```
+21
+```
+
+来源
+
+Waterloo local 2001.09.22
+
+
+
+```python
+#2300012739 汤子瑜
+import math
+import heapq
+
+def get_distance(x1, y1, x2, y2):
+    return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+
+sx, sy, ex, ey = map(int, input().split())
+min_time = {}
+rails = set()
+
+while True:
+    try:
+        rail = list(map(int, input().split()))
+        if rail == [-1, -1]:
+            break
+        stations = [(rail[2 * i], rail[2 * i + 1]) for i in range(len(rail) // 2 - 1)]
+        for j, station in enumerate(stations):
+            min_time[station] = float('inf')
+            if j != len(stations) - 1:
+                rails.add((station, stations[j + 1]))
+                rails.add((stations[j + 1], station))
+    except EOFError:
+        break
+
+min_time[(sx, sy)], min_time[(ex, ey)] = 0, float('inf')
+min_heap = [(0, sx, sy)]
+
+while min_heap:
+    curr_time, x, y = heapq.heappop(min_heap)
+    if curr_time > min_time[(x, y)]:
+        continue
+
+    for position in min_time.keys():
+        if position == (x, y):
+            continue
+        nx, ny = position
+        dis = get_distance(x, y, nx, ny)
+        rail_factor = 4 if ((position, (x, y)) in rails or ((x, y), position) in rails) else 1
+        new_time = curr_time + dis / (10000 * rail_factor)
+        if new_time < min_time[position]:
+            min_time[position] = new_time
+            heapq.heappush(min_heap, (new_time, nx, ny))
+
+print(round(min_time[(ex, ey)] * 60))
+
+```
+
+
+
 
 
 ## 02524: 宗教信仰
