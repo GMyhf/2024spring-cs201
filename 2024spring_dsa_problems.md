@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1846 GMT+8 May 30, 2024
+Updated 2036 GMT+8 May 30, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3846,6 +3846,9 @@ while min_heap:
     curr_time, x, y = heapq.heappop(min_heap)
     if curr_time > min_time[(x, y)]:
         continue
+
+    if (x, y) == (ex, ey):
+        break
 
     for position in min_time.keys():
         if position == (x, y):
