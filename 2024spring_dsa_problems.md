@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1210 GMT+8 May 29, 2024
+Updated 1149 GMT+8 May 30, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2230,7 +2230,9 @@ http://cs101.openjudge.cn/dsapre/01789/
 Advanced Cargo Movement, Ltd. uses trucks of different types. Some trucks are used for vegetable delivery, other for furniture, or for bricks. The company has its own code describing each type of a truck. The code is simply a string of exactly seven lowercase letters (each letter on each position has a very special meaning but that is unimportant for this task). At the beginning of company's history, just a single truck type was used but later other types were derived from it, then from the new types another types were derived, and so on. 
 
 Today, ACM is rich enough to pay historians to study its history. One thing historians tried to find out is so called derivation plan -- i.e. how the truck types were derived. They defined the distance of truck types as the number of positions with different letters in truck type codes. They also assumed that each truck type was derived from exactly one other truck type (except for the first truck type which was not derived from any other type). The quality of a derivation plan was then defined as 
-**1/Σ(to,td)d(to,td)**
+
+$ \frac{1}{\sum_{{t_o,t_d}} d({t_o,t_d})} $
+
 where the sum goes over all pairs of types in the derivation plan such that to is the original type and td the type derived from it and d(to,td) is the distance of the types. 
 Since historians failed, you are to write a program to help them. Given the codes of truck types, your program should find the highest possible quality of a derivation plan. 
 
@@ -2266,15 +2268,55 @@ CTU Open 2003
 
 
 ```python
+import heapq
+
+def truck_history():
+    while True:
+        n = int(input())
+        if n == 0:
+            break
+
+        trucks = [input() for _ in range(n)]
+        trucks.sort()
+
+        graph = [[0]*n for _ in range(n)]
+        for i in range(n):
+            for j in range(i+1, n):
+                graph[i][j] = graph[j][i] = sum(a!=b for a, b in zip(trucks[i], trucks[j]))
+
+        visited = [False]*n
+        min_edge = [float('inf')]*n
+        min_edge[0] = 0
+        total_distance = 0
+
+        min_heap = [(0, 0)]
+        while min_heap:
+            d, v = heapq.heappop(min_heap)
+            if visited[v]:
+                continue
+            visited[v] = True
+            total_distance += d
+            for u in range(n):
+                if not visited[u] and graph[v][u] < min_edge[u]:
+                    min_edge[u] = graph[v][u]
+                    heapq.heappush(min_heap, (graph[v][u], u))
+
+        print(f"The highest possible quality is 1/{total_distance}.")
+
+truck_history()
+```
+
+
+
+```python
 """
 https://www.cnblogs.com/chujian123/p/3375210.html
-题意大概是这样的：用一个7位的string代表一个编号，两个编号之间的distance代表这两个编号之间不同字母的个数。
+题意大概是这样的：
+用一个7位的string代表一个编号，两个编号之间的distance代表这两个编号之间不同字母的个数。
 一个编号只能由另一个编号“衍生”出来，代价是这两个编号之间相应的distance，现在要找出一个“衍生”方案，
 使得总代价最小，也就是distance之和最小。
 
-题解：问题可以转化为最小代价生成树的问题。因为每两个结点之间都有路径，所以是完全图。 此题的关键是将问题转化
-为最小生成树的问题。每一个编号为图的一个顶点，顶点与顶点间的编号差即为这条边的权值，题目所要的就是我们求出
-最小生成树来。这里我用prim算法来求最小生成树。
+题解：问题可以转化为最小代价生成树的问题。因为每两个结点之间都有路径，所以是完全图。 此题的关键是将问题转化为最小生成树的问题。每一个编号为图的一个顶点，顶点与顶点间的编号差即为这条边的权值，题目所要的就是求出最小生成树来。用prim算法来求最小生成树。
 """
 import sys
 
