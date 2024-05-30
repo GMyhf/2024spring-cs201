@@ -3867,6 +3867,72 @@ print(round(min_time[(ex, ey)] * 60))
 
 
 
+```python
+import heapq
+import math
+
+def distance(x1, y1, x2, y2, speed):
+    return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2) / speed
+
+a, b, c, d = map(int, input().split())
+home = (a, b)
+school = (c, d)
+
+# Subway stations and their coordinates
+stations = [home, school]
+subway_lines = []
+
+# Reading the subway lines
+while True:
+    try:
+        line = list(map(int, input().split()))
+        if line == [-1, -1]:
+            break
+        subway_line = []
+        for i in range(0, len(line) - 2, 2):
+            subway_line.append((line[i], line[i + 1]))
+        subway_lines.append(subway_line)
+        stations.extend(subway_line)
+    except EOFError:
+        break
+
+# Number of stations
+n = len(stations)
+
+# Distance matrix
+dis = [[float('inf')] * n for _ in range(n)]
+
+# Walking distance
+for i in range(n):
+    for j in range(i + 1, n):
+        dis[i][j] = dis[j][i] = distance(stations[i][0], stations[i][1], stations[j][0], stations[j][1], 10 / 3.6)
+
+# Subway distance
+for line in subway_lines:
+    for i in range(len(line) - 1):
+        u = stations.index(line[i])
+        v = stations.index(line[i + 1])
+        dis[u][v] = dis[v][u] = distance(line[i][0], line[i][1], line[i + 1][0], line[i + 1][1], 40 / 3.6)
+
+# Dijkstra's algorithm
+def dijkstra(start):
+    min_heap = [(0, start)]
+    min_time = [float('inf')] * n
+    min_time[start] = 0
+    while min_heap:
+        current_time, u = heapq.heappop(min_heap)
+        if current_time > min_time[u]:
+            continue
+        for v in range(n):
+            if u != v and current_time + dis[u][v] < min_time[v]:
+                min_time[v] = current_time + dis[u][v]
+                heapq.heappush(min_heap, (min_time[v], v))
+    return min_time
+
+min_time = dijkstra(0)
+print(round(min_time[1] / 60))  # Convert seconds to minutes and round to nearest minute
+```
+
 
 
 ## 02524: 宗教信仰
