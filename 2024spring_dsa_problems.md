@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2036 GMT+8 May 30, 2024
+Updated 1045 GMT+8 May 31, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3775,6 +3775,88 @@ for m in range(1, n + 1):
     print(result)
     print()
 ```
+
+
+
+## 02499: Binary Tree
+
+http://cs101.openjudge.cn/practice/02499/
+
+Binary trees are a common data structure in computer science. In this problem we will look at an infinite binary tree where the nodes contain a pair of integers. The tree is constructed like this:
+
+- The root contains the pair (1, 1).
+- If a node contains (a, b) then its left child contains (a + b, b) and its right child (a, a + b)
+
+**Problem**
+Given the contents (a, b) of some node of the binary tree described above, suppose you are walking from the root of the tree to the given node along the shortest possible path. Can you find out how often you have to go to a left child and how often to a right child?
+
+**输入**
+
+The first line contains the number of scenarios.
+Every scenario consists of a single line containing two integers i and j (1 <= i, j <= 2*109) that represent
+a node (i, j). You can assume that this is a valid node in the binary tree described above.
+
+**输出**
+
+The output for every scenario begins with a line containing "Scenario #i:", where i is the number of the scenario starting at 1. Then print a single line containing two numbers l and r separated by a single space, where l is how often you have to go left and r is how often you have to go right when traversing the tree from the root to the node given in the input. Print an empty line after every scenario.
+
+样例输入
+
+```
+3
+42 1
+3 4
+17 73
+```
+
+样例输出
+
+```
+Scenario #1:
+41 0
+
+Scenario #2:
+2 1
+
+Scenario #3:
+4 6
+```
+
+来源
+
+TUD Programming Contest 2005 (Training Session), Darmstadt, Germany
+
+
+
+ee-张坤思路：减法变成除法，就可以大大提高效率。可以假设一个极端情况 1和10000 减法要用9999次 除法只用1次。
+
+```python
+# 23n2300011329 洪亮
+def binarytree(l, r, x, y):
+    if l == r:
+        return [x, y]
+    elif l > r:
+        n = l // r
+        if l == r * n:
+            n -= 1
+        ans = binarytree(l - r * n, r, x + n, y)
+    else:
+        n = r // l
+        if r == l * n:
+            n -= 1
+        ans = binarytree(l, r - l * n, x, y + n)
+    return ans
+
+
+for _ in range(int(input())):
+    l, r = map(int, input().split())
+    ans = binarytree(l, r, 0, 0)
+    print(f'Scenario #{_ + 1}:')
+    print(ans[0], ans[1])
+    print()
+```
+
+
 
 
 
