@@ -3855,20 +3855,24 @@ for i in range(n):
 
 
 
+只要结点不包含1值，左右整除不会余0。
+
 ```python
 # 23n2300011329 洪亮
 def binarytree(l, r, x, y):
-    if l == r:
-        return [x, y]
+    if l == 1:
+        return [x, y+r-l]
+    elif r == 1:
+        return [x+l-r, y]
     elif l > r:
         n = l // r
-        if l == r * n:
-            n -= 1
+        # if l == r * n:
+        #     n -= 1
         ans = binarytree(l - r * n, r, x + n, y)
     else:
         n = r // l
-        if r == l * n:
-            n -= 1
+        # if r == l * n:
+        #     n -= 1
         ans = binarytree(l, r - l * n, x, y + n)
     return ans
 
