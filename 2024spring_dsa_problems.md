@@ -3828,7 +3828,32 @@ TUD Programming Contest 2005 (Training Session), Darmstadt, Germany
 
 
 
-ee-张坤思路：减法变成除法，就可以大大提高效率。可以假设一个极端情况 1和10000 减法要用9999次 除法只用1次。
+ee-张坤思路：减法变成除法，就可以大大提高效率。可以假设一个极端情况 1和10000 减法要用9999次 除法只用1次。武昱达：辗转相除。
+
+```python
+n = int(input())
+for i in range(n):
+    a, b = map(int, input().split())
+    l, r = 0, 0
+    while a != 1 or b != 1:
+        if a == 1:
+            r += b - a
+            b = 1
+        elif b == 1:
+            l += a - 1
+            a = 1
+        elif a > b:
+            l += a // b
+            a -= b * (a // b)
+        elif a < b:
+            r += b // a
+            b -= a * (b // a)
+    print("Scenario #{}:".format(i + 1))
+    print(l, r)
+    print()
+```
+
+
 
 ```python
 # 23n2300011329 洪亮
