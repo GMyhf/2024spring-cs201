@@ -19758,13 +19758,126 @@ http://cs101.openjudge.cn/practice/20576/
 
 
 
+## P1352: 没有上司的舞会
+
+tree dp, https://www.luogu.com.cn/problem/P1352
+
+某大学有 $n$ 个职员，编号为 $1\ldots n$。
+
+他们之间有从属关系，也就是说他们的关系就像一棵以校长为根的树，父结点就是子结点的直接上司。
+
+现在有个周年庆宴会，宴会每邀请来一个职员都会增加一定的快乐指数 $r_i$，但是呢，如果某个职员的直接上司来参加舞会了，那么这个职员就无论如何也不肯来参加舞会了。
+
+所以，请你编程计算，邀请哪些职员可以使快乐指数最大，求最大的快乐指数。
+
+**输入**
+
+输入的第一行是一个整数 $n$。
+
+第 $2$ 到第 $(n + 1)$ 行，每行一个整数，第 $(i+1)$ 行的整数表示 $i$ 号职员的快乐指数 $r_i$。
+
+第 $(n + 2)$ 到第 $2n$ 行，每行输入一对整数 $l, k$，代表 $k$ 是 $l$ 的直接上司。
+
+**输出**
+
+输出一行一个整数代表最大的快乐指数。
+
+## 
+
+样例输入 #1
+
+```
+7
+1
+1
+1
+1
+1
+1
+1
+1 3
+2 3
+6 4
+7 4
+4 5
+3 5
+```
+
+样例输出 #1
+
+```
+5
+```
+
+提示
+
+数据规模与约定
+
+对于 $100\%$ 的数据，保证 $1\leq n \leq 6 \times 10^3$，$-128 \leq r_i\leq 127$，$1 \leq l, k \leq n$，且给出的关系一定是一棵树。
+
+
+
+https://www.cnblogs.com/ifmyt/p/9588872.html
+
+树形dp是一种很优美的动态规划，真的很优美真的，前提是在你学会它之后。
+
+树形dp的主要实现形式是dfs，在dfs中dp，主要的实现形式是`dp[i][j][0/1]`，i是以i为根的子树，j是表示在以i为根的子树中选择j个子节点，0表示这个节点不选，1表示选择这个节点。有的时候j或0/1这一维可以压掉。
+
+**基本的dp方程**
+
+选择节点类
+$$
+\begin{cases}
+dp[i][0]=dp[j][1] \\
+dp[i][1]=max/min(dp[j][0],dp[j][1])
+\end{cases}
+$$
+
+
+
+树形背包类
+$$
+\begin{cases}
+dp[v][k]=dp[u][k]+val \\
+dp[u][k]=max(dp[u][k],dp[v][k−1])
+\end{cases}
+$$
+
+
+
+以上就是对树形dp的基本介绍，因为树形dp没有基本的形式，然后其也没有固定的做法，一般一种题目有一种做法。
+
+这道题是一树形dp入门级别的题目，具体方程就用到了上述的选择方程。
+
+```python
+import sys
+sys.setrecursionlimit(1 << 30)
+
+def dfs(x, dp, graph):
+    for y in graph[x]:
+        dfs(y, dp, graph)
+        dp[x][0] += max(dp[y][0], dp[y][1])
+        dp[x][1] += dp[y][0]
+
+n = int(input())
+r = [int(input()) for _ in range(n)]
+dp = [[0, r[i]] for i in range(n)]
+graph = [[] for _ in range(n)]
+check = set()
+for _ in range(n-1):
+    u, v = map(int, input().split())
+    graph[v-1].append(u-1)
+    check.add(u-1)
+boss = next(i for i in range(n) if i not in check)
+
+dfs(boss, dp, graph)
+print(max(dp[boss]))
+```
+
 
 
 ## P1528 切蛋糕
-
 https://www.luogu.com.cn/problem/P1528
-
-
 
 Facer今天买了 $n$ 块蛋糕，不料被信息组中球球等好吃懒做的家伙发现了，没办法，只好浪费一点来填他们的嘴巴。他答应给每个人留一口，然后量了量每个人口的大小。Facer 有把刀，可以切蛋糕，但他不能把两块蛋糕拼起来，但是他又不会给任何人两块蛋糕。现在问你，facer 怎样切蛋糕，才能满足最多的人。（facer 的刀很强，切的时候不会浪费蛋糕）。
 
