@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1045 GMT+8 May 31, 2024
+Updated 1609 GMT+8 Jun 1, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -16459,6 +16459,96 @@ print(maximalRectangle(a))
 
 
 ```
+
+
+
+## 27256: 当前队列中位数
+
+http://cs101.openjudge.cn/routine/27256/
+
+中位数是有序序列最中间的那个数。如果序列的长度是偶数，则没有最中间的数；此时中位数是最中间的两个数的平均数。
+
+现在，假设我有一个空的list，我会对他进行以下三种操作：
+
+1. 在list最后添加一个数：add x
+2. 删除当前list的第一个数：del
+3. 查询当前list的中位数：query
+
+**输入**
+
+输入为若干行，第一行为一个整数n（n <= 100000)，表示操作的次数，接下来n行表示n次操作。数据保证在删除或查询的时候，队列长度大于0
+
+**输出**
+
+针对于每次query，输出当前的中位数
+
+样例输入
+
+```
+sample1 in:
+5
+add 1
+add 2
+query
+del
+query
+
+sample1 out:
+1.5
+2
+```
+
+样例输出
+
+```
+sample2 input:
+5
+add 1
+query
+add 3
+query
+query
+
+sample2 out:
+1
+2
+2
+```
+
+提示
+
+tags: sorting, data structure。注意输出格式如样例所示。
+
+来源
+
+2023fall zzr
+
+
+
+```python
+# 2300011742 张展皓 化院
+from bisect import bisect_left
+a, b, cnt, now = [], [], 0, 0
+for _ in range(int(input())):
+    opt = input().split()
+    if opt[0] == 'query':
+        l = len(a)
+        if l & 1: print(a[l >> 1][0])
+        else:
+            ans = (a[l >> 1][0] + a[l - 1 >> 1][0]) / 2 
+            print(ans if int(ans) != ans else int(ans))
+    if opt[0] == 'add':
+        v = int(opt[1])
+        a.insert(bisect_left(a, [v, 0]), [v, cnt])
+        b.append(v)
+        cnt += 1
+    if opt[0] == 'del': 
+        v = b[now]
+        now += 1
+        a.pop(bisect_left(a, [v, 0]))
+```
+
+
 
 
 
