@@ -2,7 +2,7 @@
 
 # 2024数算B模拟考试1@gw calss
 
-Updated 0043 GMT+8 May 23, 2024
+Updated 2353 GMT+8 Jun 1, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -728,6 +728,15 @@ http://dsbpython.openjudge.cn/2024moni1/009/
 
 
 
+思路：
+
+- **构建树**：将输入的节点和边转化为树结构，表示理一楼的布局。
+- **DFS遍历树**：通过DFS遍历计算每个子树的节点总数，确保办公室和机房数量相等。
+- **奇偶性判断**：对于非根节点的子树，如果节点总数为奇数，则减1以保证为偶数，从而能够平分为办公室和机房。
+- **计算最大机房数**：根节点特殊处理，返回整个树节点总数的一半作为最终结果。
+
+通过以上步骤，能够有效地计算出理一楼最多能容纳的机房数。
+
 ```python
 #2300011335	邓锦文
 class Node:
@@ -735,33 +744,53 @@ class Node:
         self.val = val
         self.children = []
 
-def build(n, nodes):
-    tree = [Node(i) for i in range(n+1)]
-    for a, b in nodes:
-        tree[a].children.append(tree[b])
-    return tree[1]
 
-def cal(root):
-    if root.children:
-        if root.val == 1:
-            cnt = 1
-            for child in root.children:
-                cnt += cal(child)
-            return cnt//2
-        cnt = 1
-        for child in root.children:
-            cnt += cal(child)
-        if cnt % 2:
-            return cnt-1
+def build_tree(n, edges):
+    """
+    构建树结构
+    :param n: 节点数量
+    :param edges: 边列表
+    :return: 树的根节点
+    """
+    nodes = [Node(i) for i in range(n + 1)]
+    for a, b in edges:
+        nodes[a].children.append(nodes[b])
+    return nodes[1]  # 返回根节点
+
+
+def calculate_max_computer_rooms(root):
+    """
+    计算理一楼最多能容纳的机房数
+    :param root: 树的根节点
+    :return: 最大机房数
+    """
+
+    def dfs(node):
+        if not node.children:
+            return 1  # 叶子节点
+
+        total_nodes = 1  # 包含当前节点
+
+        for child in node.children:
+            total_nodes += dfs(child)
+
+        if node.val == 1:
+            # 根节点特殊处理，返回整个树的节点数的一半
+            return total_nodes // 2
         else:
-            return cnt
-    else:
-        return 1
+            # 非根节点，判断子树的节点数是奇数还是偶数
+            return total_nodes - 1 if total_nodes % 2 else total_nodes
+
+    return dfs(root)
+
 
 n = int(input())
-nodes = [list(map(int, input().split())) for _ in range(n-1)]
-root = build(n, nodes)
-print(cal(root))
+edges = [tuple(map(int, input().split())) for _ in range(n-1)]
+
+# 构建树并计算最大机房数
+root = build_tree(n, edges)
+print(calculate_max_computer_rooms(root))
+
 ```
 
 
