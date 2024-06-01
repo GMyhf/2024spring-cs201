@@ -433,7 +433,7 @@ int main() {
 
 ## 28361: 能量果实
 
-http://dsaex.openjudge.cn/2024final/E/
+tree dp, http://dsaex.openjudge.cn/2024final/E/
 
 在一个宁静的小镇边缘，有一座神秘的古老庄园。这座庄园已经存在了数百年，传说中它的每一块砖石都蕴含着无数的故事。庄园的主人是一位老园丁，他精心呵护着一棵与众不同的古树。这棵古树庞大无比，树上的每一个分枝都是老园丁用心栽培的结果。
 
@@ -488,7 +488,7 @@ http://dsaex.openjudge.cn/2024final/E/
 
 这个问题可以使用动态规划来解决,具体思路如下:
 
-定义 dp[i][0] 表示不选择节点 i 的最大值,dp[i][1] 表示选择节点 i 的最大值。
+定义 `dp[i][0]` 表示不选择节点 i 的最大值,`dp[i][1]` 表示选择节点 i 的最大值。
 使用深度优先搜索(DFS)遍历整棵树,并计算每个节点的 `dp[i][0] `和 `dp[i][1]`。
 对于每个节点 i:
 `dp[i][0] `等于它的左子树和右子树不选择时的最大值,即 `max(dp[left][0], dp[left][1]) + max(dp[right][0], dp[right][1])`;
@@ -595,8 +595,33 @@ http://dsaex.openjudge.cn/2024final/F/
 
 
 
-```c++
+反向建图。只检验了样例数据，没有什么地方可以提交了。
 
+访问过的节点不需要再走一次了，但是应该需要防止成环的情况。
+
+从小到大遍历的时候就不用判断了
+
+```c++
+# http://dsaex.openjudge.cn/2024final/F/
+def dfs(i, label):
+    if ans[i] is None:
+        ans[i] = label
+        for nex in graph[i]:
+            dfs(nex, label)
+
+N, M = map(int, input().split())
+graph = [[] for i in range(N)]
+ans = [None] * N
+
+for _ in range(M):
+    u, v = map(int, input().split())
+    graph[v - 1].append(u - 1)
+
+for i in range(N):
+    if ans[i] is None:
+        dfs(i, i + 1)
+
+print(*ans)
 ```
 
 
