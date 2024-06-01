@@ -8,6 +8,8 @@ http://dsaex.openjudge.cn/2024final/
 
 
 
+题目挺友好的，6个题目，gpt能做5个。
+
 
 
 ## 28348: 单链表
