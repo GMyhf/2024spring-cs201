@@ -596,6 +596,40 @@ while index < len(data):
 
 
 
+输出 F 有两种可能, 要么节点多了, 要么少了; 多了就是建完树s还有剩余, 少了就是s空了还会pop, 就会raise一个IndexError
+
+```python
+# 22n2200011610 罗熙佑
+class Node:
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
+
+
+def build_tree(s):
+    val = s.pop()
+    if val == '#':
+        return None
+    
+    root = Node(val)
+    root.left = build_tree(s)
+    root.right = build_tree(s)
+    return root
+
+
+while True:
+    try:
+        n = int(input())
+        if n == 0:
+            break
+        s = input().split()[::-1]
+        _ = build_tree(s)
+        print('F' if len(s) else 'T')
+    except IndexError:
+        print('F')
+```
+
 
 
 
