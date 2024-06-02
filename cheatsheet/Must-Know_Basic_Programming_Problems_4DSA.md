@@ -16,9 +16,9 @@ Updated 1754 GMT+8 Jun 2, 2024
 | 26590: 检测括号嵌套             | stack            |
 | 26571: 我想完成数算作业：代码   | disjoint set     |
 | 20169: 排队                     | disjoint set     |
-| 24744: 想要插队的Y君            | Linke d List     |
-| 25143: 求二叉树的高度和叶子数目 | Tree             |
-| 25155: 深度优先遍历一个无向图   | Dfs              |
+| 24744: 想要插队的Y君            | Linked List      |
+| 25143: 求二叉树的高度和叶子数目 | tree             |
+| 25155: 深度优先遍历一个无向图   | dfs              |
 | 22508: 最小奖金方案             | topological sort |
 
 
