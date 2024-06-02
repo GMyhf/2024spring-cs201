@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1143 GMT+8 Jun 2, 2024
+Updated 2046 GMT+8 Jun 2, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -10081,7 +10081,8 @@ def merge_sort(a, temp, left, right):
         else:
             temp[k] = a[j]
             j += 1
-            inv_count += mid - i
+            inv_count += mid - 
+            
         k += 1
     while i < mid:
         temp[k] = a[i]
