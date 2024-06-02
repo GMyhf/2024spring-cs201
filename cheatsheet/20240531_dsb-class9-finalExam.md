@@ -1,5 +1,8 @@
 # 2024春-数据结构与算法B-9班
 
+Updated 1833 GMT+8 Jun 2, 2024
+2024 spring, Complied by Hongfei Yan
+
 
 
 2024-05-31 13:00 ~ 15:00
@@ -595,11 +598,11 @@ http://dsaex.openjudge.cn/2024final/F/
 
 
 
-反向建图。只检验了样例数据，没有什么地方可以提交了。
+反向建图。
 
 访问过的节点不需要再走一次了，但是应该需要防止成环的情况。
 
-从小到大遍历的时候就不用判断了
+从小到大遍历的时候就不用判断了。
 
 ```c++
 # http://dsaex.openjudge.cn/2024final/F/
