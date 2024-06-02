@@ -16,7 +16,7 @@ http://sydsb.openjudge.cn/2024jkkf/
 
 ## 28332: 收集金币达成成就
 
-http://sydsb.openjudge.cn/2024jkkf/1/
+http://cs101.openjudge.cn/practice/28332/
 
 小明和他的伙伴们正在玩一个游戏。游戏中有26种不同的金币和成就，金币用小写字母'a'到'z'表示，成就用大写字母'A'到'Z'表示。每种成就需要收集指定数量的金币才能达成：成就'A'需要26个'a'金币，成就'B'需要25个'b'金币，依此类推，成就'Z'需要1个'z'金币。玩家每分钟可以收集一枚金币。每个玩家的金币收集和成就独立于其他玩家。
 
@@ -163,7 +163,7 @@ print(result)
 
 ## 28332: 小明的加密算法
 
-http://sydsb.openjudge.cn/2024jkkf/3/
+http://cs101.openjudge.cn/practice/28322/
 
 小明设计了一个加密算法，用于加密一个字母字符串 s。
 
