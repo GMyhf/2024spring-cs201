@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1609 GMT+8 Jun 1, 2024
+Updated 1143 GMT+8 Jun 2, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -16199,6 +16199,66 @@ http://cs101.openjudge.cn/dsapre/26572/
 
 
 
+2024/5/30 修正过测试数据，下面两个解法不能AC。正确方法应该是中缀转后缀，后缀再转中缀表达式（同时满足题面要求：不改变算式运算顺序）。
+
+正确能够AC代码
+
+```python
+import re
+
+def infix_to_postfix(expression):
+    opStack = []
+    postfixList = []
+    prec = {"+": 0, "*": 1}
+    for i in expression:
+        if i.isalnum():
+            postfixList.append(i)
+        elif i == "(":
+            opStack.append(i)
+        elif i == ")":
+            while opStack and opStack[-1] != "(":
+                postfixList.append(opStack.pop())
+            opStack.pop()  # Remove '('
+        else:
+            while opStack and opStack[-1] != "(" and prec[i] <= prec[opStack[-1]]:
+                postfixList.append(opStack.pop())
+            opStack.append(i)
+    while opStack:
+        postfixList.append(opStack.pop())
+    return postfixList
+
+def postfix_to_infix(expression):
+    stack = []
+    for token in expression:
+        if token.isalnum(): # Operand
+            stack.append(token)
+        elif token in ["*", "+"]:
+            if token == "*":
+                if "+" in stack[-2]:
+                    stack[-2] = "(" + stack[-2] + ")"
+                if "+" in stack[-1]:
+                    stack[-1] = "(" + stack[-1] + ")"
+            operand2 = stack.pop()
+            operand1 = stack.pop()
+            stack.append(operand1 + token + operand2)
+    return stack.pop()
+
+
+while True:
+    try:
+        expression = input()
+        tokens = [token for token in re.split(r"(\D)", expression) if token]
+    except EOFError:
+        break
+
+    L = infix_to_postfix(tokens)
+    print(postfix_to_infix(L))
+```
+
+
+
+2024/5/30 修正过测试数据，下面两个解法不能AC。
+
 ```python
 # 23n2300011031 黄源森23工院 version2
 """
@@ -19676,9 +19736,11 @@ if __name__ == "__main__":
 
 
 
+# 机考
 
 
-## 2023期末上机考试（数算B）7题
+
+## Xzm2023期末机考
 
 02774: 木材加工
 
@@ -19710,7 +19772,7 @@ http://cs101.openjudge.cn/practice/05907/
 
 
 
-## 2022期末测试（校外）
+## Xzm2022期末机考
 
 24684: 直播计票
 
@@ -19738,7 +19800,7 @@ http://cs101.openjudge.cn/practice/24687/
 
 
 
-## 2021模拟考试/2020finaltest
+## xzm2020期末机考
 
 20742: 泰波拿契數
 
@@ -19766,7 +19828,7 @@ http://cs101.openjudge.cn/practice/20744/
 
 
 
-## 2020模拟上机
+## Xzm2020模拟上机
 
 20449: 是否被5整除
 
@@ -19793,6 +19855,8 @@ http://cs101.openjudge.cn/practice/20625/
 http://cs101.openjudge.cn/practice/20644/
 
 
+
+# 附录
 
 ## 二叉树的应用
 
