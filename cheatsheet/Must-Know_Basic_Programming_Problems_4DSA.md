@@ -1,6 +1,6 @@
 ## 数算B必会简单题
 
-Updated 1754 GMT+8 Jun 2, 2024
+Updated 0020 GMT+8 Jun 4, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -10,16 +10,16 @@ Updated 1754 GMT+8 Jun 2, 2024
 
 
 
-| 题目                            | tags             |
-| ------------------------------- | ---------------- |
-| 22782: PKU版爱消除              | stack            |
-| 26590: 检测括号嵌套             | stack            |
-| 26571: 我想完成数算作业：代码   | disjoint set     |
-| 20169: 排队                     | disjoint set     |
-| 24744: 想要插队的Y君            | Linked List      |
-| 25143: 求二叉树的高度和叶子数目 | tree             |
-| 25155: 深度优先遍历一个无向图   | dfs              |
-| 22508: 最小奖金方案             | topological sort |
+| 题目                                  | tags             |
+| ------------------------------------- | ---------------- |
+| 22782: PKU版爱消除                    | stack            |
+| 26590: 检测括号嵌套                   | stack            |
+| 26571: 我想完成数算作业：代码         | disjoint set     |
+| 20169: 排队                           | disjoint set     |
+| 24744: 想要插队的Y君                  | Linked List      |
+| 25143/27638: 求二叉树的高度和叶子数目 | tree             |
+| 25155: 深度优先遍历一个无向图         | dfs              |
+| 22508: 最小奖金方案                   | topological sort |
 
 
 
@@ -531,6 +531,8 @@ print(tree.countLevels() - 1, tree.countLeaves())
 
 ## 006: 求二叉树的高度和叶子数目
 
+http://cs101.openjudge.cn/dsapre/27638/
+
 http://dsbpython.openjudge.cn/easyprbs/006/
 
 给定一棵二叉树，求该二叉树的高度和叶子数目
@@ -569,6 +571,55 @@ http://dsbpython.openjudge.cn/easyprbs/006/
 来源
 
 Guo Wei
+
+
+
+由于输入无法分辨谁为根节点，所以写寻找根节点语句。
+
+```python
+class TreeNode:
+    def __init__(self):
+        self.left = None
+        self.right = None
+
+def tree_height(node):
+    if node is None:
+        return -1  # 根据定义，空树高度为-1
+    return max(tree_height(node.left), tree_height(node.right)) + 1
+
+def count_leaves(node):
+    if node is None:
+        return 0
+    if node.left is None and node.right is None:
+        return 1
+    return count_leaves(node.left) + count_leaves(node.right)
+
+n = int(input())  # 读取节点数量
+nodes = [TreeNode() for _ in range(n)]
+has_parent = [False] * n  # 用来标记节点是否有父节点
+
+for i in range(n):
+    left_index, right_index = map(int, input().split())
+    if left_index != -1:
+        nodes[i].left = nodes[left_index]
+        has_parent[left_index] = True
+    if right_index != -1:
+        #print(right_index)
+        nodes[i].right = nodes[right_index]
+        has_parent[right_index] = True
+
+# 寻找根节点，也就是没有父节点的节点
+root_index = has_parent.index(False)
+root = nodes[root_index]
+
+# 计算高度和叶子节点数
+height = tree_height(root)
+leaves = count_leaves(root)
+
+print(f"{height} {leaves}")
+```
+
+
 
 
 
