@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2046 GMT+8 Jun 2, 2024
+Updated 1057 GMT+8 Jun 3, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1045,7 +1045,7 @@ while True:
 
 ## 01321: 棋盘问题
 
-http://cs101.openjudge.cn/dsapre/01321/
+http://cs101.openjudge.cn/practice/01321/
 
 在一个给定形状的棋盘（形状可能是不规则的）上面摆放棋子，棋子没有区别。要求摆放时任意的两个棋子不能放在棋盘中的同一行或者同一列，请编程求解对于给定形状和大小的棋盘，摆放k个棋子的所有可行的摆放方案C。
 
@@ -1084,6 +1084,36 @@ http://cs101.openjudge.cn/dsapre/01321/
 来源
 
 蔡错@pku
+
+
+
+这个题目有点描述不清楚吧？没看出来要往#摆棋子。
+
+```python
+# 石贤泽2300012407
+def count_ways(board, n, k):
+    def backtrack(row, columns):
+        if len(columns) == k:
+            return 1
+        if row >= n:
+            return 0
+        count = 0
+        for col in range(n):
+            if board[row][col] == '#' and col not in columns :
+                columns.add(col)
+                count += backtrack(row + 1, columns)
+                columns.remove(col)
+        count += backtrack(row + 1, columns)
+        return count
+    return backtrack(0, set())
+
+while True:
+    n, k = map(int, input().split())
+    if n == -1 and k == -1:
+        break
+    board = [input() for j in range(n)]
+    print(count_ways(board, n, k))
+```
 
 
 
