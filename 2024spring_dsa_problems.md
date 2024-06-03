@@ -1103,7 +1103,7 @@ def count_ways(board, n, k):
                 columns.add(col)
                 count += backtrack(row + 1, columns)
                 columns.remove(col)
-        count += backtrack(row + 1, columns)
+        count += backtrack(row + 1, columns)    # 考虑不放置棋子的情况
         return count
     return backtrack(0, set())
 
