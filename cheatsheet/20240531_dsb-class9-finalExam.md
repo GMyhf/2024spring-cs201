@@ -1,6 +1,6 @@
 # 2024春-数据结构与算法B-9班
 
-Updated 1833 GMT+8 Jun 2, 2024
+Updated 1417 GMT+8 Jun 5, 2024
 2024 spring, Complied by Hongfei Yan
 
 
@@ -71,6 +71,43 @@ D 6
 来源
 
 acwing
+
+
+
+```python
+#蒋子轩 23工学院
+class Node:
+    def __init__(self,num,val):
+        self.val=val
+        self.num=num
+        self.next=None
+def find(x):
+    cur=head
+    while cur.num!=x:
+        cur=cur.next
+    return cur
+m=int(input());head=None;cnt=0
+for _ in range(m):
+    a=input().split()
+    if a[0]=='H':
+        cnt+=1
+        node=Node(cnt,int(a[1]))
+        node.next=head
+        head=node
+    elif a[0]=='D':
+        if a[1]=='0':
+            head=head.next;continue
+        cur=find(int(a[1]))
+        cur.next=cur.next.next
+    else:
+        cnt+=1;cur=find(int(a[1]))
+        node=Node(cnt,int(a[2]))
+        node.next=cur.next
+        cur.next=node
+while head:
+    print(head.val,end=' ')
+    head=head.next
+```
 
 
 
@@ -239,6 +276,26 @@ acwing
 
 
 
+
+
+```python
+#蒋子轩 23工学院
+from collections import deque
+m,n=map(int,input().split())
+cnt=0;a=deque()
+for i in list(map(int,input().split())):
+    if i not in a:
+        cnt+=1
+        a.append(i)
+        if len(a)>m:
+            a.popleft()
+print(cnt)
+```
+
+
+
+
+
 ```c++
 #include <iostream>
 #include <unordered_set>
@@ -329,6 +386,26 @@ acwing
 
 
 
+
+
+```python
+#蒋子轩 23工学院
+s=input()
+a=''
+for i in s:
+    t=ord(i)
+    if ord('a')<=t<=ord('z'):
+        t=(t-ord('a')+1)%26+ord('a')
+    elif ord('A')<=t<=ord('Z'):
+        t=(t-ord('A')+1)%26+ord('A')
+    a+=chr(t)
+print(a)
+```
+
+
+
+
+
 ```c++
 #include <iostream>
 #include <string>
@@ -400,6 +477,27 @@ http://dsaex.openjudge.cn/2024final/D/
 提示
 
 字符串的长度最大为2*10^6
+
+
+
+
+
+```python
+#蒋子轩 23工学院
+s=input();a=[-1];ans=0
+for i,c in enumerate(s):
+    if c=='(':
+        a.append(i)
+    else:
+        a.pop()
+        if a:
+            ans=max(ans,i-a[-1])
+        else:
+            a.append(i)
+print(ans)
+```
+
+
 
 
 
@@ -500,6 +598,28 @@ tree dp, http://dsaex.openjudge.cn/2024final/E/
 这个解决方案的时间复杂度是 O(n),其中 n 是树的节点数。空间复杂度是 O(n),因为我们需要存储每个节点的 dp 值。
 
 这个问题是一个经典的树形 DP 问题,通常会出现在面试和算法竞赛中。掌握这种解决方法对于理解和解决更复杂的树形 DP 问题很有帮助。
+
+
+
+
+
+```python
+#蒋子轩 23工学院
+def dfs(x,t):
+    global a
+    if x==0:return 0
+    l=a[x][1];r=a[x][2]
+    if not t: return dfs(l,1)+dfs(r,1)
+    return max(dfs(l,0)+dfs(r,0)+a[x][0],dfs(l,1)+dfs(r,1))
+n=int(input());a={}
+for i in range(1,n+1):
+    a[i]=tuple(map(int,input().split()))
+print(dfs(1,1))
+```
+
+
+
+
 
 ```c++
 #include <iostream>
@@ -604,8 +724,9 @@ http://dsaex.openjudge.cn/2024final/F/
 
 从小到大遍历的时候就不用判断了。
 
-```c++
+```python
 # http://dsaex.openjudge.cn/2024final/F/
+# 夏天明
 def dfs(i, label):
     if ans[i] is None:
         ans[i] = label
@@ -628,4 +749,26 @@ print(*ans)
 ```
 
 
+
+
+
+
+
+```python
+#蒋子轩 23工学院
+def dfs(u,mini):
+    if ans[u]==-1:
+        ans[u]=mini
+        for v in a[u]:
+            dfs(v,mini)
+n,m=map(int,input().split())
+a={i:[] for i in range(1,n+1)}
+for _ in range(m):
+    u,v=map(int,input().split())
+    a[v].append(u)
+ans=[-1]*(n+1)
+for i in range(1,n+1):
+    dfs(i,i)
+print(*ans[1:])
+```
 
