@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1547 GMT+8 Jun 3, 2024
+Updated 2350 GMT+8 Jun 6, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -5212,6 +5212,105 @@ else:
     for i in solution:
         print(i)
 ```
+
+
+
+## 03447: 银河贸易问题
+
+bfs, http://cs101.openjudge.cn/practice/03447/
+
+随着一种称为“￥”的超时空宇宙飞船的发明，一种叫做“￥￥”的地球与遥远的银河之间的商品进出口活动应运而生。￥￥希望从PluralZ星团中的一些银河进口商品，这些银河中的行星盛产昂贵的商品和原材料。初步的报告显示：
+（1） 每个银河都包含至少一个和最多26个行星，在一个银河的每个行星用A~Z中的一个字母给以唯一的标识。
+（2） 每个行星都专门生产和出口一种商品，在同一银河的不同行星出口不同的商品。
+（3） 一些行星之间有超时空货运航线连接。如果行星A和B相连，则它们可以自由贸易；如果行星C与B相连而不与A相连，则A和C之间仍可通过B进行贸易，不过B要扣留5%的货物作为通行费。一般来说，只要两个行星之间可以通过一组货运航线连接，他们就可以进行贸易，不过每个中转站都要扣留5%的货物作为通行费。
+（4） 在每个银河至少有一个行星开放一条通往地球的￥航线。对商业来说，￥航线和其他星际航线一样。
+￥￥已经对每个行星的主要出口商品定价（不超过10的正实数），数值越高，商品的价值越高。在本地市场，越值钱的商品获利也越高。问题是要确定如果要考虑通行费是，哪个行星的商品价值最高。
+
+**输入**
+
+输入包含若干银河的描述。每个银河的描述开始的第1行是一个整数n，表示银河的行星数。接下来的n行每行包括一个行星的描述，即：
+（1） 一行用以代表行星的字母；
+（2） 一个空格；
+（3） 以d.dd的形式给出该行星的出口商品的价值；
+（4） 一个空格；
+（5） 一个包含字母和（或）字符“*”的字符串；字母表示一条通往该行星的货运航线；“*”表示该行星向地球开放￥货运航线。
+
+**输出**
+
+对每个银河的描述，输出一个字母P表示在考虑通行费的前提下，行星P具有最高价值的出口商品。如果用有最高价值的出口商品的行星多于一个，只需输出字母序最小的那个行星。
+
+样例输入
+
+```
+5
+E 0.01 *A
+D 0.01 A*
+C 0.01 *A
+A 1.00 EDCB
+B 0.01 A*
+```
+
+样例输出
+
+```
+A
+```
+
+
+
+注意不要字典覆盖，多条路从S到D，价格不一样。
+
+```python
+# 肖添天
+from collections import deque, defaultdict
+
+n = int(input())
+graph = defaultdict(set)
+to_earth = set()
+price = {}
+
+for i in range(n):
+    a, b, c = input().split()
+    b = float(b)
+    if a not in price:
+        price[a] = []
+    price[a].append(b)
+    for x in c:
+        if x == "*":
+            to_earth.add(a)
+        else:
+            graph[a].add(x)
+            graph[x].add(a)
+
+def bfs(start):
+    Q = deque([(start, 1.0, 0)])
+    visited = set()
+    visited.add(start)
+    best_price = 0
+
+    while Q:
+        l = len(Q)
+        for _ in range(l):
+            f, curr_price, cnt = Q.popleft()
+            if f in to_earth:
+                for p in price[start]:
+                    best_price = max(best_price, p * (0.95 ** cnt))
+            for x in graph[f]:
+                if x not in visited:
+                    Q.append((x, curr_price * 0.95, cnt + 1))
+                    visited.add(x)
+
+    return best_price
+
+ans = []
+for planet in price:
+    ans.append((bfs(planet), planet))
+
+ans.sort(key=lambda x: [-x[0], x[1]])
+print(ans[0][1])
+```
+
+
 
 
 
