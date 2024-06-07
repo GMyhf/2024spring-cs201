@@ -5262,19 +5262,16 @@ A
 
 ```python
 # 肖添天
-from collections import deque, defaultdict
+from collections import defaultdict, deque
 
 n = int(input())
 graph = defaultdict(set)
 to_earth = set()
 price = {}
-
 for i in range(n):
     a, b, c = input().split()
     b = float(b)
-    if a not in price:
-        price[a] = []
-    price[a].append(b)
+    price[a] = b if a not in price else max(price[a], b)
     for x in c:
         if x == "*":
             to_earth.add(a)
@@ -5283,27 +5280,26 @@ for i in range(n):
             graph[x].add(a)
 
 def bfs(start):
-    Q = deque([(start, 1.0, 0)])
+    Q = deque([start])
     visited = set()
     visited.add(start)
-    best_price = 0
-
+    cnt = 0
     while Q:
         l = len(Q)
         for _ in range(l):
-            f, curr_price, cnt = Q.popleft()
+            f = Q.popleft()
             if f in to_earth:
-                for p in price[start]:
-                    best_price = max(best_price, p * (0.95 ** cnt))
+                return price[start] * (0.95 ** cnt)
             for x in graph[f]:
                 if x not in visited:
-                    Q.append((x, curr_price * 0.95, cnt + 1))
+                    Q.append(x)
                     visited.add(x)
+        cnt += 1
+    return 0
 
-    return best_price
 
 ans = []
-for planet in price:
+for planet in price.keys():
     ans.append((bfs(planet), planet))
 
 ans.sort(key=lambda x: [-x[0], x[1]])
