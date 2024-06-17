@@ -317,7 +317,7 @@ for k in range(1, n-1):
 给定键值序列：{38,64,52,26,73,40,48,55,15,12}，初始堆如下:
 
 ```
-        38
+         38
        /    \
      64      52
     /  \    /  \
@@ -326,9 +326,9 @@ for k in range(1, n-1):
 55  15 12
 ```
 
-依次对每个非叶子节点进行下沉操作。首先，找出最后一个非叶子节点，该节点在位置 ![$\left\lfloor \frac{n}{2} \right\rfloor - 1$](https://ss.chatleft.com/img/latex-placeholder.png)⌊2/n⌋−1，其中 n 是序列的长度。
+依次对每个非叶子节点进行下沉操作。首先，找出最后一个非叶子节点，该节点在位置 ![$\left\lfloor \frac{n}{2} \right\rfloor - 1$](https://ss.chatleft.com/img/latex-placeholder.png)⌊n/2⌋−1，其中 n 是序列的长度。
 
-序列长度 n=10，那么最后一个非叶子节点的位置是 ![$\left\lfloor \frac{10}{2} \right\rfloor - 1 = 4$](https://ss.chatleft.com/img/latex-placeholder.png)⌊2/10⌋−1=4。
+序列长度 n=10，那么最后一个非叶子节点的位置是 ![$\left\lfloor \frac{10}{2} \right\rfloor - 1 = 4$](https://ss.chatleft.com/img/latex-placeholder.png)⌊10/2⌋−1=4。
 
 我们从下到上，从右到左对每个非叶子节点进行下沉操作：
 
