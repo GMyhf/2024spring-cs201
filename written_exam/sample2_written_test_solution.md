@@ -1,6 +1,6 @@
 # 笔试样题2
 
-Updated 1651 GMT+8 May 19, 2024
+Updated 1126 GMT+8 Jun 17, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -173,7 +173,7 @@ Logs:
     C: 选择
     D: 归并
 
-15. 如图所示的有向图，共有（ D ）个强连通分枝。
+15. 如图所示的有向图，共有（ B ）个强连通分枝。
 
     <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240519211728958.png" alt="image-20240519211728958" style="zoom:50%;" />
 
