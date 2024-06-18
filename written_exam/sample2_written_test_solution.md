@@ -184,7 +184,7 @@ Logs:
     C: 4
     D: 3
 
-16. 在下图中，从顶点 A 出发进行深度优先遍历可得到的序列是（ A,B,D ）。
+16. 在下图中，从顶点 A 出发进行深度优先遍历可得到的序列是（ A,B,C,D ）。
 
     <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240519211933166.png" alt="image-20240519211933166" style="zoom:50%;" />
 
