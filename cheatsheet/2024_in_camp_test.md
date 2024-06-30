@@ -15,7 +15,7 @@ http://bailian.openjudge.cn/xly2024062701/
 | 文件结构“图”                   | tree           |
 | Stockbroker                    | floyd_warshall |
 | 由中根序列和后根序列重建二叉树 | tree           |
-| 超级备忘录                     | segment tree   |
+| 超级备忘录                     | splay tree     |
 
 
 
