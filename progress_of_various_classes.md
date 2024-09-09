@@ -7,42 +7,45 @@ Updated 2323 GMT+8 May 30, 2024
 
 **Logs:**
 
-2024/5/19 有5/10班级讲到图了
-2024/4/16 有2/10个班到图了：Guow, Yanhf
-2024/4/12  有6/10个班到树了
-2024/4/2  有4/10个班到树了：Guow, Yanhf, Zhaohy,Wangz
+2024/5/19 有5/10班级讲到图了  
+2024/4/16 有2/10个班到图了：Guow, Yanhf  
+2024/4/12  有6/10个班到树了  
+2024/4/2  有4/10个班到树了：Guow, Yanhf, Zhaohy,Wangz  
 2024/3/29 有3/10个班到树了：Guow, Yanhf, Zhaohy
 
 
 ## Python
-Guow: http://dsbpython.openjudge.cn hw10 关键路径，hw9 bfs, hw8 图，hw7 树，hw6 树、堆，hw5 树
+Guow: http://dsbpython.openjudge.cn  
+hw10 关键路径，hw9 bfs, hw8 图，hw7 树，hw6 树、堆，hw5 树  
+gw模考，http://dsbpython.openjudge.cn/2024moni1again/
 
-​	gw模考，http://dsbpython.openjudge.cn/2024moni1again/
+Liuyh: http://lyhdsa.openjudge.cn  
+hw10 图，hw8～9 树，hw7 计概 hw6 递归，hw5 链表，hw4 栈、队列，hw3 栈
 
-Liuyh: http://lyhdsa.openjudge.cn hw10 图，hw8～9 树，hw7 计概 hw6 递归，hw5 链表，hw4 栈、队列，hw3 栈
-Xiezm: http://xzmdsa.openjudge.cn hw5 树，hw4 二分搜索、分治、bfs、dfs，hw3 递归与dp，hw2 线性表
-Yanhf（12班）: http://cs101.openjudge.cn hwE 笔试，hwD 机考，hwC 笔试，hwA~B 图，hw8～9 图，hw7 机考，hw6 树
+Xiezm: http://xzmdsa.openjudge.cn hw5  
+树，hw4 二分搜索、分治、bfs、dfs，hw3 递归与dp，hw2 线性表
+
+Yanhf（12班）: http://cs101.openjudge.cn  
+hwE 笔试，hwD 机考，hwC 笔试，hwA~B 图，hw8～9 图，hw7 机考，hw6 树
 
 ## C/C++
-Dly: http://xlxxsjjg.openjudge.cn 
-​	5月7日 期中模拟，hw5～6 树、bfs，hw4 递归、KMP，hw3 栈、链表、递归，hw2 像计概，有dp，字符串
+Dly: http://xlxxsjjg.openjudge.cn  
+5月7日 期中模拟，hw5～6 树、bfs，hw4 递归、KMP，hw3 栈、链表、递归，hw2 像计概，有dp，字符串
 
-Huw（6班）: http://forhuwei.openjudge.cn hw4 树，hw3 树，hw2 栈, BFS
+Huw（6班）: http://forhuwei.openjudge.cn hw4 树，hw3 树，hw2 栈, BFS  
+Huw模考，http://forhuwei.openjudge.cn/faketest/
 
-​	Huw模考，http://forhuwei.openjudge.cn/faketest/
+Wangz（2班）:  http://sydsb.openjudge.cn  
+hw9 计概，hw8 散列，hw7 树、并查集，hw6 树， hw5.Supplementary，greedy, 字符串, hw5 栈、队列、递归  
+wz模考，可以python, http://sydsb.openjudge.cn/2024mk2/
 
-Wangz（2班）:  http://sydsb.openjudge.cn
-	hw9 计概，hw8 散列，hw7 树、并查集，hw6 树， hw5.Supplementary，greedy, 字符串, hw5 栈、队列、递归
+Zhaohy（9班）：http://dsaex.openjudge.cn  
+hw10~11 图，hw9 树、并查集、bfs，hw8 树，hw7 并查集，hw6 树，hw5 树，hw4 像计概, hw3 队列  
+9班模考，http://dsaex.openjudge.cn/2024jsmn2/
 
-​	wz模考，可以python, http://sydsb.openjudge.cn/2024mk2/
-
-Zhaohy（9班）：http://dsaex.openjudge.cn hw10~11 图，hw9 树、并查集、bfs，hw8 树，hw7 并查集，hw6 树，hw5 树，hw4 像计概, hw3 队列
-
-​	9班模考，http://dsaex.openjudge.cn/2024jsmn2/
-
-Zhangsl: http://ssbzsl.openjudge.cn week11 并查集，week10 树，week9 并查集、bfs，week8 树，week7 排序、优先级队列，week5 dp，week4 bfs, 栈
-
-​	模考：http://ssbzsl.openjudge.cn/mock2024/
+Zhangsl: http://ssbzsl.openjudge.cn week11  
+并查集，week10 树，week9 并查集、bfs，week8 树，week7 排序、优先级队列，week5 dp，week4 bfs, 栈  
+模考：http://ssbzsl.openjudge.cn/mock2024/
 
 Zouyz: http://hxsjjg.openjudge.cn hw6 图，hw5 集合、词典，hw4 树，hw3 栈、队列
 
