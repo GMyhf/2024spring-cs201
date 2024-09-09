@@ -47,9 +47,8 @@ Zhangsl: http://ssbzsl.openjudge.cn week11
 并查集，week10 树，week9 并查集、bfs，week8 树，week7 排序、优先级队列，week5 dp，week4 bfs, 栈  
 模考：http://ssbzsl.openjudge.cn/mock2024/
 
-Zouyz: http://hxsjjg.openjudge.cn hw6 图，hw5 集合、词典，hw4 树，hw3 栈、队列
-
-​	期末机考：http://hxsjjg.openjudge.cn/2024final/
+Zouyz: http://hxsjjg.openjudge.cn hw6 图，hw5 集合、词典，hw4 树，hw3 栈、队列  
+期末机考：http://hxsjjg.openjudge.cn/2024final/
 
 
 ## 未更新小组
