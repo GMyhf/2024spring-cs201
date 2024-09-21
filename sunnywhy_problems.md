@@ -1,12 +1,452 @@
 # 晴问编程题目
 
-Updated 2012 GMT+8 May 25, 2024
+Updated 0810 GMT+8 Sep 21, 2024
 
 2024 spring, Complied by Hongfei Yan
 
 
 
 晴问《算法笔记》题目练习网址，https://sunnywhy.com/sfbj
+
+
+
+# 入门模拟
+
+## 1 简单模拟 8题
+
+### sy54: 3N+1猜想 简单
+
+https://sunnywhy.com/sfbj/3/1/54
+
+
+ 3N + 1猜想：
+
+给定一个正整数 N，如果它是偶数，那么让它除以 2；如果它是奇数，那么让它先乘 3 加 1 再除以 2。这样一直下去，最终总能在某一步得到N = 1。
+
+给定一个正整数 N，问需要多少步可以让 N 等于 1。
+
+**输入描述**
+
+一个正整数 N（$1 \le N \le 100$）。
+
+**输出描述**
+
+输出让 N 等于 1 的步数。
+
+样例1
+
+输入
+
+```
+3
+```
+
+输出
+
+```
+5
+```
+
+解释
+
+3 => 5 => 8 => 4 => 2 => 1
+
+
+
+```python
+n = int(input())
+cnt = 0
+while n != 1:
+    if n % 2 == 0:
+        n //= 2
+        cnt += 1
+        continue
+    else:
+        n *= 3
+        n += 1
+        n //= 2
+    cnt += 1
+print(cnt)
+```
+
+
+
+### sy55: 判断三角形 简单
+
+https://sunnywhy.com/sfbj/3/1/55
+
+如果三条边A、B、C的长度同时满足A + B > C、A + C > B、B + C > A，那么这三条边可以组成一个三角形。
+
+给定三条边的长度，问这三条边是否能组成一个三角形。
+
+**输入描述**
+
+三个正整数A、B、C（$1 \le A,B,C \le 100$）。
+
+**输出描述**
+
+如果可以组成三角形，那么输出YES，否则输出NO。
+
+样例1
+
+输入
+
+```
+3 4 5
+```
+
+输出
+
+```
+YES
+```
+
+样例2
+
+输入
+
+```
+1 1 2
+```
+
+输出
+
+```
+NO
+```
+
+
+
+```python
+a,b,c = map(int, input().split())
+if a+b>c and a+c>b and b+c>a:
+    print("YES")
+else:
+    print("NO")
+```
+
+
+
+### sy56: 单调递增序列 简单
+
+https://sunnywhy.com/sfbj/3/1/56
+
+给定n个整数的序列 $A_1、A_2、...、A_n$，如果对任意的 $1 \le i \le n-1$，都有 $A_i \le A_{i+1}$ 成立，那么称这个序列为单调递增序列，输出 YES，否则输出 NO。
+
+**输入描述**
+
+第一行为一个正整数（$1 \le n \le 10$）；
+
+第二行为用空格隔开的个整数（$1 \le A_i \le 100$）。
+
+**输出描述**
+
+如果是单调递增序列，那么输出YES，否则输出NO。
+
+样例1
+
+输入
+
+```
+5
+1 3 5 5 9
+```
+
+输出
+
+```
+YES
+```
+
+样例2
+
+输入
+
+```
+5
+1 3 5 4 9
+```
+
+输出
+
+```
+NO
+```
+
+
+
+```python
+def is_sorted(a):
+    for i in range(1, len(a)):
+        if a[i] < a[i-1]:
+            return False
+    return True
+
+input()
+a = list(map(int, input().split()))
+if is_sorted(a):
+    print('YES')
+else:
+    print('NO')
+```
+
+
+
+### sy57: 数列奇数和 简单
+
+https://sunnywhy.com/sfbj/3/1/57
+
+给定n个整数的序列 $A_1、A_2、...、A_n$，求其中所有奇数的和。
+
+**输入描述**
+
+第一行为一个正整数 n（$1 \le n \le 10$）；
+
+第二行为用空格隔开的个整数（$1 \le A_i \le 100$）。
+
+**输出描述**
+
+数列中所有奇数的和。
+
+样例1
+
+输入
+
+```
+5
+5 8 7 6 2
+```
+
+输出
+
+```
+12
+```
+
+
+
+```python
+def sum_odd(a):
+    s = 0
+    for i in range(len(a)):
+        if a[i] % 2 == 1:
+            s += a[i]
+    return s
+        
+
+input()
+a = list(map(int, input().split()))
+print(sum_odd(a))
+```
+
+
+
+### sy58: 三位数 简单
+
+https://sunnywhy.com/sfbj/3/1/58
+
+给定一个三位数n，输出它的百位、十位、个位。
+
+**输入描述**
+
+一个正整数 n（$100 \le n \le 999$）。
+
+**输出描述**
+
+在一行中先后输出的百位、十位、个位，中间用空格隔开，行末不允许有多余空格。
+
+样例1
+
+输入
+
+```
+153
+```
+
+输出
+
+```
+1 5 3
+```
+
+
+
+```python
+n = input()
+print(*list(n))
+```
+
+
+
+### sy59: 水仙花数 简单
+
+https://sunnywhy.com/sfbj/3/1/59
+
+如果一个三位数 n 的各位数字的立方和等于 n，那么称 n 为水仙花数。例如$153=1^3 + 5^3 + 3^3$，因此153是水仙花数。
+
+给定一个正整数，判断这个数是否是水仙花数。
+
+**输入描述**
+
+一个正整数 n（$100 \le n \le 999$）。
+
+**输出描述**
+
+如果是水仙花数，那么输出`YES`，否则输出`NO`。
+
+样例1
+
+输入
+
+```
+153
+```
+
+输出
+
+```
+YES
+```
+
+样例2
+
+输入
+
+```
+666
+```
+
+输出
+
+```
+NO
+```
+
+
+
+```python
+n = input()
+numbers = map(int, list(n))
+cubed = map(lambda x: x**3, numbers)
+
+total = sum(cubed)
+if int(n) == total:
+    print('YES')
+else:
+    print('NO')
+```
+
+
+
+### sy60: 水仙花数II
+
+https://sunnywhy.com/sfbj/3/1/60
+
+如果一个三位数 n 的各位数字的立方和等于 n，那么称 n 为水仙花数。例如$153=1^3 + 5^3 + 3^3$，因此153是水仙花数。
+
+给定两个正整数a、b，输出在闭区间[a,b]内的所有水仙花数。
+
+**输入描述**
+
+两个正整数a、b（$100 \le a \le b \le 999$）。
+
+**输出描述**
+
+在一行里输出闭区间内的所有水仙花数，多个水仙花数按从小到大的顺序输出，中间用空格隔开，行末不允许有多余的空格。如果区间内没有水仙花数，那么输出NO。
+
+样例1
+
+输入
+
+```
+360 380
+```
+
+输出
+
+```
+370 371
+```
+
+样例2
+
+输入
+
+```
+350 360
+```
+
+输出
+
+```
+NO
+```
+
+
+
+```python
+def sum_cubes(n):
+    numbers = map(int, list(n))
+    cubed = map(lambda x: x**3, numbers)
+    total = sum(cubed)
+    return total
+
+a,b = map(int, input().split())
+
+ans = []
+for i in range(a,b+1):
+    if i == sum_cubes(str(i)):
+        ans.append(i)
+
+if len(ans) == 0:
+    print("NO")
+else:
+    print(" ".join(map(str, ans)))
+
+```
+
+
+
+### sy61: 2的幂
+
+https://sunnywhy.com/sfbj/3/1/61
+
+给定一个正整数n，求 $2^n  \mod  1007$。
+
+提示：$(a*b) \mod m=((a \mod m)*(b \mod m)) \mod m$
+
+**输入描述**
+
+一个正整数 n（$1 \le n \le 128$）。
+
+**输出描述**
+
+输出$2^n \mod 1007$的结果。
+
+样例1
+
+输入
+
+```
+3
+```
+
+输出
+
+```
+8
+```
+
+
+
+```python
+n = int(input())
+print(2**n % 1007)
+```
+
+
+
+
 
 
 
