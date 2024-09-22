@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 0810 GMT+8 Sep 21, 2024
+Updated 1615 GMT+8 Sep 22, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -637,7 +637,7 @@ print(cnt)
 
 ## 3 图形输出 3题
 
-### sy65: 等腰直角三角形
+### sy65: 等腰直角三角形 简单
 
 https://sunnywhy.com/sfbj/3/3/65
 
@@ -695,7 +695,7 @@ for i in range(n):
 
 
 
-### sy66: 等腰直角三角形II
+### sy66: 等腰直角三角形II 简单
 
 https://sunnywhy.com/sfbj/3/3/66
 
@@ -746,14 +746,593 @@ https://sunnywhy.com/sfbj/3/3/66
 
 
 ```python
+n = int(input())
+print('*')
+for i in range(1, n-1):
+    print('*' + ' ' * (i - 1) + '*')
 
+print('*' * n)
 ```
 
 
 
-### sy67: 画X
+### sy67: 画X 简单
 
 https://sunnywhy.com/sfbj/3/3/67
+
+绘制一个X（用\*号表示线），其中长、宽、对角线的长度（即可容纳的*号个数）均为同一个奇数n。
+
+**输入描述**
+
+一个正奇数n（$3 \le n \le 99$）。
+
+**输出描述**
+
+输出一个X。注意行末不要有多余的空格。
+
+样例1
+
+输入
+
+```
+3
+```
+
+输出
+
+```
+* *
+ *
+* *
+```
+
+样例2
+
+输入
+
+```
+5
+```
+
+输出
+
+```
+*   *
+ * *
+  *
+ * *
+*   *
+```
+
+
+
+注意行末不要有多余的空格。
+
+```python
+n = int(input())
+mx = [[' ']*n for _ in range(n)]
+for r in range(n):
+    mx[r][r] = '*'
+    mx[r][~r] = '*'
+
+for row in mx:
+    print(''.join(row).rstrip())
+```
+
+
+
+
+
+## 4 日期处理 6题
+
+### sy68: 判断闰年 简单
+
+https://sunnywhy.com/sfbj/3/4/68
+
+给定一个年份，判断其是平年还是闰年。（提示：如果年份是400的倍数，或者是4的倍数但不是100的倍数，那么称这个年份为闰年）
+
+**输入描述**
+
+一个正整数n（$1900 \le n \le 9999$）。
+
+**输出描述**
+
+如果是闰年，那么输出YES，否则输出NO。
+
+样例1
+
+输入
+
+```
+1900
+```
+
+输出
+
+```
+NO
+```
+
+样例2
+
+输入
+
+```
+2020
+```
+
+输出
+
+```
+YES
+```
+
+
+
+```python
+n = int(input())
+if n % 400 == 0 or (n % 4 == 0 and n % 100 != 0):
+    print('YES')
+else:
+    print('NO')
+```
+
+
+
+### sy69: 日期加法 简单
+
+https://sunnywhy.com/sfbj/3/4/69
+
+给定一个日期DAY和一个正整数n，求日期DAY加上n天后的日期。
+
+**输入描述**
+
+第一行为给定的日期DAY（格式为YYYY-MM-DD，范围为1900-01-01 $\le DAY \le$ 2199-12-31），数据保证一定合法；
+
+第二行为需要增加的天数n（$1 \le n \le 10000$）。
+
+**输出描述**
+
+以YYYY-MM-DD的格式输出增加了n天后的日期。
+
+样例1
+
+输入
+
+```
+2021-05-01
+30
+```
+
+输出
+
+```
+2021-05-31
+```
+
+样例2
+
+输入
+
+```
+2021-05-01
+31
+```
+
+输出
+
+```
+2021-06-01
+```
+
+
+
+```python
+import datetime
+
+# Read input
+day = input().strip()
+n = int(input().strip())
+
+# Parse the input date
+date = datetime.datetime.strptime(day, '%Y-%m-%d').date()
+
+# Add n days
+new_date = date + datetime.timedelta(days=n)
+
+# Print the resulting date in the format YYYY-MM-DD
+print(new_date.strftime('%Y-%m-%d'))
+```
+
+
+
+
+
+```python
+def is_leap_year(year):
+    if year % 400 == 0:
+        return True
+    if year % 100 == 0:
+        return False
+    if year % 4 == 0:
+        return True
+    return False
+
+def add_days_to_date(year, month, day, n):
+    month_days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+    # Adjust for leap year
+    if is_leap_year(year):
+        month_days[1] = 29
+
+    day += n
+
+    while day > month_days[month - 1]:
+        day -= month_days[month - 1]
+        month += 1
+        if month > 12:
+            month = 1
+            year += 1
+            if is_leap_year(year):
+                month_days[1] = 29
+            else:
+                month_days[1] = 28
+
+    return year, month, day
+
+# Read input
+day_input = input().strip()
+n = int(input().strip())
+
+# Parse the input date
+year, month, day = map(int, day_input.split('-'))
+
+# Add n days
+new_year, new_month, new_day = add_days_to_date(year, month, day, n)
+
+# Print the resulting date in the format YYYY-MM-DD
+print(f'{new_year:04d}-{new_month:02d}-{new_day:02d}')
+```
+
+
+
+
+
+### sy70: 日期减法 简单
+
+https://sunnywhy.com/sfbj/3/4/70
+
+给定一个日期DAY和一个正整数n，求日期DAY减去n天后的日期。
+
+**输入描述**
+
+第一行为给定的日期DAY（格式为YYYY-MM-DD，范围为1900-01-01 $\le DAY \le$ 2199-12-31），数据保证一定合法；
+
+第二行为需要增加的天数n（$1 \le n \le 10000$）。
+
+**输出描述**
+
+以YYYY-MM-DD的格式输出减少了n天后的日期。
+
+样例1
+
+输入
+
+```
+2021-05-31
+30
+```
+
+输出
+
+```
+2021-05-01
+```
+
+样例2
+
+输入
+
+```
+2021-05-31
+31
+```
+
+输出
+
+```
+2021-04-30
+```
+
+
+
+```python
+def is_leap_year(year):
+    if year % 400 == 0:
+        return True
+    if year % 100 == 0:
+        return False
+    if year % 4 == 0:
+        return True
+    return False
+
+def subtract_days_from_date(year, month, day, n):
+    month_days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+    # Adjust for leap year
+    if is_leap_year(year):
+        month_days[1] = 29
+
+    day -= n
+
+    while day < 1:
+        month -= 1
+        if month < 1:
+            month = 12
+            year -= 1
+            if is_leap_year(year):
+                month_days[1] = 29
+            else:
+                month_days[1] = 28
+        day += month_days[month - 1]
+
+    return year, month, day
+
+# Read input
+day_input = input().strip()
+n = int(input().strip())
+
+# Parse the input date
+year, month, day = map(int, day_input.split('-'))
+
+# Subtract n days
+new_year, new_month, new_day = subtract_days_from_date(year, month, day, n)
+
+# Print the resulting date in the format YYYY-MM-DD
+print(f'{new_year:04d}-{new_month:02d}-{new_day:02d}')
+```
+
+
+
+
+
+### sy71: 一年中的第几天 简单
+
+https://sunnywhy.com/sfbj/3/4/71
+
+给定一个日期，计算它是所在年份中的第几天。
+
+**输入描述**
+
+第一行为给定的日期DAY（格式为YYYY-MM-DD，范围为1900-01-01$\le DAY \le$2199-12-31），数据保证一定合法。
+
+**输出描述**
+
+输出一个整数，表示第几天。
+
+样例1
+
+输入
+
+```
+2021-01-31
+```
+
+输出
+
+```
+31
+```
+
+样例2
+
+输入
+
+```
+2021-02-03
+```
+
+输出
+
+```
+34
+```
+
+
+
+```python
+def is_leap_year(year):
+    if year % 400 == 0:
+        return True
+    if year % 100 == 0:
+        return False
+    if year % 4 == 0:
+        return True
+    return False
+
+def day_of_year(year, month, day):
+    month_days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+    # Adjust for leap year
+    if is_leap_year(year):
+        month_days[1] = 29
+
+    # Calculate the day of the year
+    day_of_year = sum(month_days[:month - 1]) + day
+    return day_of_year
+
+# Read input
+day_input = input().strip()
+
+# Parse the input date
+year, month, day = map(int, day_input.split('-'))
+
+# Calculate the day of the year
+result = day_of_year(year, month, day)
+
+# Print the resulting day of the year
+print(result)
+```
+
+
+
+
+
+### sy72: 日期先后 简单
+
+https://sunnywhy.com/sfbj/3/4/72
+
+给定两个日期DAY1和DAY2，判断DAY1是否在DAY2之前。
+
+输入描述
+
+前两行分别为日期DAY1和DAY2（格式为YYYY-MM-DD，范围为1900-01-01$\le DAY \le$2199-12-31），数据保证一定合法。
+
+输出描述
+
+如果DAY1在DAY2之前，那么输出YES，否则输出NO。
+
+样例1
+
+输入
+
+```
+2021-05-01
+2021-05-07
+```
+
+输出
+
+```
+YES
+```
+
+样例2
+
+输入
+
+```
+2021-05-01
+2021-05-01
+```
+
+输出
+
+```
+NO
+```
+
+样例3
+
+输入
+
+```
+2021-05-01
+2021-04-12
+```
+
+输出
+
+```
+NO
+```
+
+
+
+```python
+# Read input
+day1 = input().strip()
+day2 = input().strip()
+
+# Parse the input dates
+year1, month1, day1 = map(int, day1.split('-'))
+year2, month2, day2 = map(int, day2.split('-'))
+
+# Compare the dates manually
+if (year1 < year2) or (year1 == year2 and month1 < month2) or (year1 == year2 and month1 == month2 and day1 < day2):
+    print("YES")
+else:
+    print("NO")
+```
+
+
+
+
+
+### sy73: 周几 简单
+
+https://sunnywhy.com/sfbj/3/4/73
+
+给定一个日期DAY，求它是周几。
+
+**输入描述**
+
+第一行为给定的日期DAY（格式为YYYY-MM-DD，范围为1900-01-01$\le DAY \le$2199-12-31），数据保证一定合法。
+
+**输出描述**
+
+输出一个整数，表示周几。其中周一到周六分别用1-6表示，周天用0表示。
+
+样例1
+
+输入
+
+```
+2021-05-01
+```
+
+输出
+
+```
+6
+```
+
+样例2
+
+输入
+
+```
+2021-05-02
+```
+
+输出
+
+```
+0
+```
+
+
+
+```python
+#Use Zeller's Congruence algorithm to calculate the day of the week.
+#https://www.geeksforgeeks.org/zellers-congruence-find-day-date/
+def day_of_week(year, month, day):
+    if month < 3:
+        month += 12
+        year -= 1
+    K = year % 100
+    J = year // 100
+    f = day + 13 * (month + 1) // 5 + K + K // 4 + J // 4 + 5 * J
+    return (f % 7 + 6) % 7  # Adjust to make Monday=1, ..., Saturday=6, Sunday=0
+
+# Read input
+day_input = input().strip()
+
+# Parse the input date
+year, month, day = map(int, day_input.split('-'))
+
+# Calculate the day of the week
+result = day_of_week(year, month, day)
+
+# Print the resulting day of the week
+print(result)
+```
+
+
+
+
+
+## 5 进制转换 4题
 
 
 
@@ -767,19 +1346,15 @@ https://sunnywhy.com/sfbj/3/3/67
 
 
 
-## 4 日期处理 6题
-
-
-
-
-
-## 5 进制转换 4题
-
-
-
-
-
 ## 6 字符串处理 8题
+
+
+
+
+
+```python
+
+```
 
 
 
@@ -788,6 +1363,12 @@ https://sunnywhy.com/sfbj/3/3/67
 ## 7 综合练习精选 22题
 
 
+
+
+
+```python
+
+```
 
 
 
