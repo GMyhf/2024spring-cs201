@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1615 GMT+8 Sep 22, 2024
+Updated 2058 GMT+8 Sep 22, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1334,6 +1334,70 @@ print(result)
 
 ## 5 进制转换 4题
 
+### sy74: 十进制转二进制
+
+https://sunnywhy.com/sfbj/3/5/74
+
+给定一个十进制数n，输出它的二进制形式。
+
+**输入描述**
+
+一个非负整数n（$0 \le n \le 1024$）。
+
+**输出描述**
+
+输出一个01串，表示的二进制。
+
+样例1
+
+输入
+
+```
+6
+```
+
+输出
+
+```
+110
+```
+
+
+
+```python
+n = int(input())
+print(bin(n)[2:])
+```
+
+
+
+```python
+# Read input
+n = int(input().strip())
+
+# Initialize an empty string for the binary representation
+binary_representation = ""
+
+# Convert to binary manually
+if n == 0:
+    binary_representation = "0"
+else:
+    while n > 0:
+        binary_representation = str(n % 2) + binary_representation
+        n //= 2
+
+# Print the binary representation
+print(binary_representation)
+```
+
+
+
+
+
+sy75: 
+
+https://sunnywhy.com/sfbj/3/5/75
+
 
 
 
@@ -1343,6 +1407,34 @@ print(result)
 ```
 
 
+
+
+
+
+
+sy76: 
+
+https://sunnywhy.com/sfbj/3/5/76
+
+
+
+```python
+
+```
+
+
+
+
+
+sy77: 
+
+https://sunnywhy.com/sfbj/3/5/77
+
+
+
+```python
+
+```
 
 
 
