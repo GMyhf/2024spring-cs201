@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 2058 GMT+8 Sep 22, 2024
+Updated 2130 GMT+8 Oct 1, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1334,7 +1334,7 @@ print(result)
 
 ## 5 进制转换 4题
 
-### sy74: 十进制转二进制
+### sy74: 十进制转二进制 简单
 
 https://sunnywhy.com/sfbj/3/5/74
 
@@ -1394,53 +1394,260 @@ print(binary_representation)
 
 
 
-sy75: 
+### sy75: 二进制转十进制 简单
 
 https://sunnywhy.com/sfbj/3/5/75
 
+给定一个二进制01串，输出它的十进制形式。
 
+**输入描述**
 
+一个二进制01串（长度不超过10）。
 
+**输出描述**
 
-```python
+输出十进制形式。
 
+样例1
+
+输入
+
+```
+110
+```
+
+输出
+
+```
+6
 ```
 
 
 
 
 
+```python
+bin_str = input()
+total_val = 0
+for idx,val in enumerate(bin_str[::-1]):
+    total_val += 2**idx * int(val)
+print(total_val)
+```
 
 
-sy76: 
+
+
+
+### sy76: 十进制转K进制 简单
 
 https://sunnywhy.com/sfbj/3/5/76
 
+给定一个十进制数n，输出它的K进制形式。
+
+**输入描述**
+
+一个非负整数n（$0 \le n \le 1024$）和一个正整数K（$2 \le K \le 16$）。
+
+**输出描述**
+
+输出一行，表示的进制。其中超过9的位使用大写英文字母表示（10 => A、11 => B、12 => C、13 => D、14 => E、15 => F）。
+
+样例1
+
+输入
+
+```
+6 2
+```
+
+输出
+
+```
+110
+```
+
+样例2
+
+输入
+
+```
+45 16
+```
+
+输出
+
+```
+2D
+```
+
 
 
 ```python
+dic = [0,1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F']
+n,k = map(int, input().split())
 
+k_representation = ""
+
+if n == 0:
+    k_representation = "0"
+else:
+    while n > 0:
+        k_representation = str(dic[n % k]) + k_representation
+        n //= k
+
+print(k_representation)
 ```
 
 
 
 
 
-sy77: 
+### sy77: K进制转十进制 简单
 
 https://sunnywhy.com/sfbj/3/5/77
+
+给定一个K进制串，输出它的十进制形式。
+
+**输入描述**
+
+一个K进制串（长度不超过7，其中超过9的位使用大写英文字母表示（A => 10、B => 11、C => 12、D => 13、E => 14、F => 15））和一个正整数K（$2 \le K \le 16$）。
+
+**输出描述**
+
+输出对应的十进制形式。
+
+样例1
+
+输入
+
+```
+110 2
+```
+
+输出
+
+```
+6
+```
+
+样例2
+
+输入
+
+```
+2D 16
+```
+
+输出
+
+```
+45
+```
 
 
 
 ```python
+dic = {'0':0,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'A':10,'B':11,'C':12,'D':13,'E':14,'F':15}
 
+k_str, k = input().split()
+k = int(k)
+total_val = 0
+for idx,val in enumerate(k_str[::-1]):
+    total_val += k**idx * dic[val]
+print(total_val)
 ```
 
 
 
 ## 6 字符串处理 8题
 
+### sy78: 回文字符串 简单
 
+https://sunnywhy.com/sfbj/3/6/78
+
+
+
+```python
+
+```
+
+
+
+### sy79:  单词倒序 简单
+
+https://sunnywhy.com/sfbj/3/6/79
+
+
+
+```python
+
+```
+
+
+
+### sy80: 单词倒序II  简单
+
+https://sunnywhy.com/sfbj/3/6/80
+
+
+
+```python
+
+```
+
+
+
+### sy81: 单词数 简单
+
+https://sunnywhy.com/sfbj/3/6/81
+
+
+
+```python
+
+```
+
+
+
+### sy82:  首字母大写 简单
+
+https://sunnywhy.com/sfbj/3/6/82
+
+
+
+```python
+
+```
+
+
+
+### sy83:  公共前缀 简单
+
+https://sunnywhy.com/sfbj/3/6/83
+
+
+
+```python
+
+```
+
+
+
+### sy84:  连续相同字符统计 简单
+
+https://sunnywhy.com/sfbj/3/6/84
+
+
+
+```python
+
+```
+
+
+
+### sy85:  C语言合法变量名简单
+
+https://sunnywhy.com/sfbj/3/6/85
 
 
 
@@ -1453,6 +1660,8 @@ https://sunnywhy.com/sfbj/3/5/77
 
 
 ## 7 综合练习精选 22题
+
+
 
 
 
