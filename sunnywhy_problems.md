@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 2130 GMT+8 Oct 1, 2024
+Updated 0023 GMT+8 Oct 3, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1565,10 +1565,55 @@ print(total_val)
 
 https://sunnywhy.com/sfbj/3/6/78
 
+如果一个字符串逆序后与正序相同，那么称这个字符串为回文字符串。例如`abcba`是回文字符串，`abcca`不是回文字符串。
+
+给定一个字符串，判断它是否是回文字符串。
+
+**输入描述**
+
+一个非空字符串（长度不超过 ，仅由小写字母组成）。
+
+**输出描述**
+
+如果是回文字符串，那么输出`YES`，否则输出`NO`。
+
+样例1
+
+输入
+
+```
+abcba
+```
+
+输出
+
+```
+YES
+```
+
+样例2
+
+输入
+
+```
+abcca
+```
+
+输出
+
+```
+NO
+```
+
 
 
 ```python
-
+s = input()
+s_rev = s[::-1]
+if s == s_rev:
+    print('YES')
+else:
+    print('NO')
 ```
 
 
@@ -1577,10 +1622,35 @@ https://sunnywhy.com/sfbj/3/6/78
 
 https://sunnywhy.com/sfbj/3/6/79
 
+给定一堆用空格隔开的英文单词，输出这些英文单词的倒序（单词内部保持原序）。
+
+**输入描述**
+
+一堆英文单词，每个单词不超过10个字符，且仅由大小写字母组成；每两个单词之间用一个空格隔开，整个字符串的长度不超过1000。
+
+**输出描述**
+
+输出英文单词的倒序，单词之间仍然是一个空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+Hao Hao Xue Xi
+```
+
+输出
+
+```
+Xi Xue Hao Hao
+```
+
 
 
 ```python
-
+s = input().split()
+print(' '.join(s[::-1]))
 ```
 
 
@@ -1589,10 +1659,38 @@ https://sunnywhy.com/sfbj/3/6/79
 
 https://sunnywhy.com/sfbj/3/6/80
 
+给定一堆用空格隔开的英文单词，将每个单词内部逆序后输出（单词顺序不变）。
+
+**输入描述**
+
+一堆英文单词，每个单词不超过10个字符，且仅由大小写字母组成；每两个单词之间用一个空格隔开，整个字符串的长度不超过1000。
+
+**输出描述**
+
+输出每个单词内部逆序后的结果，单词之间仍然是一个空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+Hao Hao Xue Xi
+```
+
+输出
+
+```
+oaH oaH euX iX
+```
+
 
 
 ```python
-
+s = input().split()
+ans = []
+for token in s:
+    ans.append(token[::-1])
+print(' '.join(ans))
 ```
 
 
@@ -1601,10 +1699,34 @@ https://sunnywhy.com/sfbj/3/6/80
 
 https://sunnywhy.com/sfbj/3/6/81
 
+给定一堆用空格隔开的英文单词，统计单词个数。
+
+**输入描述**
+
+一堆英文单词，每个单词不超过10个字符，且仅由大小写字母组成；每两个单词之间用一个空格隔开，整个字符串的长度不超过1000。
+
+**输出描述**
+
+输出一个整数，表示单词的个数。
+
+样例1
+
+输入
+
+```
+good good study
+```
+
+输出
+
+```
+3
+```
+
 
 
 ```python
-
+print(len(input().split()))
 ```
 
 
@@ -1613,10 +1735,36 @@ https://sunnywhy.com/sfbj/3/6/81
 
 https://sunnywhy.com/sfbj/3/6/82
 
+给定一堆用空格隔开的英文单词，将每个单词的首字母改为大写后输出。
+
+**输入描述**
+
+一堆英文单词，每个单词不超过10个字符，且仅由小写字母组成；每两个单词之间用一个空格隔开，整个字符串的长度不超过1000。
+
+**输出描述**
+
+输出每个单词首字母大写后的结果，单词之间仍然是一个空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+good good study
+```
+
+输出
+
+```
+Good Good Study
+```
+
 
 
 ```python
-
+s = input().strip().split()
+ans = [word.capitalize() for word in s]
+print(' '.join(ans))
 ```
 
 
@@ -1625,10 +1773,76 @@ https://sunnywhy.com/sfbj/3/6/82
 
 https://sunnywhy.com/sfbj/3/6/83
 
+给定个字符串，求它们的公共前缀。
+
+**输入描述**
+
+第一行为一个正整数n（$2 \le n \le 20$），表示字符串的个数。
+
+接下来行，每行一个字符串（仅由大小写字母组成），每个字符串的长度不超过50。
+
+**输出描述**
+
+输出个字符串的公共前缀。如果没有公共前缀，那么输出空行。
+
+样例1
+
+输入
+
+```
+3
+actrpg
+actfps
+actarpg
+```
+
+输出
+
+```
+act
+```
+
+样例2
+
+输入
+
+```
+3
+actrpg
+Actfps
+actarpg
+```
+
+输出
+
+```
+
+```
+
 
 
 ```python
+def common_prefix(strs):
+    if not strs:
+        return ""
+    
+    # Start with the first string as the prefix
+    prefix = strs[0]
+    
+    for s in strs[1:]:
+        # Update the prefix by comparing it with each string
+        while s[:len(prefix)] != prefix and prefix:
+            prefix = prefix[:-1]
+        if not prefix:
+            break
+    
+    return prefix
 
+if __name__ == "__main__":
+    n = int(input().strip())
+    strs = [input().strip() for _ in range(n)]
+    result = common_prefix(strs)
+    print(result)
 ```
 
 
@@ -1637,10 +1851,76 @@ https://sunnywhy.com/sfbj/3/6/83
 
 https://sunnywhy.com/sfbj/3/6/84
 
+给定一个字符串，统计其中连续出现的相同字符个数。
+
+**输入描述**
+
+一个非空字符串（长度不超过100，仅由小写字母组成）。
+
+**输出描述**
+
+按从左到右字符出现的顺序，输出每个字符连续出现的个数。
+
+其中每个字符输出一行，每行以空格为分隔，输出该字符与出现的个数。
+
+样例1
+
+输入
+
+```
+abbbcc
+```
+
+输出
+
+```
+a 1
+b 3
+c 2
+```
+
+样例2
+
+输入
+
+```
+ccbbc
+```
+
+输出
+
+```
+c 2
+b 2
+c 1
+```
+
 
 
 ```python
+def count_consecutive_characters(s):
+    if not s:
+        return
 
+    result = []
+    current_char = s[0]
+    count = 1
+
+    for char in s[1:]:
+        if char == current_char:
+            count += 1
+        else:
+            result.append((current_char, count))
+            current_char = char
+            count = 1
+    result.append((current_char, count))
+
+    for char, count in result:
+        print(f"{char} {count}")
+
+if __name__ == "__main__":
+    s = input().strip()
+    count_consecutive_characters(s)
 ```
 
 
@@ -1649,6 +1929,309 @@ https://sunnywhy.com/sfbj/3/6/84
 
 https://sunnywhy.com/sfbj/3/6/85
 
+一个合法的C语言变量名需要满足：
+
+- 所有字符必须由且仅由字母（A-Z,a-z）、数字（0-9）、下划线（_）组成；
+- 首字符不能是数字，可以是字母或下划线；
+- 不能是C语言关键字，如if、while等。
+
+给定一个**非**C语言关键字的字符串，判断其是否可以作为合法的C语言变量名。
+
+**输入描述**
+
+一个非空字符串（长度不超过20）。数据保证不会出现C语言关键字。
+
+**输出描述**
+
+如果可以作为合法的C语言变量名，那么输出YES，否则输出NO。
+
+样例1
+
+输入
+
+```
+a1
+```
+
+输出
+
+```
+YES
+```
+
+样例2
+
+输入
+
+```
+1a
+```
+
+输出
+
+```
+NO
+```
+
+
+
+```python
+def is_valid_c_variable_name(s):
+    c_keywords = {
+        "auto", "break", "case", "char", "const", "continue", "default", "do", "double", "else", "enum", "extern", 
+        "float", "for", "goto", "if", "inline", "int", "long", "register", "restrict", "return", "short", "signed", 
+        "sizeof", "static", "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while", "_Alignas", 
+        "_Alignof", "_Atomic", "_Bool", "_Complex", "_Generic", "_Imaginary", "_Noreturn", "_Static_assert", "_Thread_local"
+    }
+
+    if not s:
+        return "NO"
+
+    if s in c_keywords:
+        return "NO"
+
+    if not (s[0].isalpha() or s[0] == '_'):
+        return "NO"
+
+    for char in s[1:]:
+        if not (char.isalnum() or char == '_'):
+            return "NO"
+
+    return "YES"
+
+if __name__ == "__main__":
+    s = input().strip()
+    print(is_valid_c_variable_name(s))
+```
+
+
+
+
+
+## 7 综合练习精选 16题
+
+### sy884: 统计一下 入门
+
+https://sunnywhy.com/sfbj/3/7/884
+
+给定一个区间 [L,R]，其中 L 和 R 为正整数。你的任务是计算这个区间内所有整数的十进制表示中出现的数字 1 的总次数。
+
+**输入描述**
+
+输入包含两个整数 L 和 R（$1 \le L \le R \le 10000$），分别表示区间的左右端点。
+
+**输出描述**
+
+输出一个整数，表示区间 [L,R] 中所有整数的十进制表示中数字 出现的总次数。
+
+样例1
+
+输入
+
+```
+1 11
+```
+
+输出
+
+```
+4
+```
+
+解释
+
+在区间 [1,11]中，数字 1、10、11 中的 1、10分别出现了 1 次，数字 11中的 1出现了 2 次，因此总共出现了 4 次 。
+
+
+
+```python
+def count_ones_in_range(L, R):
+    count = 0
+    for num in range(L, R + 1):
+        count += str(num).count('1')
+    return count
+
+if __name__ == "__main__":
+    L, R = map(int, input().strip().split())
+    result = count_ones_in_range(L, R)
+    print(result)
+```
+
+
+
+### sy569: 双向喜欢
+
+https://sunnywhy.com/sfbj/3/7/569
+
+给定n个人的q组喜欢关系，问是否有双向喜欢的情况存在。
+
+**输入描述**
+
+第一行为两行数字n,q。
+
+后面q行，每行两个数字x,y，表示x喜欢y，注意这里是单向喜欢。
+
+$1 \le n \le 10 $
+
+$1 \le q \le 10$
+
+$1 \le x,y \le n$
+
+$x \ne y$
+
+
+
+**输出描述**
+
+如果有双向喜欢的情况则输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+3 3
+1 2
+2 1
+1 3
+```
+
+输出
+
+```
+Yes
+```
+
+样例2
+
+输入
+
+```
+3 3
+1 2
+2 3
+3 1
+```
+
+输出
+
+```
+No
+```
+
+
+
+```python
+def has_mutual_likes(n, q, likes):
+    like_set = set()
+    for x, y in likes:
+        if (y, x) in like_set:
+            return "Yes"
+        like_set.add((x, y))
+    return "No"
+
+if __name__ == "__main__":
+    n, q = map(int, input().strip().split())
+    likes = [tuple(map(int, input().strip().split())) for _ in range(q)]
+    result = has_mutual_likes(n, q, likes)
+    print(result)
+```
+
+
+
+### sy570: 三方欢喜
+
+https://sunnywhy.com/sfbj/3/7/570
+
+给定n个人的q组喜欢关系，问是否有三方欢喜的情况存在，即a喜欢b ，b喜欢c，还有c也喜欢a。
+
+**输入描述**
+
+第一行为两行数字n,q。
+
+后面q行，每行两个数字x,y，表示x喜欢y，注意这里是单向喜欢。
+
+$1 \le n \le 10 $
+
+$1 \le q \le 10$
+
+$1 \le x,y \le n$
+
+$x \ne y$
+
+**输出描述**
+
+如果有三方欢喜的情况则输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+3 3
+1 2
+2 1
+1 3
+```
+
+输出
+
+```
+No
+```
+
+样例2
+
+输入
+
+```
+3 3
+1 2
+2 3
+3 1
+```
+
+输出
+
+```
+Yes
+```
+
+
+
+初始化一个字典用于存储喜欢关系。
+遍历 q 行输入，记录每个喜欢关系。
+检查是否存在三方欢喜的情况，即 a 喜欢 b，b 喜欢 c，c 喜欢 a。
+
+```python
+def has_three_way_likes(n, q, likes):
+    like_dict = {}
+    for x, y in likes:
+        if x not in like_dict:
+            like_dict[x] = set()
+        like_dict[x].add(y)
+    
+    for a in like_dict:
+        for b in like_dict[a]:
+            if b in like_dict:
+                for c in like_dict[b]:
+                    if c in like_dict and a in like_dict[c]:
+                        return "Yes"
+    return "No"
+
+if __name__ == "__main__":
+    n, q = map(int, input().strip().split())
+    likes = [tuple(map(int, input().strip().split())) for _ in range(q)]
+    result = has_three_way_likes(n, q, likes)
+    print(result)
+```
+
+
+
+### sy571:  四方坐标
+
+https://sunnywhy.com/sfbj/3/7/571
+
 
 
 ```python
@@ -1659,9 +2242,149 @@ https://sunnywhy.com/sfbj/3/6/85
 
 
 
-## 7 综合练习精选 22题
+### sy572:  五次求导
+
+https://sunnywhy.com/sfbj/3/7/572
 
 
+
+```python
+
+```
+
+
+
+### sy573: 六小时差
+
+https://sunnywhy.com/sfbj/3/7/573
+
+
+
+```python
+
+```
+
+
+
+
+
+sy574: 周七米粽
+
+https://sunnywhy.com/sfbj/3/7/574
+
+
+
+```python
+
+```
+
+
+
+sy575: 八次翻转 
+
+https://sunnywhy.com/sfbj/3/7/575
+
+
+
+```python
+
+```
+
+
+
+sy576: 九阵寻词
+
+https://sunnywhy.com/sfbj/3/7/576
+
+
+
+```python
+
+```
+
+
+
+sy577: 一O交错
+
+https://sunnywhy.com/sfbj/3/7/577
+
+
+
+```python
+
+```
+
+
+
+sy578: 一一相依
+
+https://sunnywhy.com/sfbj/3/7/578
+
+
+
+```python
+
+```
+
+
+
+sy579: 二三乃大
+
+https://sunnywhy.com/sfbj/3/7/579
+
+
+
+```python
+
+```
+
+
+
+sy580: 四面楚歌
+
+https://sunnywhy.com/sfbj/3/7/580
+
+
+
+```python
+
+```
+
+
+
+sy581: 六的倍数
+
+https://sunnywhy.com/sfbj/3/7/581
+
+
+
+```python
+
+```
+
+
+
+sy582: 七次选择
+
+https://sunnywhy.com/sfbj/3/7/582
+
+
+
+```python
+
+```
+
+
+
+sy583: 抽象三角图形
+
+https://sunnywhy.com/sfbj/3/7/583
+
+
+
+```python
+
+```
 
 
 
