@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 0023 GMT+8 Oct 3, 2024
+Updated 0027 GMT+8 Oct 5, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2232,10 +2232,47 @@ if __name__ == "__main__":
 
 https://sunnywhy.com/sfbj/3/7/571
 
+给定一个矩形在直角坐标系`xOy`上的两个对顶点的坐标，求这个矩形的面积。
+
+假设矩形的所有边均平行于x轴或y轴。
+
+**输入描述**
+
+两行，每行为一个整数坐标x,y，分别表示两个对顶点的坐标。
+
+数据范围：
+
+$-100 \le x,y \le 100$
+
+**输出描述**
+
+一个整数，这个矩形的面积。数据保证矩形的面积不会为0。
+
+样例1
+
+输入
+
+```
+1 1
+2 3
+```
+
+输出
+
+```
+2
+```
+
+解释
+
+左下角坐标为`(1,1)`，右上角坐标为`(2,3)`，该矩形的面积是`2`。
+
 
 
 ```python
-
+x1, y1 = map(int, input().split())
+x2, y2 = map(int, input().split())
+print(abs(x1 - x2) * abs(y1 - y2))
 ```
 
 
@@ -2246,10 +2283,99 @@ https://sunnywhy.com/sfbj/3/7/571
 
 https://sunnywhy.com/sfbj/3/7/572
 
+给定一个多项式函数:
+
+$f(x) = a_0 x^{b_0} + a_1 x^{b_1} + \ldots + a_{n-2} x^{b_{n-2}} + a_{n-1} x^{b_{n-1}}$
+
+对这个f(x)求五阶导函数$f^{'''''}(x)$。
+
+问这个五阶导函数最后的表达式是什么。
+
+**输入描述**
+
+第一行为n。
+
+第二行到n+1行为都为整数$a_i,b_i$表示这个有一项。
+
+其中 
+
+$1 \le n \le 10$
+
+$-10 \le a \le 10$
+
+$1 \le b \le 10$
+
+**输出描述**
+
+输出求导后的多项式，每一行两个整数，按照的次数从高到低输出他的系数和次数。
+
+如果$f^{'''''}(x)=0$则输出`0 0`
+
+如果是有非零常数项，比如$f^{'''''}(x)=(\sum a_ix^{b_i}) + C$，则在最后一行输出`C 0`。
+
+样例1
+
+输入
+
+```
+2
+1 5
+1 4
+```
+
+输出
+
+```
+120 0
+```
+
+解释
+
+$f(x) = x^5 + x^4$
+
+那么有
+
+$f^{'''''}(x)=120$
+
 
 
 ```python
+def compute_kth_derivative(a, b, k):
+    if b < k:
+        return 0, 0
+    coefficient = a
+    exponent = b
+    for i in range(k):
+        coefficient *= exponent
+        exponent -= 1
+    return coefficient, exponent
 
+if __name__ == "__main__":
+    import sys
+    input = sys.stdin.read
+    data = input().strip().split()
+
+    n = int(data[0])
+    terms = [(int(data[i*2+1]), int(data[i*2+2])) for i in range(n)]
+
+    k = 5
+    result = {}
+    for a, b in terms:
+        coeff, exp = compute_kth_derivative(a, b, k)
+        if coeff != 0:
+            if exp in result:
+                result[exp] += coeff
+            else:
+                result[exp] = coeff
+
+    if not result:
+        print("0 0")
+    else:
+        sorted_result = sorted(result.items(), key=lambda x: -x[0])
+        for exp, coeff in sorted_result:
+            if coeff == 0:
+                continue
+            print(coeff, exp)
 ```
 
 
@@ -2258,89 +2384,551 @@ https://sunnywhy.com/sfbj/3/7/572
 
 https://sunnywhy.com/sfbj/3/7/573
 
+给定一个24小时制时间，包括小时和分钟，问六小时x分钟后，时间是多少。
+
+如果时间跨天了，则按照跨天后的时间算。
+
+**输入描述**
+
+第一行，一个整数数字x。
+
+第二行，两个数字，表示当天的时间，分别是小时h和分钟m。数据保证数据合法。
+
+$0 \le x \le 59$
+
+$0 \le h \le 23$
+
+$0 \le m \le 59$
+
+**输出描述**
+
+6小时x分钟后的时间。
+
+样例1
+
+输入
+
+```
+6
+0 0
+```
+
+输出
+
+```
+6 6
+```
+
+样例2
+
+输入
+
+```
+1
+23 59
+```
+
+输出
+
+```
+6 0
+```
+
 
 
 ```python
+if __name__ == "__main__":
+    import sys
+    input = sys.stdin.read
+    data = input().strip().split()
 
+    x = int(data[0])
+    h = int(data[1])
+    m = int(data[2])
+
+    # Add 6 hours and x minutes
+    new_h = h + 6
+    new_m = m + x
+
+    # Handle minute overflow
+    if new_m >= 60:
+        new_h += new_m // 60
+        new_m = new_m % 60
+
+    # Handle hour overflow
+    if new_h >= 24:
+        new_h = new_h % 24
+
+    print(new_h, new_m)
 ```
 
 
 
 
 
-sy574: 周七米粽
+### sy574: 周七迷踪
 
 https://sunnywhy.com/sfbj/3/7/574
 
+给定年月日，问下一个周日是什么时候。
+
+如果给定时间本身是周日，则输出当天时间。
+
+**输入描述**
+
+一行，3个数字，分别表示年月日，其中年月日保证数据合法，为2000年到2099年的某一天。
+
+**输出描述**
+
+下一个周天的时间，3个数字，分别是年月日。
+
+样例1
+
+输入
+
+```
+2000 1 1
+```
+
+输出
+
+```
+2000 1 2
+```
+
+解释
+
+2000年的1月1号是周六。 那么2000年的1月2号是周日。
+
 
 
 ```python
+import datetime
 
+if __name__ == "__main__":
+    import sys
+    input = sys.stdin.read
+    data = input().strip().split()
+
+    year = int(data[0])
+    month = int(data[1])
+    day = int(data[2])
+
+    given_date = datetime.date(year, month, day)
+    day_of_week = given_date.weekday()  # Monday is 0 and Sunday is 6
+
+    # Calculate days to add to reach next Sunday
+    days_to_add = (6 - day_of_week) % 7
+
+    next_sunday = given_date + datetime.timedelta(days=days_to_add)
+
+    print(next_sunday.year, next_sunday.month, next_sunday.day)
 ```
 
 
 
-sy575: 八次翻转 
+
+
+### sy575: 八次翻转 
 
 https://sunnywhy.com/sfbj/3/7/575
 
+给定一个字符串S，下标从0开始，按照顺序对这个字符串进行如下操作8次，操作为对字符串下标区间$[L_i,Ri)$的元素进行一次翻转（即字符串逆置）。
+
+输出的最终状态。
+
+**输入描述**
+
+第一行是一个字符串S
+
+第2到9行为$L_i,Ri$，表示一次操作的下标区间。
+
+$1 \le len(S) \le 1000$
+
+$0 \le Li < Ri \le len(S)$
 
 
-```python
 
+**输出描述**
+
+八次翻转之后最终的S
+
+样例1
+
+输入
+
+```
+ab
+0 2
+0 2
+0 2
+0 2
+0 2
+0 2
+0 2
+0 2
+```
+
+输出
+
+```
+ab
 ```
 
 
 
-sy576: 九阵寻词
+```python
+def reverse_substring(s, l, r):
+    return s[:l] + s[l:r][::-1] + s[r:]
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().strip().split('\n')
+    
+    s = data[0]
+    for i in range(1, 9):
+        l, r = map(int, data[i].split())
+        s = reverse_substring(s, l, r)
+    
+    print(s)
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+### sy576: 九阵寻词
 
 https://sunnywhy.com/sfbj/3/7/576
 
+给定一个`9 x 9`的小写字母方阵。
 
+问单词S是否在这个方阵中，其中S存在的形式可以是横向（从左到右）或竖向（从上到下）。
 
-```python
+**输入描述**
 
+1到9行为一个长度为9的小写字符串。
+
+第10行为S。
+
+$1 \le len(S) \le 9$
+
+**输出描述**
+
+如果S存在这个方阵中，则输出`Yes`，否则输出`No`。
+
+样例1
+
+输入
+
+```
+srnosuios
+dmakyisab
+qvwmiyxch
+xzulwrfve
+nbsfclffj
+lplflenmc
+mpwvldpoe
+wgeeaeyvi
+inzyaapfv
+lmwi
+```
+
+输出
+
+```
+Yes
 ```
 
 
 
-sy577: 一O交错
+```python
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().strip().split('\n')
+
+    matrix = data[:9]
+    word = data[9]
+
+    # Check rows
+    for row in matrix:
+        if word in row:
+            print("Yes")
+            return
+
+    # Check columns
+    for col in range(9):
+        column = ''.join(matrix[row][col] for row in range(9))
+        if word in column:
+            print("Yes")
+            return
+
+    print("No")
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+### sy577: 一O交错
 
 https://sunnywhy.com/sfbj/3/7/577
 
+给定一个01字符串S，问最长的和的交错区间的长度。
+
+其中0和1的交错区间是指，在这个区间范围的任意两个相邻的数字都不同。例如01010是交错的，001不是交错的。
+
+**输入描述**
+
+一行，一个01字符串S。
+
+$1 < |S| < 1000$
+
+**输出描述**
+
+一个整数，最长的0和1的交错区间的长度。
+
+注意交错没有0和1先后之分。
+
+样例1
+
+输入
+
+```
+10
+```
+
+输出
+
+```
+2
+```
+
+样例2
+
+输入
+
+```
+00
+```
+
+输出
+
+```
+1
+```
+
+样例3
+
+输入
+
+```
+000101000
+```
+
+输出
+
+```
+5
+```
+
+解释
+
+中间的01010是交错区间，长度为5。
+
 
 
 ```python
+def longest_alternating_substring(s):
+    if len(s) < 2:
+        return len(s)
+    
+    max_length = 1
+    current_length = 1
+    
+    for i in range(1, len(s)):
+        if s[i] != s[i - 1]:
+            current_length += 1
+        else:
+            max_length = max(max_length, current_length)
+            current_length = 1
+    
+    max_length = max(max_length, current_length)
+    return max_length
 
+if __name__ == "__main__":
+    import sys
+    input = sys.stdin.read
+    s = input().strip()
+    print(longest_alternating_substring(s))
 ```
 
 
 
-sy578: 一一相依
+### sy578: 一一相依
 
 https://sunnywhy.com/sfbj/3/7/578
 
+给定一个字符串，只包含字符0和1，现在能把这个数组里的最多k个0变为1，操作后，最长的连续`1`的子串有多长。
 
+**输入描述**
+
+第一行两个数字n,k，表示字符串的长度和可操作次数k。
+
+第二行为一个字符串。
+
+$0 < n \le 30$
+
+$0 \le k \le 30$
+
+注意n和k没有互相限制关系。
+
+**输出描述**
+
+输出操作后的最长的连续`1`的子串的长度。
+
+样例1
+
+输入
+
+```
+20 2
+11111011111110111110
+```
+
+输出
+
+```
+19
+```
+
+说明
+
+本题有时间复杂度为的算法，请比赛期间独立思考。
+
+
+
+**Plan**
+
+1. Read the input values \( n \) and \( k \).
+2. Read the binary string.
+3. Use a sliding window approach to find the longest substring of `1`s that can be obtained by flipping at most \( k \) `0`s to `1`s.
+4. Initialize two pointers, `left` and `right`, to represent the window's boundaries.
+5. Use a variable to count the number of `0`s in the current window.
+6. Expand the window by moving the `right` pointer and update the count of `0`s.
+7. If the count of `0`s exceeds \( k \), move the `left` pointer to shrink the window until the count of `0`s is less than or equal to \( k \).
+8. Keep track of the maximum length of the window that meets the condition.
+9. Output the maximum length.
+
+**Code**
 
 ```python
+def longest_ones_after_k_flips(n, k, s):
+    left = 0
+    max_length = 0
+    zero_count = 0
 
+    for right in range(n):
+        if s[right] == '0':
+            zero_count += 1
+
+        while zero_count > k:
+            if s[left] == '0':
+                zero_count -= 1
+            left += 1
+
+        max_length = max(max_length, right - left + 1)
+
+    return max_length
+
+if __name__ == "__main__":
+    import sys
+    input = sys.stdin.read
+    data = input().strip().split()
+    
+    n = int(data[0])
+    k = int(data[1])
+    s = data[2]
+    
+    print(longest_ones_after_k_flips(n, k, s))
 ```
 
 
 
-sy579: 二三乃大
+
+
+### sy579: 二三乃大
 
 https://sunnywhy.com/sfbj/3/7/579
 
+给定一个数字字符串S，现在把这个字符串里面2和3拿出来，重新组合一个新的整数，问最大能组合出的整数。
+
+如果无法组合，则输出0。
+
+**输入描述**
+
+一个数字字符串S
+
+$0 < Length(S) \le 1000$
 
 
-```python
 
+**输出描述**
+
+输出最大能组合出的整数
+
+样例1
+
+输入
+
+```
+12321
+```
+
+输出
+
+```
+322
+```
+
+样例2
+
+输入
+
+```
+44
+```
+
+输出
+
+```
+0
 ```
 
 
 
-sy580: 四面楚歌
+```python
+def max_combination(s):
+    digits = [char for char in s if char in '23']
+    if not digits:
+        return 0
+    digits.sort(reverse=True)
+    return int(''.join(digits))
+
+if __name__ == "__main__":
+    import sys
+    input = sys.stdin.read
+    s = input().strip()
+    print(max_combination(s))
+```
+
+
+
+### sy580: 四面楚歌
 
 https://sunnywhy.com/sfbj/3/7/580
 
@@ -2352,9 +2940,11 @@ https://sunnywhy.com/sfbj/3/7/580
 
 
 
-sy581: 六的倍数
+### sy581: 六的倍数
 
 https://sunnywhy.com/sfbj/3/7/581
+
+
 
 
 
@@ -2364,7 +2954,7 @@ https://sunnywhy.com/sfbj/3/7/581
 
 
 
-sy582: 七次选择
+### sy582: 七次选择
 
 https://sunnywhy.com/sfbj/3/7/582
 
@@ -2376,9 +2966,13 @@ https://sunnywhy.com/sfbj/3/7/582
 
 
 
-sy583: 抽象三角图形
+
+
+### sy583: 抽象三角图形
 
 https://sunnywhy.com/sfbj/3/7/583
+
+
 
 
 
