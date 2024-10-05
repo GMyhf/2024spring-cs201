@@ -2932,10 +2932,95 @@ if __name__ == "__main__":
 
 https://sunnywhy.com/sfbj/3/7/580
 
+给定一个的$n \times m$数字矩阵，每个数字都为1到9。
 
+现在选定一个位置，记该位置所在列的最上方的数字为A、该位置所在行的最右侧的数字为B、该位置所在列的最下方的数字为C、该位置所在行的最左侧的数字为D。将这四个数字组成一个新的整数ABCD。
+
+问选取哪个位置（对应的数字为$x$），可以使得$x \times ABCD$的值最大。输出这个最大值。
+
+**输入描述**
+
+第一行为两个数字n,m，分别表示这个数字的矩阵的行数和列数。
+
+第2到n+1行为数字矩阵每一行的数字，用空格分开。
+
+$1 \le n,m \le 100$
+
+
+
+**输出描述**
+
+输出一个整数，表示能得到的最大值。
+
+样例1
+
+输入
+
+```
+3 3
+1 8 2
+5 9 7
+3 6 4
+```
+
+输出
+
+```
+78885
+```
+
+解释
+
+选中间9的时候，值为9*(8765)=78885，此时是最大的。
+
+
+
+**Pseudocode:**
+
+1. Parse the input to get the dimensions of the matrix \( n \) and \( m \).
+2. Read the matrix values.
+3. Initialize a variable to store the maximum value.
+4. Iterate through each position in the matrix:
+   - For each position, determine the values of \( A \), \( B \), \( C \), and \( D \).
+   - Form the integer \( ABCD \) from these values.
+   - Calculate the product of the current position's value and \( ABCD \).
+   - Update the maximum value if the current product is greater.
+5. Output the maximum value.
+
+**Code:**
 
 ```python
+def find_max_value(n, m, matrix):
+    max_value = 0
 
+    for i in range(n):
+        for j in range(m):
+            A = matrix[0][j]
+            B = matrix[i][m-1]
+            C = matrix[n-1][j]
+            D = matrix[i][0]
+            ABCD = int(f"{A}{B}{C}{D}")
+            current_value = matrix[i][j] * ABCD
+            max_value = max(max_value, current_value)
+
+    return max_value
+
+if __name__ == "__main__":
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    n = int(data[0])
+    m = int(data[1])
+    matrix = []
+    index = 2
+    for i in range(n):
+        row = list(map(int, data[index:index + m]))
+        matrix.append(row)
+        index += m
+    
+    result = find_max_value(n, m, matrix)
+    print(result)
 ```
 
 
@@ -2944,12 +3029,72 @@ https://sunnywhy.com/sfbj/3/7/580
 
 https://sunnywhy.com/sfbj/3/7/581
 
+已知一个非负整数的所有数位相加，如果结果是3的倍数，那么这个数字能被3整除。
 
+现在问一个数字x，问它是否能被6整除。
+
+**输入描述**
+
+一个整数字符串。
+
+数据范围：
+
+$0 \le x \le 10^{1000}$
+
+**输出描述**
+
+如果数字能被整除，输出`Yes`；否则输出`No`。
+
+样例1
+
+输入
+
+```
+123
+```
+
+输出
+
+```
+No
+```
+
+样例2
+
+输入
+
+```
+18
+```
+
+输出
+
+```
+Yes
+```
 
 
 
 ```python
+def is_divisible_by_6(x):
+    # Check if the last digit is even
+    if int(x[-1]) % 2 != 0:
+        return "No"
+    
+    # Calculate the sum of all digits
+    digit_sum = sum(int(digit) for digit in x)
+    
+    # Check if the sum of digits is divisible by 3
+    if digit_sum % 3 == 0:
+        return "Yes"
+    else:
+        return "No"
 
+if __name__ == "__main__":
+    import sys
+    input = sys.stdin.read().strip()
+    result = is_divisible_by_6(input)
+    print(result)
 ```
 
 
@@ -2958,10 +3103,52 @@ https://sunnywhy.com/sfbj/3/7/581
 
 https://sunnywhy.com/sfbj/3/7/582
 
+求组合数$C_n^7$。
+
+其中$C_n^7 = \frac{n!}{7!(n-7)!}$。
+
+**输入描述**
+
+一个整数N。
+
+$7 \le N \le 50$
+
+**输出描述**
+
+组合数$C_n^7$的值。
+
+数据保证$1 \le C_n^7 \le 2 \times 10^9$。
+
+样例1
+
+输入
+
+```
+7
+```
+
+输出
+
+```
+1
+```
+
 
 
 ```python
+import math
 
+def combination_n_7(n):
+    if n < 7:
+        return 0
+    return math.factorial(n) // (math.factorial(7) * math.factorial(n - 7))
+
+if __name__ == "__main__":
+    import sys
+    input = sys.stdin.read
+    n = int(input().strip())
+    result = combination_n_7(n)
+    print(result)
 ```
 
 
@@ -2972,12 +3159,65 @@ https://sunnywhy.com/sfbj/3/7/582
 
 https://sunnywhy.com/sfbj/3/7/583
 
+输出一个腰长为$n (n \ge 2)$的抽象等腰直角三角形。
 
+比如n = 2时输出
+
+```text
+ #
+##
+```
+
+n = 3时，输出
+
+```text
+  #
+ ##
+###
+```
+
+其中空白部分为空格。
+
+**输入描述**
+
+一个整数n。
+
+$2 \le n \le 100$
+
+**输出描述**
+
+参照题目描述。
+
+样例1
+
+输入
+
+```
+3
+```
+
+输出
+
+```
+  #
+ ##
+###
+```
 
 
 
 ```python
+def print_isosceles_right_triangle(n):
+    for i in range(1, n + 1):
+        spaces = ' ' * (n - i)
+        hashes = '#' * i
+        print(spaces + hashes)
 
+if __name__ == "__main__":
+    import sys
+    input = sys.stdin.read
+    n = int(input().strip())
+    print_isosceles_right_triangle(n)
 ```
 
 
