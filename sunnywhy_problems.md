@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 0027 GMT+8 Oct 5, 2024
+Updated 1515 GMT+8 Oct 11, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3227,6 +3227,309 @@ if __name__ == "__main__":
 ```python
 
 ```
+
+
+
+# 算法初步
+
+### 1 排序
+
+
+
+
+
+### 2 散列
+
+
+
+### 3 递归
+
+
+
+### 4 贪心
+
+
+
+### 5 二分
+
+
+
+### 6 two pointers
+
+#### sy175: 2-SUM-双指针
+
+https://sunnywhy.com/sfbj/4/6/175
+
+给定一个严格递增序列A和一个正整数k，在序列中寻找不同的下标i、j，使得$A_i + A_j = k$。问有多少对`(i,j)`同时`i<j`满足条件。
+
+注：使用`双指针`算法法实现
+
+**输入描述**
+
+第一行两个正整数n、k（$2 \le \n \le 10^5、1 \le k \le 10^6$），分别表示序列中的元素个数、给定的和；
+
+第二行按顺序给出n个递增的正整数，表示序列A中的元素（$1 \le 每个元素 \le 10^6$）
+
+**输出描述**
+
+一个整数，表示满足条件的`(i,j)`且`i<j`的对数。
+
+样例1
+
+输入
+
+```
+5 6
+1 2 4 5 6
+```
+
+输出
+
+```
+2
+```
+
+解释
+
+1 + 5 = 6、2 + 4 = 6，因此有两对
+
+
+
+```python
+n, k = map(int, input().split())
+a = list(map(int, input().split()))
+left = 0
+right = len(a) - 1
+cnt = 0
+while left < right:
+    if a[left] + a[right] < k:
+        left += 1
+        continue
+    if a[left] + a[right] > k:
+        right -= 1
+        continue
+    if a[left] + a[right] == k:
+        cnt += 1
+        left += 1
+        right -= 1
+print(cnt)
+```
+
+
+
+#### sy176: 序列合并
+
+https://sunnywhy.com/sfbj/4/6/176
+
+给定两个升序的正整数序列A和B，将它们合并成一个新的升序序列并输出。
+
+**输入描述**
+
+第一行一个整数n、m（$1 \le n \le 10^5、1 \le m \le 10^5$），分别表示序列和序列的元素个数；
+
+第二行为用空格隔开的n个正整数（$1 \le 每个元素 \le 10^6$），表示升序序列的所有元素；
+
+第三行为用空格隔开的m个正整数（$1 \le 每个元素 \le 10^6$），表示升序序列的所有元素；
+
+**输出描述**
+
+输出合并后的序列。整数间用一个空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+4 3
+1 5 6 8
+2 6 9
+```
+
+输出
+
+```
+1 2 5 6 6 8 9
+```
+
+
+
+```python
+def merge_sorted_sequences(n, m, A, B):
+    i, j = 0, 0
+    merged = []
+    
+    while i < n and j < m:
+        if A[i] <= B[j]:
+            merged.append(A[i])
+            i += 1
+        else:
+            merged.append(B[j])
+            j += 1
+    
+    while i < n:
+        merged.append(A[i])
+        i += 1
+    
+    while j < m:
+        merged.append(B[j])
+        j += 1
+    
+    return merged
+
+if __name__ == "__main__":
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    n = int(data[0])
+    m = int(data[1])
+    
+    A = list(map(int, data[2:n+2]))
+    B = list(map(int, data[n+2:n+2+m]))
+    
+    result = merge_sorted_sequences(n, m, A, B)
+    print(" ".join(map(str, result)))
+```
+
+
+
+#### sy177: 归并排序 中等
+
+https://sunnywhy.com/sfbj/4/6/177
+
+输入n个正整数，使用归并排序算法将它们按从小到大的顺序进行排序。
+
+**输入描述**
+
+第一行一个整数n（$1 \le n \le 1000$），表示需要输入的正整数的个数；
+
+第二行为用空格隔开的个正整数（每个正整数均不超过1000）。
+
+**输出描述**
+
+输出一行，表示输入的个正整数。整数间用一个空格隔开，行末不允许有多余的空格。
+
+样例1
+
+输入
+
+```
+5
+2 8 5 1 3
+```
+
+输出
+
+```
+1 2 3 5 8
+```
+
+
+
+```python
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+
+    return merge(left, right)
+
+def merge(left, right):
+    result = []
+    i = j = 0
+
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+
+if __name__ == "__main__":
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+
+    n = int(data[0])
+    arr = list(map(int, data[1:n+1]))
+
+    sorted_arr = merge_sort(arr)
+    print(" ".join(map(str, sorted_arr)))
+```
+
+
+
+#### sy178: 快速排序
+
+https://sunnywhy.com/sfbj/4/6/178
+
+
+
+```python
+
+```
+
+
+
+#### sy179: 集合求交II
+
+https://sunnywhy.com/sfbj/4/6/179
+
+
+
+```python
+
+```
+
+
+
+#### sy180: 集合求并II
+
+https://sunnywhy.com/sfbj/4/6/180
+
+
+
+```python
+
+```
+
+
+
+#### sy181: 集合求差III
+
+https://sunnywhy.com/sfbj/4/6/181
+
+
+
+```python
+
+```
+
+
+
+#### sy182: 集合求差IV
+
+https://sunnywhy.com/sfbj/4/6/182
+
+
+
+```python
+
+```
+
+
+
+
+
+### 7 其他高效技巧与算法
 
 
 
