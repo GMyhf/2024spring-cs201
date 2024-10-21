@@ -1,5 +1,3 @@
-$$(Insertion$$ $$Sort)$$
-
 # Python十大排序算法源码
 
 Updated 2052 GMT+8 May 22 2024
@@ -14,39 +12,81 @@ Logs:
 
 2024/4/13 取自, https://blog.csdn.net/wtandyn/article/details/119577831
 
-还未完全详细验证。算法逻辑没问题，但是具体实现不一样的话，笔试就不好做了。
-
 
 
 ## 1 前言
 
-最近经常用到各种排序算法，但是网上的Python排序源码质量参差不齐。因此结合网上的资料和个人理解，整理了一份可直接使用的排序算法Python源码。
+经常用到各种排序算法，但是网上的Python排序源码质量参差不齐。因此结合网上的资料和个人理解，整理了一份可直接使用的排序算法Python源码。
 
-包括：冒泡排序，插入排序，选择排序，希尔排序，归并排序，快速排序，堆排序，计数排序，桶排序，基数排序
-
-
+包括：冒泡排序（Bubble Sort），插入排序（Insertion Sort），选择排序（Selection Sort），希尔排序（Shell Sort），归并排序（Merge Sort），快速排序（Quick Sort），堆排序（Heap Sort），计数排序（Counting Sort），桶排序（Bucket Sort），基数排序（Radix Sort）
 
 ## 2 排序算法的选取规则
 
-根据网上（https://www.php.cn/faq/449050.html）的排序算法选取规则：
+选择合适的排序算法取决于多种因素，包括数据的规模、特性、性能要求、稳定性要求、内存限制等。
 
-（1）元素个数n大，排序码分布随机，稳定性不做要求 --------- 快速排序
+**数据规模**
 
-（2）元素个数n大，内存空间允许， 要求稳定性 ------------- 归并排序
+小规模，通常指数据量在几千到几万个元素。冒泡排序、插入排序、选择排序。
+中规模数据，通常指数据量在几万到几百万个元素。希尔排序、快速排序、归并排序。
+大规模数据，通常指数据量在几百万到几亿甚至更多个元素。归并排序、快速排序、堆排序、外部排序、分布式排序。
 
-（3）元素个数n大，排序码可能正序或逆序，稳定性不做要求 --------- 堆排序、归并排序
+**数据特性**
 
-（4）元素个数n小，排序码基本有序或随机，要求稳定性 ------------- 插入排序
+几乎有序：插入排序。
 
-（5）元素个数n小，稳定性不做要求 ------ 选择排序
+数据范围小：计数排序。
 
-（6）元素个数n小，排序码不接近逆序 ---- 插入排序
+数据分布均匀：桶排序。
 
-（7）冒泡排序一般很少用（时间空间成本都高）
+固定长度的整数或字符串：基数排序。
 
-因此，常使用的排序算法主要包括：快速排序、归并排序、堆排序。
+**性能要求**
+
+高时间效率：归并排序、快速排序、堆排序。
+
+低空间复杂度：选择排序、堆排序。
+
+**稳定性要求**
+
+需要稳定排序：归并排序、计数排序、基数排序、桶排序、插入排序、冒泡排序。
+
+**内存限制**
+
+内存有限：选择排序、堆排序。
 
 
+
+**Comparison sorts**
+
+在排序算法中，稳定性是指相等元素的相对顺序是否在排序后保持不变。换句话说，如果排序算法在排序过程中保持了相等元素的相对顺序，则称该算法是稳定的，否则是不稳定的。
+
+对于判断一个排序算法是否稳定，一种常见的方法是观察交换操作。挨着交换（相邻元素交换）是稳定的，而隔着交换（跳跃式交换）可能会导致不稳定性。
+
+Below is a table of [comparison sorts](https://en.wikipedia.org/wiki/Comparison_sort). A comparison sort cannot perform better than O(n log n) on average.
+
+|        Name         |  Best   |  Average  |   Worst   | Memory | Stable |       Method        |                         Other notes                          |
+| :-----------------: | :-----: | :-------: | :-------: | :----: | :----: | :-----------------: | :----------------------------------------------------------: |
+| In-place merge sort |    —    |     —     | $nlog^2n$ |   1    |  Yes   |       Merging       | Can be implemented as a stable sort based on stable in-place merging. |
+|      Heapsort       | $nlogn$ |  $nlogn$  |  $nlogn$  |   1    |   No   |      Selection      |                                                              |
+|     Merge sort      | $nlogn$ |  $nlogn$  |  $nlogn$  |  *n*   |  Yes   |       Merging       | Highly parallelizable (up to *O*(log *n*) using the Three Hungarian's Algorithm) |
+|       Timsort       |   *n*   |  $nlogn$  |  $nlogn$  |  *n*   |  Yes   | Insertion & Merging | Makes *n-1* comparisons when the data is already sorted or reverse sorted. |
+|      Quicksort      | $nlogn$ |  $nlogn$  |   $n^2$   | $logn$ |   No   |    Partitioning     | Quicksort is usually done in-place with *O*(log *n*) stack space. |
+|      Shellsort      | $nlogn$ | $n^{4/3}$ | $n^{3/2}$ |   1    |   No   |      Insertion      |                       Small code size.                       |
+|   Insertion sort    |   *n*   |   $n^2$   |   $n^2$   |   1    |  Yes   |      Insertion      | *O*(n + d), in the worst case over sequences that have *d* inversions. |
+|     Bubble sort     |   *n*   |   $n^2$   |   $n^2$   |   1    |  Yes   |     Exchanging      |                       Tiny code size.                        |
+|   Selection sort    |  $n^2$  |   $n^2$   |   $n^2$   |   1    |   No   |      Selection      | Stable with O(n) extra space, when using linked lists, or when made as a variant of Insertion Sort instead of swapping the two items. |
+
+
+
+Highly tuned implementations use more sophisticated variants, such as [Timsort](https://en.wikipedia.org/wiki/Timsort) (merge sort, insertion sort, and additional logic), used in [Android](https://en.wikipedia.org/wiki/Android_(operating_system)), [Java](https://en.wikipedia.org/wiki/Java_(programming_language)), and [Python](https://en.wikipedia.org/wiki/Python_(programming_language)), and [introsort](https://en.wikipedia.org/wiki/Introsort) (quicksort and heapsort), used (in variant forms) in some [C++ sort](https://en.wikipedia.org/wiki/Sort_(C%2B%2B)) implementations and in [.NET](https://en.wikipedia.org/wiki/.NET).
+
+
+
+计数排序，时间复杂度：O(n + k)，其中 k 是数据范围。空间复杂度：O(k)。稳定。适用于数据范围较小且数据分布均匀的情况。
+
+基数排序，时间复杂度：O(nk)，其中 k 是数字的位数。空间复杂度：O(n+k)。稳定。适用于数据范围较大但位数较少的情况，例如固定长度的整数或字符串。
+
+桶排序，时间复杂度：平均情况O(n+k)，最坏情况O(n^2)。空间复杂度：O(n+k)。稳定。适用于数据分布均匀且已知数据范围的情况。
 
 
 
@@ -54,7 +94,7 @@ Logs:
 
 ### 3.1 冒泡排序$$(Bubble$$ $$Sort)$$
 
-方法： 在无序区通过反复交换找到最大元素放在队首（比较次数多，交换次数多）
+方法： 通过重复地遍历要排序的列表，比较相邻的元素并根据需要交换它们的位置来实现排序。（比较次数多，交换次数多）
 主要思想： 前后两两比较，大小顺序错误就交换位置
 
 代码思路：
@@ -77,9 +117,9 @@ if __name__ == "__main__":
     print(arr_out)
 ```
 
-时间复杂度：$O(n^2)$
+时间复杂度：平均和最坏情况$O(n^2)$，最好情况$O(n)$
 空间复杂度：$O(1)$
-稳定排序
+稳定排序。适用于小规模数据或几乎有序的数据。
 
 
 
@@ -87,23 +127,26 @@ if __name__ == "__main__":
 
 改进后的冒泡排序通过增加一个标志位来优化。在每一轮比较中，如果没有发生任何交换，说明序列已经有序，不需要再进行后续的比较，因此可以提前结束排序过程。
 
-改进后的冒泡排序的伪代码如下所示：
+改进后的冒泡排序实现如下所示：
 
 ```python
-function improved_bubble_sort(array A)
-    n = length(A)
-    flag = true
-    for i from 0 to n - 1
-        flag = false
-        for j from 0 to n - 1 - i
-            if A[j] > A[j + 1]
-                swap(A[j], A[j + 1])
-                flag = true
-        if flag == false
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        # 标记是否发生了交换
+        swapped = False
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                # 交换元素
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+        # 如果没有发生交换，说明数组已经排序完成
+        if not swapped:
             break
+    return arr
 ```
 
-在这个改进后的冒泡排序算法中，如果在一轮比较中没有发生任何交换，就将标志位 `flag` 设置为 `false`，并提前跳出循环，从而减少了不必要的比较次数，提高了效率。
+在这个改进后的冒泡排序算法中，如果在一轮比较中没有发生任何交换，就将标志位 `swapped` 设置为 `False`，并提前跳出循环，从而减少了不必要的比较次数，提高了效率。
 
 
 
@@ -158,9 +201,7 @@ def InsertSort(arr):
     return arr
 
 if __name__ == "__main__":
-    arr_in = [6, 5, 18, 2, 16, 15, 19, 13,
-
- 10, 12, 7, 9, 4, 4, 8, 1, 11, 14, 3, 20, 17, 10]
+    arr_in = [6, 5, 18, 2, 16, 15, 19, 13, 10, 12, 7, 9, 4, 4, 8, 1, 11, 14, 3, 20, 17, 10]
     print(arr_in)
     arr_out = InsertSort(arr_in)
     print(arr_out)
@@ -176,7 +217,7 @@ if __name__ == "__main__":
 
 改进后的插入排序应该在找到正确位置后立即停止循环。要实现这一点，可以在内部的 for 循环中添加一个判断条件来判断是否需要继续交换。如果当前元素已经大于（或等于）前一个元素，就可以停止内部的循环了。
 
-下面是一个修正过的版本：
+下面是一个改进的插入排序版本：
 
 ```python
 def InsertSort(arr):
