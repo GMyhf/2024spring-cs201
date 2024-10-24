@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1515 GMT+8 Oct 11, 2024
+Updated 0036 GMT+8 Oct 25, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -15183,4 +15183,204 @@ else:
             print_critical_path(i, activity, in_degree)
 
 ```
+
+
+
+# 动态规划专题
+
+## 1 动态规划的递归写法和递推写法
+
+### sy407斐波拉契数列II
+
+https://sunnywhy.com/sfbj/11/1/407
+
+给定正整数n，求斐波那契数列的第n项F(n)。
+
+令F(n)表示斐波那契数列的第n项，它的定义是：
+
+- 当 n = 1 时，F(n) = 1；
+- 当 n = 2 时，F(n) = 1；
+- 当 n > 2 时，F(n) = F(n-1) + F(n-2)。
+
+大数据版：[斐波拉契数列-大数据版](https://sunnywhy.com/problem/893)
+
+**输入描述**
+
+一个正整数n（$1 \le n \le 10^4$）。
+
+**输出描述**
+
+斐波那契数列的第n项F(n)。
+
+由于结果可能很大，因此将结果对10007取模后输出。
+
+样例1
+
+输入
+
+```
+1
+```
+
+输出
+
+复制
+
+```
+1
+```
+
+样例2
+
+输入
+
+```
+3
+```
+
+输出
+
+```
+2
+```
+
+样例3
+
+输入
+
+```
+5
+```
+
+输出
+
+```
+5
+```
+
+
+
+```python
+MOD = 10007
+
+
+def f(n):
+    if n in {1, 2}:
+        return 1
+
+    pre1 = 1
+    pre2 = 1
+    current = 0
+    for i in range(3, n + 1):
+        current = (pre1 + pre2) % MOD
+        pre2 = pre1
+        pre1 = current
+
+    return current
+
+
+num = int(input())
+print(f(num))
+```
+
+
+
+### 893斐波拉契数列-大数据版 中等
+
+https://sunnywhy.com/problem/893
+
+斐波那契数列是一种经典的数列，定义如下：
+
+- 当 n = 1 时，F(n) = 1；
+- 当 n = 2 时，F(n) = 1；
+- 当 n > 2 时，F(n) = F(n-1) + F(n-2)。
+
+给定一个正整数 n，请你计算斐波那契数列的第 n 项 F(n)。由于结果可能非常大，请输出对 10^9 + 7 取模后的结果。
+
+**输入描述**
+
+输入包含一个正整数 n，表示需要求解的斐波那契数列项的编号。（$1 \le n \le 10^{18}$）
+
+**输出描述**
+
+输出斐波那契数列的第 n 项 对 10^9 + 7 取模后的结果。
+
+样例1
+
+输入
+
+```
+1
+```
+
+输出
+
+```
+1
+```
+
+解释
+
+第 项斐波那契数为 1，对 10^9 + 7 取模后的结果为 1。
+
+样例2
+
+输入
+
+```
+1000000000000000000
+```
+
+输出
+
+```
+209783453
+```
+
+解释
+
+第 项斐波那契数对 10^9 + 7 取模后的结果为 209783453。
+
+
+
+要计算斐波那契数列的第 \( n \) 项并对 \( 10^9 + 7 \) 取模，可以使用矩阵快速幂的方法。以下是详细的步骤和代码实现：
+
+1. 定义矩阵乘法函数 `matrix_mult`。
+2. 定义矩阵快速幂函数 `matrix_pow`。
+3. 使用矩阵快速幂计算斐波那契数列的第 \( n \) 项。
+
+```python
+MOD = 10 ** 9 + 7
+
+def matrix_mult(A, B):
+    return [
+        [(A[0][0] * B[0][0] + A[0][1] * B[1][0]) % MOD, (A[0][0] * B[0][1] + A[0][1] * B[1][1]) % MOD],
+        [(A[1][0] * B[0][0] + A[1][1] * B[1][0]) % MOD, (A[1][0] * B[0][1] + A[1][1] * B[1][1]) % MOD]
+    ]
+
+def matrix_pow(matrix, n):
+    result = [[1, 0], [0, 1]]  # Identity matrix
+    base = matrix
+
+    while n > 0:
+        if n % 2 == 1:
+            result = matrix_mult(result, base)
+        base = matrix_mult(base, base)
+        n //= 2
+
+    return result
+
+def fibonacci(n):
+    if n == 1 or n == 2:
+        return 1
+
+    F = [[1, 1], [1, 0]]
+    result = matrix_pow(F, n - 1)
+    return result[0][0]
+
+num = int(input())
+print(fibonacci(num))
+```
+
+
 
