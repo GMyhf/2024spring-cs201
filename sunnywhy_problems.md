@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 0036 GMT+8 Oct 25, 2024
+Updated 1254 GMT+8 Oct 27, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3232,29 +3232,453 @@ if __name__ == "__main__":
 
 # 算法初步
 
-### 1 排序
+## 1 排序
 
 
 
 
 
-### 2 散列
+```python
+
+```
 
 
 
-### 3 递归
+
+
+```python
+
+```
 
 
 
-### 4 贪心
 
 
 
-### 5 二分
+
+## 2 散列
 
 
 
-### 6 two pointers
+
+
+```python
+
+```
+
+
+
+
+
+```python
+
+```
+
+
+
+
+
+
+
+## 3 递归
+
+
+
+### sy115: 斐波拉契数列 简单
+
+https://sunnywhy.com/sfbj/4/3/115
+
+给定正整数n，求斐波那契数列的第n项F(n)。
+
+令表示斐波那契数列的第n项，它的定义是：
+
+当n=1时，F(n)=1；
+
+当n=2时，F(n)=1；
+
+当n>2时，F(n) = F(n-1) + F(n-2)。
+
+大数据版：[斐波拉契数列-大数据版](https://sunnywhy.com/problem/893)
+
+输入描述
+
+一个正整数n（$1 \le n \le 25$）。
+
+输出描述
+
+斐波那契数列的第n项F(n)。
+
+样例1
+
+输入
+
+```
+1
+```
+
+输出
+
+```
+1
+```
+
+样例2
+
+输入
+
+```
+3
+```
+
+输出
+
+```
+2
+```
+
+样例3
+
+输入
+
+```
+5
+```
+
+输出
+
+```
+5
+```
+
+
+
+```python
+def fibonacci(n):
+    if n == 1 or n == 2:
+        return 1
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+
+n = int(input())
+print(fibonacci(n))
+```
+
+
+
+### sy119: 汉诺塔 中等
+
+https://sunnywhy.com/sfbj/4/3/119    
+
+汉诺塔（又称河内塔）问题源于印度一个古老传说的益智玩具。大梵天创造世界的时候做了三根金刚石柱子，在一根柱子上从下往上按照大小顺序摞着64片黄金圆盘。大梵天命令婆罗门把圆盘从下面开始按大小顺序重新摆放在另一根柱子上。并且规定，在小圆盘上不能放大圆盘，在三根柱子之间一次只能移动一个圆盘。
+
+抽象成模型就是说：
+
+有三根相邻的柱子，标号分别为A、B、C，柱子按金字塔状叠放着n个不同大小的圆盘，现在要把所有盘子一个一个移动到柱子C上，并且任何时候同一根柱子上都不能出现大盘子在小盘子上方，请问至少需要多少次移动，并给出具体的移动方案。
+
+![10(1).png](https://sunnywhy.com/api/getFile/202203/59045e3d-783f-4693-8f87-80fc17971328.png)
+
+**输入描述**
+
+一个正整数n（$1 \le n \le 16$），表示圆盘的个数。
+
+**输出描述**
+
+第一行输出一个整数，表示至少需要的移动次数。
+
+接下来每行输出一次移动，格式为`X->Y`，表示从柱子移动最上方的圆盘到柱子最上方。
+
+样例1
+
+输入
+
+```
+1
+```
+
+输出
+
+```
+1
+A->C
+```
+
+样例2
+
+输入
+
+```
+2
+```
+
+输出
+
+复制
+
+```
+3
+A->B
+A->C
+B->C
+```
+
+样例3
+
+输入
+
+```
+3
+```
+
+输出
+
+```
+7
+A->C
+A->B
+C->B
+A->C
+B->A
+B->C
+A->C
+```
+
+
+
+```python
+def move(n, s, t, middle):
+    global cnt;ans
+    if n == 1:
+        cnt += 1
+        ans.append(f'{s}->{t}')
+    else:
+        move(n-1, s, middle, t)
+        move(1, s, t, middle)
+        move(n-1, middle, t, s)
+
+
+n = int(input())
+cnt = 0
+ans = []
+move(n, 'A', 'C', 'B')
+print(cnt)
+print('\n'.join(ans))
+```
+
+
+
+
+
+### sy132: 全排列I 中等
+
+https://sunnywhy.com/sfbj/4/3/132
+
+给定一个正整数n，假设序列S=[1,2,3,...,n]，求S的全排列。
+
+**输入描述**
+
+一个正整数n（$1 \le n \le 8$）。
+
+**输出描述**
+
+每个全排列一行，输出所有全排列。
+
+输出顺序为：两个全排列A和B，若满足前k-1项对应相同，但有Ak < Bk，那么将全排列Ak优先输出（例如[1,2,3]比[1,3,2]优先输出）。
+
+在输出时，全排列中的每个数之间用一个空格隔开，行末不允许有多余的空格。不允许出现相同的全排列。
+
+样例1
+
+输入
+
+```
+1
+```
+
+输出
+
+```
+1
+```
+
+样例2
+
+输入
+
+```
+2
+```
+
+输出
+
+```
+1 2
+2 1
+```
+
+样例3
+
+输入
+
+```
+3
+```
+
+输出
+
+```
+1 2 3
+1 3 2
+2 1 3
+2 3 1
+3 1 2
+3 2 1
+```
+
+
+
+
+
+```python
+maxn = 11
+hashTable = [False] * maxn  # 当整数i已经在数组 P中时为 true
+
+#@recviz
+def increasing_permutaions(n, prefix=[]):
+    if len(prefix) == n:  # 递归边界，已经处理完排列的1~位
+        return [prefix]
+
+    result = []
+    for i in range(1, n + 1):
+        if hashTable[i]:
+            continue
+
+        hashTable[i] = True  # 记i已在prefix中
+        # 把i加入当前排列，处理排列的后续号位
+        result += increasing_permutaions(n, prefix + [i])
+        hashTable[i] = False  # 处理完为i的子问题，还原状态
+
+    return result
+
+
+n = int(input())
+result = increasing_permutaions(n)
+for r in result:
+    print(' '.join(map(str,r)))
+```
+
+
+
+
+
+```python
+
+```
+
+
+
+
+
+
+
+```python
+
+```
+
+
+
+
+
+```python
+
+```
+
+
+
+
+
+## 4 贪心
+
+
+
+
+
+
+
+```python
+
+```
+
+
+
+
+
+```python
+
+```
+
+
+
+
+
+
+
+```python
+
+```
+
+
+
+
+
+```python
+
+```
+
+
+
+
+
+## 5 二分
+
+
+
+
+
+```python
+
+```
+
+
+
+
+
+```python
+
+```
+
+
+
+
+
+```python
+
+```
+
+
+
+
+
+```python
+
+```
+
+
+
+
+
+
+
+## 6 two pointers
 
 #### sy175: 2-SUM-双指针
 
@@ -3529,7 +3953,7 @@ https://sunnywhy.com/sfbj/4/6/182
 
 
 
-### 7 其他高效技巧与算法
+## 7 其他高效技巧与算法
 
 
 
