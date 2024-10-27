@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1254 GMT+8 Oct 27, 2024
+Updated 2237 GMT+8 Oct 27, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2117,6 +2117,23 @@ Yes
 
 ```
 No
+```
+
+
+
+```python
+# 周嘉豪24工学院
+n,q=map(int,input().split())
+Like=[]
+for _ in range(q):
+    x,y=input().split()
+    Like.append(x+y)
+    Like.append(y+x)
+like=set(Like)
+if len(like)==len(Like):
+    print('No')
+else:
+    print('Yes')
 ```
 
 
