@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 2237 GMT+8 Oct 27, 2024
+Updated 0101 GMT+8 Oct 30, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3584,6 +3584,28 @@ for r in result:
 ```
 
 
+
+数据量太小可以大复杂度搜索。循环遍历+回溯即可。
+
+```python
+# 高景行 数学科学学院
+n = int(input())
+def g(m, a, used):
+    global n
+    if m > n:
+        print(" ".join(map(str, a)))
+        return
+    for i in range(1, n + 1):
+        if not used[i]:
+            used[i] = True
+            a.append(i)
+            g(m + 1, a, used)
+            used[i] = False
+            a.pop()
+    return
+a = []
+g(1, a, [False] * (n + 1))
+```
 
 
 
