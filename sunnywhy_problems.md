@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 0101 GMT+8 Oct 30, 2024
+Updated 2301 GMT+8 Oct 30, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3606,6 +3606,36 @@ def g(m, a, used):
 a = []
 g(1, a, [False] * (n + 1))
 ```
+
+
+
+```python
+# 谢昊宸 数学学院
+def permutation(lst):
+    n = len(lst)
+    if n == 1:
+        return [[lst[0]]]
+    else:
+        ans = []
+        for i in range(0, n):
+            new_lst = lst[:i] + lst[i + 1 :]
+            for arr in permutation(new_lst):
+                ans.append([lst[i]] + arr)
+        return ans
+
+
+n = int(input())
+lst = list(range(1, n + 1))
+for arr in permutation(lst):
+    for i in range(n):
+        if i != n - 1:
+            print(arr[i], end=" ")
+        else:
+            print(arr[i])
+
+```
+
+
 
 
 
