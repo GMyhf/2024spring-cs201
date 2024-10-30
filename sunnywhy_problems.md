@@ -3637,9 +3637,26 @@ for arr in permutation(lst):
 
 
 
-
+吴诚舟-24物理学院，若不给tag最先想到cantor_expansion。没有独立想出如何用递归来解。
 
 ```python
+#cantor_expansion
+from math import factorial
+
+def cantor_to_permutation(x, n):
+    li = [i for i in range(1, n+1)]
+    ret = [0]*n
+    for j in range(n-1, 0, -1):
+        index = x // factorial(j)
+        x %= factorial(j)
+        ret[n-1-j] = li[index]
+        del li[index]
+    ret[-1] = li.pop()
+    return ret
+
+n = int(input())
+for i in range(factorial(n)):
+    print(*cantor_to_permutation(i, n))
 
 ```
 
