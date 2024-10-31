@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 2301 GMT+8 Oct 30, 2024
+Updated 2010 GMT+8 Oct 31, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3582,6 +3582,78 @@ result = increasing_permutaions(n)
 for r in result:
     print(' '.join(map(str,r)))
 ```
+
+
+
+```python
+def generate_permutations(sequence, index=0):
+    if index == len(sequence) - 1:
+        return [sequence[:]]
+
+    results = []
+    for i in range(index, len(sequence)):
+        # 交换当前元素与第一个未固定的元素
+        sequence[index], sequence[i] = sequence[i], sequence[index]
+        # 递归生成剩余部分的全排列
+        results.extend(generate_permutations(sequence, index + 1))
+        # 恢复交换，以便进行下一次迭代
+        sequence[index], sequence[i] = sequence[i], sequence[index]
+
+    return results
+
+
+# 获取用户输入并生成全排列
+num_elements = int(input())
+numbers = list(range(1, num_elements + 1))
+permutations = generate_permutations(numbers)
+
+# 对所有排列按字典序排序
+permutations.sort()
+
+# 输出所有排列
+for perm in permutations:
+    print(' '.join(map(str, perm)))
+
+```
+
+
+
+如果不使用 `sort` 来实现字典序输出，可以在递归生成全排列时确保元素按顺序递归选择，避免打乱顺序。通过总是从当前子序列的第一个元素开始递归，这样生成的全排列就会自然地按字典序排列。
+
+```python
+def generate_permutations(sequence):
+    # 如果序列长度为1，直接返回它的全排列
+    if len(sequence) == 1:
+        return [sequence]
+    else:
+        results = []
+        for i in range(len(sequence)):
+            # 创建一个新序列，将当前元素移除
+            remaining_sequence = sequence[:i] + sequence[i+1:]
+            # 递归生成剩余部分的全排列
+            for result in generate_permutations(remaining_sequence):
+                # 将当前元素加入到排列前，保证字典序
+                results.append([sequence[i]] + result)
+        return results
+
+# 获取用户输入并生成全排列
+num_elements = int(input())
+numbers = list(range(1, num_elements + 1))
+str_numbers = list(map(str, numbers))
+
+# 输出所有排列，已按字典序
+for result in generate_permutations(str_numbers):
+    print(' '.join(result))
+
+```
+
+
+
+```python
+
+```
+
+
 
 
 
