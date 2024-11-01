@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1101 GMT+8 Nov 1, 2024
+Updated 0114 GMT+8 Nov 2, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3517,7 +3517,7 @@ F(n) {
 
 一个正整数n（$2 \le n \le 12$）。
 
-输出描述
+**输出描述**
 
 每行输出一个数，依次输出当前递归深度。
 
@@ -3544,8 +3544,6 @@ F(n) {
 ```
 
 输出
-
-复制
 
 ```
 1
@@ -3732,7 +3730,20 @@ n=5
 
 
 ```python
+def F(n, depth=0):
+    depth += 1
+    blank = ' ' * 4 * (depth-1)
+    print(f"{blank}n={n}")
+    if n <= 2:
+        return 1
+    else:
+        return F(n-1, depth) + F(n-2, depth)
 
+n = int(input())
+if n == 1 or n == 2:
+    print(f'n={n}')
+else:
+    F(n)
 ```
 
 
@@ -4055,11 +4066,517 @@ print("\n".join(ans))
 
 
 
+### sy133: 全排列II
+
+https://sunnywhy.com/sfbj/4/3/133
+
+给定一个长度为n的序列，其中有n个互不相同的正整数，求该序列的所有全排列。
+
+**输入描述**
+
+第一行一个正整数n（$1 \le n \le 8$），表示序列中的元素个数。
+
+第二行按升序给出n个互不相同的正整数（每个正整数均不超过100）。
+
+**输出描述**
+
+每个全排列一行，输出所有全排列。
+
+输出顺序为：两个全排列A和B，若满足前k-1项对应相同，但有$A_k < B_k$，那么将全排列A优先输出（例如[1,2,3]比[1,3,2]优先输出）。
+
+在输出时，全排列中的每个数之间用一个空格隔开，行末不允许有多余的空格。不允许出现相同的全排列。
+
+样例1
+
+输入
+
+```
+3
+1 2 3
+```
+
+输出
+
+```
+1 2 3
+1 3 2
+2 1 3
+2 3 1
+3 1 2
+3 2 1
+```
+
+样例2
+
+输入
+
+```
+2
+3 5
+```
+
+输出
+
+```
+3 5
+5 3
+```
+
 
 
 ```python
+def quan(yu, a):
+    b = []
+    if len(a) == 1:
+        b.append(' '.join(map(str, yu+a)))
+        return b
+
+    for i in a:
+        f = quan(yu+[i], [j for j in a if j != i])
+        b.extend(f)
+
+    return b
+
+n = int(input())
+a = list(map(int, input().split()))
+ans = quan([], a)
+print("\n".join(ans))
+```
+
+
+
+### sy134: 全排列III
+
+https://sunnywhy.com/sfbj/4/3/134
+
+给定一个长度为n的序列，其中有n个可能重复的正整数，求该序列的所有全排列。
+
+**输入描述**
+
+第一行一个正整数n（$1 \le n \le 8$），表示序列中的元素个数。
+
+第二行按升序给出n个可能重复的正整数（每个正整数均不超过100）。
+
+**输出描述**
+
+每个全排列一行，输出所有全排列。
+
+输出顺序为：两个全排列A和B，若满足前k-1项对应相同，但有$A_k < B_k$，那么将全排列A优先输出（例如[1,2,3]比[1,3,2]优先输出）。
+
+在输出时，全排列中的每个数之间用一个空格隔开，行末不允许有多余的空格。不允许出现相同的全排列。
+
+样例1
+
+输入
 
 ```
+3
+1 1 3
+```
+
+输出
+
+```
+1 1 3
+1 3 1
+3 1 1
+```
+
+
+
+
+
+```python
+def generate_permutations(nums):
+    def backtrack(path, used):
+        if len(path) == len(nums):
+            permutations.add(tuple(path))
+            return
+        
+        for i in range(len(nums)):
+            if not used[i]:
+                used[i] = True
+                path.append(nums[i])
+                backtrack(path, used)
+                path.pop()
+                used[i] = False
+    
+    permutations = set()
+    used = [False] * len(nums)
+    backtrack([], used)
+    return sorted(permutations)
+
+def main():
+    n = int(input())
+    nums = list(map(int, input().split()))
+    permutations = generate_permutations(nums)
+    
+    for perm in permutations:
+        print(" ".join(map(str, perm)))
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+
+
+### sy135: 组合I
+
+https://sunnywhy.com/sfbj/4/3/135
+
+给定两个正整数n、k，假设序列S=[1,2,3,...,n]，求S从中任选k个的所有可能结果。
+
+
+
+```python
+def generate_combinations(n, k):
+    def backtrack(start, path):
+        if len(path) == k:
+            combinations.append(list(path))
+            return
+        
+        for i in range(start, n + 1):
+            path.append(i)
+            backtrack(i + 1, path)
+            path.pop()
+    
+    combinations = []
+    backtrack(1, [])
+    return combinations
+
+def main():
+    n, k = map(int, input().split())
+    combinations = generate_combinations(n, k)
+    
+    for comb in combinations:
+        print(" ".join(map(str, comb)))
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+### sy136: 组合II
+
+https://sunnywhy.com/sfbj/4/3/136
+
+给定一个长度为的序列，其中有n个互不相同的正整数，再给定一个正整数k，求从序列中任选个的所有可能结果。
+
+
+
+```python
+def generate_combinations(n, k, nums):
+    def backtrack(start, path):
+        if len(path) == k:
+            combinations.append(list(path))
+            return
+        
+        for i in range(start, n):
+            path.append(nums[i])
+            backtrack(i + 1, path)
+            path.pop()
+    
+    combinations = []
+    backtrack(0, [])
+    return combinations
+
+def main():
+    n, k = map(int, input().split())
+    nums = list(map(int, input().split()))
+    combinations = generate_combinations(n, k, nums)
+    
+    for comb in combinations:
+        print(" ".join(map(str, comb)))
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+
+
+### sy137: 组合III
+
+https://sunnywhy.com/sfbj/4/3/137
+
+给定一个长度为n的序列，其中有n个可能重复的正整数k，再给定一个正整数k，求从序列中任选k个的所有可能结果。
+
+
+
+```python
+def generate_combinations(n, k, nums):
+    def backtrack(start, path):
+        if len(path) == k:
+            combinations.add(tuple(path))
+            return
+        
+        for i in range(start, n):
+            path.append(nums[i])
+            backtrack(i + 1, path)
+            path.pop()
+    
+    combinations = set()
+    backtrack(0, [])
+    return sorted(combinations)
+
+def main():
+    n, k = map(int, input().split())
+    nums = list(map(int, input().split()))
+    combinations = generate_combinations(n, k, nums)
+    
+    for comb in combinations:
+        print(" ".join(map(str, comb)))
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+### sy146: 判断八皇后
+
+https://sunnywhy.com/sfbj/4/3/146
+
+在8×8的国际棋盘上摆放了8个皇后，判断其是否是一个合法的摆放方式，即任意两个皇后都不能处于同一行、同一列或同一斜线上。
+
+**输入描述**
+
+输入8行，每行为8个用空格隔开的整数，取值为0或1，其中1表示该位置是皇后，0则表示不是皇后。
+
+**输出描述**
+
+如果该摆放方式是合法的，那么输出YES，否则输出NO。
+
+样例1
+
+输入
+
+```
+0 0 0 0 0 1 0 0
+0 1 0 0 0 0 0 0
+0 0 0 0 0 0 1 0
+1 0 0 0 0 0 0 0
+0 0 0 1 0 0 0 0
+0 0 0 0 0 0 0 1
+0 0 0 0 1 0 0 0
+0 0 1 0 0 0 0 0
+```
+
+输出
+
+```
+YES
+```
+
+样例2
+
+输入
+
+```
+0 1 0 0 0 0 0 0
+0 0 0 0 0 1 0 0
+0 0 0 1 0 0 0 0
+1 0 0 0 0 0 0 0
+0 0 0 0 1 0 0 0
+0 0 0 0 0 0 0 1
+0 0 1 0 0 0 0 0
+0 0 0 0 0 0 1 0
+```
+
+输出
+
+```
+NO
+```
+
+
+
+为了判断一个8×8的国际象棋棋盘上的8个皇后是否合法摆放，我们需要确保任意两个皇后不能处于同一行、同一列或同一斜线上。我们可以使用以下步骤来实现这一目标：
+
+1. **读取输入**：读取8行，每行8个用空格隔开的整数，表示棋盘上的位置。
+2. **检查行和列**：确保每一行和每一列只有一个皇后。
+3. **检查对角线**：确保任意两个皇后不在同一对角线上。
+
+i = j + k 或者 i = -j + k，其中k是斜率。
+
+```python
+def is_valid_board(board):
+    n = 8
+    rows = [0] * n
+    cols = [0] * n
+    diag1 = [0] * (2 * n - 1)
+    diag2 = [0] * (2 * n - 1)
+    
+    for i in range(n):
+        for j in range(n):
+            if board[i][j] == 1:
+                rows[i] += 1
+                cols[j] += 1
+                diag1[i + j] += 1
+                diag2[i - j] += 1
+                
+                if rows[i] > 1 or cols[j] > 1 or diag1[i + j] > 1 or diag2[j - i + n - 1] > 1:
+                    return "NO"
+    
+    return "YES"
+
+def main():
+    board = []
+    for _ in range(8):
+        row = list(map(int, input().split()))
+        board.append(row)
+    
+    result = is_valid_board(board)
+    print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+
+
+### sy147: 八皇后问题
+
+https://sunnywhy.com/sfbj/4/3/147
+
+在8×8的国际棋盘上摆放8个皇后，使其不能互相攻击，即任意两个皇后都不能处于同一行、同一列或同一斜线上，问有多少种摆法。
+
+
+
+```python
+def solve_n_queens(n):
+    def is_safe(board, row, col):
+        # 检查列是否有皇后
+        for i in range(row):
+            if board[i][col] == 1:
+                return False
+
+        # 检查左上对角线是否有皇后
+        for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
+            if board[i][j] == 1:
+                return False
+
+        # 检查右上对角线是否有皇后
+        for i, j in zip(range(row, -1, -1), range(col, n)):
+            if board[i][j] == 1:
+                return False
+
+        return True
+
+    def backtrack(row):
+        if row == n:
+            solutions.append([''.join(map(str,row)) for row in board])
+            return
+
+        for col in range(n):
+            if is_safe(board, row, col):
+                board[row][col] = 1
+                backtrack(row + 1)
+                board[row][col] = 0
+
+    n = 8
+    board = [[0] * n for _ in range(n)]
+    solutions = []
+    backtrack(0)
+    return len(solutions)
+
+
+def main():
+    result = solve_n_queens(8)
+    print(result)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+backtrack 函数：
+如果已经放置了 n 个皇后，将当前解决方案转换为字符串形式并添加到 solutions 列表中。
+遍历当前行的每一列，如果在该位置放置皇后是安全的，则放置皇后并递归调用 backtrack 处理下一行。递归返回后，恢复当前状态（即回溯）。
+
+
+
+### sy148: N皇后问题
+
+https://sunnywhy.com/sfbj/4/3/148
+
+在`n x n`的国际棋盘上摆放n个皇后，使其不能互相攻击，即任意两个皇后都不能处于同一行、同一列或同一斜线上，问有多少种摆法。
+
+**输入描述**
+
+一个正整数n（$1 \le n \le 10$）。
+
+**输出描述**
+
+输出一个整数，表示摆法种数。
+
+样例1
+
+输入
+
+```
+8
+```
+
+输出
+
+```
+92
+```
+
+
+
+使用一维数组来表示棋盘是一种常见的优化方法，特别是对于 n 皇后问题。一维数组的每个元素表示每一行的皇后所在的列。这样可以减少空间复杂度，并且使代码更加简洁和高效。
+
+**为什么使用一维数组**？
+
+1. **空间效率**：一维数组只需要 `O(n)` 的空间，而二维数组需要 `O(n^2)` 的空间。
+2. **简化检查**：在一维数组中，检查列和对角线冲突更加简单。
+3. **易于回溯**：一维数组更容易进行回溯操作。
+
+```python
+def solve_n_queens(n):
+    def is_safe(row, col):
+        # 检查列是否有皇后
+        for i in range(row):
+            if board[i] == col or \
+               board[i] - i == col - row or \
+               board[i] + i == col + row:
+                return False
+        return True
+
+    def backtrack(row):
+        if row == n:
+            solutions.append(board[:])
+            return
+        
+        for col in range(n):
+            if is_safe(row, col):
+                board[row] = col
+                backtrack(row + 1)
+                board[row] = -1  # 回溯
+
+    solutions = []
+    board = [-1] * n
+    backtrack(0)
+    return len(solutions)
+
+def main():
+    n = int(input())
+    result = solve_n_queens(n)
+    print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+
 
 
 
