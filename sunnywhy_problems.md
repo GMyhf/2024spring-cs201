@@ -3782,7 +3782,21 @@ for i in ans:
 
 
 ```python
+def quan(yu, a):
+    b = []
+    if len(a) == 1:
+        b.append(' '.join(map(str, yu+a)))
+        return b
 
+    for i in a:
+        f = quan(yu+[i], [j for j in a if j != i])
+        b.extend(f)
+
+    return b
+
+n = int(input())
+ans = quan([], list(range(1, n+1)))
+print("\n".join(ans))
 ```
 
 
