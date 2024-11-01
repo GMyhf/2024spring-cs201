@@ -3752,6 +3752,31 @@ for i in range(factorial(n)):
 
 
 
+感觉回溯的想法很神奇，可以轻松搞出树状结构
+
+```python
+def P(l, depth):
+    if depth == n:
+        ans.append(path[:])
+        return
+    for i, pos in enumerate(l):
+        if not used[i]:
+            used[i] = 1
+            path.append(f"{pos}")
+            P(l, depth + 1)
+            path.pop()
+            used[i] = 0
+
+n = int(input())
+l = list(range(1, n + 1))
+used = [0 for i in range(n)]
+depth = 0
+ans, path = [], []
+P(l, 0)
+for i in ans:
+    print(" ".join(i))
+```
+
 
 
 
