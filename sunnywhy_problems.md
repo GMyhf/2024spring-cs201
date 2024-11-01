@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 2010 GMT+8 Oct 31, 2024
+Updated 1101 GMT+8 Nov 1, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3585,6 +3585,9 @@ for r in result:
 
 
 
+Backtracking based recursion/Permutations of given String 
+https://www.geeksforgeeks.org/write-a-c-program-to-print-all-permutations-of-a-given-string/
+
 ```python
 def generate_permutations(sequence, index=0):
     if index == len(sequence) - 1:
@@ -3618,7 +3621,13 @@ for perm in permutations:
 
 
 
+
+
 如果不使用 `sort` 来实现字典序输出，可以在递归生成全排列时确保元素按顺序递归选择，避免打乱顺序。通过总是从当前子序列的第一个元素开始递归，这样生成的全排列就会自然地按字典序排列。即对于 n>=2 时，只需依次将 1 到 n 放在首位，将其余数所有全排列加在后面即可。
+
+**Method**
+The idea is to one by one extract all elements, place them at first position and recur for remaining list.
+https://www.geeksforgeeks.org/generate-all-the-permutation-of-a-list-in-python/
 
 ```python
 def generate_permutations(sequence):
