@@ -3818,6 +3818,72 @@ https://sunnywhy.com/sfbj/4/3/132
 
 
 
+```python
+# 全排列I, https://sunnywhy.com/sfbj/4/3/132
+list1 = []
+
+def sequ(s, nums):
+    if len(s) == nums:
+        list1.append(s)
+        return
+    for i in range(1, nums + 1):
+        if str(i) not in s:
+            sequ(s + str(i), nums)
+
+num = int(input())
+sequ('', num)
+for k in list1:
+    print(' '.join(k))
+```
+
+> 全排列、八皇后，可以对照着学习。全排列I, https://sunnywhy.com/sfbj/4/3/132，02754 八皇后, http://cs101.openjudge.cn/practice/02754/
+>
+> ```python
+> # 02754 八皇后, http://cs101.openjudge.cn/practice/02754/
+> list1 = []
+> 
+> def queen(s):
+>     if len(s) == 8:
+>         list1.append(s)
+>         return
+>     for i in range(1, 9):
+>         if all(str(i) != s[j] and abs(len(s) - j) != abs(i - int(s[j])) for j in range(len(s))):
+>             queen(s + str(i))
+> 
+> queen('')
+> samples = int(input())
+> for k in range(samples):
+>     print(list1[int(input()) - 1])
+> 
+> """
+> abs(len(s) - j) != abs(i - int(s[j])) for j in range(len(s)) 是一个生成器表达式，
+> 用于检查当前尝试放置的皇后是否与已经放置的皇后在同一条对角线上。具体解释如下：
+> 
+> - len(s) 表示当前已经放置的皇后的数量，即当前正在尝试放置的皇后的行号。
+> - j 是已经放置的皇后的列号。
+> - i 是当前尝试放置的皇后的列号。
+> - s[j] 是已经放置的皇后所在的列号。
+> 
+> 对于每一个已经放置的皇后，检查以下条件：
+> - abs(len(s) - j) 计算当前尝试放置的皇后与已经放置的皇后之间的行差。
+> - abs(i - int(s[j])) 计算当前尝试放置的皇后与已经放置的皇后之间的列差。
+> 
+> 如果行差和列差相等，说明两皇后在同一条对角线上，返回 `False`，否则返回 `True`。
+> """
+> 
+> 
+> ```
+>
+> ![image-20241102201855107](https://raw.githubusercontent.com/GMyhf/img/main/img/202411022019515.png)
+>
+> Note: 
+>
+> 1）string类型是不可变的，作为参数传递给函数时，实际上是复制了一份，可以避免由于共享引用导致的数据污染问题。这样就会避免八皇后使用列表的浅拷贝问题。
+>
+> 2）因为列表是可变对象，当一个列表被传递给函数时，是传递该列表的引用。如果在函数内部直接修改了这个列表，那么这些修改也会影响到原始列表。
+>
+> 但是列表很方便，允许原地修改，可以提高性能并简化代码。使用时候注意浅拷贝问题就好。
+
 
 
 ```python
