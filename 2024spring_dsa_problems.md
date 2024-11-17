@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2350 GMT+8 Jun 6, 2024
+Updated 2112 GMT+8 Nov 17, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -1900,6 +1900,40 @@ If such path does not exist, only number -1 should be written to the output.
 来源
 
 CEOI 1998
+
+
+
+```python
+#何秉儒 物理学院
+import heapq
+
+def dijkstra(g):
+    while pq:
+        dist,node,fee = heapq.heappop(pq)
+        if node == n-1 :
+            return dist
+        for nei,w,f in g[node]:
+            n_dist = dist + w
+            n_fee = fee + f
+            if n_fee <= k:
+                dists[nei] = n_dist
+                heapq.heappush(pq,(n_dist,nei,n_fee))
+    return -1
+
+k,n,r = int(input()),int(input()),int(input())
+g = [[] for _ in range(n)]
+for i in range(r):
+    s,d,l,t = map(int,input().split())
+    g[s-1].append((d-1,l,t)) #node,dist,fee
+
+pq = [(0,0,0)] #dist,node,fee
+dists = [float('inf')] * n
+dists[0] = 0
+spend = 0
+
+result = dijkstra(g)
+print(result)
+```
 
 
 
