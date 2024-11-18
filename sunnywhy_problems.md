@@ -7351,6 +7351,118 @@ https://sunnywhy.com/sfbj/8/1/316
 
 
 
+样例2
+
+输入
+
+```
+4 5
+59 -62 -71 91 -12
+-36 42 -32 -36 43
+-68 -88 -94 -43 -39
+48 -38 53 31 -92
+```
+
+输出
+
+```
+1 1
+2 1
+2 2
+2 3
+2 4
+1 4
+1 5
+2 5
+3 5
+4 5
+```
+
+
+
+样例3
+
+输入
+
+```
+3 4
+-36 -10 -84 -28
+12 94 95 22
+61 -13 26 29
+```
+
+输出
+
+```
+1 1
+1 2
+2 2
+2 1
+3 1
+3 2
+3 3
+2 3
+2 4
+3 4
+```
+
+
+
+**DFS辅助visited空间**
+
+```python
+# 读取输入
+n, m = map(int, input().split())
+maze = [list(map(int, input().split())) for _ in range(n)]
+
+# 定义方向
+directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # 右、下、左、上
+visited = [[False] * m for _ in range(n)]  # 标记访问
+max_path = []
+max_sum = -float('inf')  # 最大权值初始化为负无穷
+
+# 深度优先搜索
+def dfs(x, y, current_path, current_sum):
+    global max_path, max_sum
+
+    # 到达终点，更新结果
+    if (x, y) == (n - 1, m - 1):
+        if current_sum > max_sum:
+            max_sum = current_sum
+            max_path = current_path[:]
+        return
+
+    # 遍历四个方向
+    for dx, dy in directions:
+        nx, ny = x + dx, y + dy
+
+        # 检查边界和是否访问过
+        if 0 <= nx < n and 0 <= ny < m and not visited[nx][ny]:
+            # 标记访问
+            visited[nx][ny] = True
+            current_path.append((nx, ny))
+
+            # 递归搜索
+            dfs(nx, ny, current_path, current_sum + maze[nx][ny])
+
+            # 回溯
+            current_path.pop()
+            visited[nx][ny] = False
+
+# 初始化起点
+visited[0][0] = True
+dfs(0, 0, [(0, 0)], maze[0][0])
+
+# 输出结果
+for x, y in max_path:
+    print(x + 1, y + 1)
+
+```
+
+
+
+
+
 **辅助visited空间**
 
 ```python
