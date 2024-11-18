@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 0958 GMT+8 Nov 2, 2024
+Updated 1917 GMT+8 Nov 18, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8833,6 +8833,155 @@ for row in minStep:
 ```
 
 
+
+## 3 综合练习精选
+
+### sy538: 受到祝福的平方 中等
+
+https://sunnywhy.com/sfbj/8/3/539
+
+在小元的世界里，任何人出生后会被世界分配一个随机`ID`，如果在被切割后，即`ID`满足按照从左至右顺序分割，且分割出来的数字都是某一个`正整数`的平方，分割时可以包括前导`0`，那么他就被这个世界祝福，最后获得快乐的数量和质量都比不满足这样的的人多的多。
+
+令`ID`为`A`，且`A`是一个正整数，取值范围为$1 \le A \le 10^9$，问是否是一个被受到祝福的。
+
+比如`A=8194`时，它是一个被受到祝福的`ID`，因为他可以被分割为$\{81,9,4\}=\{9^2,3^2,2^2\}$；
+
+比如`A=1001`时，它是一个被受到祝福的`ID`，因为他可以被分割为$\{1,001\}=\{1^2,1^2\}$，或者$\{100,1\}=\{10^2,1^2\}$。注意$\{1,00,1\}=\{1^2,0^2,1^2\}$不是一个合法切割，因为分割出来的数字必须为正整数的平方；
+
+比如`A=36`时，`36`已经是一个平方数了，所以它同样满足条件；
+
+比如`A=54`，它不是一个被受到祝福的`ID`，因为他无法被切割为满足条件的集合。
+
+**输入描述**
+
+一个正整数A，无前导0。
+
+其中$1 \le A \le 10^9$
+
+**输出描述**
+
+如果是一个满足题意的数字则输出`Yes`，否则`No`。
+
+样例1
+
+输入
+
+```
+8194
+```
+
+输出
+
+```
+Yes
+```
+
+样例2
+
+输入
+
+```
+3
+```
+
+输出
+
+```
+No
+```
+
+样例3
+
+输入
+
+```
+10
+```
+
+输出
+
+```
+No
+```
+
+
+
+```python
+import math
+
+def is_square(n):
+    """判断一个数字是否为完全平方数"""
+    if n == 0:
+        return False  # 0不是有效的平方数
+    root = int(math.sqrt(n))
+    return root * root == n
+
+def can_split_to_squares(s, start, memo):
+    """递归函数，判断是否可以将字符串s从start位置开始切割成平方数"""
+    if start == len(s):
+        return True
+    if start in memo:
+        return memo[start]
+
+    for end in range(start + 1, len(s) + 1):
+        part = s[start:end]
+        # 剪枝：避免数字超出合理范围
+        if len(part) > 10 or int(part) > 10**9:
+            break
+        if is_square(int(part)) and can_split_to_squares(s, end, memo):
+            memo[start] = True
+            return True
+
+    memo[start] = False
+    return False
+
+def is_blessed_number(number):
+    """主函数，判断一个数字是否满足条件"""
+    s = str(number)
+    memo = {}
+    return can_split_to_squares(s, 0, memo)
+
+# 输入处理
+number = input().strip()
+if is_blessed_number(number):
+    print("Yes")
+else:
+    print("No")
+
+```
+
+
+
+ `dp[i]` is `True` if the substring `num[0:i]` can be split into perfect squares.
+
+```python
+import math
+
+def is_square(n: int) -> bool:
+    if n == 0:
+        return False
+    root = int(math.isqrt(n))
+    return root * root == n
+
+def is_blessed_number(num: str) -> str:
+    n = len(num)
+    dp = [False] * (n + 1)
+    dp[0] = True  # Base case: empty string is considered valid
+
+    for i in range(1, n + 1):
+        for j in range(i):
+            if dp[j]  and is_square(int(num[j:i])):
+                dp[i] = True
+                break
+
+    return "Yes" if dp[n] else "No"
+
+# Example usage
+if __name__ == "__main__":
+    #print(is_blessed_number("8194"))  # Output: Yes
+    #print(is_blessed_number("100000"))     # Output: No
+    print(is_blessed_number(input()))
+```
 
 
 
