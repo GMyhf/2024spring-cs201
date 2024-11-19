@@ -7757,28 +7757,30 @@ print(sum(l) + len(l) - 2)
 
 #### 计算机思维
 
-##### Python
+我们使用from collections import deque就满足要求，适用于需要频繁从队列的两端进行操作的场景，如广度优先搜索（BFS）、滑动窗口等问题。
+
+> from queue import Queue适用于多线程编程中，需要在多个线程之间安全地共享和传递数据的场景。提供线程安全的特性，内置锁机制，可以在多线程环境中安全地使用。支持阻塞操作，如 `get` 和 `put` 方法可以设置超时时间，等待队列中有数据可用或空间可用。不支持从队列两端进行操作，只能从一端进行插入和删除。
 
 ```python
 from collections import deque
 
-def bfs(n):
 
+def bfs(n):
     inq = set()
     inq.add(1)
     q = deque()
-    q.append((1, 0))
+    q.append((0, 1))
     while q:
-        front, step = q.popleft()
+        step, front = q.popleft()
         if front == n:
             return step
 
         if front * 2 <= n and front * 2 not in inq:
-            inq.add(front *2)
-            q.append((front * 2, step+1))
+            inq.add(front * 2)
+            q.append((step + 1, front * 2))
         if front + 1 <= n and front + 1 not in inq:
             inq.add(front + 1)
-            q.append((front + 1, step+1))
+            q.append((step + 1, front + 1))
 
 
 n = int(input())
@@ -7998,34 +8000,37 @@ from collections import deque
 dx = [0, 0, 1, -1]
 dy = [1, -1, 0, 0]
 
-def bfs(x, y):
+def bfs(x, y, n, m, maze):
     q = deque()
-    q.append((x, y))
+    q.append((0, (x, y)))  # (step, (x, y))
+    inq_set = set()
     inq_set.add((x, y))
-    step = 0
+    
     while q:
-        for _ in range(len(q)):
-            cur_x, cur_y = q.popleft()
-            if cur_x == n and cur_y == m:
-                return step
-            for direction in range(4):
-                next_x = cur_x + dx[direction]
-                next_y = cur_y + dy[direction]
-                if maze[next_x][next_y] == 0 and (next_x,next_y) not in inq_set:
-                    inq_set.add((next_x, next_y))
-                    q.append((next_x, next_y))
-        step += 1
+        step, (cur_x, cur_y) = q.popleft()
+        
+        if cur_x == n and cur_y == m:
+            return step
+        
+        for direction in range(4):
+            next_x = cur_x + dx[direction]
+            next_y = cur_y + dy[direction]
+            
+            if maze[next_x][next_y] == 0 and (next_x, next_y) not in inq_set:
+                inq_set.add((next_x, next_y))
+                q.append((step + 1, (next_x, next_y)))
+    
     return -1
 
 if __name__ == '__main__':
-
     n, m = map(int, input().split())
-    maze = [[-1] * (m + 2)] + [[-1] + list(map(int, input().split())) + [-1] for i in range(n)] + [[-1] * (m + 2)]
-    inq_set = set()
-
-    step = bfs(1, 1)
+    
+    # 初始化迷宫，增加边界
+    maze = [[-1] * (m + 2)] + [[-1] + list(map(int, input().split())) + [-1] for _ in range(n)] + [[-1] * (m + 2)]
+    
+    step = bfs(1, 1, n, m, maze)
     print(step)
-
+    
 ```
 
 
@@ -8046,12 +8051,11 @@ def can_visit(x, y):
 # BFS函数 实现广度优先搜索
 def bfs(x, y):
     q = deque()
-    q.append((x, y))
+    q.append((0, (x, y)))
     in_queue[x][y] = True
-    step = 0
     while q:
         for _ in range(len(q)):
-            cur_x, cur_y = q.popleft()
+            step, (cur_x, cur_y) = q.popleft()
             if cur_x == n - 1 and cur_y == m - 1:
                 return step
             for direction in range(4):
@@ -8059,8 +8063,7 @@ def bfs(x, y):
                 next_y = cur_y + dy[direction]
                 if can_visit(next_x, next_y):
                     in_queue[next_x][next_y] = True
-                    q.append((next_x, next_y))
-        step += 1
+                    q.append((step + 1, (next_x, next_y)))
     return -1
 
 # 主函数
@@ -8077,7 +8080,7 @@ if __name__ == '__main__':
     # 执行BFS并输出步数
     step = bfs(0, 0)
     print(step)
-
+    
 ```
 
 
@@ -8136,45 +8139,53 @@ in_queue 数组，结点是否已入过队
 ```python
 from collections import deque
 
+# 声明方向变化的数组，代表上下左右移动
 MAX_DIRECTIONS = 4
 dx = [0, 0, 1, -1]
 dy = [1, -1, 0, 0]
 
-def is_valid_move(x, y):
-    return 0 <= x < n and 0 <= y < m and maze[x][y] == 0 and not in_queue[x][y]
+def is_valid_move(x, y, n, m, maze, in_queue):
+    return 0 <= x < n and 0 <= y < m and maze[x][y] == 0 and (x, y) not in in_queue
 
-def bfs(start_x, start_y):
+def bfs(start_x, start_y, n, m, maze):
     queue = deque()
     queue.append((start_x, start_y))
-    in_queue[start_x][start_y] = True
+    
+    in_queue = set()
+    prev = [[(-1, -1)] * m for _ in range(n)]
+    
+    in_queue.add((start_x, start_y))
     while queue:
         x, y = queue.popleft()
         if x == n - 1 and y == m - 1:
-            return
+            return prev
         for i in range(MAX_DIRECTIONS):
             next_x = x + dx[i]
             next_y = y + dy[i]
-            if is_valid_move(next_x, next_y):
+            if is_valid_move(next_x, next_y, n, m, maze, in_queue):
                 prev[next_x][next_y] = (x, y)
-                in_queue[next_x][next_y] = True
+                in_queue.add((next_x, next_y))
                 queue.append((next_x, next_y))
+    return None
 
-def print_path(pos):
-    prev_position = prev[pos[0]][pos[1]]
-    if prev_position == (-1, -1):
+def print_path(prev, end_pos):
+    path = []
+    while end_pos != (-1, -1):
+        path.append(end_pos)
+        end_pos = prev[end_pos[0]][end_pos[1]]
+    path.reverse()
+    for pos in path:
         print(pos[0] + 1, pos[1] + 1)
-        return
-    print_path(prev_position)
-    print(pos[0] + 1, pos[1] + 1)
 
-n, m = map(int, input().split())
-maze = [list(map(int, input().split())) for _ in range(n)]
-
-in_queue = [[False] * m for _ in range(n)]
-prev = [[(-1, -1)] * m for _ in range(n)]
-
-bfs(0, 0)
-print_path((n - 1, m - 1))
+if __name__ == '__main__':
+    n, m = map(int, input().split())
+    maze = [list(map(int, input().split())) for _ in range(n)]
+    
+    prev = bfs(0, 0, n, m, maze)
+    if prev:
+        print_path(prev, (n - 1, m - 1))
+    else:
+        print("No path found")
 
 ```
 
@@ -8246,53 +8257,49 @@ print_path((n - 1, m - 1))
 
 
 
-我们使用from collections import deque就满足要求，适用于需要频繁从队列的两端进行操作的场景，如广度优先搜索（BFS）、滑动窗口等问题。
 
-> from queue import Queue适用于多线程编程中，需要在多个线程之间安全地共享和传递数据的场景。提供线程安全的特性，内置锁机制，可以在多线程环境中安全地使用。支持阻塞操作，如 `get` 和 `put` 方法可以设置超时时间，等待队列中有数据可用或空间可用。不支持从队列两端进行操作，只能从一端进行插入和删除。
 
 ```python
 from collections import deque
 
-MAXN = 100
+# 声明方向变化的数组，代表上下左右及四个斜向移动
 MAXD = 8
-
 dx = [0, 0, 0, 0, 1, -1, 2, -2]
 dy = [1, -1, 2, -2, 0, 0, 0, 0]
 
-def canVisit(x, y):
-    return x >= 0 and x < n and y >= 0 and y < m and maze[x][y] == 0 and not inQueue[x][y]
+def canVisit(x, y, n, m, maze, in_queue):
+    return 0 <= x < n and 0 <= y < m and maze[x][y] == 0 and (x, y) not in in_queue
 
-def bfs(x, y):
+def bfs(start_x, start_y, n, m, maze):
     q = deque()
-    q.append((x, y))
-    inQueue[x][y] = True
-    step = 0
+    q.append((0, start_x, start_y))  # (step, x, y)
+    in_queue = {(start_x, start_y)}
+    
     while q:
-        cnt = len(q)
-        while cnt > 0:
-            front = q.popleft()
-            cnt -= 1
-            if front[0] == n - 1 and front[1] == m - 1:
-                return step
-            for i in range(MAXD):
-                nextX = front[0] + dx[i]
-                nextY = front[1] + dy[i]
-                nextHalfX = front[0] + dx[i] // 2
-                nextHalfY = front[1] + dy[i] // 2
-                if canVisit(nextX, nextY) and maze[nextHalfX][nextHalfY] == 0:
-                    inQueue[nextX][nextY] = True
-                    q.append((nextX, nextY))
-        step += 1
+        step, x, y = q.popleft()
+        
+        if x == n - 1 and y == m - 1:
+            return step
+        
+        for i in range(MAXD):
+            next_x = x + dx[i]
+            next_y = y + dy[i]
+            next_half_x = x + dx[i] // 2
+            next_half_y = y + dy[i] // 2
+            
+            if canVisit(next_x, next_y, n, m, maze, in_queue) and maze[next_half_x][next_half_y] == 0:
+                in_queue.add((next_x, next_y))
+                q.append((step + 1, next_x, next_y))
+    
     return -1
 
-n, m = map(int, input().split())
-maze = []
-inQueue = [[False] * m for _ in range(n)]
-for _ in range(n):
-    maze.append(list(map(int, input().split())))
-
-step = bfs(0, 0)
-print(step)
+if __name__ == '__main__':
+    n, m = map(int, input().split())
+    maze = [list(map(int, input().split())) for _ in range(n)]
+    
+    step = bfs(0, 0, n, m, maze)
+    print(step)
+    
 ```
 
 
@@ -8372,61 +8379,59 @@ print(step)
 ```python
 from collections import deque
 
-MAXN = 100
+# 声明方向变化的数组，代表上下左右移动
 MAXD = 4
-
 dx = [0, 0, 1, -1]
 dy = [1, -1, 0, 0]
 
-def canVisit(x, y):
-    return 0 <= x < n and 0 <= y < m and maze[x][y] == 0 and not inQueue[x][y]
+def canVisit(x, y, n, m, maze, in_queue):
+    return 0 <= x < n and 0 <= y < m and maze[x][y] == 0 and (x, y) not in in_queue
 
-def BFS(start, target):
-    q = deque([start])
-    inQueue[start[0]][start[1]] = True
-    step = 0
+def BFS(start, target, n, m, maze):
+    q = deque([(0, start)])  # (step, (x, y))
+    in_queue = {start}
+    
     while q:
-        cnt = len(q)
-        while cnt > 0:
-            front = q.popleft()
-            cnt -= 1
-            if front == target:
-                return step
-            for i in range(MAXD):
-                nextX = front[0] + dx[i]
-                nextY = front[1] + dy[i]
-                if canVisit(nextX, nextY):
-                    inQueue[nextX][nextY] = True
-                    q.append((nextX, nextY))
-        step += 1
+        step, (x, y) = q.popleft()
+        
+        if (x, y) == target:
+            return step
+        
+        for i in range(MAXD):
+            next_x = x + dx[i]
+            next_y = y + dy[i]
+            if canVisit(next_x, next_y, n, m, maze, in_queue):
+                in_queue.add((next_x, next_y))
+                q.append((step + 1, (next_x, next_y)))
+    
     return -1
 
-n, m = map(int, input().split())
-maze = []
-inQueue = [[False] * m for _ in range(n)]
-start, target = None, None
-
-for i in range(n):
-    row = input().strip()
-    maze_row = []
-    for j in range(m):
-        if row[j] == '.':
-            maze_row.append(0)
-        elif row[j] == '*':
-            maze_row.append(1)
-        elif row[j] == 'S':
-            start = (i, j)
-            maze_row.append(0)
-        elif row[j] == 'T':
-            target = (i, j)
-            maze_row.append(0)
-    maze.append(maze_row)
-
-if start is None or target is None:
-    print(-1)
-else:
-    step = BFS(start, target)
-    print(step)
+if __name__ == '__main__':
+    n, m = map(int, input().split())
+    maze = []
+    start, target = None, None
+    
+    for i in range(n):
+        row = input().strip()
+        maze_row = []
+        for j in range(m):
+            if row[j] == '.':
+                maze_row.append(0)
+            elif row[j] == '*':
+                maze_row.append(1)
+            elif row[j] == 'S':
+                start = (i, j)
+                maze_row.append(0)
+            elif row[j] == 'T':
+                target = (i, j)
+                maze_row.append(0)
+        maze.append(maze_row)
+    
+    if start is None or target is None:
+        print(-1)
+    else:
+        step = BFS(start, target, n, m, maze)
+        print(step)
 ```
 
 
@@ -8481,44 +8486,40 @@ from collections import deque
 import sys
 
 INF = sys.maxsize
-MAXN = 100
 MAXD = 4
 
 dx = [0, 0, 1, -1]
 dy = [1, -1, 0, 0]
 
-def canVisit(x, y):
-    return 0 <= x < n and 0 <= y < m and maze[x][y] == 0 and not inQueue[x][y]
+def canVisit(x, y, n, m, maze, in_queue):
+    return 0 <= x < n and 0 <= y < m and maze[x][y] == 0 and (x, y) not in in_queue
 
-def BFS(x, y):
+def BFS(start_x, start_y, n, m, maze):
     minStep = [[-1] * m for _ in range(n)]
-    q = deque([(x, y)])
-    inQueue[x][y] = True
-    minStep[x][y] = 0
-    step = 0
+    q = deque([(0, start_x, start_y)])  # (step, x, y)
+    in_queue = {(start_x, start_y)}
+    minStep[start_x][start_y] = 0
+    
     while q:
-        cnt = len(q)
-        while cnt > 0:
-            front = q.popleft()
-            cnt -= 1
-            for i in range(MAXD):
-                nextX = front[0] + dx[i]
-                nextY = front[1] + dy[i]
-                if canVisit(nextX, nextY):
-                    inQueue[nextX][nextY] = True
-                    minStep[nextX][nextY] = step + 1
-                    q.append((nextX, nextY))
-        step += 1
+        step, x, y = q.popleft()
+        
+        for i in range(MAXD):
+            next_x = x + dx[i]
+            next_y = y + dy[i]
+            if canVisit(next_x, next_y, n, m, maze, in_queue):
+                in_queue.add((next_x, next_y))
+                minStep[next_x][next_y] = step + 1
+                q.append((step + 1, next_x, next_y))
+    
     return minStep
 
 n, m = map(int, input().split())
 maze = []
-inQueue = [[False] * m for _ in range(n)]
 
 for _ in range(n):
     maze.append(list(map(int, input().split())))
 
-minStep = BFS(0, 0)
+minStep = BFS(0, 0, n, m, maze)
 for i in range(n):
     print(' '.join(map(str, minStep[i])))
 ```
@@ -8596,42 +8597,41 @@ for i in range(n):
 ```python
 from collections import deque
 
-MAXN = 100
 MAXD = 4
 
 dx = [0, 0, 1, -1]
 dy = [1, -1, 0, 0]
 
-def canVisit(x, y):
-    return 0 <= x < n and 0 <= y < m and (maze[x][y] == 0 or maze[x][y] == 2) and not inQueue[x][y]
+def canVisit(x, y, n, m, maze, in_queue):
+    return 0 <= x < n and 0 <= y < m and (maze[x][y] == 0 or maze[x][y] == 2) and (x, y) not in in_queue
 
-def BFS(x, y):
-    q = deque([(x, y)])
-    inQueue[x][y] = True
-    step = 0
+def BFS(start_x, start_y, n, m, maze, transMap):
+    q = deque([(0, start_x, start_y)])  # (step, x, y)
+    in_queue = {(start_x, start_y)}
+
     while q:
-        cnt = len(q)
-        while cnt > 0:
-            front = q.popleft()
-            cnt -= 1
-            if front[0] == n - 1 and front[1] == m - 1:
-                return step
-            for i in range(MAXD):
-                nextX = front[0] + dx[i]
-                nextY = front[1] + dy[i]
-                if canVisit(nextX, nextY):
-                    inQueue[nextX][nextY] = True
-                    q.append((nextX, nextY))
-                    if maze[nextX][nextY] == 2:
-                        transPosition = transMap[(nextX, nextY)]
-                        inQueue[transPosition[0]][transPosition[1]] = True
-                        q.append(transPosition)
-        step += 1
+        step, x, y = q.popleft()
+
+        if x == n - 1 and y == m - 1:
+            return step
+
+        for i in range(MAXD):
+            next_x = x + dx[i]
+            next_y = y + dy[i]
+            if canVisit(next_x, next_y, n, m, maze, in_queue):
+                in_queue.add((next_x, next_y))
+                q.append((step + 1, next_x, next_y))
+
+                if maze[next_x][next_y] == 2:
+                    trans_position = transMap.get((next_x, next_y))
+                    if trans_position:
+                        in_queue.add(trans_position)
+                        q.append((step + 1, trans_position[0], trans_position[1]))
+
     return -1
 
 n, m = map(int, input().split())
 maze = []
-inQueue = [[False] * m for _ in range(n)]
 transMap = {}
 transVector = []
 
@@ -8643,13 +8643,17 @@ for i in range(n):
         for j, val in enumerate(row):
             if val == 2:
                 transVector.append((i, j))
-        
+
         if len(transVector) == 2:
             transMap[transVector[0]] = transVector[1]
             transMap[transVector[1]] = transVector[0]
             transVector = []  # 清空 transVector 以便处理下一对传送点
 
-step = BFS(0, 0)
+if transVector:
+    print("Error: Unpaired teleportation point found.")
+    exit(1)
+
+step = BFS(0, 0, n, m, maze, transMap)
 print(step)
 ```
 
@@ -8702,41 +8706,39 @@ print(step)
 ```python
 from collections import deque
 
-MAXN = 100
 MAXD = 8
 
 dx = [-2, -1, 1, 2, -2, -1, 1, 2]
 dy = [1, 2, 2, 1, -1, -2, -2, -1]
 
-def canVisit(x, y):
-    return 0 <= x < n and 0 <= y < m and not inQueue[x][y]
 
-def BFS(x, y):
+def canVisit(x, y, n, m, in_queue):
+    return 0 <= x < n and 0 <= y < m and (x, y) not in in_queue
+
+
+def BFS(start_x, start_y, n, m):
     minStep = [[-1] * m for _ in range(n)]
-    queue = deque()
-    queue.append((x, y))
-    inQueue[x][y] = True
-    minStep[x][y] = 0
-    step = 0
+    queue = deque([(0, start_x, start_y)])  # (step, x, y)
+    in_queue = {(start_x, start_y)}
+    minStep[start_x][start_y] = 0
+
     while queue:
-        cnt = len(queue)
-        while cnt > 0:
-            front = queue.popleft()
-            cnt -= 1
-            for i in range(MAXD):
-                nextX = front[0] + dx[i]
-                nextY = front[1] + dy[i]
-                if canVisit(nextX, nextY):
-                    inQueue[nextX][nextY] = True
-                    minStep[nextX][nextY] = step + 1
-                    queue.append((nextX, nextY))
-        step += 1
+        step, x, y = queue.popleft()
+
+        for i in range(MAXD):
+            next_x = x + dx[i]
+            next_y = y + dy[i]
+            if canVisit(next_x, next_y, n, m, in_queue):
+                in_queue.add((next_x, next_y))
+                minStep[next_x][next_y] = step + 1
+                queue.append((step + 1, next_x, next_y))
+
     return minStep
 
 
 n, m, x, y = map(int, input().split())
-inQueue = [[False] * m for _ in range(n)]
-minStep = BFS(x - 1, y - 1)
+
+minStep = BFS(x - 1, y - 1, n, m)
 for row in minStep:
     print(' '.join(map(str, row)))
 ```
@@ -8801,42 +8803,39 @@ for row in minStep:
 from collections import deque
 
 MAXD = 8
-dx = [-2,-2,-1,1,2,2,1,-1]
-dy = [1,-1,-2,-2,-1,1,2,2]
+dx = [-2, -2, -1, 1, 2, 2, 1, -1]
+dy = [1, -1, -2, -2, -1, 1, 2, 2]
 
 
 def canVisit(x, y):
-    return x >= 0 and x < n and y >= 0 and y < m and not isBlock.get((x, y), False) and not inQueue[x][y]
+    return 0 <= x < n and 0 <= y < m and (x, y) not in isBlock and (x, y) not in in_queue
 
 
-def BFS(x, y):
+def BFS(start_x, start_y):
     minStep = [[-1] * m for _ in range(n)]
-    queue = deque()
-    queue.append((x, y))
-    inQueue[x][y] = True
-    minStep[x][y] = 0
-    step = 0
+    queue = deque([(0, start_x, start_y)])  # (step, x, y)
+    in_queue.add((start_x, start_y))
+    minStep[start_x][start_y] = 0
+
     while queue:
-        cnt = len(queue)
-        for _ in range(cnt):
-            front = queue.popleft()
-            wx, wy = [-1, 0, 1, 0], [0, -1, 0, 1]
-            for i in range(MAXD):
-                nextX = front[0] + dx[i]
-                nextY = front[1] + dy[i]
-                footX, footY = front[0] + wx[i//2], front[1] + wy[i//2]
+        step, x, y = queue.popleft()
 
-                if canVisit(nextX, nextY) and not isBlock.get((footX, footY), False):
-                    inQueue[nextX][nextY] = True
-                    minStep[nextX][nextY] = step + 1
-                    queue.append((nextX, nextY))
+        wx, wy = [-1, 0, 1, 0], [0, -1, 0, 1]
+        for i in range(MAXD):
+            nextX = x + dx[i]
+            nextY = y + dy[i]
+            footX, footY = x + wx[i//2], y + wy[i//2]
 
+            if canVisit(nextX, nextY) and (footX, footY) not in isBlock:
+                in_queue.add((nextX, nextY))
+                minStep[nextX][nextY] = step + 1
+                queue.append((step + 1, nextX, nextY))
 
-        step += 1
     return minStep
 
+
 n, m, x, y = map(int, input().split())
-inQueue = [[False] * m for _ in range(n)]
+in_queue = set()
 isBlock = {}
 
 k = int(input())
@@ -8851,63 +8850,6 @@ for row in minStep:
 ```
 
 
-
-```python
-from collections import deque
-
-MAXD = 8
-dx = [-2, -1, 1, 2, -2, -1, 1, 2]
-dy = [1, 2, 2, 1, -1, -2, -2, -1]
-
-
-def canVisit(x, y):
-    return x >= 0 and x < n and y >= 0 and y < m and not isBlock.get((x, y), False) and not inQueue[x][y]
-
-
-def BFS(x, y):
-    minStep = [[-1] * m for _ in range(n)]
-    queue = deque()
-    queue.append((x, y))
-    inQueue[x][y] = True
-    minStep[x][y] = 0
-    step = 0
-    while queue:
-        cnt = len(queue)
-        for _ in range(cnt):
-            front = queue.popleft()
-            for i in range(MAXD):
-                nextX = front[0] + dx[i]
-                nextY = front[1] + dy[i]
-                if dx[i] == -1 and dy[i] != -1: #如果dx=-1，-1//2=-1，期望得到0
-                    footX, footY = front[0], front[1] + dy[i] // 2
-                elif dx[i] != -1 and dy[i] == -1:
-                    footX, footY = front[0] + dx[i] // 2, front[1]
-                else:
-                    footX, footY = front[0] + dx[i] // 2, front[1] + dy[i] // 2
-
-                if canVisit(nextX, nextY) and not isBlock.get((footX, footY), False):
-                    inQueue[nextX][nextY] = True
-                    minStep[nextX][nextY] = step + 1
-                    queue.append((nextX, nextY))
-
-
-        step += 1
-    return minStep
-
-n, m, x, y = map(int, input().split())
-inQueue = [[False] * m for _ in range(n)]
-isBlock = {}
-
-k = int(input())
-for _ in range(k):
-    blockX, blockY = map(int, input().split())
-    isBlock[(blockX - 1, blockY - 1)] = True
-
-minStep = BFS(x - 1, y - 1)
-
-for row in minStep:
-    print(' '.join(map(str, row)))
-```
 
 
 
