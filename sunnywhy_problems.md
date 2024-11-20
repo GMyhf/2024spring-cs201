@@ -7309,6 +7309,145 @@ print(maxValue)
 
 
 
+鉴于求最短、最长的问题都能用heapq实现，在图搜索中搭配bfs尤其好用。给出用heapq的bfs实现。
+
+```python
+import heapq
+
+
+def max_path_sum(matrix):
+    n, m = len(matrix), len(matrix[0])
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # 右，下，左，上
+
+    # 使用最大堆，堆元素为 (-权值和, 当前行, 当前列, 已访问路径)
+    max_heap = [(-matrix[0][0], 0, 0, {(0, 0)})]
+
+    max_value = float('-inf')  # 用于记录全局最大值
+
+    while max_heap:
+        # 从堆中取出当前路径
+        curr_sum, x, y, visited = heapq.heappop(max_heap)
+        curr_sum = -curr_sum  # 恢复为正值
+
+        # 如果到达右下角，更新最大值
+        if x == n - 1 and y == m - 1:
+            max_value = max(max_value, curr_sum)
+            continue
+
+        # 扩展当前节点的所有邻居
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < n and 0 <= ny < m and (nx, ny) not in visited:
+                new_visited = visited.copy()
+                new_visited.add((nx, ny))
+                heapq.heappush(max_heap, (-(curr_sum + matrix[nx][ny]), nx, ny, new_visited))
+
+    return max_value
+
+
+n, m = map(int, input().split())
+maze = []
+for _ in range(n):
+    row = list(map(int, input().split()))
+    maze.append(row)
+
+print(max_path_sum(maze))
+
+```
+
+> 路径状态管理实现正确的去重逻辑，每条路径在扩展时独立处理。
+>
+> 1. **独立路径管理**：
+>    - 为每条路径单独存储访问的点集（`visited`），避免路径交叉污染。
+>    - 每次扩展时复制当前路径的访问状态，确保不重复访问。
+>
+> 2. **终止条件更新**：
+>    - 到达右下角时，直接更新全局最大值 `max_value`。
+>
+> 3. **堆扩展逻辑**：
+>    - 对于未访问的点，动态维护新的路径和，并加入堆中。
+>
+> **输出验证**
+>
+> 对于输入：
+>
+> ```
+> 2 5
+> 4 38 55 42 -21
+> -85 -45 76 49 39
+> ```
+>
+> 程序输出为 `282`，路径为：
+>
+> ```
+> 4 -> 38 -> 55 -> 42 -> 49 -> 39
+> ```
+>
+> **复杂度分析**
+>
+> 1. **时间复杂度**：
+>    - 最坏情况下，每个点的路径状态都可能被扩展，复杂度为 \(O((n \times m) \times 2^{n \times m})\)，由于 \(n, m \leq 5\)，可以接受。
+> 2. **空间复杂度**：
+>    - 由于堆存储路径状态，复杂度为 $O(2^{n \times m})$。
+
+
+
+以下是使用 `deque` 替代 `heapq` 实现的代码：
+
+```python
+from collections import deque
+
+def max_path_sum(matrix):
+    n, m = len(matrix), len(matrix[0])
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # 右，下，左，上
+
+    # 使用队列，存储 (当前权值和, 当前行, 当前列, 已访问路径)
+    queue = deque([(matrix[0][0], 0, 0, {(0, 0)})])
+
+    max_value = float('-inf')  # 用于记录全局最大值
+
+    while queue:
+        # 从队列中取出当前路径
+        curr_sum, x, y, visited = queue.popleft()
+
+        # 如果到达右下角，更新最大值
+        if x == n - 1 and y == m - 1:
+            max_value = max(max_value, curr_sum)
+            continue
+
+        # 扩展当前节点的所有邻居
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < n and 0 <= ny < m and (nx, ny) not in visited:
+                new_visited = visited.copy()
+                new_visited.add((nx, ny))
+                queue.append((curr_sum + matrix[nx][ny], nx, ny, new_visited))
+
+    return max_value
+
+
+# 读取输入
+n, m = map(int, input().split())
+maze = []
+for _ in range(n):
+    row = list(map(int, input().split()))
+    maze.append(row)
+
+# 输出结果
+print(max_path_sum(maze))
+```
+
+
+
+> **复杂度分析**
+>
+> 1. **时间复杂度**：
+>    - 同样是 $O((n \times m) \times 2^{n \times m})$，但 `deque` 操作比 `heapq` 更简单，适合小规模问题。
+> 2. **空间复杂度**：
+>    - 队列存储所有路径状态，复杂度为 $O(2^{n \times m})$。
+
+
+
 ### sy316: 矩阵最大权值路径 中等
 
 https://sunnywhy.com/sfbj/8/1/316
