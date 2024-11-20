@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1501 GMT+8 Nov 20, 2024
+Updated 1921 GMT+8 Nov 20, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8922,6 +8922,35 @@ No
 ```
 No
 ```
+
+
+
+思路：DFS，寻找分段点，有一种方案成立即返回True。 体现Python优势的题目，字符串切片转整数
+
+```python
+# 徐至晟，24光华
+import math
+a=input()
+n=len(a)
+
+def dfs(x):
+    global a,n
+    if x==n:
+        return True
+    for y in range(x+1,n+1):
+        b=int(a[x:y])
+        if b>0 and b==(int(math.sqrt(b))**2):
+            if dfs(y):
+                return True
+    return False
+
+if dfs(0):
+    print('Yes')
+else:
+    print('No')
+```
+
+
 
 
 
