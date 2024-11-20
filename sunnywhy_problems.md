@@ -9249,6 +9249,37 @@ if __name__ == "__main__":
 
 
 
+```python
+# 曾孜博 24工学院
+import math
+
+
+def luck(a, r):
+    if r[-1] == len(a):
+        ans.append(r)
+        return
+    i = r[-1]
+    for j in range(i, len(a)):
+        k = ''.join(a[i:j + 1])
+        t = math.sqrt(int(k))
+        if t.is_integer() and t > 0:
+            r.append(j + 1)
+            luck(a, r)
+            r.pop()
+
+
+a = list(input())
+ans = []
+luck(a, [0])
+if len(ans) > 0:
+    print("Yes")
+else:
+    print("No")
+
+```
+
+
+
 # 树专题（46题）
 
 ## 1 树与二叉树 1题
