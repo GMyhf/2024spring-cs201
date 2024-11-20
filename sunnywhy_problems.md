@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1917 GMT+8 Nov 18, 2024
+Updated 1501 GMT+8 Nov 20, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8922,6 +8922,39 @@ No
 ```
 No
 ```
+
+
+
+dfs，先定义一个集合，存储所有小$10^9$的平方数。然后将数据按照位数生成列表，便于提取数据。定义dfs函数，将数字列表从高位开始分割，对于每次分割，检查前面的数字是否为平方数，以及后面的数字是否可以继续分割为平方数，如果可以，返回True，不可以，返回False。
+
+```python
+# 李天笑，24物理学院
+squares = set()
+i = 1
+while i ** 2 < 10 ** 9:
+    squares.add(i ** 2)
+    i += 1
+def dfs(idx):
+    if idx == len(digits):
+        return True
+
+    num = 0
+    for i in range(idx, len(digits)):
+        num = num * 10 + digits[i]
+        if num in squares:
+            if dfs(i + 1):
+                return True
+    return False
+
+A = int(input())
+digits = list(map(int, str(A)))
+if dfs(0):
+    print('Yes')
+else:
+    print('No')
+```
+
+
 
 
 
