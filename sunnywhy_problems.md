@@ -8797,7 +8797,7 @@ for row in minStep:
 
 
 
-<img src="/Users/hfyan/Library/Application Support/typora-user-images/image-20240525200326139.png" alt="image-20240525200326139" style="zoom: 50%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240525200326139.png" alt="image-20240525200326139" style="zoom: 50%;" />
 
 ```python
 from collections import deque
