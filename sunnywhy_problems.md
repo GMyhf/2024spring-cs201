@@ -9147,6 +9147,27 @@ else:
 
 
 
+把合法的点位放到一个数组里，也许有点dp想法但不是dp。
+
+```python
+# 高景行 24数学科学学院
+a = input()
+n = len(a)
+valid = [-1]
+def check(x):
+    if not x: return False
+    tmp = int(x ** 0.5)
+    return tmp * tmp == x
+for i in range(n):
+    for t in valid:
+        if check(int(a[t + 1:i + 1])):
+            valid.append(i)
+            break
+print("Yes" if n - 1 in valid else "No")
+```
+
+
+
 
 
 ```python
