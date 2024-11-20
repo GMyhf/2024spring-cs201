@@ -8952,6 +8952,29 @@ else:
 
 
 
+思路：dfs，用了is_integer()函数，要是把小于等于a的完全平方数都算出来会超时
+
+```python
+# 吴道宁 24元培学院
+from math import sqrt
+a=int(input())
+s=str(a)
+def dfs(s):
+    if sqrt(int(s)).is_integer() and sqrt(int(s))!=0:
+        return True
+    for i in range(1,len(s)):
+        if sqrt(int(s[:i])).is_integer() and sqrt(int(s[:i]))!=0:
+            if dfs(s[i:]):
+                return True
+    return False
+if dfs(s):
+    print('Yes')
+else:
+    print('No')
+```
+
+
+
 
 
 dfs，先定义一个集合，存储所有小$10^9$的平方数。然后将数据按照位数生成列表，便于提取数据。定义dfs函数，将数字列表从高位开始分割，对于每次分割，检查前面的数字是否为平方数，以及后面的数字是否可以继续分割为平方数，如果可以，返回True，不可以，返回False。
