@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1921 GMT+8 Nov 20, 2024
+Updated 1515 GMT+8 Nov 21, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9277,6 +9277,29 @@ else:
     print("No")
 
 ```
+
+
+
+思路：暴力枚举
+
+```python
+# 陈一匡 24物理学院
+square_nums=set()
+for i in range(1,31624):
+    square_nums.add(i*i)
+def f(a):
+    if int(a) in square_nums:
+        return 'Yes'
+    for i in range(len(a)):
+        if int(a[:i+1]) in square_nums and f(a[i+1:])=='Yes':
+            return 'Yes'
+    return 'No'
+
+a=input()
+print(f(a))
+```
+
+
 
 
 
