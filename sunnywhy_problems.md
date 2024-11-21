@@ -9301,6 +9301,40 @@ print(f(a))
 
 
 
+思路：recursion
+
+```python
+# 卢殷文  24物院
+from math import sqrt
+from functools import lru_cache
+
+def is_power(s:str):
+    n=int(s)
+    if n==0:
+        return False
+    elif int(sqrt(n))**2 == n:
+        return True
+    else:
+        return False
+
+@lru_cache(maxsize=256)
+def blessed(s:str):
+    if is_power(s):
+        return True
+    for i in range(1,len(s)):
+        if blessed(s[:i]) and blessed(s[i:]):
+            return True
+    return False
+
+a=input()
+if blessed(a):
+    print("Yes")
+else:
+    print("No")
+```
+
+
+
 
 
 # 树专题（46题）
