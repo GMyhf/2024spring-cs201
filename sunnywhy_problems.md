@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1515 GMT+8 Nov 21, 2024
+Updated 0126 GMT+8 Nov 22, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9061,6 +9061,45 @@ No
 ```
 No
 ```
+
+
+
+思路：回溯上次找到的平方数，继续往后找新的平方数
+
+```python
+# 曹以楷 24物理学院
+from math import isqrt
+
+
+def is_square(x):
+    """判断一个数字是否是完全平方数"""
+    x = int(x)
+    return x != 0 and isqrt(x)**2 == x
+
+
+def dfs(s, x, n):
+    """深度优先搜索，判断是否可以将字符串分割成完全平方数"""
+    if x >= n - 1:
+        return True
+    value = ""
+    for j in range(x + 1, n):
+        value += s[j]
+        if is_square(value) and dfs(s, j, n):
+            return True
+    return False
+
+
+# 主程序
+s = input()
+n = len(s)
+
+# 执行DFS并输出结果
+result = dfs(s, -1, n)
+print("Yes" if result else "No")
+
+```
+
+
 
 
 
