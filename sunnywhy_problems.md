@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1109 GMT+8 Nov 22, 2024
+Updated 1541 GMT+8 Nov 22, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9064,6 +9064,39 @@ No
 
 
 
+dfs，先定义一个集合，存储所有小$10^9$的平方数。然后将数据按照位数生成列表，便于提取数据。定义dfs函数，将数字列表从高位开始分割，对于每次分割，检查前面的数字是否为平方数，以及后面的数字是否可以继续分割为平方数，如果可以，返回True，不可以，返回False。
+
+是一道典型的dfs问题，先初始化变量，然后再把所有平方数生成列表，再套用dfs模版（最终状态，即idx=len(each_number)），中间状态（巧妙之处就在于它很好表示了拆分后再将数字给组合起来），再写出dfs从哪里开始（0）。
+
+```python
+# 李天笑，24物理学院
+squares = set()
+i = 1
+while i ** 2 < 10 ** 9:
+    squares.add(i ** 2)
+    i += 1
+def dfs(idx):
+    if idx == len(digits):
+        return True
+
+    num = 0
+    for i in range(idx, len(digits)):
+        num = num * 10 + digits[i]
+        if num in squares:
+            if dfs(i + 1):
+                return True
+    return False
+
+A = int(input())
+digits = list(map(int, str(A)))
+if dfs(0):
+    print('Yes')
+else:
+    print('No')
+```
+
+
+
 
 
 是否存在一种二分分割，使得前一半是正平方数且后一半也是祝福数。
@@ -9183,39 +9216,6 @@ def dfs(s):
                 return True
     return False
 if dfs(s):
-    print('Yes')
-else:
-    print('No')
-```
-
-
-
-
-
-dfs，先定义一个集合，存储所有小$10^9$的平方数。然后将数据按照位数生成列表，便于提取数据。定义dfs函数，将数字列表从高位开始分割，对于每次分割，检查前面的数字是否为平方数，以及后面的数字是否可以继续分割为平方数，如果可以，返回True，不可以，返回False。
-
-```python
-# 李天笑，24物理学院
-squares = set()
-i = 1
-while i ** 2 < 10 ** 9:
-    squares.add(i ** 2)
-    i += 1
-def dfs(idx):
-    if idx == len(digits):
-        return True
-
-    num = 0
-    for i in range(idx, len(digits)):
-        num = num * 10 + digits[i]
-        if num in squares:
-            if dfs(i + 1):
-                return True
-    return False
-
-A = int(input())
-digits = list(map(int, str(A)))
-if dfs(0):
     print('Yes')
 else:
     print('No')
