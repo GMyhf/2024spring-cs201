@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 0126 GMT+8 Nov 22, 2024
+Updated 1109 GMT+8 Nov 22, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9061,6 +9061,43 @@ No
 ```
 No
 ```
+
+
+
+
+
+是否存在一种二分分割，使得前一半是正平方数且后一半也是祝福数。
+
+```python
+# 吕金浩 24物理学院
+from functools import lru_cache
+import math
+
+
+@lru_cache(maxsize=None)
+def is_blessed_number(n):
+    if int(n) < 1:
+        return False
+
+    # 检查整个数字是否为平方数
+    if math.isqrt(int(n)) ** 2 == int(n):
+        return True
+
+    for i in range(1, len(n)):
+        left = n[:i]
+        right = n[i:]
+
+        if is_blessed_number(left) and is_blessed_number(right):
+            return True
+
+    return False
+
+
+# 测试
+print('Yes' if is_blessed_number(input()) else 'No')
+```
+
+
 
 
 
