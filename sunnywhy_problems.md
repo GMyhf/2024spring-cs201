@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1541 GMT+8 Nov 22, 2024
+Updated 1409 GMT+8 Nov 24, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9096,6 +9096,26 @@ else:
 ```
 
 
+
+```python
+# 李欣妤 24地空学院
+def is_blessed_number(n_str):
+    squares = [str(i * i) for i in range(1, 31623)]
+
+    def can_split(s):
+        if not s:
+            return True
+        for square in squares:
+            if s.startswith(square) and can_split(s[len(square):]):
+                return True
+        return False
+
+    return "Yes" if can_split(n_str) else "No"
+
+
+num = input()
+print(is_blessed_number(num))
+```
 
 
 
