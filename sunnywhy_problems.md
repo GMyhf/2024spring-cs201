@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1409 GMT+8 Nov 24, 2024
+Updated 2302 GMT+8 Nov 25, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -7596,57 +7596,6 @@ dfs(0, 0, [(0, 0)], maze[0][0])
 for x, y in max_path:
     print(x + 1, y + 1)
 
-```
-
-
-
-
-
-**辅助visited空间**
-
-```python
-# gpt translated version of the C++ code
-MAXN = 5
-INF = float('inf')
-n, m = map(int, input().split())
-maze = []
-for _ in range(n):
-    row = list(map(int, input().split()))
-    maze.append(row)
-
-visited = [[False for _ in range(m)] for _ in range(n)]
-maxValue = -INF
-tempPath, optPath = [], []
-
-MAXD = 4
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
-
-def is_valid(x, y):
-    return 0 <= x < n and 0 <= y < m and not visited[x][y]
-
-def DFS(x, y, nowValue):
-    global maxValue, tempPath, optPath
-    if x == n - 1 and y == m - 1:
-        if nowValue > maxValue:
-            maxValue = nowValue
-            optPath = list(tempPath)
-        return
-    visited[x][y] = True
-    for i in range(MAXD):
-        nextX = x + dx[i]
-        nextY = y + dy[i]
-        if is_valid(nextX, nextY):
-            nextValue = nowValue + maze[nextX][nextY]
-            tempPath.append((nextX, nextY))
-            DFS(nextX, nextY, nextValue)
-            tempPath.pop()
-    visited[x][y] = False
-
-tempPath.append((0, 0))
-DFS(0, 0, maze[0][0])
-for pos in optPath:
-    print(pos[0] + 1, pos[1] + 1)
 ```
 
 
