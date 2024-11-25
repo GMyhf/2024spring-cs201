@@ -6991,7 +6991,6 @@ print(cnt)
 **辅助visited空间**
 
 ```python
-# gpt translated version of the C++ code
 MAXN = 5
 n, m = map(int, input().split())
 maze = []
@@ -7141,7 +7140,6 @@ print("Yes" if canReach else "No")
 **辅助visited空间**
 
 ```python
-# gpt translated version of the C++ code
 MAXN = 5
 n, m, k = map(int, input().split())
 maze = []
@@ -7266,7 +7264,6 @@ print(maxValue)
 **辅助visited空间**
 
 ```python
-# gpt translated version of the C++ code
 MAXN = 5
 INF = float('inf')
 n, m = map(int, input().split())
@@ -7696,7 +7693,6 @@ print(maxValue)
 **辅助visited空间**
 
 ```python
-# gpt translated version of the C++ code
 MAXN = 5
 INF = float('inf')
 n, m = map(int, input().split())
