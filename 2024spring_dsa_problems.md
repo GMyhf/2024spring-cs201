@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2359 GMT+8 Nov 24, 2024
+Updated 2359 GMT+8 Nov 28, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -12584,82 +12584,61 @@ print(min_employees(tasks, t))
 
 http://cs101.openjudge.cn/dsapre/21006/
 
-把M个同样的苹果放在N个同样的盘子里，允许有的盘子空着不放，问共有多少种不同的分法？（用K表示）5，1，1和1，5，1 是同一种分法。
+这个题目后台没有数据，提交什么都是AC。
 
-**输入**
+正确的题目是
 
-苹果个数m 和盘子个数n(0<=M，1<=N<=10)
-
-**输出**
-
-不同的放法数目
-
-样例输入
-
-```
-7 3
-```
-
-样例输出
-
-```
-8
-```
+http://cs101.openjudge.cn/practice/01664/
 
 
 
-这是一个经典的组合数学问题，也被称为“球和盒子模型”。使用动态规划来解决这个问题。定义dp\[i][j]为将i个苹果放入j个盘子的方法数。那么，我们有两种情况：
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-1. 所有的盘子都至少放一个苹果，那么问题就变成了如何将i-j个苹果放入j个盘子。这就是dp\[i-j][j]。
-
-2. 至少有一个盘子是空的，那么问题就变成了如何将i个苹果放入j-1个盘子。这就是dp\[i][j-1]。
-
-因此，我们有$dp[i][j] = dp[i-j][j] + dp[i][j-1]$。我们可以使用一个二维数组来存储dp值，并使用嵌套循环来计算所有的dp值。
-
-以下是Python代码实现：
-
-```python
-# GitHub copilot
-def count_ways(m, n):
-    dp = [[0 for _ in range(n+1)] for _ in range(m+1)]
-    for i in range(m+1):
-        dp[i][1] = 1
-    for i in range(1, m+1):
-        for j in range(2, min(i, n)+1):
-            dp[i][j] = dp[i-j][j] + dp[i][j-1]
-    return dp[m][n]
-
-# Processing input
-try:
-    while True:
-        m, n = map(int, input().split())
-        print(count_ways(m, n))
-except EOFError:
-    pass
-```
+的 Optional problems
 
 
 
+~~把M个同样的苹果放在N个同样的盘子里，允许有的盘子空着不放，问共有多少种不同的分法？（用K表示）5，1，1和1，5，1 是同一种分法。~~
+
+~~**输入**~~
+
+~~苹果个数m 和盘子个数n(0<=M，1<=N<=10)~~
+
+~~**输出**~~
+
+~~不同的放法数目~~
 
 
-```python
-# 23n2300011427
-m,n=map(int,input().split())
-dp=[[0]*(m+1) for i in range(n+1)]
-for i in range(1,n+1):
-    dp[i][0]=1
 
-dp[1]=[1]*(m+1)
-for i in range(1,n+1):
-    dp[i][1]=1
-for i in range(1,n+1):
-    for j in range(1,m+1):
-        if i>j:
-            dp[i][j]=dp[j][j]
-        else:
-            dp[i][j]=dp[i-1][j]+dp[i][j-i]
-print(dp[n][m])
-```
+~~这是一个经典的组合数学问题，也被称为“球和盒子模型”。使用动态规划来解决这个问题。定义dp\[i][j]为将i个苹果放入j个盘子的方法数。那么，我们有两种情况：~~
+
+1. ~~所有的盘子都至少放一个苹果，那么问题就变成了如何将i-j个苹果放入j个盘子。这就是dp\[i-j][j]。~~
+
+2. ~~至少有一个盘子是空的，那么问题就变成了如何将i个苹果放入j-1个盘子。这就是dp\[i][j-1]。~~
+
+~~因此，我们有$dp[i][j] = dp[i-j][j] + dp[i][j-1]$。我们可以使用一个二维数组来存储dp值，并使用嵌套循环来计算所有的dp值。~~
+
+> 
+>
+> ```python
+> # 23n2300011427
+> m,n=map(int,input().split())
+> dp=[[0]*(m+1) for i in range(n+1)]
+> for i in range(1,n+1):
+>     dp[i][0]=1
+> 
+> dp[1]=[1]*(m+1)
+> for i in range(1,n+1):
+>     dp[i][1]=1
+> for i in range(1,n+1):
+>     for j in range(1,m+1):
+>         if i>j:
+>             dp[i][j]=dp[j][j]
+>         else:
+>             dp[i][j]=dp[i-1][j]+dp[i][j-i]
+> print(dp[n][m])
+> ```
+>
 
 
 
