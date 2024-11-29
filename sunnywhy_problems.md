@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1024 GMT+8 Nov 29, 2024
+Updated 1613 GMT+8 Nov 29, 2024
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4696,17 +4696,17 @@ if __name__ == "__main__":
 
 ## 4 贪心
 
-### sy149: 最优装箱
+### sy149: 最优装箱 简单
 
 https://sunnywhy.com/sfbj/4/4/149
 
-有个箱子需要装上一艘轮船，已知第个箱子的重量为，轮船的载重为。问在不超过轮船载重的前提下，最多能把多少个箱子装上轮船。
+有`n`个箱子需要装上一艘轮船，已知第i个箱子的重量为$w_i$，轮船的载重为`W`。问在不超过轮船载重的前提下，最多能把多少个箱子装上轮船。
 
 **输入描述**
 
-第一行两个正整数、（、），分别表示箱子个数和轮船载重。
+第一行两个正整数`n、W`（$1 \le n \le 10^5$、$1 \le W \le 10^7$），分别表示箱子个数和轮船载重。
 
-第二行个正整数（），表示个箱子的重量。
+第二行个正整数$w_i$（$1 \le w_i \le 10^7$），表示`n`个箱子的重量。
 
 **输出描述**
 
@@ -4749,7 +4749,7 @@ print(cnt, w_raw - w)
 
 
 
-### sy150: 整数配对
+### sy150: 整数配对 简单
 
 https://sunnywhy.com/sfbj/4/4/150
 
@@ -4790,7 +4790,24 @@ https://sunnywhy.com/sfbj/4/4/150
 
 
 ```python
+n, m = map(int, input().split())
+*a, = map(int, input().split())
+*b, = map(int, input().split())
+a.sort()
+b.sort()
+first = 0
+second = 0
+cnt = 0
 
+while first < n and second < m:
+    if a[first] <= b[second]:
+        cnt += 1
+        first += 1
+        second += 1
+    else:
+        second += 1
+
+print(cnt)
 ```
 
 
