@@ -5346,7 +5346,7 @@ print(ans[0][1])
 
 ## 03424: Candies
 
-http://cs101.openjudge.cn/practice/03424/
+dijkstra, http://cs101.openjudge.cn/practice/03424/
 
 During the kindergarten days, flymouse was the monitor of his class. Occasionally the head-teacher brought the kids of flymouse’s class a large bag of candies and had flymouse distribute them. All the kids loved candies very much and often compared the numbers of candies they got with others. A kid A could had the idea that though it might be the case that another kid B was better than him in some aspect and therefore had a reason for deserving more candies than he did, he should never get a certain number of candies fewer than B did no matter how many candies he actually got, otherwise he would feel dissatisfied and go to the head-teacher to complain about flymouse’s biased distribution.
 
@@ -9834,7 +9834,7 @@ solve_bug_life(scenarios)
 
 http://cs101.openjudge.cn/practice/07735/
 
-同 01724: ROADS，Dijkstra, dfs with pruning, http://cs101.openjudge.cn/2024sp_routine/01724/
+同 01724: ROADS，Dijkstra, dfs with pruning, http://cs101.openjudge.cn/practice/01724/
 
 ```python
 import heapq
@@ -13625,7 +13625,7 @@ http://cs101.openjudge.cn/dsapre/22509/
 
 ## 22510: 皮卡丘的冒险
 
-http://dsbpython.openjudge.cn/2024hw12/002/
+dijkstra, http://dsbpython.openjudge.cn/2024hw12/002/
 
 某天火箭队终于成功抓到了皮卡丘，但是因为主角光环加身，他又双叒叕逃脱了。他想赶紧回到
 小智身边，但是前面有一片森林挡住了去路。
