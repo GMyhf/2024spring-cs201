@@ -2,7 +2,7 @@
 # http://cs101.openjudge.cn/practice/03424/
 import heapq
 
-def dijkstra(N, G, start):
+def dijkstra(N, G, start):	# 读作/'daikstrə/,不是dijiekestra
     INF = float('inf')
     dist = [INF] * (N + 1)  # 存储源点到各个节点的最短距离
     dist[start] = 0  # 源点到自身的距离为0
