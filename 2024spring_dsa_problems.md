@@ -7515,7 +7515,7 @@ print(" ".join(res_new))
 
 ## 05345: 位查询
 
-http://cs101.openjudge.cn/dsapre/05345/
+http://cs101.openjudge.cn/practice/05345/
 
 给出N个范围在[0, 65535]的整数，编程支持以下的操作： 
 
