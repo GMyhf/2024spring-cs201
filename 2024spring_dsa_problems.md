@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1850 GMT+8 Dec 05, 2024
+Updated 1742 GMT+8 Jan 15, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -7566,6 +7566,27 @@ Q 2
 
 
 "最低位i为0"的意思是指编号上个位数是第零位。比如说 $4 = (100)_2$，这里面1是第二位，而不是第三位的意思。
+
+```python
+n,m  = map(int, input().split())
+a = list(map(int, input().split()))
+for _ in range(m):
+    op, i = input().split()
+    i = int(i)
+    if op == 'C':
+        for j in range(n):
+            a[j] += i
+            a[j] %= 65535
+    elif op == 'Q':
+        cnt = 0
+        for j in a:
+            s = bin(j)[2:][::-1]
+            if i < len(s) and s[i] == '1':
+                cnt += 1
+        print(cnt)
+```
+
+
 
 ```python
 def modify_nums(nums, d):
