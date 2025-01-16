@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1742 GMT+8 Jan 15, 2025
+Updated 2205 GMT+8 Jan 16, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -30,7 +30,7 @@ Deng Jinwen's summary, https://github.com/JinwenDeng/DSA-Summary
 
 ## 01094: Sorting It All Out
 
-http://cs101.openjudge.cn/dsapre/01094/
+http://cs101.openjudge.cn/practice/01094/
 
 An ascending sorted sequence of distinct values is one in which some form of a less-than operator is used to order the elements from smallest to largest. For example, the sorted sequence A, B, C, D implies that A < B, B < C and C < D. in this problem, we will give you a set of relations of the form A < B and ask you to determine whether a sorted order has been specified or not. 
 
