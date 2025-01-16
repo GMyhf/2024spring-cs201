@@ -3454,7 +3454,7 @@ while True:
 
 ## 02299: Ultra-QuickSort
 
-http://cs101.openjudge.cn/dsapre/02299/
+http://cs101.openjudge.cn/practice/02299/
 
 In this problem, you have to analyze a particular sorting algorithm. The algorithm processes a sequence of n distinct integers by swapping two adjacent sequence elements until the sequence is sorted in ascending order. For the input sequence 
 9 1 0 5 4 , 
