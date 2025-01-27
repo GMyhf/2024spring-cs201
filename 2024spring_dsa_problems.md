@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1649 GMT+8 Jan 23, 2025
+Updated 1149 GMT+8 Jan 27, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -172,7 +172,7 @@ while True:
 
 ## 01145: Tree Summing
 
-http://cs101.openjudge.cn/dsapre/01145/
+http://cs101.openjudge.cn/practice/01145/
 
 LISP was one of the earliest high-level programming languages and, with FORTRAN, is one of the oldest languages currently being used. Lists, which are the fundamental data structures in LISP, can easily be adapted to represent other important data structures such as trees. 
 
@@ -1588,7 +1588,7 @@ while True:
 
 ## 01611: The Suspects
 
-http://cs101.openjudge.cn/dsapre/01611/
+http://cs101.openjudge.cn/practice/01611/
 
 Severe acute respiratory syndrome (SARS), an atypical pneumonia of unknown aetiology, was recognized as a global threat in mid-March 2003. To minimize transmission to others, the best strategy is to separate the suspects from others.
 In the Not-Spreading-Your-Sickness University (NSYSU), there are many student groups. Students in the same group intercommunicate with each other frequently, and a student may join several groups. To prevent the possible transmissions of SARS, the NSYSU collects the member lists of all student groups, and makes the following rule in their standard operation procedure (SOP).
@@ -2197,7 +2197,7 @@ else:
 
 ## 01760: Disk Tree
 
-http://cs101.openjudge.cn/dsapre/01760/
+http://cs101.openjudge.cn/practice/01760/
 
 Hacker Bill has accidentally lost all the information from his workstation's hard drive and he has no backup copies of its contents. He does not regret for the loss of the files themselves, but for the very nice and convenient directory structure that he had created and cherished during years of work. Fortunately, Bill has several copies of directory listings from his hard drive. Using those listings he was able to recover full paths (like "WINNT\SYSTEM32\CERTSRV\CERTCO~1\X86") for some directories. He put all of them in a file by writing each path he has found on a separate line. Your task is to write a program that will help Bill to restore his state of the art directory structure by providing nicely formatted directory tree.
 
@@ -3387,7 +3387,7 @@ while True:
 
 ## 02255: 重建二叉树
 
-http://cs101.openjudge.cn/dsapre/02255/
+http://cs101.openjudge.cn/prctice/02255/
 
 **输入**
 
@@ -3636,7 +3636,7 @@ for r in results:
 
 ## 02337: Catenyms
 
-http://cs101.openjudge.cn/dsapre/02337/
+http://cs101.openjudge.cn/practice/02337/
 
 A catenym is a pair of words separated by a period such that the last letter of the first word is the same as the last letter of the second. For example, the following are catenyms: 
 
@@ -3784,7 +3784,7 @@ if __name__ == "__main__":
 
 http://cs101.openjudge.cn/practice/02442/
 
-中文版是 http://cs101.openjudge.cn/dsapre/06648/
+中文版是 http://cs101.openjudge.cn/practice/06648/
 
 
 
@@ -4206,7 +4206,7 @@ print(round(min_time[1] / 60))  # Convert seconds to minutes and round to neares
 
 ## 02524: 宗教信仰
 
-disjoint set, http://cs101.openjudge.cn/dsapre/02524/
+disjoint set, http://cs101.openjudge.cn/practice/02524/
 
 世界上有许多宗教，你感兴趣的是你学校里的同学信仰多少种宗教。
 
@@ -4297,7 +4297,7 @@ if __name__ == "__main__":
 
 ## 02694: 波兰表达式
 
-http://cs101.openjudge.cn/dsapre/02694/
+http://cs101.openjudge.cn/practice/02694/
 
 
 
@@ -4309,9 +4309,9 @@ http://cs101.openjudge.cn/dsapre/02694/
 
 ## 02756: 二叉树（1）
 
-http://cs101.openjudge.cn/dsapre/02756/
+http://cs101.openjudge.cn/practice/02756/
 
-描述
+
 
 ![img](http://media.openjudge.cn/images/2756_1.jpg)
 如上图所示，由正整数1, 2, 3, ...组成了一棵无限大的二叉树。从某一个结点到根结点（编号是1的结点）都有一条唯一的路径，比如从10到根结点的路径是(10, 5, 2, 1)，从4到根结点的路径是(4, 2, 1)，从根结点1到根结点的路径上只包含一个结点1，因此路径就是(1)。对于两个结点x和y，假设他们到根结点的路径分别是(x1, x2, ... ,1)和(y1, y2, ... ,1)（这里显然有x = x1，y = y1），那么必然存在两个正整数i和j，使得从xi和 yj开始，有$x_i = y_j , x_{i + 1} = y_{j + 1}, x_{i + 2} = y_{j + 2},...$ 现在的问题就是，给定x和y，要求xi（也就是yj)。
@@ -4395,7 +4395,7 @@ print(common(m, n))
 
 ## 02766: 最大子矩阵
 
-http://cs101.openjudge.cn/dsapre/02766/
+http://cs101.openjudge.cn/practice/02766/
 
 
 
@@ -4407,7 +4407,7 @@ http://cs101.openjudge.cn/dsapre/02766/
 
 ## 02773: 采药
 
-http://cs101.openjudge.cn/dsapre/02773/
+http://cs101.openjudge.cn/practice/02773/
 
 
 
@@ -4419,7 +4419,7 @@ http://cs101.openjudge.cn/dsapre/02773/
 
 ## 02774: 木材加工
 
-http://cs101.openjudge.cn/dsapre/02774/
+http://cs101.openjudge.cn/practice/02774/
 
 木材厂有一些原木，现在想把这些木头切割成一些长度相同的小段木头，需要得到的小段的数目是给定了。当然，我们希望得到的小段越长越好，你的任务是计算能够得到的小段木头的最大长度。
 
@@ -4854,7 +4854,7 @@ if __name__ == "__main__":
 
 ## 02788: 二叉树（2）
 
-http://cs101.openjudge.cn/dsapre/02788/
+http://cs101.openjudge.cn/practice/02788/
 
 
 
