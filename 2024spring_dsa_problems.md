@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1149 GMT+8 Jan 27, 2025
+Updated 1554 GMT+8 Jan 30, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -13135,6 +13135,43 @@ http://cs101.openjudge.cn/practice/22275/
   2  5 
  / \  
  1  3  
+
+
+
+```python
+class Node:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def build_bst(preorder):
+    if not preorder:
+        return None
+    root = Node(preorder[0])
+    i = 1
+    while i < len(preorder) and preorder[i] < root.val:
+        i += 1
+    root.left = build_bst(preorder[1:i])
+    root.right = build_bst(preorder[i:])
+    return root
+
+def post_order(root):
+    if not root:
+        return []
+    # 先左子树，后右子树，最后根节点
+    return post_order(root.left) + post_order(root.right) + [root.val]
+
+
+# Read input
+n = int(input())
+preorder = list(map(int, input().split()))
+
+# Build BST and get postorder traversal
+root = build_bst(preorder)
+res = post_order(root)
+print(' '.join(map(str, res)))
+```
 
 
 
