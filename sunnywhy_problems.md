@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 2124 GMT+8 Jan 16, 2025
+Updated 1341 GMT+8 Jan 31, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -5393,7 +5393,7 @@ https://sunnywhy.com/sfbj/7/1/295
 
 
 
-The user is asking for a Python program that generates all possible sequences of popped elements from a stack. The stack initially contains a sequence of integers from 1 to n, and the program should simulate pushing these integers onto the stack and popping them off in any order. The program should print all possible sequences of popped elements, sorted in lexicographical order.
+The user is asking for a Python program that generates all possible sequences of popped elements from a stack. The `in_stack` initially contains a sequence of integers from 1 to n, and the program should simulate pushing these integers onto the stack and popping them off in any order. The program should print all possible sequences of popped elements, sorted in lexicographical order.
 
 Here is a Python program that accomplishes this:
 
