@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1554 GMT+8 Jan 30, 2025
+Updated 1845 GMT+8 Feb 2, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3983,6 +3983,93 @@ Scenario #3:
 来源
 
 TUD Programming Contest 2005 (Training Session), Darmstadt, Germany
+
+
+
+这个问题可以用 **递归或迭代方法** 解决，我们需要从 `(1,1)` 根节点出发，找到从根到 `(i,j)` 这个节点的路径，并统计 **左移和右移的次数**。
+
+**分析题目**
+
+**树的结构：**
+
+- 根节点 `(1,1)`
+- 左子树： `(a + b, b)`
+- 右子树： `(a, a + b)`
+
+对于 **给定的 `(i, j)`**，我们要找到它在二叉树中的位置，并计算 **左转和右转的次数**：
+
+- **如果 `i > j`**，意味着 `(i, j)` 来自 **左子树**，所以 **左转**。
+- **如果 `i < j`**，意味着 `(i, j)` 来自 **右子树**，所以 **右转**。
+- **如果 `i == j`**，那么 `i, j` 必须是 `(1,1)`，但由于题目保证 `(i,j)` 是合法的，我们不需要考虑这种情况。
+
+因此，我们可以不断递归：
+
+- 如果 `(i > j)`，它的 **父节点** 是 `(i - j, j)`，左转计数 `+1`。
+- 如果 `(i < j)`，它的 **父节点** 是 `(i, j - i)`，右转计数 `+1`。
+
+最终 `(1,1)` 会是终点。
+
+**Python 代码**
+
+```python
+def count_moves(i, j):
+    left_moves = 0
+    right_moves = 0
+
+    while i != 1 and j != 1:  # 终止条件: (1,1)
+        if i > j:
+            left_moves += i // j  # 计算可以跳跃多少次
+            i %= j  # 直接更新 i，减少迭代次数
+            if i == 0:  # 避免 ZeroDivisionError
+                i = 1
+        else:
+            right_moves += j // i  # 计算可以跳跃多少次
+            j %= i  # 直接更新 j，减少迭代次数
+            if j == 0:  # 避免 ZeroDivisionError
+                j = 1
+
+    # 可能 i != 1 或 j != 1，需要再补一次
+    if i > 1:
+        left_moves += i - 1
+    elif j > 1:
+        right_moves += j - 1
+
+    return left_moves, right_moves
+
+
+n = int(input())  # 读取测试用例数量
+for case_num in range(1, n + 1):
+    i, j = map(int, input().split())  # 读取 i, j
+    left, right = count_moves(i, j)
+
+    # 输出格式
+    print(f"Scenario #{case_num}:")
+    print(left, right)
+    if case_num != n:
+        print()  # 题目要求每个案例后面空行
+
+```
+
+> **优化点**
+>
+> 1. **使用 `i // j` 和 `i % j` 来优化计算**：
+>    - 由于 `(i, j)` 总是其父节点 `(i - j, j)` 或 `(i, j - i)`，我们可以直接 **跳跃** `i // j` 或 `j // i` 步，而不是一层层递归，减少递归调用。
+>    - 例如 `(42, 1)`，它的 **父节点** 是 `(41,1)`，然后 `(40,1)`，一直到 `(1,1)`，所以左转 `41` 次，而不是递归 41 次。
+>
+> 2. **用 `while` 迭代代替递归**：
+>    - 避免递归的栈溢出问题（因为 `i, j` 可以达到 `2 * 10^9`）。
+>    - 迭代方式更加 **高效**，可以 **O(log(max(i, j)))** 解决问题。
+>
+> **复杂度分析**
+>
+> 每次迭代都将 `i, j` 变成 `i % j` 或 `j % i`，类似 **欧几里得算法（求 GCD）**，因此：
+>
+> - **时间复杂度：** `O(log(max(i, j)))`
+> - **空间复杂度：** `O(1)`
+>
+> 这个方法在大数据情况下也能高效运行！
+
+
 
 
 
