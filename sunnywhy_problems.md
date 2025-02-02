@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-Updated 1341 GMT+8 Jan 31, 2025
+Updated 2300 GMT+8 Feb 2, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -16983,7 +16983,7 @@ Yes
 
 解释
 
-对应的有向无环图如下图所示，加粗的边组成了关键路径，其长度为。
+对应的有向无环图如下图所示，加粗的边组成了关键路径，其长度为1 + 4 + 3 = 8。
 
 ![关键路径长度.png](https://raw.githubusercontent.com/GMyhf/img/main/img/b355f389-786f-4795-83ea-492517c5f24c.png)
 
