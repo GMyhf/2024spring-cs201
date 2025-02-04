@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1845 GMT+8 Feb 2, 2025
+Updated 1600 GMT+8 Feb 4, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -5004,6 +5004,38 @@ while True:
         ans += n - left + 1
 
     print(ans)
+```
+
+
+
+
+
+```python
+import sys
+
+def count_subtree_nodes(m, n):
+    left_bound, right_bound, depth = 2 * m, 2 * m + 1, 1
+
+    while left_bound <= n:
+        if right_bound < n:
+            depth += 1
+            left_bound *= 2
+            right_bound = 2 * right_bound + 1
+        else:
+            return (1 << depth) + (n - left_bound)
+
+    return (1 << depth) - 1
+
+def main():
+    input_data = sys.stdin.read().strip().split("\n")
+    for line in input_data:
+        m, n = map(int, line.split())
+        if m == 0 and n == 0:
+            break
+        print(count_subtree_nodes(m, n))
+
+if __name__ == "__main__":
+    main()
 ```
 
 
