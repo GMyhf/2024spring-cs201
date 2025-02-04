@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1600 GMT+8 Feb 4, 2025
+Updated 2150 GMT+8 Feb 4, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -2197,7 +2197,7 @@ else:
 
 ## 01760: Disk Tree
 
-http://cs101.openjudge.cn/practice/01760/
+前缀树（Trie），http://cs101.openjudge.cn/practice/01760/
 
 Hacker Bill has accidentally lost all the information from his workstation's hard drive and he has no backup copies of its contents. He does not regret for the loss of the files themselves, but for the very nice and convenient directory structure that he had created and cherished during years of work. Fortunately, Bill has several copies of directory listings from his hard drive. Using those listings he was able to recover full paths (like "WINNT\SYSTEM32\CERTSRV\CERTCO~1\X86") for some directories. He put all of them in a file by writing each path he has found on a separate line. Your task is to write a program that will help Bill to restore his state of the art directory structure by providing nicely formatted directory tree.
 
@@ -2244,6 +2244,76 @@ WINNT
 来源
 
 Northeastern Europe 2000
+
+
+
+
+
+这道题本质上是 **前缀树（Trie）** 的应用场景！我们可以使用 **Trie 结构** 来存储和组织目录路径，并通过 **递归遍历** 来打印出格式化的目录树。  
+
+为什么适合使用前缀树（Trie）？
+
+1. 前缀共享：不同路径可能有公共前缀，使用 Trie 可以高效存储和查询这些前缀，而无需重复存储相同的部分。
+2. 层次结构：Trie 本身是一个 **树结构**，天然适合表示 **文件系统** 这种 **层次化目录结构**。
+3. 字典序排序：Trie 的子节点本质上是 **字典**，可以 按键排序，方便按照要求 字典序输出。
+
+```python
+from collections import defaultdict
+import sys
+
+class TrieNode:
+    """Trie 结点类"""
+    def __init__(self):
+        self.children = defaultdict(TrieNode)  # 存储子目录
+        self.is_end = False  # 该标志在本题中可省略
+
+class Trie:
+    """Trie 前缀树"""
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, path: str):
+        """插入目录路径"""
+        node = self.root
+        for folder in path.split("\\"):  # 以 "\" 分割路径
+            node = node.children[folder]  # 如果不存在则自动创建
+
+    def print_tree(self, node=None, depth=0):
+        """递归打印目录树"""
+        if node is None:
+            node = self.root
+        for folder in sorted(node.children):  # 按字典序排序
+            print(" " * depth + folder)  # 根据深度打印
+            self.print_tree(node.children[folder], depth + 1)  # 递归打印子目录
+
+def main():
+    # 读取输入
+    n = int(sys.stdin.readline().strip())
+    trie = Trie()
+
+    for _ in range(n):
+        path = sys.stdin.readline().strip()
+        trie.insert(path)
+
+    # 输出目录树
+    trie.print_tree()
+
+if __name__ == "__main__":
+    main()
+```
+
+> `Trie` 结构
+>
+> - `insert(path)`：将路径拆分成目录层级，并插入 Trie。
+> - `print_tree(node, depth)`：递归遍历 Trie，并 **按字典序** 打印，使用 **深度控制缩进**。
+>
+> 时间复杂 度分析
+>
+> - 插入路径：每个路径最多 80 个字符，总体复杂度 **O(N * M)**（`M` 为路径最大深度）。
+> - 打印 Trie：遍历整个树，O(N log N)（因排序）。
+> - 整体复杂度：`O(N log N)`，适用于 `N ≤ 500`。
+
+
 
 
 
