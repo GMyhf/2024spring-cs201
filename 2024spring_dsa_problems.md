@@ -9698,7 +9698,7 @@ http://cs101.openjudge.cn/dsapre/07161/
 
 例如对于以下森林：
 
-![img](http://media.openjudge.cn/images/upload/1401904592.png)
+<img src="http://media.openjudge.cn/images/upload/1401904592.png" alt="img" style="zoom:50%;" />
 
 两棵树的层次遍历序列分别为：C E F G K H J / D X I
 
@@ -10530,7 +10530,7 @@ print(post(root))
 
 ## 08758: 2的幂次方表示
 
-http://cs101.openjudge.cn/dsapre/08758/
+http://cs101.openjudge.cn/practice/08758/
 
 
 
@@ -10542,7 +10542,7 @@ http://cs101.openjudge.cn/dsapre/08758/
 
 ## 09201: Freda的越野跑
 
-http://cs101.openjudge.cn/dsapre/09201/
+http://cs101.openjudge.cn/practice/09201/
 
 Freda报名参加了学校的越野跑。越野跑共有N人参加，在一条笔直的道路上进行。这N个人在起点处站成一列，相邻两个人之间保持一定的间距。比赛开始后，这N个人同时沿着道路向相同的方向跑去。换句话说，这N个人可以看作x轴上的N个点，在比赛开始后，它们同时向x轴正方向移动。
 假设越野跑的距离足够远，这N个人的速度各不相同且保持匀速运动，那么会有多少对参赛者之间发生“赶超”的事件呢？
