@@ -8023,7 +8023,7 @@ print(expression_value)
 
 ## 05442: 兔子与星空
 
-prim, kruskal, http://cs101.openjudge.cn/dsapre/05442/
+prim, kruskal, http://cs101.openjudge.cn/practice/05442/
 
 很久很久以前，森林里住着一群兔子。兔子们无聊的时候就喜欢研究星座。如图所示，天空中已经有了n颗星星，其中有些星星有边相连。兔子们希望删除掉一些边，然后使得保留下的边仍能是n颗星星连通。他们希望计算，保留的边的权值之和最小是多少？
 
@@ -8166,7 +8166,7 @@ print(kruskal(n, edges))
 
 ## 05443: 兔子与樱花
 
-http://cs101.openjudge.cn/dsapre/05443/
+dijkstra, http://cs101.openjudge.cn/practice/05443/
 
 很久很久之前，森林里住着一群兔子。有一天，兔子们希望去赏樱花，但当他们到了上野公园门口却忘记了带地图。现在兔子们想求助于你来帮他们找到公园里的最短路。
 
@@ -10684,7 +10684,7 @@ print(ans)
 
 ## 09202: 舰队、海域出击！
 
-http://cs101.openjudge.cn/practice/09202/
+Topological Order, http://cs101.openjudge.cn/practice/09202/
 
 作为一名海军提督，Pachi将指挥一支舰队向既定海域出击！
 Pachi已经得到了海域的地图，地图上标识了一些既定目标和它们之间的一些单向航线。如果我们把既定目标看作点、航线看作边，那么海域就是一张有向图。不幸的是，Pachi是一个会迷路的提督QAQ，所以他在包含环(圈)的海域中必须小心谨慎，而在无环的海域中则可以大展身手。
@@ -13545,7 +13545,7 @@ for i in ls:
 
 ## 22429/P1260: 火星大工程
 
-http://dsbpython.openjudge.cn/dspythonbook/P1260/
+AOE，拓扑排序，关键路径，http://dsbpython.openjudge.cn/dspythonbook/P1260/
 
 中国要在火星上搞个大工程，即建造n个科考站
 
@@ -17444,7 +17444,7 @@ print(*f(1,1))
 
 ## 27880: 繁忙的厦门
 
-MST, http://cs101.openjudge.cn/2024sp_routine/27880/
+MST, http://cs101.openjudge.cn/practice/27880/
 
 城市 XM 是一个非常繁忙的大都市，城市中的道路十分的拥挤，于是市长决定对其中的道路进行改造。城市 XM 的道路是这样分布的：城市中有 *n* 个交叉路口，有些交叉路口之间有道路相连，两个交叉路口之间最多有一条道路相连接。这些道路是双向的，且把所有的交叉路口直接或间接的连接起来了。每条道路都有一个分值，分值越小表示这个道路越繁忙，越需要进行改造。但是市政府的资金有限，市长希望进行改造的道路越少越好，于是他提出下面的要求：
 
