@@ -7366,7 +7366,7 @@ http://cs101.openjudge.cn/dsapre/04117/
 
 ## 04130: Saving Tang Monk
 
-http://cs101.openjudge.cn/2024sp_routine/04130/
+http://cs101.openjudge.cn/practice/04130/
 
 《Journey to the West》(also 《Monkey》) is one of the Four Great Classical Novels of Chinese literature. It was written by Wu Cheng'en during the Ming Dynasty. In this novel, Monkey King Sun Wukong, pig Zhu Bajie and Sha Wujing, escorted Tang Monk to India to get sacred Buddhism texts. 
 
