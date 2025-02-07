@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2150 GMT+8 Feb 4, 2025
+Updated 1345 GMT+8 Feb 7, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -18634,7 +18634,7 @@ print(bfs(start,end,dic))
 
 ## 28050: 骑士周游
 
-http://cs101.openjudge.cn/practice/28050/
+Warnsdorff, 回溯, http://cs101.openjudge.cn/practice/28050/
 
 在一个国际象棋棋盘上，一个棋子“马”（骑士），按照“马走日”的规则，从一个格子出发，要走遍所有棋盘格恰好一次。把一个这样的走棋序列称为一次“周游“。在 8 × 8 的国际象棋棋盘上，合格的“周游”数量有 1.305×10^35这么多，走棋过程中失败的周游就更多了。
 
@@ -18674,53 +18674,57 @@ https://runestone.academy/ns/books/published/pythonds3/Graphs/KnightsTourAnalysi
 
 和马走日思路一样，不过需要优化搜索算法，先找到当前点能够走的所有下一个点，然后计算每个下一个点能走的下下一个点数量，优先搜索数量少的，一旦发现一条周游路径就返回True。
 
+采用 **Warnsdorff’s Rule** 进行搜索，优先选择出度最小的下一步路径，从而提高找到完整骑士周游路径的成功率。需要**回溯**的功能来确保即使某个方向走不通，仍然可以回到上一步，尝试其他可能的路径。**结合了 Warnsdorff 规则 和 回溯**，确保最大程度提高找到骑士周游的概率
+
 ```python
-# 周添 23物理学院
-def knight_tour(n, sr, sc):
-    moves = [(-2, -1), (-2, 1), (-1, -2), (-1, 2),
-             (1, -2), (1, 2), (2, -1), (2, 1)]
+import sys
 
-    visited = [[False] * n for _ in range(n)]
+def is_valid_move(x, y, board, n):
+    return 0 <= x < n and 0 <= y < n and board[x][y] == -1
 
-    def is_valid_move(row, col):
-        return 0 <= row < n and 0 <= col < n and not visited[row][col]
+def get_degree(x, y, board, n, moves):
+    count = 0
+    for dx, dy in moves:
+        if is_valid_move(x + dx, y + dy, board, n):
+            count += 1
+    return count
 
-    def count_neighbors(row, col):
-        count = 0
-        for dr, dc in moves:
-            next_row, next_col = row + dr, col + dc
-            if is_valid_move(next_row, next_col):
-                count += 1
-        return count
+def knights_tour_warnsdorff(n, sr, sc):
+    moves = [(2, 1), (1, 2), (-1, 2), (-2, 1),
+             (-2, -1), (-1, -2), (1, -2), (2, -1)]
+    board = [[-1 for _ in range(n)] for _ in range(n)]
+    board[sr][sc] = 0
+    
+    def backtrack(x, y, move_count):
+        if move_count == n * n:
+            return True
+        
+        next_moves = []
+        for dx, dy in moves:
+            nx, ny = x + dx, y + dy
+            if is_valid_move(nx, ny, board, n):
+                degree = get_degree(nx, ny, board, n, moves)
+                next_moves.append((degree, nx, ny))
+        
+        next_moves.sort()  # 按 Warnsdorff 规则选择最少可行移动的方向
+        
+        for _, nx, ny in next_moves:
+            board[nx][ny] = move_count
+            if backtrack(nx, ny, move_count + 1):
+                return True
+            board[nx][ny] = -1  # 回溯
+        
+        return False
+    
+    if backtrack(sr, sc, 1):
+        print("success")
+    else:
+        print("fail")
 
-    def sort_moves(row, col):
-        neighbor_counts = []
-        for dr, dc in moves:
-            next_row, next_col = row + dr, col + dc
-            if is_valid_move(next_row, next_col):
-                count = count_neighbors(next_row, next_col)
-                neighbor_counts.append((count, (next_row, next_col)))
-        neighbor_counts.sort()
-        sorted_moves = [move[1] for move in neighbor_counts]
-        return sorted_moves
-
-    visited[sr][sc] = True
-    tour = [(sr, sc)]
-
-    while len(tour) < n * n:
-        current_row, current_col = tour[-1]
-        sorted_next_moves = sort_moves(current_row, current_col)
-        if not sorted_next_moves:
-            return "fail"
-        next_row, next_col = sorted_next_moves[0]
-        visited[next_row][next_col] = True
-        tour.append((next_row, next_col))
-
-    return "success"
-
-n = int(input())
-sr, sc = map(int, input().split())
-print(knight_tour(n, sr, sc)) 
+if __name__ == "__main__":
+    n = int(sys.stdin.readline().strip())
+    sr, sc = map(int, sys.stdin.readline().strip().split())
+    knights_tour_warnsdorff(n, sr, sc)
 ```
 
 
