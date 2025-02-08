@@ -2110,7 +2110,7 @@ Kruskal算法的时间复杂度为 O(ElogE)，其中 E 是边的数量。排序�
 
 # III. 排序算法
 
-### 1. 插入排序 Insertion Sort
+## 1. 插入排序 Insertion Sort
 
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/insertionsort.png" alt="insertion-sort" style="zoom:50%;" />
 
