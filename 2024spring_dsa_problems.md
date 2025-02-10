@@ -13544,228 +13544,6 @@ for i in ls:
 
 
 
-## 22429/P1260: 火星大工程
-
-AOE，拓扑排序，关键路径，http://dsbpython.openjudge.cn/dspythonbook/P1260/
-
-中国要在火星上搞个大工程，即建造n个科考站
-
-建科考站需要很专业的设备，不同的科考站需要不同的设备来完成
-
-有的科考站必须等另外一些科考站建好后才能建。
-
-每个设备参与建完一个科考站后，都需要一定时间来保养维修，才能参与到下一个科考站的建设。
-
-所以，会发生科考站A建好后，必须至少等一定时间才能建科考站B的情况。因为B必须在A之后建，且建B必需的某个设备，参与了建A的工作，它需要一定时间进行维修保养。
-
-一个维修保养任务用三个数a b c表示，意即科考站b必须等a建完才能建。而且，科考站a建好后，建a的某个设备必须经过时长c的维修保养后，才可以开始参与建科考站b。
-
-假设备都很牛，只要设备齐全可用，建站飞快就能完成，建站时间忽略不计。一开始所有设备都齐全可用。
-
-给定一些维修保养任务的描述，求所有科考站都建成，最快需要多长时间。
-
-有的维修保养任务，能开始的时候也可以先不开始，往后推迟一点再开始也不会影响到整个工期。问在不影响最快工期的情况下，哪些维修保养任务的开始时间必须是确定的。按字典序输出这些维修保养工任务，输出的时候不必输出任务所需的时间。
-
-  
-
-**输入**
-
-第一行两个整数n,m，表示有n个科考站，m个维修保养任务。科考站编号为1，2.....n
-接下来m行，每行三个整数a b c，表示一个维修保养任务
-1 < n,m <=3000
-
-**输出**
-
-先输出所有科考站都建成所需的最短时间
-然后按字典序输出开始时间必须确定的维修保养任务
-
-样例输入
-
-```
-9 11
-1 2 6
-1 3 4
-1 4 5
-2 5 1
-3 5 1
-4 6 2
-5 7 9
-5 8 7
-6 8 4
-7 9 2
-8 9 4
-```
-
-样例输出
-
-```
-18
-1 2
-2 5
-5 7
-5 8
-7 9
-8 9
-```
-
-来源
-
-郭炜
-
-
-
-```python
-# 李宗远 白衣者
-# 拓扑排序和AOE网络问题
-# 首先建立edge对象，依据数据得到邻接矩阵
-# 得到拓扑排序序列
-# 依据拓扑排序序列得到时间最早和最晚开始时间和最快时长确定关键事件
-# 进而确定关键活动
-from collections import defaultdict, deque
-
-
-class Edge:
-    def __init__(self, end, weight):
-        self.end = end
-        self.weight = weight
-
-    def __lt__(self, other):
-        return self.end < other.end
-
-def find_critical_activities(n, m, edges):
-    # 构建邻接表和入度数组
-    graph = defaultdict(list)
-    in_degree = [0] * n
-    for s, e, w in edges:
-        graph[s - 1].append(Edge(e - 1, w))
-        in_degree[e - 1] += 1
-
-    # 拓扑排序
-    queue = deque([i for i in range(n) if in_degree[i] == 0])
-    topological_order = []
-    while queue:
-        node = queue.popleft()
-        topological_order.append(node)
-        for edge in graph[node]:
-            in_degree[edge.end] -= 1
-            if in_degree[edge.end] == 0:
-                queue.append(edge.end)
-
-    # 计算最早开始时间
-    earliest = [0] * n
-    for i in topological_order:
-        for edge in graph[i]:
-            earliest[edge.end] = max(earliest[edge.end], earliest[i] + edge.weight)
-    T = max(earliest)
-
-    # 计算最晚开始时间
-    latest = [T] * n
-    for j in reversed(topological_order):
-        for edge in graph[j]:
-            latest[j] = min(latest[j], latest[edge.end] - edge.weight)
-
-    # 确定关键事件
-    critical_events = [i for i in range(n) if earliest[i] == latest[i]]
-
-    # 确定关键活动
-    critical_activities = []
-    for i in critical_events:
-        graph[i].sort()
-        for edge in graph[i]:
-            #关键活动通常指的是导致关键事件发生的活动，而不是所有指向关键事件的活动都是关键活动。
-            if edge.end in critical_events and earliest[edge.end] - earliest[i] == edge.weight:
-                critical_activities.append((i + 1, edge.end + 1))
-
-    return T, critical_activities
-
-
-n, m = map(int, input().split())
-edges = [list(map(int, input().split())) for _ in range(m)]
-
-# 求解关键活动
-T, critical_activities = find_critical_activities(n, m, edges)
-
-print(T)
-for activity in critical_activities:
-    print(*activity)
-```
-
-
-
-```python
-from collections import deque, defaultdict
-from dataclasses import dataclass
-
-
-@dataclass
-class Edge:
-    end: int
-    weight: int
-
-
-def topo_sort(graph, in_degrees, n):
-    queue = deque([i for i in range(n) if in_degrees[i] == 0])
-    topo_order = []
-    while queue:
-        node = queue.popleft()
-        topo_order.append(node)
-        for edge in graph[node]:
-            in_degrees[edge.end] -= 1
-            if in_degrees[edge.end] == 0:
-                queue.append(edge.end)
-    return topo_order
-
-
-def find_critical_activities(n, m, edges):
-    graph = defaultdict(list)
-    in_degrees = [0] * n
-    for u, v, w in edges:
-        graph[u - 1].append(Edge(v - 1, w))
-        in_degrees[v - 1] += 1
-
-    topo_order = topo_sort(graph, in_degrees[:], n)
-    if not topo_order:
-        return ["No"]
-
-    est = [0] * n
-    for node in topo_order:
-        for edge in graph[node]:
-            est[edge.end] = max(est[edge.end], est[node] + edge.weight)
-
-    T = max(est)
-
-    # 计算最晚开始时间
-    lst = [T] * n
-    for node in reversed(topo_order):
-        for edge in graph[node]:
-            lst[node] = min(lst[node], lst[edge.end] - edge.weight)
-
-    # 确定关键事件
-    critical_events = [i for i in range(n) if est[i] == lst[i]]
-
-    # 确定关键活动
-    critical_activities = []
-    for node in critical_events:
-        for edge in graph[node]:
-            # 关键活动通常指的是导致关键事件发生的活动，而不是所有指向关键事件的活动都是关键活动。
-            if edge.end in critical_events and est[node] == est[edge.end] - edge.weight:
-                critical_activities.append((node + 1, edge.end + 1))
-
-    # critical_activities.sort()
-
-    return T, ["{} {}".format(u, v) for u, v in critical_activities]
-
-
-n, m = map(int, input().split())
-edges = [tuple(map(int, input().split())) for _ in range(m)]
-T, critical_activities = find_critical_activities(n, m, edges)
-print(T)
-print('\n'.join(critical_activities))
-
-```
-
-
-
 ## 22485: 升空的焰火，从侧面看
 
 http://cs101.openjudge.cn/practice/22485/
@@ -19762,11 +19540,9 @@ if __name__ == "__main__":
 
 
 
-# 附录
+# 其他题目
 
-## 二叉树的应用
-
-### 20555: evaluate
+## 20555: evaluate
 
 http://cs101.openjudge.cn/practice/20555/
 
@@ -19808,9 +19584,598 @@ print(evaluate_expression(expression))
 
 
 
-20576: printExp
+## P0020.删除链表元素
 
-http://cs101.openjudge.cn/practice/20576/
+http://dsbpython.openjudge.cn/dspythonbook/P0020/
+
+程序填空，删除链表元素
+
+```python
+class Node:
+	def __init__(self, data, next=None):
+		self.data, self.next = data, next
+class LinkList:  #循环链表
+	def __init__(self):
+		self.tail = None
+		self.size = 0
+	def isEmpty(self):
+		return self.size == 0
+	def pushFront(self,data):
+		nd = Node(data)
+		if self.tail == None:
+			self.tail = nd
+			nd.next = self.tail
+		else:
+			nd.next = self.tail.next
+			self.tail.next = nd
+		self.size += 1
+	def pushBack(self,data):
+		self.pushFront(data)
+		self.tail = self.tail.next
+	def popFront(self):
+		if self.size == 0:
+			return None
+		else:
+			nd = self.tail.next
+			self.size -= 1
+			if self.size == 0:
+				self.tail = None
+			else:
+				self.tail.next = nd.next
+		return nd.data
+	def printList(self):
+		if self.size > 0:
+			ptr = self.tail.next
+			while True:
+				print(ptr.data,end = " ")
+				if ptr == self.tail:
+					break
+				ptr = ptr.next
+			print("")
+
+	def remove(self,data):
+// 在此处补充你的代码
+t = int(input())
+for i in range(t):
+	lst = list(map(int,input().split()))
+	lkList = LinkList()
+	for x in lst:
+		lkList.pushBack(x)
+	lst = list(map(int,input().split()))
+	for a in lst:
+		result = lkList.remove(a)
+		if result == True:
+			lkList.printList()
+		elif result == False:
+			print("NOT FOUND")
+		else:
+			print("EMPTY")
+	print("----------------")
+```
+
+输入
+
+第一行为整数t，表示有t组数据。
+每组数据2行
+第一行是若干个整数，构成了一张链表
+第二行是若干整数，是要从链表中删除的数。
+
+输出
+
+对每组数据第二行中的每个整数x:
+
+1) 如果链表已经为空，则输出 "EMPTY"
+2) 如果x在链表中，则将其删除，并且输出删除后的链表。如果删除后链表为空，则没输出。如果有重复元素，则删前面的。
+
+3）如果链表不为空且x不在链表中，则输出"NOT FOUND"
+
+样例输入
+
+```
+2
+1 2 3
+3 2 2 9 5 1 1 4
+1
+9 88 1 23
+```
+
+样例输出
+
+```
+1 2 
+1 
+NOT FOUND
+NOT FOUND
+NOT FOUND
+EMPTY
+EMPTY
+----------------
+NOT FOUND
+NOT FOUND
+EMPTY
+----------------
+```
+
+来源
+
+郭炜
+
+
+
+程序填空题目，需要掌握“补充代码”题型，例如写出某个函数的实现代码，如 def remove(self,data):
+
+```python
+class Node:
+    def __init__(self, data, next=None):
+        self.data, self.next = data, next
+
+
+class LinkList:  # 循环链表
+    def __init__(self):
+        self.tail = None
+        self.size = 0
+
+    def isEmpty(self):
+        return self.size == 0
+
+    def pushFront(self, data):
+        nd = Node(data)
+        if self.tail == None:
+            self.tail = nd
+            nd.next = self.tail
+        else:
+            nd.next = self.tail.next
+            self.tail.next = nd
+        self.size += 1
+
+    def pushBack(self, data):
+        self.pushFront(data)
+        self.tail = self.tail.next
+
+    def popFront(self):
+        if self.size == 0:
+            return None
+        else:
+            nd = self.tail.next
+            self.size -= 1
+            if self.size == 0:
+                self.tail = None
+            else:
+                self.tail.next = nd.next
+        return nd.data
+
+    def printList(self):
+        if self.size > 0:
+            ptr = self.tail.next
+            while True:
+                print(ptr.data, end=" ")
+                if ptr == self.tail:
+                    break
+                ptr = ptr.next
+            print("")
+
+    def remove(self, data):  # 填空：实现函数
+        if self.size == 0:
+            return None
+        else:
+            ptr = self.tail
+            while ptr.next.data != data:
+                ptr = ptr.next
+                if ptr == self.tail:
+                    return False
+            self.size -= 1
+            if ptr.next == self.tail:
+                self.tail = ptr
+            ptr.next = ptr.next.next
+            return True
+
+
+t = int(input())
+for i in range(t):
+    lst = list(map(int, input().split()))
+    lkList = LinkList()
+    for x in lst:
+        lkList.pushBack(x)
+    lst = list(map(int, input().split()))
+    for a in lst:
+        result = lkList.remove(a)
+        if result == True:
+            lkList.printList()
+        elif result == False:
+            print("NOT FOUND")
+        else:
+            print("EMPTY")
+    print("----------------")
+
+"""
+样例输入
+2
+1 2 3
+3 2 2 9 5 1 1 4
+1
+9 88 1 23
+
+样例输出
+1 2 
+1 
+NOT FOUND
+NOT FOUND
+NOT FOUND
+EMPTY
+EMPTY
+----------------
+NOT FOUND
+NOT FOUND
+EMPTY
+----------------
+"""
+```
+
+
+
+## 004.插入链表元素
+
+http://dsbpython.openjudge.cn/2024allhw/004/
+
+很遗憾，一意孤行的Y君没有理会你告诉他的饮食计划并很快吃完了他的粮食储备。
+但好在他捡到了一张校园卡，凭这个他可以偷偷混入领取物资的队伍。
+为了不被志愿者察觉自己是只猫，他想要插到队伍的最中央。（插入后若有偶数个元素则选取靠后的位置）
+于是他又找到了你，希望你能帮他修改志愿者写好的代码，在发放顺序的中间加上他的学号6。
+你虽然不理解志愿者为什么要用链表来写这份代码，但为了不被发现只得在此基础上进行修改：
+
+```python
+class Node:
+	def __init__(self, data, next=None):
+		self.data, self.next = data, next
+
+class LinkList:
+	def __init__(self):
+		self.head = None
+
+	def initList(self, data):
+		self.head = Node(data[0])
+		p = self.head
+		for i in data[1:]:
+			node = Node(i)
+			p.next = node
+			p = p.next
+
+	def insertCat(self):
+// 在此处补充你的代码
+########            
+	def printLk(self):
+		p = self.head
+		while p:
+			print(p.data, end=" ")
+			p = p.next
+		print()
+
+lst = list(map(int,input().split()))
+lkList = LinkList()
+lkList.initList(lst)
+lkList.insertCat()
+lkList.printLk()
+```
+
+输入
+
+一行，若干个整数，组成一个链表。
+
+输出
+
+一行，在链表中间位置插入数字6后得到的新链表
+
+样例输入
+
+```
+### 样例输入1
+8 1 0 9 7 5
+### 样例输入2
+1 2 3
+```
+
+样例输出
+
+```
+### 样例输出1
+8 1 0 6 9 7 5
+### 样例输出2
+1 2 6 3
+```
+
+来源
+
+Lou Yuke
+
+
+
+程序填空题目，需要掌握“补充代码”题型，例如写出某个函数的实现代码，如 def insertCat(self):
+
+```python
+class Node:
+    def __init__(self, data, next=None):
+        self.data, self.next = data, next
+
+class LinkList:
+    def __init__(self):
+        self.head = None
+
+    def initList(self, data):
+        self.head = Node(data[0])
+        p = self.head
+        for i in data[1:]:
+            node = Node(i)
+            p.next = node
+            p = p.next
+
+    def insertCat(self):
+        # 计算链表的长度
+        length = 0
+        p = self.head
+        while p:
+            length += 1
+            p = p.next
+
+        # 找到插入位置
+        position = length // 2 if length % 2 == 0 else (length // 2) + 1
+        p = self.head
+        for _ in range(position - 1):
+            p = p.next
+
+        # 在插入位置处插入数字6
+        node = Node(6)
+        node.next = p.next
+        p.next = node
+
+    def printLk(self):
+        p = self.head
+        while p:
+            print(p.data, end=" ")
+            p = p.next
+        print()
+
+lst = list(map(int, input().split()))
+lkList = LinkList()
+lkList.initList(lst)
+lkList.insertCat()
+lkList.printLk()
+
+"""
+### 样例输入1
+8 1 0 9 7 5
+### 样例输入2
+1 2 3
+
+### 样例输出1
+8 1 0 6 9 7 5
+### 样例输出2
+1 2 6 3
+"""
+```
+
+
+
+
+
+## P1260: 火星大工程
+
+AOE，拓扑排序，关键路径，http://dsbpython.openjudge.cn/dspythonbook/P1260/
+
+中国要在火星上搞个大工程，即建造n个科考站
+
+建科考站需要很专业的设备，不同的科考站需要不同的设备来完成
+
+有的科考站必须等另外一些科考站建好后才能建。
+
+每个设备参与建完一个科考站后，都需要一定时间来保养维修，才能参与到下一个科考站的建设。
+
+所以，会发生科考站A建好后，必须至少等一定时间才能建科考站B的情况。因为B必须在A之后建，且建B必需的某个设备，参与了建A的工作，它需要一定时间进行维修保养。
+
+一个维修保养任务用三个数a b c表示，意即科考站b必须等a建完才能建。而且，科考站a建好后，建a的某个设备必须经过时长c的维修保养后，才可以开始参与建科考站b。
+
+假设备都很牛，只要设备齐全可用，建站飞快就能完成，建站时间忽略不计。一开始所有设备都齐全可用。
+
+给定一些维修保养任务的描述，求所有科考站都建成，最快需要多长时间。
+
+有的维修保养任务，能开始的时候也可以先不开始，往后推迟一点再开始也不会影响到整个工期。问在不影响最快工期的情况下，哪些维修保养任务的开始时间必须是确定的。按字典序输出这些维修保养工任务，输出的时候不必输出任务所需的时间。
+
+  
+
+**输入**
+
+第一行两个整数n,m，表示有n个科考站，m个维修保养任务。科考站编号为1，2.....n
+接下来m行，每行三个整数a b c，表示一个维修保养任务
+1 < n,m <=3000
+
+**输出**
+
+先输出所有科考站都建成所需的最短时间
+然后按字典序输出开始时间必须确定的维修保养任务
+
+样例输入
+
+```
+9 11
+1 2 6
+1 3 4
+1 4 5
+2 5 1
+3 5 1
+4 6 2
+5 7 9
+5 8 7
+6 8 4
+7 9 2
+8 9 4
+```
+
+样例输出
+
+```
+18
+1 2
+2 5
+5 7
+5 8
+7 9
+8 9
+```
+
+来源
+
+郭炜
+
+
+
+```python
+# 李宗远 白衣者
+# 拓扑排序和AOE网络问题
+# 首先建立edge对象，依据数据得到邻接矩阵
+# 得到拓扑排序序列
+# 依据拓扑排序序列得到时间最早和最晚开始时间和最快时长确定关键事件
+# 进而确定关键活动
+from collections import defaultdict, deque
+
+
+class Edge:
+    def __init__(self, end, weight):
+        self.end = end
+        self.weight = weight
+
+    def __lt__(self, other):
+        return self.end < other.end
+
+def find_critical_activities(n, m, edges):
+    # 构建邻接表和入度数组
+    graph = defaultdict(list)
+    in_degree = [0] * n
+    for s, e, w in edges:
+        graph[s - 1].append(Edge(e - 1, w))
+        in_degree[e - 1] += 1
+
+    # 拓扑排序
+    queue = deque([i for i in range(n) if in_degree[i] == 0])
+    topological_order = []
+    while queue:
+        node = queue.popleft()
+        topological_order.append(node)
+        for edge in graph[node]:
+            in_degree[edge.end] -= 1
+            if in_degree[edge.end] == 0:
+                queue.append(edge.end)
+
+    # 计算最早开始时间
+    earliest = [0] * n
+    for i in topological_order:
+        for edge in graph[i]:
+            earliest[edge.end] = max(earliest[edge.end], earliest[i] + edge.weight)
+    T = max(earliest)
+
+    # 计算最晚开始时间
+    latest = [T] * n
+    for j in reversed(topological_order):
+        for edge in graph[j]:
+            latest[j] = min(latest[j], latest[edge.end] - edge.weight)
+
+    # 确定关键事件
+    critical_events = [i for i in range(n) if earliest[i] == latest[i]]
+
+    # 确定关键活动
+    critical_activities = []
+    for i in critical_events:
+        graph[i].sort()
+        for edge in graph[i]:
+            #关键活动通常指的是导致关键事件发生的活动，而不是所有指向关键事件的活动都是关键活动。
+            if edge.end in critical_events and earliest[edge.end] - earliest[i] == edge.weight:
+                critical_activities.append((i + 1, edge.end + 1))
+
+    return T, critical_activities
+
+
+n, m = map(int, input().split())
+edges = [list(map(int, input().split())) for _ in range(m)]
+
+# 求解关键活动
+T, critical_activities = find_critical_activities(n, m, edges)
+
+print(T)
+for activity in critical_activities:
+    print(*activity)
+```
+
+
+
+```python
+from collections import deque, defaultdict
+from dataclasses import dataclass
+
+
+@dataclass
+class Edge:
+    end: int
+    weight: int
+
+
+def topo_sort(graph, in_degrees, n):
+    queue = deque([i for i in range(n) if in_degrees[i] == 0])
+    topo_order = []
+    while queue:
+        node = queue.popleft()
+        topo_order.append(node)
+        for edge in graph[node]:
+            in_degrees[edge.end] -= 1
+            if in_degrees[edge.end] == 0:
+                queue.append(edge.end)
+    return topo_order
+
+
+def find_critical_activities(n, m, edges):
+    graph = defaultdict(list)
+    in_degrees = [0] * n
+    for u, v, w in edges:
+        graph[u - 1].append(Edge(v - 1, w))
+        in_degrees[v - 1] += 1
+
+    topo_order = topo_sort(graph, in_degrees[:], n)
+    if not topo_order:
+        return ["No"]
+
+    est = [0] * n
+    for node in topo_order:
+        for edge in graph[node]:
+            est[edge.end] = max(est[edge.end], est[node] + edge.weight)
+
+    T = max(est)
+
+    # 计算最晚开始时间
+    lst = [T] * n
+    for node in reversed(topo_order):
+        for edge in graph[node]:
+            lst[node] = min(lst[node], lst[edge.end] - edge.weight)
+
+    # 确定关键事件
+    critical_events = [i for i in range(n) if est[i] == lst[i]]
+
+    # 确定关键活动
+    critical_activities = []
+    for node in critical_events:
+        for edge in graph[node]:
+            # 关键活动通常指的是导致关键事件发生的活动，而不是所有指向关键事件的活动都是关键活动。
+            if edge.end in critical_events and est[node] == est[edge.end] - edge.weight:
+                critical_activities.append((node + 1, edge.end + 1))
+
+    # critical_activities.sort()
+
+    return T, ["{} {}".format(u, v) for u, v in critical_activities]
+
+
+n, m = map(int, input().split())
+edges = [tuple(map(int, input().split())) for _ in range(m)]
+T, critical_activities = find_critical_activities(n, m, edges)
+print(T)
+print('\n'.join(critical_activities))
+
+```
 
 
 
