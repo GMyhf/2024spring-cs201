@@ -1,6 +1,6 @@
 # KMP-BinarySearch-radixSort-Retrieval
 
-Updated 1657 GMT+8 May 22, 2024
+Updated 2028 GMT+8 Feb 11, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -148,7 +148,7 @@ print("pos matched：", index)
 参考：https://www.acwing.com/solution/content/4614/
 
 引理：
-对于某一字符串 S[1～i]，在它众多的next[i]的“候选项”中，如果存在某一个next[i]，使得: i%(i-nex[i])==0，那么 S[1～ (i−next[i])] 可以为 S[1～i] 的循环元而 i/(i−next[i]) 即是它的循环次数 K。
+对于某一字符串 `S[1～i]`，在它众多的`next[i]`的“候选项”中，如果存在某一个`next[i]`，使得: `i%(i-nex[i])==0`，那么 `S[1～ (i−next[i])]` 可以为 `S[1～i]` 的循环元而` i/(i−next[i])` 即是它的循环次数 K。
 
 证明如下：
 
@@ -156,15 +156,15 @@ print("pos matched：", index)
 
 如果在紧挨着之前框选的子串后面再框选一个长度为 m 的小子串(绿色部分)，同样的道理，
 
-可以得到：S[m～b]=S[b～c]
-又因为：S[1～m]=S[m～b]
-所以：S[1～m]=S[m～b]=S[b～c]
+可以得到：`S[m～b]=S[b～c]`
+又因为：`S[1～m]=S[m～b]`
+所以：`S[1～m]=S[m～b]=S[b～c]`
 
 
 
 <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/5c8ef2df2845d.png" alt="img" style="zoom:75%;" />
 
-如果一直这样框选下去，无限推进，总会有一个尽头。当满足 i % m==0 时，刚好可以分出 K 个这样的小子串，且形成循环(K=i/m)。
+如果一直这样框选下去，无限推进，总会有一个尽头。当满足` i % m==0` 时，刚好可以分出 K 个这样的小子串，且形成循环(`K=i/m`)。
 
 
 
@@ -261,7 +261,7 @@ For each prefix of a given string S with N characters (each character has an ASC
 **输出**
 
 对于每组测试数据，第一行输出 "Test case #“ 和测试数据的编号。
-接下来的每一行，输出前缀长度i和重复测数K，中间用一个空格隔开。前缀长度需要升序排列。
+接下来的每一行，输出前缀长度i和重复次数K，中间用一个空格隔开。前缀长度需要升序排列。
 在每组测试数据的最后输出一个空行。
 
 样例输入
