@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1743 GMT+8 Feb 10, 2025
+Updated 2210 GMT+8 Feb 22, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -7195,7 +7195,7 @@ for i in anslst:
 
 ## 04093: 倒排索引查询
 
-http://cs101.openjudge.cn/practice/04093/
+data structures, http://cs101.openjudge.cn/practice/04093/
 
 现在已经对一些文档求出了倒排索引，对于一些词得出了这些词在哪些文档中出现的列表。
 
@@ -7307,6 +7307,87 @@ for _ in range(M):
 for result in results:
     print(result)
 ```
+
+
+
+利用集合运算来处理倒排索引查询。思路如下：
+
+1. **建立倒排索引**  
+   对于每个词，读入出现该词的文档编号，将其存入一个集合中。
+
+2. **处理查询**  
+   对于每个查询，按照查询向量（每个位置取值 1、-1、0）：
+   - 对于标记为 1 的词（必须出现），求这些词对应集合的交集。
+   - 对于标记为 -1 的词（必须不出现），从交集中减去这些词出现的文档编号。
+   - 0 的词不作限制。
+   
+3. **输出结果**  
+   将最终得到的候选文档集合按升序输出；如果为空，则输出 "NOT FOUND"。
+
+下面是完整代码：
+
+```python
+#!/usr/bin/env python3
+import sys
+
+def main():
+    data = sys.stdin.read().split()
+    it = iter(data)
+    
+    # 读入倒排索引的词数
+    N = int(next(it))
+    inverted = []
+    for _ in range(N):
+        # 每个词的出现文档数
+        count = int(next(it))
+        docs = set()
+        for _ in range(count):
+            docs.add(int(next(it)))
+        inverted.append(docs)
+    
+    # 读入查询数目
+    M = int(next(it))
+    output_lines = []
+    for _ in range(M):
+        # 每个查询包含 N 个数字
+        query = [int(next(it)) for _ in range(N)]
+        candidate = None
+        # 处理必须出现的词（值为 1）：取交集
+        for j in range(N):
+            if query[j] == 1:
+                if candidate is None:
+                    candidate = inverted[j].copy()
+                else:
+                    candidate &= inverted[j]
+        # 处理必须不出现的词（值为 -1）：从候选集合中剔除
+        for j in range(N):
+            if query[j] == -1:
+                candidate -= inverted[j]
+        # 输出结果
+        if candidate:
+            result_line = " ".join(map(str, sorted(candidate)))
+            output_lines.append(result_line)
+        else:
+            output_lines.append("NOT FOUND")
+    
+    sys.stdout.write("\n".join(output_lines))
+    
+if __name__ == '__main__':
+    main()
+```
+
+**代码说明**
+
+- **倒排索引构建**  
+  从输入中读入每个词出现的文档编号，并用 `set` 保存，方便后续交并集操作。
+
+- **查询处理**  
+  - 先对所有标记为 1 的词取交集，即得到文档中同时包含所有这些词的候选集合。
+  - 再对所有标记为 -1 的词，从候选集合中减去这些文档编号。
+  - 0 表示不关心，不做任何操作。
+
+- **输出**  
+  如果候选集合非空，则将文档编号排序后输出，否则输出 "NOT FOUND"。
 
 
 
@@ -9317,7 +9398,7 @@ print(second_round_cows[0][2])
 
 ## 06640: 倒排索引
 
-http://cs101.openjudge.cn/2024sp_routine/06640/
+data structure, http://cs101.openjudge.cn/practice/06640/
 
 给定一些文档，要求求出某些单词的倒排表。
 
