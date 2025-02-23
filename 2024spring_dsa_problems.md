@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2210 GMT+8 Feb 22, 2025
+Updated 1805 GMT+8 Feb 23, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -16578,6 +16578,8 @@ tags: sorting, data structure。注意输出格式如样例所示。
 
 
 
+给出一种基于双堆（大根堆和小根堆）及延迟删除的做法，既能在队列操作（FIFO）下维护数据，又能高效查询中位数。
+
 ```python
 import sys
 import heapq
@@ -16682,6 +16684,20 @@ if __name__ == '__main__':
     print("\n".join(results))
 
 ```
+
+**代码说明**
+
+1. **DualHeap 类：**
+   - 使用两个堆：`small`（大根堆，用负数存储）和 `large`（小根堆）。
+   - 通过延迟删除字典 `delayed` 记录待删除的元素，避免在堆中直接查找删除，节省时间。
+   - `small_size` 和 `large_size` 分别记录堆中实际有效的元素数量。
+2. **操作函数：**
+   - **add(num):** 根据数值大小将 `num` 插入到对应的堆中，然后调用 `balance` 进行平衡。
+   - **remove(num):** 将 `num`标记为延迟删除，同时减少相应堆的计数，再进行堆顶清理和平衡。
+   - **median():** 先清理堆顶，再根据当前元素个数奇偶返回中位数（若为偶数则返回两个堆顶的平均值）。
+3. **主函数：**
+   - 通过 `deque` 保存添加的顺序，保证“del”操作始终删除最先添加的数。
+   - 每次执行 `query` 时调用 `median()` 并按照要求输出。
 
 
 
