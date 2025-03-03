@@ -9588,35 +9588,27 @@ NOT FOUND
 3. 对于每个查询，检查字典中是否存在该单词，如果存在，则返回升序文档编号列表；如果不存在，则返回 "NOT FOUND"。
 
 ```python
+from collections import defaultdict
 def main():
-    import sys
-    input = sys.stdin.read
-    data = input().splitlines()
-
-    n = int(data[0])
+    n = int(input())
     index = 1
-    inverted_index = {}   # 构建倒排索引
+    inverted_index = defaultdict(set)   # 构建倒排索引
     for i in range(1, n + 1):
-        parts = data[index].split()
+        parts = input().split()
         doc_id = i
         num_words = int(parts[0])
         words = parts[1:num_words + 1]
         for word in words:
-            if word not in inverted_index:
-                inverted_index[word] = []
-            inverted_index[word].append(doc_id)
-        index += 1
+            inverted_index[word].add(doc_id)
 
-    m = int(data[index])
-    index += 1
+    m = int(input())
     results = []
 
     # 查询倒排索引
     for _ in range(m):
-        query = data[index]
-        index += 1
+        query = input()
         if query in inverted_index:
-            results.append(" ".join(map(str, sorted(inverted_index[query]))))
+            results.append(" ".join(map(str, sorted(list(inverted_index[query])))))
         else:
             results.append("NOT FOUND")
 
