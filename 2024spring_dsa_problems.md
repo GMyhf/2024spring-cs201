@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2141 GMT+8 Feb 25, 2025
+Updated 2127 GMT+8 Mar 4, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -7388,6 +7388,41 @@ if __name__ == '__main__':
 
 - **输出**  
   如果候选集合非空，则将文档编号排序后输出，否则输出 "NOT FOUND"。
+
+
+
+```python
+n = int(input())
+files = [] # 储存所有单词的文档归属数据
+for i in range(n):
+    data = list(map(int,input().split()))
+    files.append(set(data[1:])) # 将每个单词对应的文档数据转化为集合，方便后续的操作
+
+m = int(input())
+for i in range(m):
+
+    data = list(map(int,input().split()))
+    t = data.index(1) # 第一个1要特殊处理，作为初始值
+    a = set(files[t]) # 所有有可能合题的文档（同样要储存在集合内）
+    for j in range(t + 1,n):
+        if data[j] == 1:
+            a = a & files[j] # 取交集（集合之间的∩、-、∪运算时间复杂度极低！）
+
+    b = set() # 所有一定不合题的文档（同样要储存在集合内）
+    for j in range(n):
+        if data[j] == -1:
+            b = b | files[j] # 取并集
+    
+    # 注意：一定要先把所有要包含的文档全部放入a，所有不能包含的文档统一放入b，最后再a-b！
+    # 否则会损失一些b中的信息，例如如果是“无所谓、不能包含2、要包含12”，
+    # 如果一步一步使用交集和差集的话，则1和2都合题，这与第二个条件矛盾！因此不能一步一步来~
+    c = a - b # a与b的差集
+    finale = list(c)
+    if finale:
+        finale.sort()
+        print(" ".join(map(str,finale)))
+    else:print("NOT FOUND")
+```
 
 
 
