@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2127 GMT+8 Mar 4, 2025
+Updated 2237 GMT+8 Mar 4, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -13715,6 +13715,54 @@ def post_order(pre_order):
 n = int(input())
 pre_order = list(map(int, input().split()))
 print(' '.join(map(str, post_order(pre_order))))
+```
+
+
+
+```python
+class Treenode:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+# 构建二叉搜索树
+def buildtree(p):
+    n = len(p)
+    stack = []
+    root = Treenode(p[0])
+    stack.append(root)
+
+    for i in range(1, n):
+        cur = Treenode(p[i])
+        if p[i] < stack[-1].val:
+            stack[-1].left = cur
+            stack.append(cur)
+        else:
+            pre = None
+            while stack and p[i] > stack[-1].val:
+                pre = stack.pop()
+            pre.right = cur
+            stack.append(cur)
+
+    return root
+
+# 后序遍历
+def hou(root):
+    if not root:
+        return []
+    return hou(root.left) + hou(root.right) + [root.val]
+
+# 输入处理
+n = int(input())
+p = list(map(int, input().split()))
+
+# 构建BST并获取后序遍历结果
+root = buildtree(p)
+ans = hou(root)
+
+# 输出结果
+print(' '.join(map(str, ans)))
 ```
 
 
