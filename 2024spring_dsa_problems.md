@@ -9975,7 +9975,7 @@ print(ans)
 
 ## 06648: Sequence
 
-http://cs101.openjudge.cn/dsapre/06648/
+http://cs101.openjudge.cn/practice/06648/
 
 英文版，http://cs101.openjudge.cn/practice/02442/
 
