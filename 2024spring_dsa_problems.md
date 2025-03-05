@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2237 GMT+8 Mar 4, 2025
+Updated 1412 GMT+8 Mar 5, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -3975,6 +3975,72 @@ For each test case, print a line with the smallest n sums in increasing order, w
 来源
 
 POJ Monthly,Guang Lin
+
+
+
+利用堆合并的方法依次求解两序列的最小 n 个和，从而逐步合并 m 个序列，避免枚举所有 n^m 种组合。
+
+```python
+import sys
+import heapq
+
+def merge(arr1, arr2, n):
+    """
+    将两个有序数组 arr1 和 arr2 合并，求出所有组合中最小的 n 个和
+    使用堆来进行合并搜索
+    """
+    heap = []
+    visited = set()
+    # 初始候选项：(arr1[0]+arr2[0], 0, 0)
+    heapq.heappush(heap, (arr1[0] + arr2[0], 0, 0))
+    visited.add((0, 0))
+    result = []
+    while len(result) < n:
+        s, i, j = heapq.heappop(heap)
+        result.append(s)
+        # 如果 arr1 中的下一个数存在，尝试加入候选项
+        if i + 1 < n and (i + 1, j) not in visited:
+            heapq.heappush(heap, (arr1[i + 1] + arr2[j], i + 1, j))
+            visited.add((i + 1, j))
+        # 如果 arr2 中的下一个数存在，尝试加入候选项
+        if j + 1 < n and (i, j + 1) not in visited:
+            heapq.heappush(heap, (arr1[i] + arr2[j + 1], i, j + 1))
+            visited.add((i, j + 1))
+    return result
+
+def main():
+    input_data = sys.stdin.read().split()
+    it = iter(input_data)
+    T = int(next(it))
+    results = []
+    for _ in range(T):
+        m = int(next(it))
+        n = int(next(it))
+        # 读取第一个序列，并排序
+        current = sorted(int(next(it)) for _ in range(n))
+        # 依次与后续的 m-1 个序列合并
+        for _ in range(m - 1):
+            seq = sorted(int(next(it)) for _ in range(n))
+            current = merge(current, seq, n)
+        results.append(" ".join(map(str, current)))
+    sys.stdout.write("\n".join(results))
+
+if __name__ == "__main__":
+    main()
+```
+
+代码说明
+
+- **merge 函数**  
+  该函数接受两个有序数组 `arr1` 与 `arr2`，利用最小堆依次寻找组合中最小的 n 个和。我们用 `visited` 集合避免重复放入堆中。
+- **主函数**  
+  先读取测试用例数 T，再依次处理每个测试用例。每个测试用例中，首先将第一个序列排序作为初始的结果，再依次将后续序列与当前结果进行合并。最终输出最小的 n 个和。
+
+该算法利用堆优化，每次合并时间复杂度约为 O(n log n)，适合 m 与 n 的题目范围。
+
+
+
+
 
 
 
