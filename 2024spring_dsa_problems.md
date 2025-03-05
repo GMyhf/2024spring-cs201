@@ -2846,7 +2846,7 @@ print(ans)
 
 ## 02039: 反反复复
 
-http://cs101.openjudge.cn/dsapre/02039/
+http://cs101.openjudge.cn/practice/02039/
 
 Mo和Larry发明了一种信息加密方法。他们首先决定好列数，然后将信息（只包含字母）从上往下依次填入各列，并在末尾补充一些随机字母使其成为一个完整的字母矩阵。例如，若信息是“There's no place like home on a snowy night”并且有5列，Mo会写成：
 
@@ -3084,7 +3084,7 @@ while True:
 
 ## 02092: Grandpa is Famous
 
-http://cs101.openjudge.cn/dsapre/02092/
+http://cs101.openjudge.cn/practice/02092/
 
 The whole family was excited by the news. Everyone knew grandpa had been an extremely good bridge player for decades, but when it was announced he would be in the Guinness Book of World Records as the most successful bridge player ever, whow, that was astonishing!
 The International Bridge Association (IBA) has maintained, for several years, a weekly ranking of the best players in the world. Considering that each appearance in a weekly ranking constitutes a point for the player, grandpa was nominated the best player ever because he got the highest number of points.
