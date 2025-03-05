@@ -3249,7 +3249,7 @@ for _ in range(n):
 
 ## 02226: Muddy Fields
 
-http://cs101.openjudge.cn/dsapre/02226/
+http://cs101.openjudge.cn/practice/02226/
 
 Rain has pummeled the cows' field, a rectangular grid of R rows and C columns (1 <= R <= 50, 1 <= C <= 50). While good for the grass, the rain makes some patches of bare earth quite muddy. The cows, being meticulous grazers, don't want to get their hooves dirty while they eat.
 
@@ -3299,6 +3299,94 @@ Board 2 overlaps boards 3 and 4.
 来源
 
 USACO 2005 January Gold
+
+
+
+A well‐known approach is to first label each maximal horizontal contiguous segment and each maximal vertical contiguous segment, build a bipartite graph between these segments (with an edge if a muddy cell belongs to both), and then compute the maximum matching (which, by Kőnig’s theorem, equals the minimum vertex cover – i.e. the minimum boards needed).
+
+```python
+def min_boards(R, C, field):
+    # Label horizontal segments.
+    hor = [[0] * C for _ in range(R)]
+    hor_id = 0
+    for r in range(R):
+        c = 0
+        while c < C:
+            if field[r][c] == '*':
+                hor_id += 1
+                # label contiguous '*' segment in row r
+                while c < C and field[r][c] == '*':
+                    hor[r][c] = hor_id
+                    c += 1
+            else:
+                c += 1
+
+    # Label vertical segments.
+    ver = [[0] * C for _ in range(R)]
+    ver_id = 0
+    for c in range(C):
+        r = 0
+        while r < R:
+            if field[r][c] == '*':
+                ver_id += 1
+                # label contiguous '*' segment in column c
+                while r < R and field[r][c] == '*':
+                    ver[r][c] = ver_id
+                    r += 1
+            else:
+                r += 1
+
+    # Build bipartite graph: for each horizontal segment, list all vertical segments that intersect it.
+    graph = {i: set() for i in range(1, hor_id + 1)}
+    for r in range(R):
+        for c in range(C):
+            if field[r][c] == '*':
+                h = hor[r][c]
+                v = ver[r][c]
+                graph[h].add(v)
+
+    # Use DFS to find an augmenting path in the bipartite graph.
+    match = {}  # maps vertical segment -> horizontal segment
+
+    def dfs(u, seen):
+        for v in graph[u]:
+            if v in seen:
+                continue
+            seen.add(v)
+            if v not in match or dfs(match[v], seen):
+                match[v] = u
+                return True
+        return False
+
+    result = 0
+    for u in range(1, hor_id + 1):
+        if dfs(u, set()):
+            result += 1
+    return result
+
+if __name__ == "__main__":
+    import sys
+    data = sys.stdin.read().strip().split()
+    if not data:
+        exit(0)
+    R = int(data[0])
+    C = int(data[1])
+    field = data[2:]
+    print(min_boards(R, C, field))
+
+```
+
+> Explanation
+>
+> 1. **Segment Labeling:**
+>    - **Horizontal Segments:** For each row, we scan left-to-right. When we hit a `'*'`, we label all consecutive `'*'`cells as one horizontal segment.
+>    - **Vertical Segments:** For each column, we scan top-to-bottom. When we hit a `'*'`, we label all consecutive `'*'` cells as one vertical segment.
+> 2. **Graph Construction:**
+>    - For every cell with mud (`'*'`), we know its horizontal segment id (from `hor`) and its vertical segment id (from `ver`). We then add an edge from the horizontal segment to the vertical segment.
+> 3. **Maximum Bipartite Matching:**
+>    - We use a DFS-based augmenting path algorithm to compute the maximum matching. By Kőnig’s theorem, this matching size is equal to the minimum number of boards required.
+
+
 
 
 
