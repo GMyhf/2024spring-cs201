@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1412 GMT+8 Mar 5, 2025
+Updated 1058 GMT+8 Mar 6, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -7974,6 +7974,66 @@ print(f"{root2:.9f}")
 > >   - 梯度下降则更为简单，易于实现，特别是在高维空间中，但由于只使用了一阶导数信息，其收敛速度可能较慢，尤其是在接近极值点时。
 >
 > 
+
+
+
+思路：先算一下迭代的方程$$\phi(x)=x-\frac{x^3-5x^2+10x-80}{3x^2-10x+10}=\frac{2x^3-5x^2+80}{3x^2-10x+10}$$
+与此同时，利用一点点数学，可以发现原方程有且仅有一实根，且在5到6之间。
+
+```python
+# coding: utf-8
+"""
+@File        :   newton_04140.py
+@Time        :   2025/03/01 16:14:57
+@Author      :   Usercyk
+@Description :   Using Newton's method to solve the equation f(x) = 0
+"""
+
+
+class Solution:
+    """
+    The solution
+    """
+
+    def phi(self, x: float) -> float:
+        """
+        The iteration function
+
+        Arguments:
+            x -- The nth x value
+
+        Returns:
+            The (n+1)th x value
+        """
+        return (2*x**3-5*x**2+80)/(3*x**2-10*x+10)
+
+    def solve(self, x_init: float = 5.0, eps: float = 1e-15) -> float:
+        """
+        Solve the equation f(x) = x**3-5*x**2+10*x-80 = 0
+
+        Keyword Arguments:
+            x_init -- The initial value of x (default: {5.0})
+            eps -- The precision (default: {1e-15})
+
+        Returns:
+            The solution of the equation
+        """
+        x = x_init
+        while True:
+            x_next = self.phi(x)
+            if abs(x_next-x) < eps:
+                return x_next
+            x = x_next
+
+
+if __name__ == "__main__":
+    print(f"{Solution().solve():.9f}")
+
+```
+
+
+
+
 
 **方法 2：二分法**
 
