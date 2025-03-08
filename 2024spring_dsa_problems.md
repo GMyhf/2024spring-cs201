@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2059 GMT+8 Mar 7, 2025
+Updated 1827 GMT+8 Mar 8, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8774,6 +8774,56 @@ Meijishinguu Meijishinguu
 Uenokouen->(35)->Ginza->(80)->Sensouji->(60)->Meijishinguu->(35)->Yoyogikouen
 Meijishinguu
 ```
+
+
+
+
+
+
+
+由于图中所有边的权值均为非负数，可以利用经典的 Dijkstra 算法：维护一个全局的距离字典，当发现更短的路径时更新之。
+
+```python
+import heapq
+from collections import defaultdict
+
+p = int(input())
+points = [input().strip() for _ in range(p)]
+maps = defaultdict(list)
+for _ in range(int(input())):
+    a, b, d = input().split()
+    d = int(d)
+    maps[a].append((b, d))
+    maps[b].append((a, d))
+
+def dijkstra(src, dst):
+    INF = float('inf')
+    dist = {point: INF for point in points}
+    path = {point: "" for point in points}
+    dist[src] = 0
+    path[src] = src
+    pq = [(0, src)]
+    while pq:
+        d, u = heapq.heappop(pq)
+        if d > dist[u]:
+            continue
+        if u == dst:
+            break
+        for v, w in maps[u]:
+            nd = d + w
+            if nd < dist[v]:
+                dist[v] = nd
+                path[v] = path[u] + f"->({w})->" + v
+                heapq.heappush(pq, (nd, v))
+    return path[dst]
+
+for _ in range(int(input())):
+    s, t = input().split()
+    print(dijkstra(s, t))
+
+```
+
+
 
 
 
