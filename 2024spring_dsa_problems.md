@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1823 GMT+8 Mar 10, 2025
+Updated 2256 GMT+8 Mar 11, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4122,6 +4122,56 @@ A1B3C1A2B4C2A3B1C3A4B2C4
 来源
 
 TUD Programming Contest 2005, Darmstadt, Germany
+
+
+
+【陈宣之 23生科】思路：Dijstra，把路径放在第一位，用heapq取字典序最小
+
+```python
+# 陈宣之 23生科
+import heapq
+def dfs(x,y,r,c):
+    global table,directions
+    q=[[table[x][y],(x,y)]]
+    while q:
+        way,(x,y)=heapq.heappop(q)
+        if len(way)==r*c*2:
+            return way
+        for dx,dy in directions:
+            nx,ny=x+dx,y+dy
+            if 0<=nx<r and 0<=ny<c and table[nx][ny] not in way:
+                heapq.heappush(q,[way+table[nx][ny],(nx,ny)])
+    return 0
+
+
+n=int(input())
+directions=[(-2,-1),(-2,1),(-1,2),(-1,-2),(1,-2),(1,2),(2,-1),(2,1)]
+for _ in range(n):
+    p,q=map(int,input().split())
+    table=[]
+    for i in range(p):
+        temp=[]
+        for j in range(q):
+            temp.append(chr(ord("A")+j)+str(i+1))
+        table.append(temp)
+    judge=False
+    for j in range(q):
+        for i in range(p):
+            if dfs(i,j,p,q):
+                judge=True
+                print("Scenario #",_+1,":",sep="")
+                print(dfs(i,j,p,q))
+                break
+        if judge:
+            break
+    if not judge:
+        print("Scenario #",_+1,":",sep="")
+        print("impossible")
+    if _<n-1:
+        print()
+```
+
+
 
 
 
