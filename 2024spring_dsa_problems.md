@@ -10265,6 +10265,61 @@ http://cs101.openjudge.cn/practice/06648/
 
 
 
+思路：输入时将各条序列sort，先只考虑两条序列，（0,0）一定最小，用heapq存储，下一步最小一定在（i+1, j）和（i, j+1）之间，以此类推找到最小的n个存为序列seq，再将seq与第三条序列重复操作，以此类推。注意m=1的情况。
+
+```python
+import sys
+import heapq
+
+def merge(arr1, arr2, n):
+    """
+    将两个有序数组 arr1 和 arr2 合并，求出所有组合中最小的 n 个和
+    使用堆来进行合并搜索
+    """
+    heap = []
+    visited = set()
+    # 初始候选项：(arr1[0]+arr2[0], 0, 0)
+    heapq.heappush(heap, (arr1[0] + arr2[0], 0, 0))
+    visited.add((0, 0))
+    result = []
+    while len(result) < n:
+        s, i, j = heapq.heappop(heap)
+        result.append(s)
+        # 如果 arr1 中的下一个数存在，尝试加入候选项
+        if i + 1 < n and (i + 1, j) not in visited:
+            heapq.heappush(heap, (arr1[i + 1] + arr2[j], i + 1, j))
+            visited.add((i + 1, j))
+        # 如果 arr2 中的下一个数存在，尝试加入候选项
+        if j + 1 < n and (i, j + 1) not in visited:
+            heapq.heappush(heap, (arr1[i] + arr2[j + 1], i, j + 1))
+            visited.add((i, j + 1))
+    return result
+
+def main():
+    input_data = sys.stdin.read().split()
+    it = iter(input_data)
+    T = int(next(it))
+    results = []
+    for _ in range(T):
+        m = int(next(it))
+        n = int(next(it))
+        # 读取第一个序列，并排序
+        current = sorted(int(next(it)) for _ in range(n))
+        # 依次与后续的 m-1 个序列合并
+        for _ in range(m - 1):
+            seq = sorted(int(next(it)) for _ in range(n))
+            current = merge(current, seq, n)
+        results.append(" ".join(map(str, current)))
+    sys.stdout.write("\n".join(results))
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+
+
 虑到n^m个和的数量可能非常大，我们不能直接存储它们。因此，我们可以通过逐步合并两个序列来找到最小的n个和，而不是一次性生成所有可能的和。
 
 为了找到最小的n个和，我们可以按照以下步骤操作：
