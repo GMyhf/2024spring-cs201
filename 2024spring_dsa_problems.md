@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2256 GMT+8 Mar 11, 2025
+Updated 1310 GMT+8 Mar 17, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -12168,11 +12168,11 @@ for row in laplacianMatrix:	# 输出结果
 
 ## 20018: 蚂蚁王国的越野跑
 
-http://cs101.openjudge.cn/practice/20018
+merge sort, http://cs101.openjudge.cn/practice/20018
 
 为了促进蚂蚁家族身体健康，提高蚁族健身意识，蚂蚁王国举行了越野跑。假设越野跑共有N个蚂蚁参加，在一条笔直的道路上进行。N个蚂蚁在起点处站成一列，相邻两个蚂蚁之间保持一定的间距。比赛开始后，N个蚂蚁同时沿着道路向相同的方向跑去。换句话说，这N个蚂蚁可以看作x轴上的N个点，在比赛开始后，它们同时向X轴正方向移动。假设越野跑的距离足够远，这N个蚂蚁的速度有的不相同有的相同且保持匀速运动，那么会有多少对参赛者之间发生“赶超”的事件呢？此题结果比较大，需要定义long long类型。请看备注。
 
-![img](http://media.openjudge.cn/images/upload/1576506586.jpg)
+<img src="http://media.openjudge.cn/images/upload/1576506586.jpg" alt="img" style="zoom:50%;" />
 
 **输入**
 
@@ -12221,7 +12221,126 @@ long long，有符号 64位整数，所占8个字节(Byte)
 
 
 
-出题人太随意了。题目中的样例数据是 2 组样例数据吧。
+出题人太随意了。题目中的样例数据是 2 组样例数据。
+
+
+
+```python
+import sys
+
+
+def merge_sort(arr, temp, left, right):
+    if left >= right:
+        return 0
+    mid = (left + right) // 2
+    inv_count = merge_sort(arr, temp, left, mid) + merge_sort(arr, temp, mid + 1, right)
+
+    # 归并过程，同时计算逆序数
+    i, j, k = left, mid + 1, left
+    while i <= mid and j <= right:
+        if arr[i] >= arr[j]:  # 注意这里是 >=，保证稳定性
+            temp[k] = arr[i]
+            i += 1
+        else:
+            temp[k] = arr[j]
+            inv_count += (mid - i + 1)  # 统计逆序对
+            j += 1
+        k += 1
+
+    while i <= mid:
+        temp[k] = arr[i]
+        i += 1
+        k += 1
+    while j <= right:
+        temp[k] = arr[j]
+        j += 1
+        k += 1
+
+    # 拷贝回原数组
+    for i in range(left, right + 1):
+        arr[i] = temp[i]
+
+    return inv_count
+
+
+if __name__ == "__main__":
+    n = int(sys.stdin.readline().strip())
+    arr = [int(sys.stdin.readline().strip()) for _ in range(n)]
+    temp = [0] * n
+    result = merge_sort(arr, temp, 0, n - 1)
+    print(result)
+
+```
+
+主要优化点：
+
+1. **索引传递优化**：避免创建子列表，改为在原数组上进行归并排序，提高空间效率。
+2. **减少 `extend` 操作**：直接在 `temp` 中合并排序，最后一次性拷贝回 `arr`，减少内存拷贝开销。
+3. **提高稳定性**：使用 `arr[i] <= arr[j]`，确保排序稳定。
+4. **使用 `sys.stdin.readline()`**：加速大规模输入读取，提升整体运行效率。
+
+**时间复杂度：** $O(NlogN)$
+**空间复杂度：** $O(N)$ (使用 `temp` 作为辅助数组)
+
+
+
+```python
+import sys
+from collections import Counter
+
+sys.setrecursionlimit(200000)
+
+def merge_count(arr):
+    # 归并排序，同时计算逆序数
+    n = len(arr)
+    if n <= 1:
+        return arr, 0
+    mid = n // 2
+    left, inv_left = merge_count(arr[:mid])
+    right, inv_right = merge_count(arr[mid:])
+    merged = []
+    i = j = 0
+    inv = inv_left + inv_right
+    while i < len(left) and j < len(right):
+        # 如果左边元素<=右边元素，不构成逆序对（注意：相等情况不算）
+        if left[i] <= right[j]:
+            merged.append(left[i])
+            i += 1
+        else:
+            # left[i] > right[j]构成逆序对，左边剩余的元素都大于right[j]
+            merged.append(right[j])
+            inv += len(left) - i
+            j += 1
+    merged.extend(left[i:])
+    merged.extend(right[j:])
+    return merged, inv
+
+def main():
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    n = int(input_data[0])
+    speeds = list(map(int, input_data[1:]))
+    total_pairs = n * (n - 1) // 2
+
+    # 统计相等对数（任意两个相同速度的蚂蚁不会发生赶超）
+    cnt = Counter(speeds)
+    equal_pairs = sum(v * (v - 1) // 2 for v in cnt.values())
+
+    # 计算传统逆序数：统计满足a[i] > a[j]的(i,j)
+    _, inv = merge_count(speeds)
+    # 根据分析，赶超事件的对数为：
+    result = total_pairs - equal_pairs - inv
+    print(result)
+
+if __name__ == '__main__':
+    main()
+
+```
+
+
+
+
 
 ```python
 #23n2300011505(12号娱乐选手)
