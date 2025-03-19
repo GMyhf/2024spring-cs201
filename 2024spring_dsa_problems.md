@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1310 GMT+8 Mar 17, 2025
+Updated 1736 GMT+8 Mar 19, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -12168,7 +12168,7 @@ for row in laplacianMatrix:	# 输出结果
 
 ## 20018: 蚂蚁王国的越野跑
 
-merge sort, http://cs101.openjudge.cn/practice/20018
+merge sort, binary search, http://cs101.openjudge.cn/practice/20018
 
 为了促进蚂蚁家族身体健康，提高蚁族健身意识，蚂蚁王国举行了越野跑。假设越野跑共有N个蚂蚁参加，在一条笔直的道路上进行。N个蚂蚁在起点处站成一列，相邻两个蚂蚁之间保持一定的间距。比赛开始后，N个蚂蚁同时沿着道路向相同的方向跑去。换句话说，这N个蚂蚁可以看作x轴上的N个点，在比赛开始后，它们同时向X轴正方向移动。假设越野跑的距离足够远，这N个蚂蚁的速度有的不相同有的相同且保持匀速运动，那么会有多少对参赛者之间发生“赶超”的事件呢？此题结果比较大，需要定义long long类型。请看备注。
 
@@ -12375,6 +12375,21 @@ l = []
 for i in range(n):
     l.append(int(input()))
 l, ans = merge_sort(l)
+print(ans)
+```
+
+
+
+```python
+from bisect import bisect_left
+n=int(input())
+v=[]
+ans=0
+for i in range(n):
+    p=int(input())
+    index=bisect_left(v,p)
+    v.insert(index,p)
+    ans+=index
 print(ans)
 ```
 
