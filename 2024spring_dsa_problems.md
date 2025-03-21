@@ -1398,7 +1398,7 @@ while True:
 
 ## 01426: Find The Multiple
 
-http://cs101.openjudge.cn/dsapre/01426/
+http://cs101.openjudge.cn/practice/01426/
 
 Given a positive integer n, write a program to find out a nonzero multiple m of n whose decimal representation contains only the digits 0 and 1. You may assume that n is not greater than 200 and there is a corresponding m containing no more than 100 decimal digits.
 
