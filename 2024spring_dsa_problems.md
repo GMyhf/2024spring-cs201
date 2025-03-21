@@ -1166,7 +1166,7 @@ while True:
 
 ## 01376: Robot
 
-bfs, http://cs101.openjudge.cn/dsapre/01376/
+bfs, http://cs101.openjudge.cn/practice/01376/
 
 洛谷上有中文题面。机器人搬重物，https://www.luogu.com.cn/problem/P1126
 
