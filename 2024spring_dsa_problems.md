@@ -2696,7 +2696,7 @@ if __name__ == "__main__":
 
 ## 01860: Currency Exchange
 
-http://cs101.openjudge.cn/dsapre/01860/
+http://cs101.openjudge.cn/practice/01860/
 
 Several currency exchange points are working in our city. Let us suppose that each point specializes in two particular currencies and performs exchange operations only with these currencies. There can be several points specializing in the same pair of currencies. Each point has its own exchange rates, exchange rate of A to B is the quantity of B you get for 1A. Also each exchange point has some commission, the sum you have to pay for your exchange operation. Commission is always collected in source currency.
 For example, if you want to exchange 100 US Dollars into Russian Rubles at the exchange point, where the exchange rate is 29.75, and the commission is 0.39 you will get (100 - 0.39) * 29.75 = 2963.3975RUR. 
@@ -2885,7 +2885,7 @@ while True:
 
 ## 01944: Fiber Communications
 
-http://cs101.openjudge.cn/dsapre/01944/
+http://cs101.openjudge.cn/practice/01944/
 
 Farmer John wants to connect his N (1 <= N <= 1,000) barns (numbered 1..N) with a new fiber-optic network. However, the barns are located in a circle around the edge of a large pond, so he can only connect pairs of adjacent barns. The circular configuration means that barn N is adjacent to barn 1.
 
@@ -3055,7 +3055,7 @@ print(original)
 
 ## 02049: Finding Nemo
 
-http://cs101.openjudge.cn/dsapre/02049/
+http://cs101.openjudge.cn/practice/02049/
 
 Nemo is a naughty boy. One day he went into the deep sea all by himself. Unfortunately, he became lost and couldn't find his way home. Therefore, he sent a signal to his father, Marlin, to ask for help.
 After checking the map, Marlin found that the sea is like a labyrinth with walls and doors. All the walls are parallel to the X-axis or to the Y-axis. The thickness of the walls are assumed to be zero.
@@ -4069,7 +4069,7 @@ if __name__ == "__main__":
 
 ## 02442: Sequence
 
-http://cs101.openjudge.cn/practice/02442/
+heap, merge, http://cs101.openjudge.cn/practice/02442/
 
 中文版是 http://cs101.openjudge.cn/practice/06648/
 
@@ -4212,6 +4212,8 @@ http://cs101.openjudge.cn/practice/02488/
 **Background**
 The knight is getting bored of seeing the same black and white squares again and again and has decided to make a journey
 around the world. Whenever a knight moves, it is two squares in one direction and one square perpendicular to this. The world of a knight is the chessboard he is living on. Our knight lives on a chessboard that has a smaller area than a regular 8 * 8 board, but it is still rectangular. Can you help this adventurous knight to make travel plans?
+
+![img](http://media.openjudge.cn/images/g1490/2488_1.jpg)
 
 **Problem**
 Find a path such that the knight visits every square once. The knight can start and end on any square of the board.
