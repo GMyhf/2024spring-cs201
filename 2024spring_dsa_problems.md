@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2331 GMT+8 Mar 20, 2025
+Updated 2022 GMT+8 Mar 21, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -10708,7 +10708,7 @@ if __name__ == "__main__":
 
 ## 07206: 我是最快的马
 
-http://cs101.openjudge.cn/practice/07206/
+bfs, http://cs101.openjudge.cn/practice/07206/
 
 我们都知道，在中国象棋中，马是走日字步的。现给定马的起始坐标与终点坐标，求出马最快能到达的路线。如果有多条路线都是步数最少的，则输出路线的数目
 注意，此时棋盘上可能会有一些其它的棋子，这些棋子是会憋马脚的，注意！
@@ -10742,57 +10742,100 @@ http://cs101.openjudge.cn/practice/07206/
 
 
 
-不用维护访问过的点，因为当层访问，可能有多条最快路线。
 
-这个搜索的题目还挺难，就是数据弱。
 
 ```python
-# 23n2000012515(heol) 熊江凯
-from collections import deque
+def solve():
+    import sys
+    from collections import deque
+    start_r, start_c = map(int, input().split())
+    end_r, end_c = map(int, input().split())
+    M = int(input())
+    obstacles = set()
+    for _ in range(M):
+        r, c = map(int, input().split())
+        obstacles.add((r, c))
 
-sx, sy = map(int, input().split())
-ex, ey = map(int, input().split())
-# blocks = set(tuple(map(int, input().split())) for _ in range(int(input())))
-blocks = set()
-for _ in range(int(input())):
-    coordinates = tuple(map(int, input().split()))
-    blocks.add(coordinates)
+    # 棋盘坐标范围
+    MIN, MAX = 0, 10
 
-MAXD = 8
-dx = [-2, -2, -1, 1, 2, 2, 1, -1]
-dy = [1, -1, -2, -2, -1, 1, 2, 2]
+    # 马的走法：每个元组为(dx, dy, (block_dx, block_dy))
+    moves = [
+        (2, 1, (1, 0)), (2, -1, (1, 0)),
+        (-2, 1, (-1, 0)), (-2, -1, (-1, 0)),
+        (1, 2, (0, 1)), (-1, 2, (0, 1)),
+        (1, -2, (0, -1)), (-1, -2, (0, -1))
+    ]
 
-q = deque()
-q.append((sx, sy, f'({sx},{sy})'))
-inQueue = set()
-inQueue.add((sx, sy))
-ans = 0
-cur_path = ''
+    def in_bounds(pos):
+        r, c = pos
+        return MIN <= r <= MAX and MIN <= c <= MAX
 
-while q:
-    tmp = deque()
+    start = (start_r, start_c)
+    end = (end_r, end_c)
+
+    # BFS：dist记录最短步数，ways记录最短路径数，prev在唯一路径时记录前驱便于重构路径
+    dist, ways, prev = {}, {}, {}
+    dist[start] = 0
+    ways[start] = 1
+    prev[start] = None
+    q = deque([start])
+
     while q:
-        x, y, path = q.popleft()
-        wx, wy = [-1, 0, 1, 0], [0, -1, 0, 1]
-        if x == ex and y == ey:
-            ans += 1
-            if ans == 1:
-                cur_path = path
-        for i in range(MAXD):
-            nx, ny = x + dx[i], y + dy[i]
-            hx, hy = x + wx[i//2], y + wy[i//2]
-            if (nx, ny) not in inQueue and (hx, hy) not in blocks:
-                tmp.append((nx, ny, path + f'-({nx},{ny})'))
+        cur = q.popleft()
+        r, c = cur
+        for dx, dy, (br, bc) in moves:
+            # 计算“蹩马腿”所在位置
+            block = (r + br, c + bc)
+            # 如果该位置在棋盘上且被其它棋子占据，则该方向走法被阻挡
+            if in_bounds(block) and block in obstacles:
+                continue
+            newPos = (r + dx, c + dy)
+            if not in_bounds(newPos) or newPos in obstacles:
+                continue
+            nd = dist[cur] + 1
+            if newPos not in dist:
+                dist[newPos] = nd
+                ways[newPos] = ways[cur]
+                # 若当前点只有一条路径，则记录前驱；如果不唯一，则设为None
+                prev[newPos] = cur if ways[cur] == 1 else None
+                q.append(newPos)
+            elif nd == dist[newPos]:
+                ways[newPos] += ways[cur]
+                # 前驱不再唯一
+                prev[newPos] = None
 
-        inQueue.add((nx, ny))	# 避免重复入队列
-    if ans:
-        break
-    q = tmp	# 等价于q.extend(tmp)
+    # 如果目标不可达，输出"无解"
+    if end not in dist:
+        print("无解")
+        return
 
-print(cur_path if ans == 1 else ans)
+    # 如果只有唯一一条最短路径，则重构路径输出格式 "(r,c)-(r,c)-..."
+    if ways[end] == 1:
+        path = []
+        cur = end
+        while cur is not None:
+            path.append(cur)
+            cur = prev[cur]
+        path.reverse()
+        route_str = "-".join("({},{})".format(r, c) for r, c in path)
+        print(route_str)
+    else:
+        # 多条最短路径则输出路径数目
+        print(str(ways[end]))
+
+
+if __name__ == '__main__':
+    solve()
+
+"""
+0 0
+2 2
+0
+
+16
+"""
 ```
-
-
 
 
 
