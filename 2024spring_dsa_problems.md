@@ -1166,7 +1166,9 @@ while True:
 
 ## 01376: Robot
 
-http://cs101.openjudge.cn/dsapre/01376/
+bfs, http://cs101.openjudge.cn/dsapre/01376/
+
+洛谷上有中文题面。机器人搬重物，https://www.luogu.com.cn/problem/P1126
 
 The Robot Moving Institute is using a robot in their local store to transport different items. Of course the robot should spend only the minimum time necessary when travelling from one place in the store to another. The robot can move only along a straight line (track). All tracks form a rectangular grid. Neighbouring tracks are one meter apart. The store is a rectangle N x M meters and it is entirely covered by this grid. The distance of the track closest to the side of the store is exactly one meter. The robot has a circular shape with diameter equal to 1.6 meter. The track goes through the center of the robot. The robot always faces north, south, west or east. The tracks are in the south-north and in the west-east directions. The robot can move only in the direction it faces. The direction in which it faces can be changed at each track crossing. Initially the robot stands at a track crossing. The obstacles in the store are formed from pieces occupying 1m x 1m on the ground. Each obstacle is within a 1 x 1 square formed by the tracks. The movement of the robot is controlled by two commands. These commands are GO and TURN. 
 The GO command has one integer parameter n in {1,2,3}. After receiving this command the robot moves n meters in the direction it faces. 
@@ -1212,6 +1214,130 @@ The output contains one line for each block except the last block in the input. 
 来源
 
 Central Europe 1996
+
+
+
+```python
+from collections import deque
+
+
+def bfs_min_time(grid, start, end, direction):
+    N, M = len(grid), len(grid[0])
+    # 定义朝向：0-东, 1-南, 2-西, 3-北
+    dir_map = {'E': 0, 'S': 1, 'W': 2, 'N': 3}
+    start_dir = dir_map[direction]
+    sr, sc, tr, tc = start[0], start[1], end[0], end[1]
+
+    # 机器人中心只能位于网格交点，合法交点要求其周围四个相邻的格子都不能有障碍。
+    # 对于交点 (i, j) (i,j均从1开始计数，i∈[1,N-1], j∈[1,M-1])，对应的格子为
+    # (i-1,j-1), (i-1,j), (i,j-1), (i,j)
+    valid = [[False] * (M) for _ in range(N)]
+    for i in range(1, N):
+        for j in range(1, M):
+            if grid[i - 1][j - 1] == 0 and grid[i - 1][j] == 0 and grid[i][j - 1] == 0 and grid[i][j] == 0:
+                valid[i][j] = True
+
+    # 检查起始点和目标点是否合法
+    if not valid[sr][sc] or not valid[tr][tc]:
+        return -1
+
+    # 定义方向移动，顺序：东, 南, 西, 北
+    dr = [0, 1, 0, -1]
+    dc = [1, 0, -1, 0]
+
+    # BFS: 状态 (r, c, d)
+    visited = [[[False] * 4 for _ in range(M)] for _ in range(N)]
+    q = deque()
+    q.append((sr, sc, start_dir, 0))
+    visited[sr][sc][start_dir] = True
+
+    while q:
+        r, c, d, steps = q.popleft()
+        # 判断是否到达目标位置（朝向不要求匹配）
+        if r == tr and c == tc:
+            return steps
+
+        # 转向操作
+        # Left: d_new = (d+3)%4, Right: d_new = (d+1)%4
+        for nd in [(d + 3) % 4, (d + 1) % 4]:
+            if not visited[r][c][nd]:
+                visited[r][c][nd] = True
+                q.append((r, c, nd, steps + 1))
+
+        # 前进1,2,3步，每一步中间都必须合法
+        for k in range(1, 4):
+            nr = r + dr[d] * k
+            nc = c + dc[d] * k
+            # 判断越界
+            if nr < 1 or nr >= N or nc < 1 or nc >= M:
+                break
+            # 如果当前位置不合法，则不能继续向前走
+            if not valid[nr][nc]:
+                break
+            if not visited[nr][nc][d]:
+                visited[nr][nc][d] = True
+                q.append((nr, nc, d, steps + 1))
+    return -1
+
+
+# 读取输入数据
+while True:
+    n, m = map(int, input().split())
+    if n == 0 and m == 0:
+        break
+    grid = [list(map(int, input().split())) for _ in range(n)]
+    sx, sy, ex, ey, direction = input().split()
+    sx, sy, ex, ey = map(int, [sx, sy, ex, ey])
+
+    direction = direction.upper()  # 确保方向是大写
+
+    # 计算最短时间
+    result = bfs_min_time(grid, (sx, sy), (ex, ey), direction[0])
+    print(result)
+```
+
+> 处理 **机器人转向** 的操作，它的目的是计算左转（`Left`）和右转（`Right`）后对应的新朝向。
+>
+> **转向的数学公式**
+>
+> 方向 `d` 是用 **0、1、2、3** 来表示的：
+>
+> - `0` → **东 (E)**
+> - `1` → **南 (S)**
+> - `2` → **西 (W)**
+> - `3` → **北 (N)**
+>
+> **左转 (Left)** 和 **右转 (Right)** 的计算方式：
+>
+> - **左转（逆时针 90°）**：
+>   - `d_new = (d - 1) % 4`
+>   - 但由于 Python 取模可能会导致负数，为了保持非负数，等价于 `d_new = (d + 3) % 4`
+> - **右转（顺时针 90°）**：
+>   - `d_new = (d + 1) % 4`
+>
+> **具体转向示例：**
+>
+> | 当前方向 | `d` 值 | 左转 `(d+3) % 4` | 右转 `(d+1) % 4` |
+> | -------- | ------ | ---------------- | ---------------- |
+> | 东 (E)   | 0      | 3 (北 N)         | 1 (南 S)         |
+> | 南 (S)   | 1      | 0 (东 E)         | 2 (西 W)         |
+> | 西 (W)   | 2      | 1 (南 S)         | 3 (北 N)         |
+> | 北 (N)   | 3      | 2 (西 W)         | 0 (东 E)         |
+>
+> 所以：
+>
+> ```python
+> for nd in [(d + 3) % 4, (d + 1) % 4]:  # 遍历左转和右转的情况
+> ```
+>
+> 这个 `for` 循环的作用是：
+>
+> - `nd = (d + 3) % 4` **模拟左转**
+> - `nd = (d + 1) % 4` **模拟右转**
+>
+> 
+
+
 
 
 
@@ -1265,6 +1391,8 @@ while True:
 
     print(bfs(sx, sy, ex, ey, sdir))
 ```
+
+
 
 
 
@@ -11597,238 +11725,6 @@ for _ in range(int(input())):
 ```
 
 
-
-
-
-## 01376: Robot
-
-bfs, http://cs101.openjudge.cn/dsapre/01376/
-
-洛谷上有中文题面。机器人搬重物，https://www.luogu.com.cn/problem/P1126
-
-The Robot Moving Institute is using a robot in their local store to transport different items. Of course the robot should spend only the minimum time necessary when travelling from one place in the store to another. The robot can move only along a straight line (track). All tracks form a rectangular grid. Neighbouring tracks are one meter apart. The store is a rectangle N x M meters and it is entirely covered by this grid. The distance of the track closest to the side of the store is exactly one meter. The robot has a circular shape with diameter equal to 1.6 meter. The track goes through the center of the robot. The robot always faces north, south, west or east. The tracks are in the south-north and in the west-east directions. The robot can move only in the direction it faces. The direction in which it faces can be changed at each track crossing. Initially the robot stands at a track crossing. The obstacles in the store are formed from pieces occupying 1m x 1m on the ground. Each obstacle is within a 1 x 1 square formed by the tracks. The movement of the robot is controlled by two commands. These commands are GO and TURN. 
-The GO command has one integer parameter n in {1,2,3}. After receiving this command the robot moves n meters in the direction it faces. 
-
-The TURN command has one parameter which is either left or right. After receiving this command the robot changes its orientation by 90o in the direction indicated by the parameter. 
-
-The execution of each command lasts one second. 
-
-Help researchers of RMI to write a program which will determine the minimal time in which the robot can move from a given starting point to a given destination.
-
-**输入**
-
-The input consists of blocks of lines. The first line of each block contains two integers M <= 50 and N <= 50 separated by one space. In each of the next M lines there are N numbers one or zero separated by one space. One represents obstacles and zero represents empty squares. (The tracks are between the squares.) The block is terminated by a line containing four positive integers B1 B2 E1 E2 each followed by one space and the word indicating the orientation of the robot at the starting point. B1, B2 are the coordinates of the square in the north-west corner of which the robot is placed (starting point). E1, E2 are the coordinates of square to the north-west corner of which the robot should move (destination point). The orientation of the robot when it has reached the destination point is not prescribed. We use (row, column)-type coordinates, i.e. the coordinates of the upper left (the most north-west) square in the store are 0,0 and the lower right (the most south-east) square are M - 1, N - 1. The orientation is given by the words north or west or south or east. The last block contains only one line with N = 0 and M = 0.
-
-**输出**
-
-The output contains one line for each block except the last block in the input. The lines are in the order corresponding to the blocks in the input. The line contains minimal number of seconds in which the robot can reach the destination point from the starting point. If there does not exist any path from the starting point to the destination point the line will contain -1. 
-![img](http://media.openjudge.cn/images/g378/1376_1.jpg)
-
-样例输入
-
-```
-9 10
-0 0 0 0 0 0 1 0 0 0
-0 0 0 0 0 0 0 0 1 0
-0 0 0 1 0 0 0 0 0 0
-0 0 1 0 0 0 0 0 0 0
-0 0 0 0 0 0 1 0 0 0
-0 0 0 0 0 1 0 0 0 0
-0 0 0 1 1 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0
-1 0 0 0 0 0 0 0 1 0
-7 2 2 7 south
-0 0
-```
-
-样例输出
-
-```
-12
-```
-
-来源
-
-Central Europe 1996
-
-
-
-```python
-from collections import deque
-
-
-def bfs_min_time(grid, start, end, direction):
-    N, M = len(grid), len(grid[0])
-    # 定义朝向：0-东, 1-南, 2-西, 3-北
-    dir_map = {'E': 0, 'S': 1, 'W': 2, 'N': 3}
-    start_dir = dir_map[direction]
-    sr, sc, tr, tc = start[0], start[1], end[0], end[1]
-
-    # 机器人中心只能位于网格交点，合法交点要求其周围四个相邻的格子都不能有障碍。
-    # 对于交点 (i, j) (i,j均从1开始计数，i∈[1,N-1], j∈[1,M-1])，对应的格子为
-    # (i-1,j-1), (i-1,j), (i,j-1), (i,j)
-    valid = [[False] * (M) for _ in range(N)]
-    for i in range(1, N):
-        for j in range(1, M):
-            if grid[i - 1][j - 1] == 0 and grid[i - 1][j] == 0 and grid[i][j - 1] == 0 and grid[i][j] == 0:
-                valid[i][j] = True
-
-    # 检查起始点和目标点是否合法
-    if not valid[sr][sc] or not valid[tr][tc]:
-        return -1
-
-    # 定义方向移动，顺序：东, 南, 西, 北
-    dr = [0, 1, 0, -1]
-    dc = [1, 0, -1, 0]
-
-    # BFS: 状态 (r, c, d)
-    visited = [[[False] * 4 for _ in range(M)] for _ in range(N)]
-    q = deque()
-    q.append((sr, sc, start_dir, 0))
-    visited[sr][sc][start_dir] = True
-
-    while q:
-        r, c, d, steps = q.popleft()
-        # 判断是否到达目标位置（朝向不要求匹配）
-        if r == tr and c == tc:
-            return steps
-
-        # 转向操作
-        # Left: d_new = (d+3)%4, Right: d_new = (d+1)%4
-        for nd in [(d + 3) % 4, (d + 1) % 4]:
-            if not visited[r][c][nd]:
-                visited[r][c][nd] = True
-                q.append((r, c, nd, steps + 1))
-
-        # 前进1,2,3步，每一步中间都必须合法
-        for k in range(1, 4):
-            nr = r + dr[d] * k
-            nc = c + dc[d] * k
-            # 判断越界
-            if nr < 1 or nr >= N or nc < 1 or nc >= M:
-                break
-            # 如果当前位置不合法，则不能继续向前走
-            if not valid[nr][nc]:
-                break
-            if not visited[nr][nc][d]:
-                visited[nr][nc][d] = True
-                q.append((nr, nc, d, steps + 1))
-    return -1
-
-
-# 读取输入数据
-while True:
-    n, m = map(int, input().split())
-    if n == 0 and m == 0:
-        break
-    grid = [list(map(int, input().split())) for _ in range(n)]
-    sx, sy, ex, ey, direction = input().split()
-    sx, sy, ex, ey = map(int, [sx, sy, ex, ey])
-
-    direction = direction.upper()  # 确保方向是大写
-
-    # 计算最短时间
-    result = bfs_min_time(grid, (sx, sy), (ex, ey), direction[0])
-    print(result)
-```
-
-> 处理 **机器人转向** 的操作，它的目的是计算左转（`Left`）和右转（`Right`）后对应的新朝向。
->
-> **转向的数学公式**
->
-> 方向 `d` 是用 **0、1、2、3** 来表示的：
->
-> - `0` → **东 (E)**
-> - `1` → **南 (S)**
-> - `2` → **西 (W)**
-> - `3` → **北 (N)**
->
-> **左转 (Left)** 和 **右转 (Right)** 的计算方式：
->
-> - **左转（逆时针 90°）**：
->   - `d_new = (d - 1) % 4`
->   - 但由于 Python 取模可能会导致负数，为了保持非负数，等价于 `d_new = (d + 3) % 4`
-> - **右转（顺时针 90°）**：
->   - `d_new = (d + 1) % 4`
->
-> **具体转向示例：**
->
-> | 当前方向 | `d` 值 | 左转 `(d+3) % 4` | 右转 `(d+1) % 4` |
-> | -------- | ------ | ---------------- | ---------------- |
-> | 东 (E)   | 0      | 3 (北 N)         | 1 (南 S)         |
-> | 南 (S)   | 1      | 0 (东 E)         | 2 (西 W)         |
-> | 西 (W)   | 2      | 1 (南 S)         | 3 (北 N)         |
-> | 北 (N)   | 3      | 2 (西 W)         | 0 (东 E)         |
->
-> 所以：
->
-> ```python
-> for nd in [(d + 3) % 4, (d + 1) % 4]:  # 遍历左转和右转的情况
-> ```
->
-> 这个 `for` 循环的作用是：
->
-> - `nd = (d + 3) % 4` **模拟左转**
-> - `nd = (d + 1) % 4` **模拟右转**
->
-> 
-
-
-
-
-
-
-
-```python
-from collections import deque
-
-# Directions: north(0), east(1), south(2), west(3)
-dx = [-1, 0, 1, 0]
-dy = [0, 1, 0, -1]
-
-def bfs(sx, sy, ex, ey, sdir):
-    queue = deque([(sx, sy, 0, sdir)])
-    visited = [[[0]*4 for _ in range(m+1)] for _ in range(n+1)]
-    visited[sx][sy][sdir] = 1
-
-    while queue:
-        x, y, time, dir = queue.popleft()
-        for i in range(1, 4):  # 1, 2, 3 steps
-            nx, ny = x + dx[dir]*i, y + dy[dir]*i
-            if nx < 1 or nx >= n or ny < 1 or ny >= m or grid[nx][ny] or grid[nx+1][ny] or grid[nx][ny+1] or grid[nx+1][ny+1]:
-                break
-            if not visited[nx][ny][dir]:
-                visited[nx][ny][dir] = 1
-                if nx == ex and ny == ey:
-                    return time + 1
-                queue.append((nx, ny, time + 1, dir))
-        for i in range(4):
-            if abs(dir - i) == 2:  # Don't go back
-                continue
-            if not visited[x][y][i]:  # Turn in place, no need to check boundaries
-                visited[x][y][i] = 1
-                queue.append((x, y, time + 1, i))
-    return -1
-
-while True:
-    n, m = map(int, input().split())
-    if n == 0 and m == 0:
-        break
-
-    grid = [[0]*(m+2) for _ in range(n+2)]
-    for i in range(1, n+1):
-        grid[i] = [0] + list(map(int, input().split())) + [0]
-
-    sx, sy, ex, ey, sdir = input().split()
-    sx, sy, ex, ey = map(int, [sx, sy, ex, ey])
-    sdir = {'n': 0, 'e': 1, 's': 2, 'w': 3}[sdir[0]]
-
-    if sx == ex and sy == ey:
-        print(0)
-        continue
-
-    print(bfs(sx, sy, ex, ey, sdir))
-```
 
 
 
