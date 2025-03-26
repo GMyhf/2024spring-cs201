@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2022 GMT+8 Mar 21, 2025
+Updated 2322 GMT+8 Mar 26, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -11311,6 +11311,76 @@ ABD..EF..G..C..
 DBFEGAC
 DFGEBCA
 ```
+
+
+
+通过递归方法解析扩展二叉树的先序序列，并输出其中序和后序序列：
+
+```python
+class Node:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+def build_tree(s, index):
+    # 如果当前字符为'.'，表示空结点，返回None，并将索引后移一位
+    if s[index] == '.':
+        return None, index + 1
+    # 否则创建一个结点
+    node = Node(s[index])
+    index += 1
+    # 递归构造左子树
+    node.left, index = build_tree(s, index)
+    # 递归构造右子树
+    node.right, index = build_tree(s, index)
+    return node, index
+
+def inorder(node, res):
+    if node is None:
+        return
+    inorder(node.left, res)
+    res.append(node.val)
+    inorder(node.right, res)
+
+def postorder(node, res):
+    if node is None:
+        return
+    postorder(node.left, res)
+    postorder(node.right, res)
+    res.append(node.val)
+
+def main():
+    s = input().strip()
+    root, _ = build_tree(s, 0)
+    
+    in_res = []
+    inorder(root, in_res)
+    
+    post_res = []
+    postorder(root, post_res)
+    
+    print("".join(in_res))
+    print("".join(post_res))
+
+if __name__ == '__main__':
+    main()
+```
+
+代码说明
+
+- **build_tree 函数**  
+  递归地根据扩展二叉树的先序序列构造二叉树：  
+  - 当遇到 `'.'` 时表示空结点，直接返回 `None`。  
+  - 否则以当前字符创建一个结点，然后递归构造其左子树和右子树。
+
+- **inorder 和 postorder 函数**  
+  分别实现中序遍历（左-根-右）和后序遍历（左-右-根）。
+
+- **main 函数**  
+  读取输入字符串，构造树后计算中序和后序遍历结果，并输出。  
+
+
 
 
 
