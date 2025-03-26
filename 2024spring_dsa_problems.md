@@ -16235,6 +16235,8 @@ EBFGCIHDA
 
 
 
+
+
 下面两个代码。先给出用类表示node。
 
 思路：对于括号嵌套树，使用stack记录进行操作中的父节点，node记录正在操作的节点。每当遇见一个字母，将其设为node，并存入stack父节点中；遇到'('，即对当前node准备添加子节点，将其append入stack中，node重新设为None；遇到')'，stack父节点操作完毕，将其弹出并作为操作中的节点node，不断重复建立树，同时最后返出的父节点为树的根root。
@@ -16343,6 +16345,73 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+
+
+实现了括号嵌套表示树的解析以及前序、后序遍历：
+
+```python
+class Node:
+    def __init__(self, val):
+        self.val = val
+        self.children = []
+
+def parse_tree(s, i=0):
+    # 当前字符为结点的值（大写字母）
+    node = Node(s[i])
+    i += 1
+    # 如果下一个字符是'('，说明有子树
+    if i < len(s) and s[i] == '(':
+        i += 1  # 跳过'('
+        while True:
+            child, i = parse_tree(s, i)  # 解析一个子树
+            node.children.append(child)
+            # 子树之间用逗号隔开
+            if i < len(s) and s[i] == ',':
+                i += 1  # 跳过逗号，继续解析下一个子树
+            else:
+                break
+        i += 1  # 跳过')'
+    return node, i
+
+def preorder(node, res):
+    if node is None:
+        return
+    res.append(node.val)
+    for child in node.children:
+        preorder(child, res)
+
+def postorder(node, res):
+    if node is None:
+        return
+    for child in node.children:
+        postorder(child, res)
+    res.append(node.val)
+
+def main():
+    # 读入一行树的括号嵌套表示形式
+    s = input().strip()
+    root, _ = parse_tree(s)
+    
+    pre_res = []
+    preorder(root, pre_res)
+    
+    post_res = []
+    postorder(root, post_res)
+    
+    print("".join(pre_res))
+    print("".join(post_res))
+
+if __name__ == '__main__':
+    main()
+```
+
+代码说明
+
+- **Node 类**：定义了树的结点，包含结点值 `val` 和子结点列表 `children`。
+- **parse_tree 函数**：采用递归下降的方式解析字符串。遇到大写字母创建结点；若后续遇到 '(' 则说明存在子树，解析所有子树直到遇到 ')'。
+- **preorder 和 postorder 函数**：分别实现前序遍历（先访问结点，再遍历所有子树）和后序遍历（先遍历所有子树，最后访问结点）。
+- **main 函数**：读取输入，构造树，然后输出前序遍历和后序遍历的结果。
 
 
 
@@ -18035,7 +18104,7 @@ print('loop:yes' if l else 'loop:no')
 
 ## 27637: 括号嵌套二叉树
 
-http://cs101.openjudge.cn/practice/27637/
+dfs, stack, http://cs101.openjudge.cn/practice/27637/
 
 可以用括号嵌套的方式来表示一棵二叉树。
 
@@ -18082,6 +18151,8 @@ http://dsbpython.openjudge.cn/dspythonbook/P0680/
 
 
 
+将输入的括号嵌套形式转换成二叉树，然后实现了前序和中序遍历。
+
 ```python
 class TreeNode:
     def __init__(self, value):
@@ -18091,16 +18162,16 @@ class TreeNode:
 
 
 def parse_tree(s):
-    if s == '*':
+    """ 解析括号嵌套格式的二叉树 """
+    if s == '*':  # 处理空树
         return None
-    if '(' not in s:
+    if '(' not in s:  # 只有单个根节点
         return TreeNode(s)
 
-    # Find the root value and the subtrees
-    root_value = s[0]
-    subtrees = s[2:-1]  # Remove the root and the outer parentheses
+    root_value = s[0]  # 根节点值
+    subtrees = s[2:-1]  # 去掉根节点和外层括号
 
-    # Use a stack to find the comma that separates the left and right subtrees
+    # 使用栈找到逗号位置
     stack = []
     comma_index = None
     for i, char in enumerate(subtrees):
@@ -18115,35 +18186,34 @@ def parse_tree(s):
     left_subtree = subtrees[:comma_index] if comma_index is not None else subtrees
     right_subtree = subtrees[comma_index + 1:] if comma_index is not None else None
 
-    # Parse the subtrees
     root = TreeNode(root_value)
-    root.left = parse_tree(left_subtree)
-    root.right = parse_tree(right_subtree) if right_subtree else None
+    root.left = parse_tree(left_subtree)  # 解析左子树
+    root.right = parse_tree(right_subtree) if right_subtree else None  # 解析右子树
     return root
 
 
-# Define the traversal functions
 def preorder_traversal(root):
-    if root is None:
-        return ""
-    return root.value + preorder_traversal(root.left) + preorder_traversal(root.right)
+    """前序遍历：根 -> 左 -> 右"""
+    return root.value + preorder_traversal(root.left) + preorder_traversal(root.right) if root else ""
 
 
 def inorder_traversal(root):
-    if root is None:
-        return ""
-    return inorder_traversal(root.left) + root.value + inorder_traversal(root.right)
+    """中序遍历：左 -> 根 -> 右"""
+    return inorder_traversal(root.left) + root.value + inorder_traversal(root.right) if root else ""
 
 
-# Input reading and processing
-n = int(input().strip())
+# 读取输入
+n = int(input().strip())  
+results = []
+
 for _ in range(n):
-    tree_string = input().strip()
+    tree_string = input().strip().replace(" ", "")  # 去掉可能的空格
     tree = parse_tree(tree_string)
-    preorder = preorder_traversal(tree)
-    inorder = inorder_traversal(tree)
-    print(preorder)
-    print(inorder)
+    results.append(preorder_traversal(tree))
+    results.append(inorder_traversal(tree))
+
+print("\n".join(results))  # 按格式输出
+
 ```
 
 
