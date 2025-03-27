@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2322 GMT+8 Mar 26, 2025
+Updated 1400 GMT+8 Mar 27, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -10607,6 +10607,81 @@ D 2 X 0 I 0
 ```
 K H J E F G C X I D
 ```
+
+
+
+
+
+利用队列根据“带度数的层次序列”构造树，然后进行后根遍历。代码如下：
+
+```python
+from collections import deque
+import sys
+
+# 定义树的结点
+class Node:
+    def __init__(self, value, degree):
+        self.value = value
+        self.degree = degree
+        self.children = []
+
+# 根据带度数的层次序列构造树
+def build_tree(tokens):
+    # tokens 的格式：[字母, 度数, 字母, 度数, ...]
+    # 第一个结点为根
+    root = Node(tokens[0], int(tokens[1]))
+    queue = deque([root])
+    index = 2  # 下一个待处理的token索引
+    while queue and index < len(tokens):
+        current = queue.popleft()
+        # current.degree 个孩子依次出现在 tokens 中
+        for _ in range(current.degree):
+            # 每个孩子由两个元素构成：字母和度数
+            child = Node(tokens[index], int(tokens[index+1]))
+            current.children.append(child)
+            queue.append(child)
+            index += 2
+    return root
+
+# 后根遍历（后序遍历）：先遍历所有子树，再访问根节点
+def postorder(node, output):
+    for child in node.children:
+        postorder(child, output)
+    output.append(node.value)
+
+def main():
+    input_lines = sys.stdin.read().splitlines()
+    if not input_lines:
+        return
+    n = int(input_lines[0].strip())
+    result = []
+    # 对于每一棵树进行构造并后序遍历
+    for i in range(1, n+1):
+        # 将一行的内容按空格分割
+        tokens = input_lines[i].split()
+        if not tokens:
+            continue
+        root = build_tree(tokens)
+        temp = []
+        postorder(root, temp)
+        result.extend(temp)
+    # 输出时以空格分隔各个结点
+    print(" ".join(result))
+
+if __name__ == "__main__":
+    main()
+```
+
+代码说明
+
+1. **构造树：**  
+   利用队列按照层次顺序为每个结点分配其子结点，注意每个结点的子结点个数由紧随其后读入的数字决定。
+
+2. **后根遍历：**  
+   递归地先遍历所有子树，然后将当前结点值加入输出列表。
+
+3. **主函数：**  
+   读取输入，依次构造每棵树，并将每棵树的后序遍历结果依次合并，最后按要求格式输出。
 
 
 
