@@ -18278,7 +18278,7 @@ dfs, stack, http://cs101.openjudge.cn/practice/27637/
 ```
 2
 A
-A(B(*,C),D(E))
+A(B(*,C),D(E,*))
 ```
 
 样例输出
