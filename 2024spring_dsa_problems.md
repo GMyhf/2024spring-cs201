@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1400 GMT+8 Apr 2, 2025
+Updated 2205 GMT+8 Apr 2, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -9421,7 +9421,7 @@ for _ in range(t):
 
 ## 05907: 二叉树的操作
 
-http://cs101.openjudge.cn/dsapre/05907/
+http://cs101.openjudge.cn/practice/05907/
 
 给定一棵二叉树，在二叉树上执行两个操作：
 
