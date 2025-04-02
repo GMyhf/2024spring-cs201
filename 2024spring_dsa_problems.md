@@ -5474,11 +5474,54 @@ http://cs101.openjudge.cn/practice/02788/
 
 
 
-完全二叉树
+利用每层节点的编号区间来计算子树中存在的节点数量。这样既能保证效率，也能避免超时问题：
 
-​           每个结点
+```python
+import sys
 
-左孩子 2\*i          右孩子 2\*i+1
+def count_subtree_nodes(m, n):
+    count = 0
+    left = m
+    right = m
+    # 每层的节点编号范围为 [left, right]
+    while left <= n:
+        count += min(n, right) - left + 1
+        left *= 2
+        right = right * 2 + 1
+    return count
+
+def main():
+    input_stream = sys.stdin
+    for line in input_stream:
+        m, n = map(int, line.split())
+        if m == 0 and n == 0:
+            break
+        print(count_subtree_nodes(m, n))
+
+if __name__ == '__main__':
+    main()
+```
+
+说明
+
+1. **每层计算**：
+   - 对于子树中每一层，节点编号的区间为 `[left, right]`，其中初始 `left = m` 和 `right = m`。
+   - 下一层的区间为 `[left*2, right*2+1]`。
+2. **节点数计算**：
+   - 对于每一层，实际存在的节点数为 `min(n, right) - left + 1`，确保不超过 `n`。
+
+这种方法的时间复杂度约为 O(log n)，能高效解决问题，并且避免了内存和时间上的超限问题。
+
+
+
+
+
+> 完全二叉树
+>
+> ​           每个结点
+>
+> 左孩子 2\*i          右孩子 2\*i+1
+>
 
  
 
@@ -8390,7 +8433,7 @@ else:print("No")
 
 ## 05344: 最后的最后
 
-http://cs101.openjudge.cn/dsapre/05344/
+http://cs101.openjudge.cn/practice/05344/
 
  [弗拉维奥·约瑟夫斯](http://http//zh.wikipedia.org/wiki/弗拉維奧·約瑟夫斯)是1世纪的一名犹太历史学家。他在自己的日记中写道，在一次战中，他和他的40个战友被罗马军队包围在洞中。他们讨论是自杀还是被俘，最终决定自杀，并以抽签的方式决定谁杀掉谁。约瑟夫斯和另外一个人是最后两个留下的人。约瑟夫斯说服了那个人，他们将向罗马军队投降，不再自杀。约瑟夫斯把他的存活归因于运气或天意，他不知道是哪一个。
 
@@ -8417,6 +8460,52 @@ http://cs101.openjudge.cn/dsapre/05344/
 ```
 2 4 6 8 10 3 7 1 9
 ```
+
+
+
+```python
+class Node:
+    def __init__(self, number):
+        self.number = number
+        self.next = None
+
+def josephus_circle(n, k):
+    # 创建循环链表
+    head = Node(1)
+    current = head
+    for i in range(2, n + 1):
+        new_node = Node(i)
+        current.next = new_node
+        current = new_node
+    current.next = head  # 形成环
+
+    result = []
+    current = head
+    prev = None
+
+    while current.next != current:
+        # 找到第k个节点
+        for _ in range(k - 1):
+            prev = current
+            current = current.next
+        # 杀掉第k个节点
+        result.append(str(current.number))
+        prev.next = current.next
+        current = prev.next
+
+    # 最后剩下的一个人
+    #result.append(str(current.number))
+    #return ' '.join(result[:-1])  # 根据题意，只输出被杀掉的编号
+    return ' '.join(result)
+
+# 读取输入
+n, k = map(int, input().split())
+
+# 计算并输出结果
+print(josephus_circle(n, k))
+```
+
+该实现的时间复杂度为 O(n*k)，对于 `n` 和 `k` 较大的情况，可以考虑优化算法，如使用数学方法求解约瑟夫斯问题的位置，但本题要求模拟过程，故采用链表方法。
 
 
 
