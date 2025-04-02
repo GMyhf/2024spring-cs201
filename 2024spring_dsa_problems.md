@@ -7943,13 +7943,13 @@ for _ in range(m):
 
 ## 04117: 简单的整数划分问题
 
-http://cs101.openjudge.cn/dsapre/04117/
+http://cs101.openjudge.cn/practice/04117/
 
 
 
 题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-的 Optional Problems 部分相应题目
+的 Tough 部分相应题目
 
 
 
@@ -7957,154 +7957,9 @@ http://cs101.openjudge.cn/dsapre/04117/
 
 http://cs101.openjudge.cn/practice/04130/
 
-《Journey to the West》(also 《Monkey》) is one of the Four Great Classical Novels of Chinese literature. It was written by Wu Cheng'en during the Ming Dynasty. In this novel, Monkey King Sun Wukong, pig Zhu Bajie and Sha Wujing, escorted Tang Monk to India to get sacred Buddhism texts. 
+题解在 https://github.com/GMyhf/2020fall-cs101 题集 2020fall_cs101.openjudge.cn_problems.md
 
-During the journey, Tang Monk was often captured by demons. Most of demons wanted to eat Tang Monk to achieve immortality, but some female demons just wanted to marry him because he was handsome. So, fighting demons and saving Monk Tang is the major job for Sun Wukong to do.
-
-Once, Tang Monk was captured by the demon White Bones. White Bones lived in a palace and she cuffed Tang Monk in a room. Sun Wukong managed to get into the palace. But to rescue Tang Monk, Sun Wukong might need to get some keys and kill some snakes in his way. 
-
-The palace can be described as a matrix of characters. Each character stands for a room. In the matrix, 'K' represents the original position of Sun Wukong, 'T' represents the location of Tang Monk and 'S' stands for a room with a snake in it. Please note that there are only one 'K' and one 'T', and at most five snakes in the palace. And, '.' means a clear room as well '#' means a deadly room which Sun Wukong couldn't get in. 
-
-There may be some keys of different kinds scattered in the rooms, but there is at most one key in one room. There are at most 9 kinds of keys. A room with a key in it is represented by a digit(from '1' to '9'). For example, '1' means a room with a first kind key, '2' means a room with a second kind key, '3' means a room with a third kind key... etc. To save Tang Monk, Sun Wukong must get ALL kinds of keys(in other words, at least one key for each kind). 
-
-For each step, Sun Wukong could move to the adjacent rooms(except deadly rooms) in 4 directions(north,west,south and east), and each step took him one minute. If he entered a room in which a living snake stayed, he must kill the snake. Killing a snake also took one minute. If Sun Wukong entered a room where there is a key of kind N, Sun would get that key if and only if he had already got keys of kind 1,kind 2 ... and kind N-1. In other words, Sun Wukong must get a key of kind N before he could get a key of kind N+1 (N>=1). If Sun Wukong got all keys he needed and entered the room in which Tang Monk was cuffed, the rescue mission is completed. If Sun Wukong didn't get enough keys, he still could pass through Tang Monk's room. Since Sun Wukong was a impatient monkey, he wanted to save Tang Monk as quickly as possible. Please figure out the minimum time Sun Wukong needed to rescue Tang Monk.
-
-
-
-**输入**
-
-There are several test cases.
-
-For each case, the first line includes two integers N and M(0 < N <= 100, 0 <= M <= 9), meaning that the palace is a N * N matrix and Sun Wukong needed M kinds of keys(kind 1, kind 2, ... kind M). 
-
-Then the N*N matrix follows.
-
-The input ends with N = 0 and M = 0.
-
-**输出**
-
-For each test case, print the minimum time (in minute) Sun Wokong needed to save Tang Monk. If it's impossible for Sun Wokong to complete the mission, print "impossible".
-
-样例输入
-
-```
-3 1
-K.S
-##1
-1#T
-3 1
-K#T
-.S#
-1#.
-3 2
-K#T
-.S.
-21.
-0 0
-```
-
-样例输出
-
-```
-5
-impossible
-8
-# down -> down -> right, get key1 ->left, get key2 -> right -> right ->up -> up, 得到8
-```
-
-
-
-来源
-
-Guo Wei
-
-
-
-```python
-# 2300011335	邓锦文
-import heapq
-import sys
-
-input = sys.stdin.readline
-
-class Node:
-    def __init__(self, x, y, time, key, snake):
-        self.x = x
-        self.y = y
-        self.time = time
-        self.key = key
-        self.snake = snake # 用二进制位表示经过的蛇
-
-    def __lt__(self, other):
-        return self.time < other.time
-
-
-def bfs(maze, n, m):
-    x0, y0, count = 0, 0, 0
-    snakes = [[0] * n for _ in range(n)]
-    for i in range(n):
-        for j in range(n):
-            if maze[i][j] == 'K':
-                x0, y0 = i, j
-            if maze[i][j] == 'S':
-                snakes[i][j] = count
-                count += 1
-
-    dirs = [(-1, 0), (0, -1), (1, 0), (0, 1)]
-    inf = float('inf')
-    memo = [[[inf] * (m + 1) for _ in range(n)] for _ in range(n)]
-    queue = []
-    heapq.heappush(queue, Node(x0, y0, 0, 0, 0))
-    memo[x0][y0][0] = 0
-    while queue:
-        node = heapq.heappop(queue)
-        for dx, dy in dirs:
-            nx, ny = node.x + dx, node.y + dy
-            if 0 <= nx < n and 0 <= ny < n:
-                if maze[nx][ny] == '#':
-                    continue
-                elif maze[nx][ny] == 'S':
-                    if node.snake & (1 << snakes[nx][ny]):
-                        if node.time + 1 < memo[nx][ny][node.key]:
-                            memo[nx][ny][node.key] = node.time + 1
-                            heapq.heappush(queue, Node(nx, ny, node.time + 1, node.key, node.snake))
-                    else:
-                        if node.time + 2 < memo[nx][ny][node.key]:
-                            memo[nx][ny][node.key] = node.time + 2
-
-                            # snake：表示经过蛇的情况，这里使用位运算
-                            # 将当前位置的蛇加入到 node.snake 中，表示经过了当前位置的蛇。
-                            heapq.heappush(queue, Node(nx, ny, node.time + 2,
-                                                       node.key, node.snake | (1 << snakes[nx][ny])))
-                elif maze[nx][ny].isdigit():
-                    if int(maze[nx][ny]) == node.key + 1:
-                        if node.time + 1 < memo[nx][ny][node.key + 1]:
-                            memo[nx][ny][node.key + 1] = node.time + 1
-                            heapq.heappush(queue, Node(nx, ny, node.time + 1, node.key + 1, node.snake))
-                    else:
-                        if node.time + 1 < memo[nx][ny][node.key]:
-                            memo[nx][ny][node.key] = node.time + 1
-                            heapq.heappush(queue, Node(nx, ny, node.time + 1, node.key, node.snake))
-                elif maze[nx][ny] == 'T' and node.key == m:
-                    return node.time + 1
-                else:
-                    if node.time + 1 < memo[nx][ny][node.key]:
-                        memo[nx][ny][node.key] = node.time + 1
-                        heapq.heappush(queue, Node(nx, ny, node.time + 1, node.key, node.snake))
-    return 'impossible'
-
-
-result = []
-while True:
-    n, m = map(int, input().split())
-    if n == m == 0:
-        break
-    maze = [list(input()) for _ in range(n)]
-    result.append(bfs(maze, n, m))
-for tmp in result:
-    print(tmp)
-
-```
+的 Tough 部分相应题目
 
 
 
