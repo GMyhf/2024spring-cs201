@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1400 GMT+8 Mar 27, 2025
+Updated 1400 GMT+8 Apr 2, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -12783,7 +12783,7 @@ print(binary_divisible_by_five(binary_string))
 
 ## 20453: 和为k的子数组个数
 
-http://cs101.openjudge.cn/dsapre/20453/
+http://cs101.openjudge.cn/practice/20453/
 
 给定一组整数数字和一个整数 k，你需要找到该数组中和为 k 的连续的子数组的个数。
 
@@ -12840,7 +12840,7 @@ print(subarray_sum(nums, k))
 
 ## 20456: 统计封闭岛屿的数目
 
-http://cs101.openjudge.cn/dsapre/20456/
+http://cs101.openjudge.cn/practice/20456/
 
 给定10行，每行有10个数字的方形地图 ，每个位置要么是陆地（记号为 0 ）要么是水域（记号为 1 ）。 我们从一块陆地出发，每次可以往上下左右 4 个方向相邻区域走，能走到的所有陆地区域，我们将其称为一座「岛屿」。 如果一座岛屿 完全 由水域包围，即陆地边缘上下左右所有相邻区域都是水域，那么我们将其称为 「封闭岛屿」。 请输出封闭岛屿的数目。
 
@@ -12928,7 +12928,7 @@ print(closedIsland(grid))
 
 ## 20472: 死循环的机器人
 
-http://cs101.openjudge.cn/dsapre/20472/
+http://cs101.openjudge.cn/practice/20472/
 
 在无限的平面上，机器人最初位于 (0, 0) 处，面朝北方。机器人可以接受下列三条指令之一： "G"：直走 1 个单位 "L"：左转 90 度 "R"：右转 90 度 机器人按顺序执行指令，并一直重复它们。 只有在平面中存在死循环使得机器人永远无法离开时，返回 1。否则，返回 0。
 
@@ -13040,7 +13040,7 @@ print(1 if is_robot_making_loop(commands) else 0)
 
 ## 20576: printExp
 
-http://cs101.openjudge.cn/dsapre/20576/
+http://cs101.openjudge.cn/practice/20576/
 
 输出中缀表达式(去除不必要的括号)
 
@@ -13150,7 +13150,7 @@ main()
 
 ## 20625: 1跟0数量相等的子字串
 
-http://cs101.openjudge.cn/dsapre/20625/
+http://cs101.openjudge.cn/practice/20625/
 
 给一个由0跟1组成的字串，请问有多少个子字串(非空)的0跟1数量相等而且0跟1分别是连续的
 如果一个子字串出现n次记作n
@@ -13228,7 +13228,7 @@ print(count_balanced_substrings(input()))
 
 ## 20626: 对子数列做XOR运算
 
-http://cs101.openjudge.cn/dsapre/20626/
+http://cs101.openjudge.cn/practice/20626/
 
 给定一个正整数数列V，V的下标从零开始。
 
@@ -13322,7 +13322,7 @@ sys.stdout.write('\n'.join(results) + '\n')
 
 ## 20644: 统计全为 1 的正方形子矩阵
 
-http://cs101.openjudge.cn/dsapre/20644/
+http://cs101.openjudge.cn/practice/20644/
 
 给一个 m * n 的矩阵，矩阵中的元素不是 0 就是 1，
 
@@ -13411,7 +13411,7 @@ print(cnt)
 
 ## 20650: 最长的公共子序列的长度
 
-http://cs101.openjudge.cn/dsapre/20650/
+http://cs101.openjudge.cn/practice/20650/
 
 我们称一个字符的数组S为一个序列。对于另外一个字符数组Z,如果满足以下条件，则称Z是S的一个子序列：（1）Z中的每个元素都是S中的元素（2）Z中元素的顺序与在S中的顺序一致。例如：当S = (E,R,C,D,F,A,K)时，（E，C，F）和（E，R）等等都是它的子序列。而（R，E）则不是。 
 
@@ -13463,7 +13463,7 @@ print(longest_common_subsequence(s1, s2))
 
 ## 20742: 泰波拿契數
 
-http://cs101.openjudge.cn/dsapre/20742/
+http://cs101.openjudge.cn/practice/20742/
 
 泰波拿契数列 Tn 定义是
 
@@ -13522,7 +13522,7 @@ print(tribonacci(n))
 
 ## 20743: 整人的提词本
 
-http://cs101.openjudge.cn/dsapre/20743/
+http://cs101.openjudge.cn/practice/20743/
 
 剧组为了整演员，提供给他们的提词本是经过加工的
 
@@ -13597,7 +13597,7 @@ print(reverse_parentheses(s))
 
 ## 20746: 满足合法工时的最少人数
 
-http://cs101.openjudge.cn/dsapre/20746/
+http://cs101.openjudge.cn/practice/20746/
 
 若干个工作任务，需要在一天内完成。给一个正整数数列，存储每个任务所需的工时。
 
@@ -13676,7 +13676,7 @@ print(min_employees(tasks, t))
 
 ## 21006: 放苹果（盘子相同）
 
-http://cs101.openjudge.cn/dsapre/21006/
+http://cs101.openjudge.cn/practice/21006/
 
 这个题目后台没有数据，提交什么都是AC。
 
@@ -14027,7 +14027,7 @@ while True:
 
 ## 22068: 合法出栈序列
 
-http://cs101.openjudge.cn/dsapre/22068/
+http://cs101.openjudge.cn/practice/22068/
 
 给定一个由大小写字母和数字构成的，没有重复字符的长度不超过62的字符串x，现在要将该字符串的字符依次压入栈中，然后再全部弹出。
 
@@ -14700,7 +14700,7 @@ print(' '.join(map(str, ans)))
 
 ## 22359: Goldbach Conjecture
 
-http://cs101.openjudge.cn/dsapre/22359/
+http://cs101.openjudge.cn/practice/22359/
 
 Given the sum of prime A and prime B, find A and B.
 
@@ -14918,7 +14918,7 @@ print(" ".join(ans))
 
 ## 22509: 解方程
 
-http://cs101.openjudge.cn/dsapre/22509/
+http://cs101.openjudge.cn/practice/22509/
 
 
 
@@ -15017,7 +15017,7 @@ print(distances[1])
 
 ## 22636: 修仙之路
 
-http://cs101.openjudge.cn/dsapre/22636/
+http://cs101.openjudge.cn/practice/22636/
 
 修仙之路长漫漫，逆水行舟，不进则退！你过五关斩六将，终于来到了仙界。仙界是一个r行c列的二维格子空间，每个单元格是一个”境界“，每个境界都有等级。你需要任意选择其中一个境界作为起点，从一个境界可以前往上下左右相邻四个境界之一 ，当且仅当新到达的境界等级增加。你苦苦行走，直到所在的境界等级比相邻四个境界的等级都要高为止，一览众山小。请问包括起始境界在内最长修仙路径需要经过的境界数是多少？
 
@@ -15155,7 +15155,7 @@ add(n, 0, 0, '')
 
 ## 23451: 交互四则运算计算器_带错误表达式版
 
-http://cs101.openjudge.cn/dsapre/23451/
+http://cs101.openjudge.cn/practice/23451/
 
 实现一个人机交互四则运算计算器。该程序可以根据用户输入的 ***含任意多层圆括号\*** 的四则运算表达式给出计算结果，其中合法的输入数字包括正负整数和小数（例如10，-10，10.5，-10.5，***每个数最多带有一个符号***），运算符包括 +、-、*、/。
 
@@ -15388,15 +15388,15 @@ while True:
 
 ## 23563: 多项式时间复杂度
 
-http://cs101.openjudge.cn/dsapre/23563/
+http://cs101.openjudge.cn/practice/23563/
 
-请参看 2020fall_cs101.openjudge.cn_problems.md 的 Basic Exercises部分的相同题目。
+请参看 2020fall_cs101.openjudge.cn_problems.md 的 Easy 部分的相同题目。
 
 
 
 ## 23568: 幸福的寒假生活
 
-http://cs101.openjudge.cn/dsapre/23568/
+http://cs101.openjudge.cn/practice/23568/
 
 请参看 2020fall_cs101.openjudge.cn_problems.md 的 Optional problems部分的相同题目。
 
@@ -15404,7 +15404,7 @@ http://cs101.openjudge.cn/dsapre/23568/
 
 ## 23570: 特殊密码锁
 
-http://cs101.openjudge.cn/dsapre/23570/
+http://cs101.openjudge.cn/practice/23570/
 
 有一种特殊的二进制密码锁，由n个相连的按钮组成（1<=n<30），按钮有凹/凸两种状态，用手按按钮会改变其状态。
 
@@ -15482,7 +15482,7 @@ if __name__ == "__main__":
 
 ## 23660: 7的倍数取法有多少种
 
-http://cs101.openjudge.cn/dsapre/23660/
+http://cs101.openjudge.cn/practice/23660/
 
 在n个不同的正整数里，任意取若干个，不能重复取,要求它们的和是7的倍数，问有几种取法。
 
@@ -15551,7 +15551,7 @@ for _ in range(t):
 
 ## 24375: 小木棍
 
-http://cs101.openjudge.cn/dsapre/24375/
+http://cs101.openjudge.cn/practice/24375/
 
 小明将一批等长的木棍随机切成最长为50单位的小段。现在他想要将木棍还原成原来的状态，但是却忘记了原来的木棍数量和长度。请写一个程序帮助他计算如果还原成原来的等长木棍，其长度可能的最小值。所有的长度均大于0。
 
@@ -15631,7 +15631,7 @@ while True:
 
 ## 24588: 后序表达式求值
 
-http://cs101.openjudge.cn/dsapre/24588/
+http://cs101.openjudge.cn/practice/24588/
 
 后序表达式由操作数和运算符构成。操作数是整数或小数，运算符有 + - * / 四种，其中 * / 优先级高于 + -。后序表达式可用如下方式递归定义：
 
@@ -15714,7 +15714,7 @@ for _ in range(n):
 
 ## 24591: 中序表达式转后序表达式
 
-http://cs101.openjudge.cn/dsapre/24591/
+http://cs101.openjudge.cn/practice/24591/
 
 中序表达式是运算符放在两个数中间的表达式。乘、除运算优先级高于加减。可以用"()"来提升优先级 --- 就是小学生写的四则算术运算表达式。中序表达式可用如下方式递归定义：
 
@@ -15931,7 +15931,7 @@ for o in output:
 
 ## 24676: 共同富裕
 
-http://cs101.openjudge.cn/dsapre/24676/
+http://cs101.openjudge.cn/practice/24676/
 
 Z&Z公司设计了一种发奖金的规则：把n个人的总奖金分成n x n份，放入一个矩阵中，每一份都为正整数，每个人最终拿到的奖金是矩阵中某一列的和。
 
@@ -16038,7 +16038,7 @@ for result in results:
 
 ## 24677: 安全位置
 
-http://cs101.openjudge.cn/dsapre/24677/
+http://cs101.openjudge.cn/practice/24677/
 
 公元2200年，人类和外星人开始了一场宇宙大战，你作为百京大学的一名本科小盆友和外星人在一个四维空间展开了一场殊死搏斗。现在给出一串密码，希望你能从中解锁出所有的安全位置。具体来说，密码是一个字符串，你可以将其分为四个部分，每个部分依次代表四维空间中该维度的坐标。如果这四个坐标均在0到500之间（包含0和500）则是一个安全位置。**注意坐标不能含有前导0，即001是不合法的坐标。**
 
@@ -16098,7 +16098,7 @@ print(safe_locations(s, []))
 
 ## 24678: 任性买房
 
-http://cs101.openjudge.cn/dsapre/24678/
+http://cs101.openjudge.cn/practice/24678/
 
 在刚刚过去的5月20日，唐老板抽到了价值为W的买房优惠券，且该优惠券的使用条件是实际支付金额不小于W。正巧618即将来临，他希望在中关村北大街买房，经中介介绍，从南至北总共有n套房，每套房价格为pi，他有一些想法：
 
@@ -16167,7 +16167,7 @@ print(min_houses_to_buy(W, n, prices))
 
 ## 24684: 直播计票
 
-http://cs101.openjudge.cn/dsapre/24684/
+http://cs101.openjudge.cn/practice/24684/
 
 直播间发起了投票活动：在屏幕上列出若干选项，观众通过发送弹幕向自己支持的选项投票。在幕后工作的你需要根据弹幕信息，向直播间的观众们展示哪个选项得票最多。
 
@@ -16223,7 +16223,7 @@ print(' '.join(str(winner[0]) for winner in winners))
 
 ## 24686: 树的重量
 
-http://cs101.openjudge.cn/dsapre/24686/
+http://cs101.openjudge.cn/prctice/24686/
 
 有一棵 k 层的满二叉树（一共有2k-1个节点，且从上到下从左到右依次编号为1, 2, ..., 2k-1），最开始每个节点的重量均为0。请编程实现如下两种操作：
 
@@ -16338,7 +16338,7 @@ for _ in range(n):
 
 ## 24687: 封锁管控
 
-http://cs101.openjudge.cn/dsapre/24687/
+http://cs101.openjudge.cn/practice/24687/
 
 为减少人员流动，降低疫情传播风险，某城市决定在内部施加封锁管控措施。
 
@@ -16653,7 +16653,7 @@ if __name__ == '__main__':
 
 ## 24750: 根据二叉树中后序序列建树
 
-http://cs101.openjudge.cn/dsapre/24750/
+http://cs101.openjudge.cn/practice/24750/
 
 假设二叉树的节点里包含一个大写字母，每个节点的字母都不同。
 
@@ -16961,7 +16961,7 @@ for _ in range(n):
 
 ## 25655: 核酸检测统计
 
-http://cs101.openjudge.cn/2024sp_routine/25655/
+http://cs101.openjudge.cn/practice/25655/
 
 因疫情防控需要，每名同学需要遵守“三天一检”的核酸要求，即每三天至少需要做一次核酸检测。现在需要统计学校同学近9天内的核酸检测完成情况，其中每名同学第一天必须完成一次核酸检测。请输出有多少名同学没有按时完成核酸检测，并输出完成情况（未按时完成核酸的学生数量除以院系总人数）最差的院系编号。
 
@@ -17059,7 +17059,7 @@ print(worst_department)
 
 ## 25815: 回文字符串
 
-http://cs101.openjudge.cn/dsapre/25815/
+http://cs101.openjudge.cn/practice/25815/
 
 给定一个字符串 S ，最少需要几次增删改操作可以把 S 变成一个回文字符串？
 
@@ -17370,7 +17370,7 @@ int main() {
 
 ## 26572: 多余的括号
 
-http://cs101.openjudge.cn/dsapre/26572/
+http://cs101.openjudge.cn/practice/26572/
 
 小明总是记不清四则运算的优先级关系，为了保险起见，他总是在算式中加上许多冗余的括号，但层层嵌套的括号可苦了批改作业的老师。现在想请你编写一个程序，在不改变算式运算顺序的前提下，删除其中多余的括号。
 
@@ -17574,7 +17574,7 @@ while True:
 
 ## 26573: 康托集的图像表示
 
-http://cs101.openjudge.cn/dsapre/26573/
+http://cs101.openjudge.cn/practice/26573/
 
 在数学上具有重要意义的康托集(cantor set)是用如下方法构造的。考虑区间[0,1]，我们第一步要做的是，将区间三等分，然后删去中间的部分(1/3, 2/3)。在后面的每一步中，取出所有剩下的小区间，将每一个小区间都三等分后删去中间的部分，这样操作无穷次，最后剩下的点即为康托集。
 
@@ -18043,7 +18043,7 @@ for _ in range(int(input())):
 
 ## 27625: AVL树至少有几个结点
 
-http://cs101.openjudge.cn/dsapre/27625/
+http://cs101.openjudge.cn/practice/27625/
 
 输入n(0<n<50),输出一个n层的AVL树至少有多少个结点。
 
@@ -18096,7 +18096,7 @@ print(min_nodes)
 
 ## 27626: AVL树最多有几层
 
-http://cs101.openjudge.cn/dsapre/27626/
+http://cs101.openjudge.cn/practice/27626/
 
 n个结点的AVL树最多有多少层？
 
@@ -18151,7 +18151,7 @@ print(max_height(n))
 
 ## 27635: 判断无向图是否连通有无回路(同23163)
 
-http://cs101.openjudge.cn/dsapre/27635/
+http://cs101.openjudge.cn/practice/27635/
 
 例题：给定一个无向图，判断是否连通，是否有回路。
 
@@ -18454,7 +18454,7 @@ print("\n".join(results))  # 按格式输出
 
 ## 27638: 求二叉树的高度和叶子数目
 
-http://cs101.openjudge.cn/dsapre/27638/
+http://cs101.openjudge.cn/practice/27638/
 
 给定一棵二叉树，求该二叉树的高度和叶子数目二叉树高度定义：从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的结点数减1为树的高度。只有一个结点的二叉树，高度是0。
 
@@ -18536,7 +18536,7 @@ print(f"{height} {leaves}")
 
 ## 27653: Fraction类
 
-http://cs101.openjudge.cn/2024sp_routine/27653/
+http://cs101.openjudge.cn/practice/27653/
 
 实现用户定义的类，一个常用的例子是构建实现抽象数据类型Fraction的类。我们已经看到，Python提供了很多数值类。但是在有些时候，需要创建“看上去很像”分数的数据对象。
 
@@ -19937,7 +19937,7 @@ Warnsdorff, 回溯, http://cs101.openjudge.cn/practice/28050/
 
 采用图搜索算法，是解决骑士周游问题最容易理解和编程的方案之一，解决方案分为两步： 首先用图表示骑士在棋盘上的合理走法； 采用图搜索算法搜寻一个长度为（行 × 列-1）的路径，路径上包含每个顶点恰一次。
 
-![img](http://media.openjudge.cn/images/upload/9136/1712843793.jpg)
+<img src="http://media.openjudge.cn/images/upload/9136/1712843793.jpg" alt="img" style="zoom:67%;" />
 
 **输入**
 
