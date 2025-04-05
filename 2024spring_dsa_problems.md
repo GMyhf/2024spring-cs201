@@ -18949,6 +18949,10 @@ traverse_print(root, nodes)
 
 
 
+
+
+
+
 总体思路分为三步：1.通过字典建立输入数据的父子关系；2.找到树的根（这里我将父节点和子节点分别用两个列表记录，最后使用集合减法）；3.通过递归实现要求的从小到大遍历。
 
 感觉这种题目用字典写会更简洁，而且不再需要考虑如何将输入的值全部归入TreeNode类并建立父子关系的问题。
@@ -18979,6 +18983,47 @@ def traversal(node):
 
 
 traversal((set(parents) - set(children)).pop())
+
+```
+
+
+
+```python
+from collections import defaultdict
+import sys
+sys.setrecursionlimit(10000)
+
+def main():
+    n = int(sys.stdin.readline())
+    tree = defaultdict(list)
+    all_nodes = set()
+    child_nodes = set()
+    
+    for _ in range(n):
+        parts = list(map(int, sys.stdin.readline().split()))
+        parent, *children = parts
+        tree[parent].extend(children)
+        all_nodes.add(parent)
+        all_nodes.update(children)
+        child_nodes.update(children)
+    
+    # 根节点 = 出现在 all_nodes 但没出现在 child_nodes 的那个
+    root = (all_nodes - child_nodes).pop()
+    
+    def traverse(u):
+        # 把 u 自己和它的所有直接孩子放一起排序
+        group = tree[u] + [u]
+        group.sort()
+        for x in group:
+            if x == u:
+                print(u)
+            else:
+                traverse(x)
+    
+    traverse(root)
+
+if __name__ == "__main__":
+    main()
 
 ```
 
