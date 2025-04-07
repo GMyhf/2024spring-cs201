@@ -12939,7 +12939,7 @@ class BinaryTree:
     def getroot(self):
         return self.root
 
-def postorder(string):    #中缀改后缀
+def postorder(string):    #中缀改后缀 Shunting yard algorightm
     opStack = []
     postList = []
     inList = string.split()
@@ -12967,7 +12967,7 @@ def buildParseTree(infix):       #以后缀表达式为基础建树
     postList = postorder(infix)
     stack = []
     for word in postList:
-        if word == 'not':  
+        if word == 'not':
             newTree = BinaryTree(word)
             newTree.leftChild = stack.pop()
             stack.append(newTree)
@@ -12987,10 +12987,22 @@ def printTree(parsetree: BinaryTree):
     if parsetree.getroot() == 'or':
         return printTree(parsetree.getleftchild()) + ['or'] + printTree(parsetree.getrightchild())
     elif parsetree.getroot() == 'not':
-        return ['not'] + (['('] + printTree(parsetree.getleftchild()) + [')'] if parsetree.leftChild.getroot() not in ['True', 'False'] else printTree(parsetree.getleftchild()))
+        return ['not'] + (
+            ['('] + printTree(parsetree.getleftchild()) + [')']
+            if parsetree.leftChild.getroot() not in ['True', 'False']
+            else printTree(parsetree.getleftchild())
+        )
     elif parsetree.getroot() == 'and':
-        leftpart = ['('] + printTree(parsetree.getleftchild()) + [')'] if parsetree.leftChild.getroot() == 'or' else printTree(parsetree.getleftchild())
-        rightpart = ['('] + printTree(parsetree.getrightchild()) + [')'] if parsetree.rightChild.getroot() == 'or' else printTree(parsetree.getrightchild())
+        leftpart = (
+            ['('] + printTree(parsetree.getleftchild()) + [')']
+            if parsetree.leftChild.getroot() == 'or'
+            else printTree(parsetree.getleftchild())
+        )
+        rightpart = (
+            ['('] + printTree(parsetree.getrightchild()) + [')']
+            if parsetree.rightChild.getroot() == 'or'
+            else printTree(parsetree.getrightchild())
+        )
         return leftpart + ['and'] + rightpart
     else:
         return [str(parsetree.getroot())]
@@ -13018,6 +13030,149 @@ main()
 5. 如果根节点的值为"True"或"False"，函数会直接返回一个包含该值的列表。
 
 6. 最后，函数会将生成的字符串列表合并为一个字符串，并返回。
+
+> `printTree` 函数的确是这个程序的关键部分，它负责**把表达式树重新转成中缀表达式**，而且在这个过程中要**去掉不必要的括号，只保留必要的括号**，以保证表达式的优先级正确。
+>
+> 我们来**一行行分析这个函数**，并且结合优先级规则来详细解释。
+>
+> ---
+>
+> ✅ 背景知识（非常重要）
+>
+> 我们有 3 个操作符：
+>
+> - `not`：优先级最高（3）
+> - `and`：中间（2）
+> - `or`：最低（1）
+>
+> 所以当我们重建中缀表达式时，如果低优先级的操作被嵌套在高优先级的操作里面，那就**需要加括号**来保持原来的优先顺序。
+>
+> ---
+>
+> 💡 函数签名
+>
+> ```python
+> def printTree(parsetree: BinaryTree):
+> ```
+>
+> 这是一个递归函数。每次调用会处理一个子树，返回一个**字符串列表**（最后用 `' '.join()` 组合成结果）。
+>
+> ---
+>
+> 🧩 情况 1：当前节点是 `or`
+>
+> ```python
+> if parsetree.getroot() == 'or':
+>     return printTree(parsetree.getleftchild()) + ['or'] + printTree(parsetree.getrightchild())
+> ```
+>
+> - `or` 是最低优先级，所以它**永远不会被其他操作包裹住**（不需要加括号）
+> - 左右子树分别处理就好，中间加上 `'or'`
+>
+> ---
+>
+> 🧩 情况 2：当前节点是 `not`
+>
+> ```python
+> elif parsetree.getroot() == 'not':
+>     return ['not'] + (
+>         ['('] + printTree(parsetree.getleftchild()) + [')']
+>         if parsetree.leftChild.getroot() not in ['True', 'False']
+>         else printTree(parsetree.getleftchild())
+>     )
+> ```
+>
+> - `not` 是单目操作符（只有一个子节点）
+>
+> - 如果它的子节点是 `'True'` 或 `'False'`，就直接写：
+>
+>   ```
+>   not True
+>   ```
+>
+> - 但如果子节点是像 `True or False` 这样的表达式，需要加括号包住它：
+>
+>   ```
+>   not (True or False)
+>   ```
+>
+> 👉 这是为了防止表达式优先级出错！
+>
+> ---
+>
+> 🧩 情况 3：当前节点是 `and`
+>
+> ```python
+> elif parsetree.getroot() == 'and':
+>     leftpart = (
+>         ['('] + printTree(parsetree.getleftchild()) + [')']
+>         if parsetree.leftChild.getroot() == 'or'
+>         else printTree(parsetree.getleftchild())
+>     )
+>     rightpart = (
+>         ['('] + printTree(parsetree.getrightchild()) + [')']
+>         if parsetree.rightChild.getroot() == 'or'
+>         else printTree(parsetree.getrightchild())
+>     )
+>     return leftpart + ['and'] + rightpart
+> ```
+>
+> - `and` 的优先级高于 `or`
+>
+> - 如果它的某个子节点是 `or`，就必须加括号：
+>
+>   ```
+>   (A or B) and C
+>   ```
+>
+> 否则表达式优先级就会错了！
+>
+> **例子：**
+>
+> - 正确的：`(True or False) and True`
+> - 错误的：`True or False and True`（这个意思不一样）
+>
+> ---
+>
+> 🧩 情况 4：叶子节点（True 或 False）
+>
+> ```python
+> else:
+>     return [str(parsetree.getroot())]
+> ```
+>
+> 这个就是递归到底了，返回布尔值（字符串形式）
+>
+> ---
+>
+> 🔁 总结：如何判断加不加括号？
+>
+> - `or` 最低优先级，从不加括号。
+> - `and` 如果操作的是 `or`，要加括号。
+> - `not` 如果操作的是复杂表达式（不是布尔常量），要加括号。
+>
+> ---
+>
+> ✨举个完整例子
+>
+> 输入：
+>
+> ```plaintext
+> ( not ( True or False ) ) and ( False or True and True )
+> ```
+>
+> 输出：
+>
+> ```plaintext
+> not ( True or False ) and ( False or True and True )
+> ```
+>
+> 说明：
+>
+> - `not` 操作 `True or False` → 加括号 ✅
+> - `and` 的左右：
+>   - 左是 `not (...)`：不需要额外括号
+>   - 右是 `False or True and True`，按优先级就是 `False or (True and True)`，不需要额外括号
 
 
 
