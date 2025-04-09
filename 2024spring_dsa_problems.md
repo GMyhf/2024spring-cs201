@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1737 GMT+8 Apr 7, 2025
+Updated 1748 GMT+8 Apr 9, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -6666,6 +6666,100 @@ int main() {
 	deleteTree(root);
 	return 0;
 }
+```
+
+
+
+## 04080:Huffman编码树
+
+http://cs101.openjudge.cn/practice/04080/
+
+构造一个具有n个外部节点的扩充二叉树，每个外部节点Ki有一个Wi对应，作为该外部节点的权。使得这个扩充二叉树的叶节点带权外部路径长度总和最小：
+
+​                   Min( W1 * L1 + W2 * L2 + W3 * L3 + … + Wn * Ln)
+
+Wi:每个节点的权值。
+
+Li:根节点到第i个外部叶子节点的距离。
+
+编程计算最小外部路径长度总和。
+
+输入
+
+第一行输入一个整数n，外部节点的个数。第二行输入n个整数，代表各个外部节点的权值。
+2<=N<=100
+
+输出
+
+输出最小外部路径长度总和。
+
+样例输入
+
+```
+4
+1 1 3 5
+```
+
+样例输出
+
+```
+17
+```
+
+
+
+```python
+import heapq as H
+n = int(input())
+l = list(map(int, input().split()))
+ans = 0
+H.heapify(l)
+for _ in range(n-1):
+    a = H.heappop(l)
+    b = H.heappop(l)
+    ans += a+b
+    H.heappush(l, a+b)
+print(ans)
+```
+
+
+
+```python
+from heapq import heapify,heappop,heappush
+
+class Node:
+    def __init__(self,val,fre):
+        self.val=val
+        self.fre=fre
+        self.left=None
+        self.right=None
+    def __lt__(self,other):
+        return self.fre<other.fre
+    
+def HuffmanTree(val_fre):
+    while len(val_fre)>1:
+        left=heappop(val_fre)
+        right=heappop(val_fre)
+        merge=Node(None,left.fre+right.fre)
+        merge.left=left
+        merge.right=right
+        heappush(val_fre,merge)
+    return val_fre[0]
+
+def calculate(node,depth):
+    if node.left==node.right==None:
+        return node.fre*depth
+    return calculate(node.left,depth+1)+calculate(node.right,depth+1)
+
+n=int(input())
+val_fre=[]
+fres=list(map(int,input().split()))
+for i in range(n):
+    val_fre.append(Node(i,fres[i]))
+heapify(val_fre)
+root=HuffmanTree(val_fre)
+ans=calculate(root,0)
+print(ans)
 ```
 
 
