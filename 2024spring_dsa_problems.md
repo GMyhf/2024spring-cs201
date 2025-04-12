@@ -16345,7 +16345,7 @@ print(' '.join(str(winner[0]) for winner in winners))
 
 ## 24686: 树的重量
 
-http://cs101.openjudge.cn/prctice/24686/
+http://cs101.openjudge.cn/practice/24686/
 
 有一棵 k 层的满二叉树（一共有2k-1个节点，且从上到下从左到右依次编号为1, 2, ..., 2k-1），最开始每个节点的重量均为0。请编程实现如下两种操作：
 
