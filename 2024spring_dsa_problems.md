@@ -6139,7 +6139,7 @@ print(shortest_distance)
 
 ## 03720: 文本二叉树
 
-http://cs101.openjudge.cn/dsapre/03720/
+http://cs101.openjudge.cn/practice/03720/
 
 
 
