@@ -6220,6 +6220,10 @@ BAC
 
 
 
+
+
+
+
 ```python
 class Node:
     def __init__(self, x, depth):
@@ -6289,6 +6293,93 @@ for root in build_tree():
     print("".join(root.postorder_traversal()))
     print("".join(root.inorder_traversal()))
     print()
+
+```
+
+
+
+```python
+class Node:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+def parse_tree(lines):
+    # last_node_at_level[i] 记录最近一个深度为 i 的真实节点
+    last_node_at_level = {}
+    # expect_right[i] 标记深度 i 的节点下一个真实节点应该挂在它的 right
+    expect_right = {}
+
+    root = None
+
+    for line in lines:
+        # 计算深度
+        level = 0
+        while line[level] == '-':
+            level += 1
+        val = line[level]
+
+        if val == '*':
+            # 标记：depth = level-1 的节点左子为空，下一个真实节点挂到它的 right
+            expect_right[level-1] = True
+            # 不创建实际节点
+            continue
+
+        node = Node(val)
+        # 第一个节点当作 root
+        if level == 0:
+            root = node
+
+        # 如果不是根，就找父节点
+        if level > 0:
+            parent = last_node_at_level[level-1]
+            # 如果父节点标记了 expect_right，则挂到 right
+            if expect_right.get(level-1, False):
+                parent.right = node
+                expect_right[level-1] = False  # 重置标记
+            else:
+                # 否则，先挂左，再挂右
+                if parent.left is None:
+                    parent.left = node
+                else:
+                    parent.right = node
+
+        # 更新同层最新节点
+        last_node_at_level[level] = node
+
+    return root
+
+def preorder(root):
+    return '' if not root else root.val + preorder(root.left) + preorder(root.right)
+
+def inorder(root):
+    return '' if not root else inorder(root.left) + root.val + inorder(root.right)
+
+def postorder(root):
+    return '' if not root else postorder(root.left) + postorder(root.right) + root.val
+
+if __name__ == '__main__':
+    import sys
+    data = sys.stdin.read().splitlines()
+    n = int(data[0])
+    idx = 1
+
+    for ti in range(n):
+        # 读取一棵树的所有行
+        lines = []
+        while data[idx] != '0':
+            lines.append(data[idx])
+            idx += 1
+        idx += 1  # 跳过 '0'
+
+        root = parse_tree(lines)
+        # 输出三种遍历
+        print(preorder(root))
+        print(postorder(root))
+        print(inorder(root))
+        if ti != n-1:
+            print()
 
 ```
 
