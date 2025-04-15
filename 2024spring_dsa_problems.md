@@ -6525,72 +6525,70 @@ http://cs101.openjudge.cn/practice/04078/
 
 
 
-练习自己写个BinHeap。当然机考时候，如果遇到这样题目，直接import heapq。手搓栈、队列、堆、AVL等，考试前需要搓个遍。
+练习自己写个BinaryHeap。当然机考时候，如果遇到这样题目，直接import heapq。手搓栈、队列、堆、AVL等，考试前需要搓个遍。
 
 ```python
-class BinHeap:
+class BinaryHeap:
     def __init__(self):
-        self.heapList = [0]
-        self.currentSize = 0
+        self._heap = []
 
-    def percUp(self, i):
-        while i // 2 > 0:
-            if self.heapList[i] < self.heapList[i // 2]:
-                tmp = self.heapList[i // 2]
-                self.heapList[i // 2] = self.heapList[i]
-                self.heapList[i] = tmp
-            i = i // 2
+    def _perc_up(self, i):
+        while (i - 1) // 2 >= 0:
+            parent_idx = (i - 1) // 2
+            if self._heap[i] < self._heap[parent_idx]:
+                self._heap[i], self._heap[parent_idx] = (
+                    self._heap[parent_idx],
+                    self._heap[i],
+                )
+            i = parent_idx
 
-    def insert(self, k):
-        self.heapList.append(k)
-        self.currentSize = self.currentSize + 1
-        self.percUp(self.currentSize)
+    def insert(self, item):
+        self._heap.append(item)
+        self._perc_up(len(self._heap) - 1)
 
-    def percDown(self, i):
-        while (i * 2) <= self.currentSize:
-            mc = self.minChild(i)
-            if self.heapList[i] > self.heapList[mc]:
-                tmp = self.heapList[i]
-                self.heapList[i] = self.heapList[mc]
-                self.heapList[mc] = tmp
-            i = mc
-
-    def minChild(self, i):
-        if i * 2 + 1 > self.currentSize:
-            return i * 2
-        else:
-            if self.heapList[i * 2] < self.heapList[i * 2 + 1]:
-                return i * 2
+    def _perc_down(self, i):
+        while 2 * i + 1 < len(self._heap):
+            sm_child = self._get_min_child(i)
+            if self._heap[i] > self._heap[sm_child]:
+                self._heap[i], self._heap[sm_child] = (
+                    self._heap[sm_child],
+                    self._heap[i],
+                )
             else:
-                return i * 2 + 1
+                break
+            i = sm_child
 
-    def delMin(self):
-        retval = self.heapList[1]
-        self.heapList[1] = self.heapList[self.currentSize]
-        self.currentSize = self.currentSize - 1
-        self.heapList.pop()
-        self.percDown(1)
-        return retval
+    def _get_min_child(self, i):
+        if 2 * i + 2 > len(self._heap) - 1:
+            return 2 * i + 1
+        if self._heap[2 * i + 1] < self._heap[2 * i + 2]:
+            return 2 * i + 1
+        return 2 * i + 2
 
-    def buildHeap(self, alist):
-        i = len(alist) // 2
-        self.currentSize = len(alist)
-        self.heapList = [0] + alist[:]
-        while (i > 0):
-            #print(f'i = {i}, {self.heapList}')
-            self.percDown(i)
+    def delete(self):
+        self._heap[0], self._heap[-1] = self._heap[-1], self._heap[0]
+        result = self._heap.pop()
+        self._perc_down(0)
+        return result
+
+    def heapify(self, not_a_heap):
+        self._heap = not_a_heap[:]
+        i = len(self._heap) // 2 - 1    # 超过中点的节点都是叶子节点
+        while i >= 0:
+            #print(f'i = {i}, {self._heap}')
+            self._perc_down(i)
             i = i - 1
-        #print(f'i = {i}, {self.heapList}')
+
 
 
 n = int(input().strip())
-bh = BinHeap()
+bh = BinaryHeap()
 for _ in range(n):
     inp = input().strip()
     if inp[0] == '1':
         bh.insert(int(inp.split()[1]))
     else:
-        print(bh.delMin())
+        print(bh.delete())
 ```
 
 
