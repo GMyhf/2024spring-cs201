@@ -6797,19 +6797,67 @@ Li:根节点到第i个外部叶子节点的距离。
 
 
 
-```python
-import heapq as H
-n = int(input())
-l = list(map(int, input().split()))
-ans = 0
-H.heapify(l)
-for _ in range(n-1):
-    a = H.heappop(l)
-    b = H.heappop(l)
-    ans += a+b
-    H.heappush(l, a+b)
-print(ans)
+
+
+这个问题其实是一个经典的 **最优二叉树** 构造问题，也叫做 **霍夫曼编码（Huffman Coding）**。我们要构造一棵 **扩充二叉树**（即每个非叶子节点都有两个子节点），使得所有 **叶子节点的带权路径长度和最小**。
+
+---
+
+✅ 思路简述（霍夫曼算法）：
+
+我们通过以下贪心策略构造一棵最优二叉树：
+
+1. 将所有权值作为初始节点，放入一个最小堆中。
+2. 重复执行以下操作直到只剩一个节点：
+   - 从堆中取出两个最小权值节点 `a` 和 `b`
+   - 合并为一个新节点，权值为 `a + b`
+   - 把这个新节点的权值加入堆
+   - 这次合并会产生一个代价：`a + b`，将其加入总路径代价中
+3. 最终累加的合并代价即为 **最小外部带权路径长度总和**。
+
+---
+
+✅ 示例解释
+
+输入：
+
 ```
+4
+1 1 3 5
+```
+
+构造过程：
+
+- 1 + 1 → 新节点权值 2，总成本 += 2
+- 2 + 3 → 新节点权值 5，总成本 += 5
+- 5 + 5 → 新节点权值 10，总成本 += 10
+- 最终成本 = 2 + 5 + 10 = **17**
+
+---
+
+✅ Python 实现
+
+```python
+import heapq
+
+def min_weighted_path_length(n, weights):
+    heapq.heapify(weights)
+    total = 0
+    while len(weights) > 1:
+        a = heapq.heappop(weights)
+        b = heapq.heappop(weights)
+        combined = a + b
+        total += combined
+        heapq.heappush(weights, combined)
+    return total
+
+# 读取输入
+n = int(input())
+weights = list(map(int, input().split()))
+print(min_weighted_path_length(n, weights))
+```
+
+
 
 
 
