@@ -9377,6 +9377,65 @@ http://cs101.openjudge.cn/practice/05455/
 
 
 
+按输入顺序遍历数字，用一个 `seen` 集合来跳过重复值，对于每个新值，插入 BST。
+
+```python
+from collections import deque
+import sys
+
+# 定义二叉树结点
+class TreeNode:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+# 插入结点到 BST 中
+def insert(root, val):
+    if not root:
+        return TreeNode(val)
+    if val < root.val:
+        root.left = insert(root.left, val)
+    elif val > root.val:
+        root.right = insert(root.right, val)
+    return root
+
+# 层次遍历
+def level_order(root):
+    if not root:
+        return []
+    result = []
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        result.append(str(node.val))
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+    return result
+
+def main():
+    data = sys.stdin.read().strip().split()
+    seen = set()
+    root = None
+    for tok in data:
+        num = int(tok)
+        if num in seen:
+            continue
+        seen.add(num)
+        root = insert(root, num)
+    # 输出层次遍历，最后不带多余空格或换行
+    out = ' '.join(level_order(root))
+    sys.stdout.write(out)
+
+if __name__ == "__main__":
+    main()
+
+```
+
+
+
 The problem is asking to construct a binary search tree (BST) from a sequence of numbers and then perform a level order traversal (also known as breadth-first search) on the BST.
 
 Here is a step-by-step plan:
