@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1748 GMT+8 Apr 9, 2025
+Updated 0954 GMT+8 Apr 16, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -14567,6 +14567,8 @@ CBNTX
 来源：郭炜
 
 
+
+也是递归方式处理，利用前序遍历第一个为根节点可以很容易找到跟，进而区分左右子树。
 
 The problem is asking to construct a binary tree from given preorder and inorder traversal sequences, and then output the postorder traversal sequence of the constructed tree.  
 
