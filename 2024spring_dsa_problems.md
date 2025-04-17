@@ -21128,6 +21128,134 @@ print(*ans)
 
 
 
+## 29468.实现散列表
+
+http://cs101.openjudge.cn/practice/29468/
+
+给定一个指定大小**N**的散列表，并输入一系列数字：
+
+若找到空槽，则插入该数字，并返回槽位置；若该数字在散列表中存在，则直接输出其位置。
+
+注1：使用下标增加的二次探测法解决散列冲突
+
+注2：散列表实际大小应确定为不小于用户输入**N**的最小**质数**
+
+注3：散列函数使用**除余法**
+
+
+
+**输入**
+
+两行
+第一行为用户指定散列表大小整数N
+第二行为一系列数字，以空格分隔
+
+**输出**
+
+逐个输出对应数字在散列表中位置，以空格分隔
+若该数字无法插入，则输出“-”
+
+样例输入
+
+```
+4
+10 6 4 10 15
+```
+
+样例输出
+
+```
+0 1 4 0 -
+```
+
+来源
+
+yh
+
+
+
+按照以下步骤进行：
+
+**1. 确定散列表的实际大小**
+
+- 用户输入的 `N` 是散列表的建议大小。
+- 我们需要找到不小于 `N` 的最小质数作为散列表的实际大小。
+
+**2. 散列函数**
+
+- 使用除余法：`hash(key) = key % table_size`
+
+**3. 解决冲突**
+
+- 使用二次探测法（Quadratic Probing）解决冲突：
+  - 如果槽位被占用，则依次尝试 `(hash(key) + i^2) % table_size` 和 `(hash(key) - i^2) % table_size`，其中 `i` 从 1 开始递增。
+
+> 题目中的注1：“下标增加的二次探测法”。可能正确的做法是只沿着一个方向探测，比如每次加i²，而不是同时正反两个方向。比如，二次探测的标准做法是每次跳跃的步长是i²，但可能只在正方向上。
+
+**4. 插入和查找逻辑**
+
+- 如果数字已经在散列表中，直接输出其位置。
+- 如果找到空槽，则插入该数字并返回槽位置。
+- 如果所有槽位都被占满且无法插入，输出 `-`。
+
+```python
+def is_prime(num):
+    if num < 2:
+        return False
+    for i in range(2, int(num**0.5) + 1):
+        if num % i == 0:
+            return False
+    return True
+
+def next_prime(n):
+    while not is_prime(n):
+        n += 1
+    return n
+
+def quadratic_probing_insert(table, key, table_size):
+    hash_val = key % table_size
+    if table[hash_val] == key:
+        return hash_val
+    elif table[hash_val] is None:
+        table[hash_val] = key
+        return hash_val
+    else:
+        i = 1
+        while i < table_size:
+            new_pos = (hash_val + i * i) % table_size
+            if table[new_pos] == key:
+                return new_pos
+            elif table[new_pos] is None:
+                table[new_pos] = key
+                return new_pos
+            i += 1
+        return -1  # 插入失败
+
+# 输入处理
+import sys
+input = sys.stdin.read().splitlines()
+
+N = int(input[0])
+numbers = list(map(int, input[1].split()))
+
+table_size = next_prime(N)
+hash_table = [None] * table_size
+
+result = []
+for num in numbers:
+    pos = quadratic_probing_insert(hash_table, num, table_size)
+    if pos == -1:
+        result.append("-")
+    else:
+        result.append(str(pos))
+
+print(" ".join(result))
+```
+
+
+
+
+
 # 部分题目渐进性分类
 
 http://cs101.openjudge.cn/dsapre/
