@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1355 GMT+8 Apr 17, 2025
+Updated 1601 GMT+8 Apr 18, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -7273,6 +7273,75 @@ a f c b e d
 样例输入输出对应着题目描述中的那棵树。
 
 
+
+根据给定的伪满二叉树前序遍历，输出其镜面映射的宽度优先遍历序列。镜面映射是指将每个节点的子节点顺序反转，而宽度优先遍历则需要按层级遍历所有节点。
+
+思路
+
+1. **输入处理**：读取输入的节点数目和前序遍历序列。
+2. **层级计算**：通过遍历前序序列，维护当前层级信息。内部节点（标记为0）会增加层级，而外部节点（标记为1）会减少层级。
+3. **层级分组**：将每个非虚节点按计算的层级分组。
+4. **逆序输出**：对每个层级的节点逆序，并按层级顺序合并所有节点。
+
+```python
+from collections import defaultdict
+
+n = int(input())
+if n == 0:
+    print()
+    exit()
+
+preorder = input().split()
+
+# 初始化根节点
+root = preorder[0][0]
+root_type = preorder[0][1]
+
+tier = defaultdict(list)
+tier[0].append(root)
+
+nodes = [root]
+level = 0
+types = {root: root_type}
+
+for i in range(1, n):
+    current = preorder[i]
+    name = current[0]
+    typ = current[1]
+    types[name] = typ
+
+    prev_node = nodes[-1]
+    prev_type = types[prev_node]
+
+    # 计算层级变化
+    if prev_type == '1':
+        level -= 1
+    else:
+        level += 1
+
+    nodes.append(name)
+
+    # 只添加非虚节点到对应层级
+    if name != '$':
+        tier[level].append(name)
+
+# 按层级顺序排序并逆序每层节点
+sorted_levels = sorted(tier.items(), key=lambda x: x[0])
+result = []
+for level, chars in sorted_levels:
+    result.extend(reversed(chars))
+
+print(' '.join(result))
+```
+
+代码解释
+
+1. **输入处理**：读取输入的节点数和前序序列，处理根节点。
+2. **层级计算**：遍历前序序列中的每个节点，根据前一个节点的类型（内部或外部）调整当前层级。
+3. **层级分组**：将每个非虚节点添加到对应的层级列表中。
+4. **逆序输出**：对每个层级的节点进行逆序处理，并按层级顺序合并所有结果，生成最终的宽度优先遍历序列。
+
+这种方法避免了显式构建树结构，直接通过前序序列的遍历和层级计算，高效地得到镜面映射后的遍历结果。
 
 
 
