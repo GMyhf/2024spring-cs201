@@ -20603,6 +20603,39 @@ print(bfs(start,end,dic))
 
 
 
+将有三个字母确定的单词存到固定的桶中，进行BFS时只要将同一个桶中未入队的单词入队即可。对每个单词存储其BFS过程中的“父节点”，最后逆序找出路径输出即可。
+
+```python
+# 蔡沐轩 数学科学学院
+from collections import defaultdict,deque
+
+buckets=defaultdict(list)
+for _ in range(int(input())):
+    word=input()
+    for k in range(4):
+        buckets[word[:k]+' '+word[k+1:]].append(word)
+x,y=input().split()
+father={x:x}
+q=deque([x])
+while q:
+    word=q.popleft()
+    if word==y:break
+    for k in range(4):
+        for i in buckets[word[:k]+' '+word[k+1:]]:
+            if i not in father:
+                q.append(i)
+                father[i]=word
+if word==y:
+    ans=[y]
+    while y!=x:
+        y=father[y]
+        ans.append(y)
+    print(' '.join(reversed(ans)))
+else:print('NO')
+```
+
+
+
 
 
 ## 28050: 骑士周游
