@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1601 GMT+8 Apr 18, 2025
+Updated 1748 GMT+8 Apr 24, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -7947,7 +7947,11 @@ YES
 
 
 
+> 04089:电话号码。使用方法二（直接比较）作为首选，因为实现简单且在Python中对于题目给出的数据规模（n≤10000）效率足够。当处理更大规模数据时，则应选择Trie实现（方法一）。方法一：Trie（字典树）实现，方法二：排序后直接比较。即更简单的方法是对号码排序后逐个检查是否为前缀。方法三：递归字典实现。另一种Trie的递归实现方式。
 
+
+
+方法一：
 
 要解决这个问题，需要判断是否存在某个电话号码是另一个电话号码的前缀。这可以通过构建一个 **字典树（Trie）** 来高效实现。
 
@@ -8115,7 +8119,7 @@ for _ in range(t):
 
 
 
-
+方法二：排序后直接比较。即更简单的方法是对号码排序后逐个检查是否为前缀。
 
 ```python
 # 雷逸鸣 物理学院
@@ -8144,6 +8148,8 @@ if __name__ == "__main__":
 ```
 
 
+
+方法三：递归字典实现。是另一种Trie的递归实现方式。
 
 用字典嵌套建树，按照每一位数字，如果是子节点就在子节点继续添加，如果不是就新建子节点，在此添加，最后记录end；遍历的时候按深度优先，如果end和其他节点同时存在，就是NO
 
@@ -8191,6 +8197,34 @@ for i in anslst:
 ```
 
 
+
+```python
+def insert(phone, node):
+    for i, digit in enumerate(phone):
+        if 'end' in node:
+            # 当前路径已经是某个号码的结尾，但我们还在往下走，说明前缀冲突
+            return False
+        if digit not in node:
+            node[digit] = {}
+        node = node[digit]
+    # 插入结束，如果这个节点还有子节点，说明有其他号码以它为前缀
+    if node:
+        return False
+    node['end'] = None
+    return True
+
+t = int(input())
+for _ in range(t):
+    n = int(input())
+    numbers = [input().strip() for _ in range(n)]
+    tree = {}
+    consistent = True
+    for num in sorted(numbers):  # 先排序，前缀更容易被检测出来
+        if not insert(num, tree):
+            consistent = False
+            break
+    print("YES" if consistent else "NO")
+```
 
 
 
