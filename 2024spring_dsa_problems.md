@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1748 GMT+8 Apr 24, 2025
+Updated 1947 GMT+8 Apr 27, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -8225,6 +8225,46 @@ for _ in range(t):
             break
     print("YES" if consistent else "NO")
 ```
+
+
+
+【蔡东辰、24工学院】只记得字典树是字典套字典，但课件里的代码只是粗略扫了一眼，没记住具体怎么写，于是自己想了一个。对于这题而言，通过递归计算总叶子节点数量，如果与输入的数据数量不一致就输出NO。但是一开始写的时候一直wa，和ai共同探索后才发现number里的数据一开始以int形式存了，导致有先导0时会出错，去了int之后果然ac了，感觉是值得进我错题本的题
+
+```python
+class Trie:
+    def __init__(self,key = None):
+        self.dic = {}
+        self.key = key
+    def add(self,s):
+        if s[0] not in self.dic:
+            self.dic[s[0]] = Trie(s[0])
+        a = self.dic[s[0]]
+        if len(s) > 1:
+            a.add(s[1:])
+    def leaf_nums(self):
+        if len(self.dic) == 0:
+            return 1
+        num = 0
+        for i in self.dic:
+            num += self.dic[i].leaf_nums()
+        return num
+t = int(input())
+for i in range(t):
+    n = int(input())
+    trie = Trie()
+    number = []
+    for j in range(n):
+        number.append(input())
+    number.sort(key = lambda x:-len(x))
+    for k in number:
+        trie.add(str(k))
+    if trie.leaf_nums() == n:
+        print('YES')
+    else:
+        print('NO')
+```
+
+
 
 
 
