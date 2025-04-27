@@ -8070,6 +8070,8 @@ https://www.geeksforgeeks.org/trie-insert-and-search/
 
 使用字典实现的字典树（Trie）。它的主要功能是插入和搜索字符串。
 
+这里特意把 insert 和 search 分开写，也是保留了Trie本身的完整性。
+
 ```python
 class TrieNode:
     def __init__(self):
