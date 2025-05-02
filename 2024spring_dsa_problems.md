@@ -9713,6 +9713,89 @@ for _ in range(int(input())):
 
 
 
+【张俊龙 24工学院】思路：定义最小距离以及走最小距离的第一步，之后三重循环维护。
+
+> 代码的功能是：**实现一个带权无向图的最短路径查询系统**，它会先读入点和边的信息，预处理所有点对之间的最短路径（使用 Floyd-Warshall 算法），然后支持多次查询输出从一个点到另一个点的路径和路径长度。
+
+```python
+def floyd_warshall(p, length, nxt):
+    for k in range(p):
+        for i in range(p):
+            if length[i][k] == float('inf'):
+                continue
+            for j in range(p):
+                if length[k][j] == float('inf'):
+                    continue
+                if length[i][k] + length[k][j] < length[i][j]:
+                    length[i][j] = length[i][k] + length[k][j]
+                    nxt[i][j] = nxt[i][k]
+
+def reconstruct_path(u, v, nxt, name, length):
+    if u == v:
+        return name[u]
+    path = [u]
+    while u != v:
+        u = nxt[u][v]
+        if u is None:
+            return "NO PATH"
+        path.append(u)
+    result = name[path[0]]
+    for i in range(1, len(path)):
+        result += f'->({length[path[i - 1]][path[i]]})->{name[path[i]]}'
+    return result
+
+# -------------------------------
+# Main
+# -------------------------------
+p = int(input())
+name = []
+di = {}
+for i in range(p):
+    place = input().strip()
+    name.append(place)
+    di[place] = i
+
+length = [[float('inf')] * p for _ in range(p)]
+nxt = [[None] * p for _ in range(p)]
+
+for i in range(p):
+    length[i][i] = 0
+    nxt[i][i] = i
+
+q = int(input())
+for _ in range(q):
+    a, b, c = input().split()
+    u, v, d = di[a], di[b], int(c)
+    if d < length[u][v]:  # Take shortest if multiple edges
+        length[u][v] = length[v][u] = d
+        nxt[u][v] = v
+        nxt[v][u] = u
+
+# Compute all-pairs shortest paths
+floyd_warshall(p, length, nxt)
+
+r = int(input())
+for _ in range(r):
+    a, b = input().split()
+    u, v = di[a], di[b]
+    print(reconstruct_path(u, v, nxt, name, length))
+
+```
+
+**`floyd_warshall(...)`：**
+
+- 经典三重循环版本。
+- 如果从 `i` 到 `j` 可以通过中间点 `k` 走得更短，则更新路径和 `nxt[i][j]`。
+
+**`reconstruct_path(...)`：**
+
+- 利用 `nxt` 重建路径。
+- 输出格式为：`A->(距离)->B->(距离)->C`。
+
+
+
+
+
 思路：用 $\text{Floyd}$​ 算法很容易求多源汇最短路径长度，本题重点是记录具体路径。此外可以将每个顶点都哈希以便后续的 dp 操作。
 
 简单讲解该算法：$dp[k][x][y]$ 的含义是只允许用节点 $1\sim k$ 作为中间点时节点 $x$ 到节点 $y$ 的最短路长度；很显然 $dp[n][x][y]$ 就是节点 $x$ 到节点 $y$ 的最短路长度。然后根据经过 $k$ 点和不经过 $k$ 点两种情况分类，可以得到转移方程：
