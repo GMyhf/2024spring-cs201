@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1434 GMT+8 Apr 28, 2025
+Updated 1434 GMT+8 May 2, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -15989,7 +15989,29 @@ a的b次方在python的写法是 a ** b
 
 
 
-好，来，我们一起解这个题。
+【李佳聪 24工学院】二分查找，只需找到60%节点处的学生成绩并与85分比较即可。
+
+```python
+grade = [float(x) for x in input().split()]
+le = len(grade)
+grade.sort()
+targ = grade[int(le * 0.4)]
+left = 0
+right = 1000000000
+while left <= right:
+    mid = (left + right) // 2
+    gd = targ * mid / 1000000000 + 1.1 ** (targ * mid / 1000000000)
+    if gd >= 85:
+        right = mid - 1
+    else:
+        left = mid + 1
+print(left)
+
+```
+
+
+
+
 
 **总结题目要求**：
 
