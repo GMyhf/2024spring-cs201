@@ -2696,22 +2696,38 @@ if __name__ == "__main__":
 
 ## 01860: Currency Exchange
 
-http://cs101.openjudge.cn/practice/01860/
+Bellman-Ford, http://cs101.openjudge.cn/practice/01860/
 
-Several currency exchange points are working in our city. Let us suppose that each point specializes in two particular currencies and performs exchange operations only with these currencies. There can be several points specializing in the same pair of currencies. Each point has its own exchange rates, exchange rate of A to B is the quantity of B you get for 1A. Also each exchange point has some commission, the sum you have to pay for your exchange operation. Commission is always collected in source currency.
-For example, if you want to exchange 100 US Dollars into Russian Rubles at the exchange point, where the exchange rate is 29.75, and the commission is 0.39 you will get (100 - 0.39) * 29.75 = 2963.3975RUR. 
-You surely know that there are N different currencies you can deal with in our city. Let us assign unique integer number from 1 to N to each currency. Then each exchange point can be described with 6 numbers: integer A and B - numbers of currencies it exchanges, and real RAB, CAB, RBA and CBA - exchange rates and commissions when exchanging A to B and B to A respectively.
-Nick has some money in currency S and wonders if he can somehow, after some exchange operations, increase his capital. Of course, he wants to have his money in currency S in the end. Help him to answer this difficult question. Nick must always have non-negative sum of money while making his operations.
+我们城市中有多个货币兑换点。假设每个兑换点专门处理两种特定的货币，并且仅在这两种货币之间进行兑换操作。相同的货币对可能会有多个兑换点同时处理。每个兑换点都有自己的汇率，其中 A 到 B 的汇率表示的是用 1 单位 A 可以兑换到多少单位 B。此外，每个兑换点都收取一定的手续费，该费用是你在进行兑换时需要支付的金额，且手续费总是以原始货币（即兑换前的货币）来计算。
+
+例如，如果你想在某个兑换点将 100 美元兑换成俄罗斯卢布，该兑换点的汇率为 29.75，手续费为 0.39，那么你最终会得到 (100 - 0.39) * 29.75 = 2963.3975 卢布。
+
+当然你知道，在我们城市中你可以使用的货币共有 N 种。让我们将每种货币编号为从 1 到 N 的唯一整数。那么每一个兑换点可以用以下六个数字来描述：整数 A 和 B 表示它兑换的两种货币；实数 RAB、CAB、RBA 和 CBA 分别表示从 A 兑换到 B 以及从 B 兑换到 A 的汇率和手续费。
+
+Nick 手中目前拥有某种货币 S 的一定数量的资金。他想知道是否可以通过一系列兑换操作使得自己的资金增加。当然，最后他希望手中仍然持有货币 S。请帮助他回答这个难题。在整个兑换过程中，Nick 必须始终保持其账户中的资金为非负值。
+
+> Several currency exchange points are working in our city. Let us suppose that each point specializes in two particular currencies and performs exchange operations only with these currencies. There can be several points specializing in the same pair of currencies. Each point has its own exchange rates, exchange rate of A to B is the quantity of B you get for 1A. Also each exchange point has some commission, the sum you have to pay for your exchange operation. Commission is always collected in source currency.
+> For example, if you want to exchange 100 US Dollars into Russian Rubles at the exchange point, where the exchange rate is 29.75, and the commission is 0.39 you will get (100 - 0.39) * 29.75 = 2963.3975RUR. 
+> You surely know that there are N different currencies you can deal with in our city. Let us assign unique integer number from 1 to N to each currency. Then each exchange point can be described with 6 numbers: integer A and B - numbers of currencies it exchanges, and real RAB, CAB, RBA and CBA - exchange rates and commissions when exchanging A to B and B to A respectively.
+> Nick has some money in currency S and wonders if he can somehow, after some exchange operations, increase his capital. Of course, he wants to have his money in currency S in the end. Help him to answer this difficult question. Nick must always have non-negative sum of money while making his operations.
 
 **输入**
 
-The first line of the input contains four numbers: N - the number of currencies, M - the number of exchange points, S - the number of currency Nick has and V - the quantity of currency units he has. The following M lines contain 6 numbers each - the description of the corresponding exchange point - in specified above order. Numbers are separated by one or more spaces. 1<=S<=N<=100, 1<=M<=100, V is real number, 0<=V<=103.
-For each point exchange rates and commissions are real, given with at most two digits after the decimal point, 10-2<=rate<=102, 0<=commission<=102.
-Let us call some sequence of the exchange operations simple if no exchange point is used more than once in this sequence. You may assume that ratio of the numeric values of the sums at the end and at the beginning of any simple sequence of the exchange operations will be less than 104.
+输入的第一行包含四个数字：N — 货币种类的数量，M — 兑换点的数量，S — Nick 当前拥有的货币种类编号，V — 他拥有的该货币的数量。接下来的 M 行，每行给出一个兑换点的信息，格式如上所述。数据之间由一个或多个空格分隔。1 ≤ S ≤ N ≤ 100，1 ≤ M ≤ 100，V 是一个实数，范围是 0 ≤ V ≤ 10³。每个兑换点的汇率和手续费都是实数，保留两位小数，其中汇率范围为 10⁻² ≤ 汇率 ≤ 10²，手续费范围为 0 ≤ 手续费 ≤ 10²。
+
+我们将一组兑换操作称为“简单”的，如果这组操作中没有一个兑换点被使用超过一次。你可以假设对于任何一组“简单”的兑换操作，其最终金额与初始金额之比小于 10⁴。
+
+> The first line of the input contains four numbers: N - the number of currencies, M - the number of exchange points, S - the number of currency Nick has and V - the quantity of currency units he has. The following M lines contain 6 numbers each - the description of the corresponding exchange point - in specified above order. Numbers are separated by one or more spaces. 1<=S<=N<=100, 1<=M<=100, V is real number, 0<=V<=10^3.
+> For each point exchange rates and commissions are real, given with at most two digits after the decimal point, 10-2<=rate<=102, 0<=commission<=10^2.
+> Let us call some sequence of the exchange operations simple if no exchange point is used more than once in this sequence. You may assume that ratio of the numeric values of the sums at the end and at the beginning of any simple sequence of the exchange operations will be less than 10^4.
 
 **输出**
 
-If Nick can increase his wealth, output YES, in other case output NO to the output file.
+如果 Nick 能通过某些兑换操作增加他的财富，请输出 YES，否则输出 NO。
+
+> If Nick can increase his wealth, output YES, in other case output NO to the output file.
+
+
 
 样例输入
 
@@ -2730,6 +2746,114 @@ YES
 来源
 
 Northeastern Europe 2001, Northern Subregion
+
+
+
+要判断 Nick 是否能通过一系列兑换操作把初始货币 S 的数量从 V 增加到更大，可以把每种货币看作图中的一个节点，把每个兑换点的两个方向兑换看作两条有向边，然后在这张图上做「最大可达金额」的松弛（relax），等价于在带「非线性」边权下做一次 Bellman–Ford 检测正环。
+
+------
+
+**算法思路**
+
+1. **节点**：货币种类编号 1…N。
+
+2. **边**：每个兑换点 i（描述为 A,B,RAB,CAB,RBA,CBA）对应两条有向边：
+
+   - 从 A 到 B，如果当前在 A 手上有 x 单位，可以兑换到
+
+     $x′=(x−CAB)×RAB$
+
+     但仅当 x>CAB 时才可能兑换，不然兑换后金额为负。
+
+   - 从 B 到 A，同理：
+
+     $x′=(x−CBA)×RBA$
+
+3. **状态**：用数组 best[1..N] 记录在每个货币上能够达到的“最大金额”。初始化：
+
+   $best[S]=V,best[i≠S]=0$.
+
+4. **松弛操作**：对每条有向边 (u→v) 重复下面操作：
+
+   ```text
+   if best[u] > fee(u→v)  then
+       best[v] = max(best[v], (best[u] - fee(u→v)) * rate(u→v))
+   ```
+
+5. **检测“增益回路”**：
+
+   - 纯粹为了把“最终回到 S 的金额 > V”这一目标化为「检测可达正权环」：
+     - 在做了 N−1 次松弛之后，若还能在第 N 次松弛中让任意节点的 best 值发生增大，就说明图中存在能够无限增大的“套利回路”；
+     - 或者在任何一次松弛中，best[S] 超过了初始值 V，就可以立即判定为 “YES”。
+
+6. **复杂度**：节点数 N≤100，边数 2M≤200。Bellman–Ford 最坏 $O(N ⁣× ⁣M)=10^4$ 级别，完全可以接受。
+
+```python
+import sys
+
+def main():
+    # 读取第一行：N, M, S, V
+    data = sys.stdin.read().strip().split()
+    N, M = map(int, data[:2])
+    S = int(data[2])       # 起始货币编号
+    V = float(data[3])     # 起始金额
+
+    # 解析后续每个兑换点的信息
+    edges = []
+    idx = 4
+    for _ in range(M):
+        A = int(data[idx]);     B = int(data[idx+1])
+        R_ab = float(data[idx+2]);  C_ab = float(data[idx+3])
+        R_ba = float(data[idx+4]);  C_ba = float(data[idx+5])
+        idx += 6
+
+        # 从 A->B 的边
+        edges.append((A, B, R_ab, C_ab))
+        # 从 B->A 的边
+        edges.append((B, A, R_ba, C_ba))
+
+    # best[i] 表示最终能在货币 i 上得到的最大金额
+    best = [0.0] * (N + 1)
+    best[S] = V
+
+    # Bellman–Ford 核心：最多做 N 轮松弛
+    for iteration in range(1, N + 1):
+        updated = False
+        for u, v, rate, fee in edges:
+            if best[u] > fee:
+                x = (best[u] - fee) * rate
+                if x > best[v] + 1e-12:  # 加一点 eps 防止浮点误差
+                    best[v] = x
+                    updated = True
+
+                    # 如果再次更新回了起始货币 S，且金额大于初始值，立刻输出 YES
+                    if v == S and best[S] > V:
+                        print("YES")
+                        return
+
+        # 如果第 N 轮仍有更新，说明存在正增益回路
+        if iteration == N and updated:
+            print("YES")
+            return
+
+        # 没有任何更新，可提前结束
+        if not updated:
+            break
+
+    # 没发现任何增益方案
+    print("NO")
+
+
+if __name__ == "__main__":
+    main()
+
+```
+
+------
+
+用这段代码，可以在 $O(NM)$ 时间内判断是否存在一个“简单序列”（至多用每个兑换点一次）能让 Nick 最终的 S 货币金额超过他最初的 V。
+
+
 
 
 
@@ -2792,6 +2916,10 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+
+
+
 
 
 
