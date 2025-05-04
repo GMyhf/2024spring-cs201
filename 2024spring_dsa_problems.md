@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1817 GMT+8 May 3, 2025
+Updated 2010 GMT+8 May 4, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -16118,6 +16118,126 @@ while stack:
     stack = temp
 print(" ".join(ans))
 ```
+
+
+
+## T22508:最小奖金方案
+
+DAG 上的 DP, http://cs101.openjudge.cn/practice/22508/
+
+现在有n个队伍参加了比赛，他们进行了m次PK。现在赛事方需要给他们颁奖（奖金为整数），已知参加比赛就可获得100元，由于比赛双方会比较自己的奖金，所以获胜方的奖金一定要比败方奖金高。请问赛事方要准备的最小奖金为多少？奖金数额一定是整数。
+
+**输入**
+
+一组数据，第一行是两个整数n(1≤n≤1000)和m(0≤m≤2000)，分别代表n个队伍和m次pk，队伍编号从0到n-1。接下来m行是pk信息，具体信息a，b，代表编号为a的队伍打败了编号为b的队伍。
+输入保证队伍之间的pk战胜关系不会形成有向环
+
+**输出**
+
+给出最小奖金w
+
+样例输入
+
+```
+5 6
+1 0
+2 0
+3 0
+4 1
+4 2
+4 3
+```
+
+样例输出
+
+```
+505
+```
+
+来源: 陈鑫
+
+
+
+这个问题可以建模为一个 **有向无环图（DAG）中的最小奖金分配问题**，其本质是：
+
+- 每个队伍初始获得 100 元。
+- 如果 a 打败了 b，则 a 的奖金必须 **严格大于** b 的奖金。
+- 我们的目标是满足所有约束的前提下，使总奖金最小。
+
+---
+
+**解题思路**
+
+这是一个典型的 **拓扑排序 + 动态规划** 的问题：
+
+1. **构建图：**
+   - 将每个比赛结果 `(a, b)` 看作一条从 b 到 a 的边（因为 a 要比 b 高）。
+2. **拓扑排序：**
+   - 因为题目保证没有环，所以我们可以进行拓扑排序来处理依赖关系。
+3. **动态规划：**
+   - 初始化每个人的奖金为 100。
+   - 按照拓扑序处理每个节点，更新获胜队伍的奖金：
+     - 对于每条边 `b -> a`（即 a 打败了 b），如果 `bonus[a] <= bonus[b]`，则设置 `bonus[a] = bonus[b] + 1`。
+
+这样就能确保每个人只被处理一次，并且满足所有胜负关系。
+
+
+
+```python
+import sys
+from collections import defaultdict, deque
+
+def min_bonus(n, m, matches):
+    # 图结构：记录谁打败了谁（反向边）
+    graph = defaultdict(list)
+    indegree = [0] * n
+    
+    for a, b in matches:
+        graph[b].append(a)  # a > b，所以 b 是 a 的前驱
+        indegree[a] += 1
+
+    # 初始化奖金为 100
+    bonus = [100] * n
+
+    # 拓扑排序队列
+    queue = deque([i for i in range(n) if indegree[i] == 0])
+
+    while queue:
+        curr = queue.popleft()
+        for neighbor in graph[curr]:
+            # 如果邻居的奖金不大于当前的，就调整它
+            if bonus[neighbor] <= bonus[curr]:
+                bonus[neighbor] = bonus[curr] + 1
+            indegree[neighbor] -= 1
+            if indegree[neighbor] == 0:
+                queue.append(neighbor)
+
+    return sum(bonus)
+
+# 读取输入
+if __name__ == "__main__":
+    input = sys.stdin.read
+    data = input().split()
+    
+    n = int(data[0])
+    m = int(data[1])
+    
+    matches = []
+    idx = 2
+    for _ in range(m):
+        a = int(data[idx])
+        b = int(data[idx+1])
+        matches.append((a, b))
+        idx += 2
+
+    result = min_bonus(n, m, matches)
+    print(result)
+```
+
+时间复杂度分析
+
+- 拓扑排序时间复杂度为 O(n + m)
+- 每个边最多处理一次，奖金更新也是 O(1) 操作
 
 
 
