@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 2010 GMT+8 May 4, 2025
+Updated 2241 GMT+8 May 4, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -13165,9 +13165,9 @@ print(*ans)
 
 
 
-## 17975: 用二次探查法建立散列表
+## M17975: 用二次探查法建立散列表
 
-http://cs101.openjudge.cn/practice/17975/
+hash table, http://cs101.openjudge.cn/practice/17975/
 
 给定一系列整型关键字和素数P，用除留余数法定义的散列函数H（key)=key%M，将关键字映射到长度为M的散列表中，用二次探查法解决冲突.
 
@@ -13213,6 +13213,50 @@ index += 1
 m = int(data[index])
 index += 1
 num_list = [int(i) for i in data[index:index+n]]
+```
+
+
+
+```python
+def quadratic_probe_insert(keys, M):
+    table = [None] * M
+    result = []
+
+    for key in keys:
+        pos = key % M
+        if table[pos] is None or table[pos] == key:
+            table[pos] = key
+            result.append(pos)
+            continue
+
+        # 否则开始二次探查
+        i = 1
+        instered = False
+        while not instered:
+            for sign in [1, -1]:
+                new_pos = (pos + sign * (i ** 2)) % M
+                if table[new_pos] is None or table[new_pos] == key:
+                    table[new_pos] = key
+                    result.append(new_pos)
+                    instered = True
+                    break
+
+            i += 1  # 探查次数增加
+
+    return result
+
+
+import sys
+
+input = sys.stdin.read
+data = input().split()
+N = int(data[0])
+M = int(data[1])
+keys = list(map(int, data[2:2 + N]))
+
+positions = quadratic_probe_insert(keys, M)
+print(*positions)
+
 ```
 
 
