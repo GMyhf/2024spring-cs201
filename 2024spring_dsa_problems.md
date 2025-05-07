@@ -9800,6 +9800,54 @@ for _ in range(int(input())):
 
 
 
+【柯有为】思路：图的最短路径问题，用Dijkstra方法。由于是求最短路径，所以需要额外添加一个储存路径的字典，最后将路径转化为所要求的格式输出即可。
+
+```python
+import heapq
+
+def Dijkstra(graph, start, end):
+    if start == end:
+        return []
+    
+    distances = {place:float('inf') for place in graph.keys()}
+    paths = {place:[] for place in graph.keys()}
+    distances[start] = 0
+    heap = []
+    heapq.heappush(heap, (0, [], start))
+
+    while heap:
+        d, path, cur = heapq.heappop(heap)
+        for neighbor, nd in graph[cur].items():
+            if d + nd < distances[neighbor]:
+                distances[neighbor] = d + nd
+                paths[neighbor] = path + [neighbor]
+                heapq.heappush(heap, (distances[neighbor], paths[neighbor], neighbor))
+    
+    return paths[end]
+
+graph = dict()
+P = int(input())
+for _ in range(P):
+    graph[input()] = dict()
+Q = int(input())
+for _ in range(Q):
+    u, v, d = map(str,input().split())
+    graph[u][v] = graph[v][u] = int(d)
+
+R = int(input())
+for _ in range(R):
+    start, end = map(str,input().split())
+    path = Dijkstra(graph, start, end)
+    output = start
+    cur = start
+    for vertex in path:
+        output += f"->({graph[cur][vertex]})->{vertex}"
+        cur = vertex
+    print(output)
+```
+
+
+
 
 
 思路：多添加一个路径进入pos即可。
