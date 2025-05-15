@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1423 GMT+8 May 7, 2025
+Updated 1634 GMT+8 May 15, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -6541,6 +6541,69 @@ http://cs101.openjudge.cn/practice/04077/
 
 先了解栈的两种基本操作，进栈push就是将元素放入栈顶，栈顶指针上移一位，等待进栈队列也上移一位，出栈pop是将栈顶元素弹出，同时栈顶指针下移一位。
 　　 用一个过程采模拟进出栈的过程，可以通过循环加递归来实现回溯：重复这样的过程，如果可以进栈则进一个元素，如果可以出栈则出一个元素。就这样一个一个地试探下去，当出栈元素个数达到n时就计数一次(这也是递归调用结束的条件)。
+
+
+
+这是一个经典的栈操作模拟问题。我们需要统计对于从 `1` 到 `n` 的数字，所有可能的出栈序列数量。这个问题的本质就是 **栈的合法出栈序列个数问题**。
+
+这个数量恰好是 **第 n 个卡特兰数（Catalan Number）**，其定义为：
+$$
+C_n = \frac{1}{n+1} \binom{2n}{n}
+$$
+
+
+​				
+​					
+
+或者通过递归模拟也可以得到。下面我们给出递归+回溯的写法，逐个模拟进栈和出栈的操作。
+
+------
+
+✅ Python 代码如下：
+
+```python
+def count_sequences(n):
+    def dfs(push_num, stack, popped):
+        nonlocal count
+        # 如果已经弹出了 n 个数，说明这个出栈序列是合法的
+        if popped == n:
+            count += 1
+            return
+        # 尝试进栈：如果还有数字没进栈
+        if push_num <= n:
+            stack.append(push_num)
+            dfs(push_num + 1, stack, popped)
+            stack.pop()
+        # 尝试出栈：如果栈不空
+        if stack:
+            top = stack.pop()
+            dfs(push_num, stack, popped + 1)
+            stack.append(top)
+
+    count = 0
+    dfs(1, [], 0)
+    return count
+
+# 读取输入
+n = int(input())
+print(count_sequences(n))
+```
+
+✅ 拓展：卡特兰数法（更高效）
+
+你也可以直接用卡特兰数公式来快速计算：
+
+```python
+import math
+
+def catalan_number(n):
+    return math.comb(2 * n, n) // (n + 1)
+
+n = int(input())
+print(catalan_number(n))
+```
+
+两种方法都可以，递归方式更直观模拟操作，适合理解；卡特兰数方法更高效，适合大 n（比如 n = 15）时使用。
 
 
 
