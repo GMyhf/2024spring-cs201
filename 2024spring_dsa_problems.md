@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1634 GMT+8 May 15, 2025
+Updated 1634 GMT+8 May 18, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -17713,6 +17713,56 @@ if __name__ == "__main__":
 1. 由于是完全二叉树，孩子编号固定为 2i 和 2i+1，方便用数组索引处理。
 2. 我们从下往上（即从编号最大的叶子节点向上）计算，每个节点只需要看它的两棵子树的两个状态，不会有环，安全又高效。
 3. 最终答案是根节点不选或选的两种情况中较大的一个。
+
+
+
+【珂有为 24工学院】思路：这个题给的标签竟然是dp,有点在意料之外，我的第一思路就是把二叉树构造出来，然后递归做(觉得就是典型的能把树构造好就能秒的树的题目)。
+
+考试时把编号(从1开始算，不然没规律)和二叉树位置的对应关系忘了，现想的……把编号转为二进制编码，从第二位开始遍历，假如是`0`就往左，是`1`就往右，就可以找到编号对应的二叉树中的位置。
+
+考虑以节点`node`为根节点的子树的答案。有两种情况，一种是不取该节点的值，那么最大值为以其左右子节点为根节点的子树的答案的和；另一种是取该节点的值，则其左右节点的值不能取。为了方便起见，额外用一个参量表示能否取根节点的值。dfs(node, flag)，flag为`False`，表示不能取`node`的值，反之则可以取。
+
+构造好树以后`dfs(root, True)`即可得到答案。
+
+```python
+class Node:
+    def __init__(self, value):
+        self.val = value
+        self.left = None
+        self.right = None
+
+def InsertNode(root, v, code):
+    if code == '0':
+        root.left = Node(v)
+        return
+    elif code == '1':
+        root.right = Node(v)
+        return
+    
+    if code[0] == '0':
+        InsertNode(root.left, v, code[1:])
+    elif code[0] == '1':
+        InsertNode(root.right, v, code[1:])
+
+def dfs(root, flag):
+    if not root:
+        return 0
+    
+    if flag == False:
+        return dfs(root.left, True) + dfs(root.right, True)
+    
+    return max(root.val + dfs(root.left, False) + dfs(root.right, False), dfs(root.left, True) + dfs(root.right, True))
+
+n = int(input())
+values = [0] + list(map(int,input().split()))
+root = Node(values[1])
+for i in range(2, n + 1):
+    InsertNode(root, values[i], bin(i)[3:])
+
+print(dfs(root, True))
+```
+
+
 
 
 
