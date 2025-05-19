@@ -821,9 +821,9 @@ print(ans)
 
 
 
-## 01258: Agri-Net
+## M01258: Agri-Net
 
-http://cs101.openjudge.cn/dsapre/01258/
+prim, http://cs101.openjudge.cn/dsapre/01258/
 
 Farmer John has been elected mayor of his town! One of his campaign promises was to bring internet connectivity to all farms in the area. He needs your help, of course. 
 Farmer John ordered a high speed connection for his farm and is going to share his connectivity with the other farmers. To minimize cost, he wants to lay the minimum amount of optical fiber to connect his farm to all the other farms. 
@@ -6134,7 +6134,7 @@ print(ans[0][1])
 
 
 
-## 03424: Candies
+## M03424: Candies
 
 dijkstra, http://cs101.openjudge.cn/practice/03424/
 
@@ -6178,7 +6178,9 @@ POJ Monthly--2006.12.31, Sempr
 
 题目大意：幼儿园一个班里有N个小朋友（标号为1~N），一个小朋友flymouse（为N号）被校长指定去发糖，有M个条件，每个条件三个参数A,B,c，表示小朋友A不希望小朋友B有比他多超过c个的糖，班里还有另一个小朋友snoopy（为1号），flymouse希望自己得到的糖果比snoopy的尽量多，求最大的差值。
 
-做法：这里引入一个叫差分约束系统的东西，大概就是给定一系列这样形式的不等式：xi-xj<=bk，然后求某两个xa和xb的差的最大值，即max(xa-xb)。正确的方法是，如果存在一个xi-xj<=bk这样的不等式，就从j引一条指向i的边权为bk的有向边，这样就可以构成一个有向图，然后求max(xa-xb)就是求从b到a的最短路径。为什么呢？因为我们看任意一条简单路径：b,s1,s2,...,sn,a，其中相邻两点间边权依次为b0,b1,...,bn，所以xs1-xb<=b0,xs2-xs1<=b1,...,xa-xsn<=bn,所以xa-xb=(xa-xsn)+...+(xs2-xs1)+(xs1-xb)<=b0+b1+...+bn，所以我们可以得到xa-xb必定不超过任意从b到a的简单路径上边权的和，也就是说任何一条路径都是一个上界，所以要求最大值也就是求最小的上界，也就是求最短路了。
+做法：这里引入一个叫<mark>差分约束系统</mark>的东西，大概就是给定一系列这样形式的不等式：`xi-xj<=bk`，然后求某两个xa和xb的差的最大值，即`max(xa-xb)`。正确的方法是，如果存在一个`xi-xj<=bk`这样的不等式，就从j引一条指向i的边权为bk的有向边，这样就可以构成一个有向图，然后求`max(xa-xb)`就是求从b到a的最短路径。为什么呢？因为我们看任意一条简单路径：b,s1,s2,...,sn,a，其中相邻两点间边权依次为b0,b1,...,bn，所以`xs1-xb<=b0,xs2-xs1<=b1,...,xa-xsn<=bn`,所以`xa-xb=(xa-xsn)+...+(xs2-xs1)+(xs1-xb)<=b0+b1+...+bn`，所以我们可以得到`xa-xb`必定不超过任意从b到a的简单路径上边权的和，也就是说任何一条路径都是一个上界，所以要求最大值也就是求最小的上界，也就是求最短路了。
+
+> 差分约束系统是一个整体系统，我们需要找到所有约束都满足的前提下，目标变量差值的最大值。
 
 而这一题模型比较简单，构图很容易，对于每个条件直接连A->B，边权为c即可，然后求从1到N的最短路。
 
