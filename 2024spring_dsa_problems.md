@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1634 GMT+8 May 18, 2025
+Updated 1021 GMT+8 May 19, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -23548,6 +23548,149 @@ lkList.printLk()
 1 2 6 3
 """
 ```
+
+
+
+## P0560:文本缩进二叉树
+
+http://dsbpython.openjudge.cn/dspythonbook/P0560/
+
+文本缩进二叉树就是由若干行文本来表示的一棵二叉树。其定义如下: 
+
+1) 若一行由若干个制表符("\t")和一个字母构成，则该行表示一个二叉树的结点。该结点的层次就是制表符的数量（根是0层）
+2) 每个结点的父结点，就是它上方，离它最近的，比它往左偏移了一个制表符的那个结点。没有父结点的结点，是树根。
+3) 如果一个结点的左子树为空但右子树不为空，则在其下面的一行用一个向右多缩进了一个制表符的'*'表示其有空的左子树，然后再表示右子树。若右子树为空，则右子树无须表示。若右子树不为空，则表示完左子树后再表示右子树。若左右子树都为空，则左右子树都不需要表示。
+
+给定一个文本缩进二叉树，求其前序、中序、后序遍历序列。
+
+输入样例的二叉树如下图:
+
+![img](http://media.openjudge.cn/images/upload/1709/1662288791.png)
+
+输入
+
+一棵文本缩进二叉树, 不超过100个结点。
+
+输出
+
+该二叉树的前序、中序、后序遍历序列。
+
+样例输入
+
+```
+A
+	B
+		*
+		D
+			E
+	F
+		G
+			*
+			I
+		H
+```
+
+样例输出
+
+```
+ABDEFGIH
+BEDAGIFH
+EDBIGHFA
+```
+
+
+
+
+
+思路很：
+
+1. 当用字母节点挂父节点的 **左子树** 时，挂完之后就应该把 `parent.next_child` 从 `"left"` 切换到 `"right"`。
+2.  `stack` 用列表，遇到更浅的行就 `stack = stack[:depth]`，自动丢弃深度更大的旧节点。
+
+```python
+import sys
+sys.setrecursionlimit(10000)
+
+class Node:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+        # 表示下一个插入到该节点的是 'left' 还是 'right'
+        self.next_child = 'left'
+
+def build_tree(lines):
+    stack = []   # stack[d] 是深度 d 的最新节点
+    root = None
+
+    for line in lines:
+        # 计算深度
+        depth = 0
+        while depth < len(line) and line[depth] == '\t':
+            depth += 1
+        c = line[depth]
+
+        # 保持 stack 长度等于当前深度
+        stack = stack[:depth]
+
+        if c == '*':
+            # 标记父节点接下来要挂右子树
+            parent = stack[-1]
+            parent.next_child = 'right'
+        else:
+            node = Node(c)
+            if depth == 0:
+                root = node
+            else:
+                parent = stack[-1]
+                if parent.next_child == 'left':
+                    parent.left = node
+                    # 挂完左子树后，下一次就该挂右子树了
+                    parent.next_child = 'right'
+                else:
+                    parent.right = node
+            # 新节点默认先挂左子树
+            node.next_child = 'left'
+            # 推入栈
+            stack.append(node)
+
+    return root
+
+def preorder(node, res):
+    if not node: return
+    res.append(node.val)
+    preorder(node.left, res)
+    preorder(node.right, res)
+
+def inorder(node, res):
+    if not node: return
+    inorder(node.left, res)
+    res.append(node.val)
+    inorder(node.right, res)
+
+def postorder(node, res):
+    if not node: return
+    postorder(node.left, res)
+    postorder(node.right, res)
+    res.append(node.val)
+
+if __name__ == "__main__":
+    lines = [line.rstrip('\n') for line in sys.stdin if line.strip()!='']
+    root = build_tree(lines)
+
+    pre, ino, post = [], [], []
+    preorder(root, pre)
+    inorder(root, ino)
+    postorder(root, post)
+
+    print(''.join(pre))
+    print(''.join(ino))
+    print(''.join(post))
+```
+
+
+
+
 
 
 
