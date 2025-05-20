@@ -13248,32 +13248,35 @@ http://cs101.openjudge.cn/practice/17968/
 这个题目的输入数据可能不是标准形式，特殊处理，整体读入 sys.stdin.read
 
 ```python
+def insert_hash_table(keys, M):
+    table = [0.5] * M  # 用 0.5 表示空位
+    result = []
+
+    for key in keys:
+        index = key % M
+        i = index
+
+        while True:
+            if table[i] == 0.5 or table[i] == key:
+                result.append(i)
+                table[i] = key
+                break
+            i = (i + 1) % M
+
+    return result
+
+# 使用标准输入读取数据
 import sys
 input = sys.stdin.read
-
 data = input().split()
-index = 0
-N = int(data[index])
-index += 1
-M = int(data[index])
-index += 1
 
+N = int(data[0])
+M = int(data[1])
+keys = list(map(int, data[2:2 + N]))
 
-k = [0.5] * M
-l = list(map(int, data[index:index + N]))
+positions = insert_hash_table(keys, M)
+print(*positions)
 
-ans = []
-for u in l:
-    t = u % M
-    i = t
-    while True:
-        if k[i] == 0.5 or k[i] == u:
-            ans.append(i)
-            k[i] = u
-            break
-        i = (i + 1) % M
-
-print(*ans)
 ```
 
 
