@@ -20,9 +20,16 @@ created on Apr 6, 2024
 
 https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm
 
-In computer science, the **Knuth–Morris–Pratt algorithm** (or **KMP algorithm**) is a string-searching algorithm that searches for occurrences of a "word" `W` within a main "text string" `S` by employing the observation that when a mismatch occurs, the word itself embodies sufficient information to determine where the next match could begin, thus bypassing re-examination of previously matched characters.
+在计算机科学中，**Knuth-Morris-Pratt 算法**（简称 **KMP 算法**）是一种字符串查找算法。该算法通过观察到这样一个关键点来查找主文本字符串 `S` 中是否存在一个“单词”或子字符串 `W`：<mark>当发生字符不匹配时，单词 `W` 本身已经包含了足够的信息，可以确定下一次可能的匹配位置，从而跳过对先前已匹配字符的重复检查</mark>。
 
-The algorithm was conceived by James H. Morris and independently discovered by Donald Knuth "a few weeks later" from automata theory. Morris and Vaughan Pratt published a technical report in 1970. The three also published the algorithm jointly in 1977. Independently, in 1969, Matiyasevich discovered a similar algorithm, coded by a two-dimensional Turing machine, while studying a string-pattern-matching recognition problem over a binary alphabet. This was the first linear-time algorithm for string matching.
+> KMP 利用已经匹配的信息避免无谓的重复比较，实现了 O(n + m) 的字符串匹配效率。
+
+该算法最初由 James H. Morris 构思，并在几周后被 Donald Knuth 从自动机理论的角度独立发现。Morris 和 Vaughan Pratt 于 1970 年发表了一篇技术报告。三人于 1977 年联合发表了这一算法。与此同时，在 1969 年，Matiyasevich 在研究一个基于二元字母表的字符串模式匹配识别问题时，利用二维图灵机设计出了一个类似的算法。这是<mark>第一个实现线性时间复杂度的字符串匹配算法</mark>。
+
+> In computer science, the **Knuth–Morris–Pratt algorithm** (or **KMP algorithm**) is a string-searching algorithm that searches for occurrences of a "word" `W` within a main "text string" `S` by employing the observation that when a mismatch occurs, the word itself embodies sufficient information to determine where the next match could begin, thus bypassing re-examination of previously matched characters.
+>
+> The algorithm was conceived by James H. Morris and independently discovered by Donald Knuth "a few weeks later" from automata theory. Morris and Vaughan Pratt published a technical report in 1970. The three also published the algorithm jointly in 1977. Independently, in 1969, Matiyasevich discovered a similar algorithm, coded by a two-dimensional Turing machine, while studying a string-pattern-matching recognition problem over a binary alphabet. This was the first linear-time algorithm for string matching.
+>
 
 
 
@@ -38,23 +45,42 @@ KMP Algorithm for Pattern Searching
 
 **Generative AI is experimental**. Info quality may vary.
 
-The Knuth–Morris–Pratt (KMP) algorithm is **a computer science algorithm that searches for words in a text string**. The algorithm compares characters from left to right. 
+Knuth-Morris-Pratt（KMP）算法是**一种用于在文本字符串中查找单词的计算机科学算法**。该算法从左到右依次比较字符。
 
-When a mismatch occurs, the algorithm uses a preprocessed table called a "Prefix Table" to skip character comparisons.
+当出现字符不匹配时，算法会使用一个预处理表（称为“前缀表”）来跳过不必要的字符比较。
 
-How the KMP algorithm works
+**KMP 算法的工作原理**
 
-- The algorithm finds repeated substrings called LPS in the pattern and stores LPS information in an array.
-- The algorithm compares characters from left to right.
-- When a mismatch occurs, the algorithm uses a preprocessed table called a "Prefix Table" to skip character comparisons.
-- The algorithm precomputes a prefix function that helps determine the number of characters to skip in the pattern whenever a mismatch occurs.
-- The algorithm improves upon the brute force method by utilizing information from previous comparisons to avoid unnecessary character comparisons.
+- 该算法会在模式串中寻找被称为 LPS（最长前缀后缀）的重复子串，并将这些 LPS 信息存储在一个数组中。
+- 算法从左到右逐个比较字符。
+- 当发生不匹配时，算法使用一个预处理好的表（称为“前缀表”）来跳过字符比较。
+- 算法预先计算一个前缀函数，帮助确定每次发生不匹配时可以在模式串中跳过多少字符。
+- 相比暴力搜索方法，KMP 算法利用先前比较的信息，避免了不必要的字符比较，从而提高了效率。
 
-Benefits of the KMP algorithm
+**KMP 算法的优势**
 
-- The KMP algorithm efficiently helps you find a specific pattern within a large body of text.
-- The KMP algorithm makes your text editing tasks quicker and more efficient.
-- The KMP algorithm guarantees 100% reliability.
+- KMP 算法可以高效地帮助你在大量文本中找到特定的模式串。
+- KMP 算法可以使你的文本编辑任务更快、更高效。
+- KMP 算法保证了**100% 的可靠性**。
+
+> The Knuth–Morris–Pratt (KMP) algorithm is **a computer science algorithm that searches for words in a text string**. The algorithm compares characters from left to right. 
+>
+> When a mismatch occurs, the algorithm uses a preprocessed table called a "Prefix Table" to skip character comparisons.
+>
+> How the KMP algorithm works
+>
+> - The algorithm finds repeated substrings called LPS in the pattern and stores LPS information in an array.
+> - The algorithm compares characters from left to right.
+> - When a mismatch occurs, the algorithm uses a preprocessed table called a "Prefix Table" to skip character comparisons.
+> - The algorithm precomputes a prefix function that helps determine the number of characters to skip in the pattern whenever a mismatch occurs.
+> - The algorithm improves upon the brute force method by utilizing information from previous comparisons to avoid unnecessary character comparisons.
+>
+> Benefits of the KMP algorithm
+>
+> - The KMP algorithm efficiently helps you find a specific pattern within a large body of text.
+> - The KMP algorithm makes your text editing tasks quicker and more efficient.
+> - The KMP algorithm guarantees 100% reliability.
+>
 
 
 
@@ -63,11 +89,21 @@ Benefits of the KMP algorithm
 **Preprocessing Overview:**
 
 - KMP algorithm preprocesses pat[] and constructs an auxiliary **lps[]** of size **m** (same as the size of the pattern) which is used to skip characters while matching.
-- Name **lps** indicates the longest proper prefix which is also a suffix. A proper prefix is a prefix with a whole string not allowed. For example, prefixes of “ABC” are “”, “A”, “AB” and “ABC”. Proper prefixes are “”, “A” and “AB”. Suffixes of the string are “”, “C”, “BC”, and “ABC”. 真前缀（proper prefix）是一个串除该串自身外的其他前缀。
+
+- Name **lps** indicates the <mark>longest proper prefix</mark> which is also a suffix. A proper prefix is a prefix with a whole string not allowed. For example, prefixes of “ABC” are “”, “A”, “AB” and “ABC”. Proper prefixes are “”, “A” and “AB”. Suffixes of the string are “”, “C”, “BC”, and “ABC”. 真前缀（proper prefix）是一个串除该串自身外的其他前缀。
+
 - We search for lps in subpatterns. More clearly we ==focus on sub-strings of patterns that are both prefix and suffix==.
+
 - For each sub-pattern pat[0..i] where i = 0 to m-1, lps[i] stores the length of the maximum matching proper prefix which is also a suffix of the sub-pattern pat[0..i].
 
+  > <mark>LPS表是一个数组，其中的每个元素表示模式字符串中当前位置之前的子串的最长前缀后缀的长度。</mark>
+
 >   lps[i] = the longest proper prefix of pat[0..i] which is also a suffix of pat[0..i]. 
+>
+>   <mark>核心概念：最长前缀后缀（LPS 表）</mark>
+>
+>   - **<mark>LPS（Longest Prefix which is also Suffix）</mark>表**：对模式串 `pattern` 的每个前缀子串，记录它的“最长相等前后缀”的长度。
+>   - 它的作用是：**当匹配失败时，指针无需回退主串的位置，只需调整模式串的位置即可继续匹配**。
 
 **Note:** lps[i] could also be defined as the longest prefix which is also a proper suffix. We need to use it properly in one place to make sure that the whole substring is not considered.
 
@@ -101,16 +137,16 @@ def compute_lps(pattern):
     """
 
     m = len(pattern)
-    lps = [0] * m
-    length = 0
-    for i in range(1, m):
+    lps = [0] * m  # 初始化lps数组
+    length = 0  # 当前最长前后缀长度
+    for i in range(1, m):  # 注意i从1开始，lps[0]永远是0
         while length > 0 and pattern[i] != pattern[length]:
-            length = lps[length - 1]    # 跳过前面已经比较过的部分
+            length = lps[length - 1]  # 回退到上一个有效前后缀长度
         if pattern[i] == pattern[length]:
             length += 1
         lps[i] = length
-    return lps
 
+    return lps
 
 def kmp_search(text, pattern):
     n = len(text)
@@ -120,15 +156,17 @@ def kmp_search(text, pattern):
     lps = compute_lps(pattern)
     matches = []
 
-    j = 0  # j是pattern的索引
-    for i in range(n):  # i是text的索引
+    # 在 text 中查找 pattern
+    j = 0  # 模式串指针
+    for i in range(n):  # 主串指针
         while j > 0 and text[i] != pattern[j]:
-            j = lps[j - 1]
+            j = lps[j - 1]  # 模式串回退
         if text[i] == pattern[j]:
             j += 1
         if j == m:
-            matches.append(i - j + 1)
-            j = lps[j - 1]
+            matches.append(i - j + 1)  # 匹配成功
+            j = lps[j - 1]  # 查找下一个匹配
+
     return matches
 
 
@@ -138,8 +176,25 @@ index = kmp_search(text, pattern)
 print("pos matched：", index)
 # pos matched： [4, 13]
 
-
 ```
+
+
+
+KMP 是一种利用双指针和动态规划的字符串匹配算法。
+
+- **双指针**：确实存在，一个指针在主串 `text` 上（`i`），另一个在模式串 `pattern` 上（`j`）。
+- **动态规划**：广义上讲，LPS 的构造有递推性质，有人将其类比为动态规划的表构建过程（类似于状态转移），但它并不是真正的 DP 算法，只是一个预处理表。
+
+------
+
+✅ 总结
+
+| 项目     | 说明                                      |
+| -------- | ----------------------------------------- |
+| 主要目标 | 在主串中高效地查找子串                    |
+| 核心工具 | LPS 表：用于跳过无效比较                  |
+| 优点     | 匹配失败时主串不回退，时间复杂度 O(n + m) |
+| 适用场景 | 文本搜索、DNA序列分析、代码查重等         |
 
 
 
@@ -168,7 +223,7 @@ print("pos matched：", index)
 
 
 
-### 02406: 字符串乘方
+### 练习02406: 字符串乘方
 
 http://cs101.openjudge.cn/practice/02406/
 
@@ -237,7 +292,7 @@ while True:
 
 
 
-### 01961: 前缀中的周期
+### 练习01961: 前缀中的周期
 
 http://cs101.openjudge.cn/practice/01961/
 
@@ -292,9 +347,9 @@ Test case #2
 
 【POJ1961】period，https://www.cnblogs.com/ve-2021/p/9744139.html
 
-如果一个字符串S是由一个字符串T重复K次构成的，则称T是S的循环元。使K出现最大的字符串T称为S的最小循环元，此时的K称为最大循环次数。
+如果一个字符串S是由一个字符串T重复K次构成的，则称T是S的<mark>循环元</mark>。使K出现最大的字符串T称为S的最小循环元，此时的K称为最大循环次数。
 
-现在给定一个长度为N的字符串S，对S的每一个前缀S[1~i],如果它的最大循环次数大于1，则输出该循环的最小循环元长度和最大循环次数。
+现在给定一个长度为N的字符串S，对S的每一个前缀S[1~i]，如果它的最大循环次数大于1，则输出该循环的最小循环元长度和最大循环次数。
 
 
 
