@@ -17769,6 +17769,31 @@ print(dfs(root, True))
 
 
 
+【白晨旭 24工学院】很简洁，选了当前点就不能选左右儿子，相当于就是左右儿子的notchoose + 当前点；不选当前点就看左右儿子最大能有多少宝藏然后加起来。树和递归融合起来确实简洁又漂亮
+
+```python
+def max_value(n, tree):
+    def dfs(i):
+        if i >= n:
+            return 0, 0
+        
+        left = dfs(2 * i + 1)
+        right = dfs(2 * i + 2)
+        not_choose = max(left) + max(right)
+        choose = left[0] + right[0] + tree[i]
+        
+        return not_choose, choose
+    return max(dfs(0))
+    
+n = int(input())
+values = list(map(int, input().split()))
+print(max_value(n, values))
+```
+
+
+
+
+
 ```python
 # 黄鑫源 24地空学院
 # 用递归比较节点与孙子节点的和与子节点和的大小
