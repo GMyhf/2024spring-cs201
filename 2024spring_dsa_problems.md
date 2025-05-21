@@ -17769,6 +17769,25 @@ print(dfs(root, True))
 
 
 
+```python
+# 黄鑫源 24地空学院
+# 用递归比较节点与孙子节点的和与子节点和的大小
+n = int(input())
+l = list(map(int, input().split()))
+
+
+def dfs(i):
+    if i >= n:
+        return 0
+    else:
+        return max(l[i] + dfs(4 * i + 3) + dfs(4 * i + 4) + dfs(4 * i + 5) + dfs(4 * i + 6),
+                   dfs(2 * i + 1) + dfs(2 * i + 2))
+
+
+print(dfs(0))
+
+```
+
 
 
 ## 24676: 共同富裕
