@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1021 GMT+8 May 19, 2025
+Updated 1021 GMT+8 May 22, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -6171,6 +6171,64 @@ Output one line with only the largest difference desired. The difference is guar
 来源
 
 POJ Monthly--2006.12.31, Sempr
+
+
+
+你的理解是正确的：
+
+- 将每个不等式
+
+  $x_B−x_A≤c$
+
+  看作有向边 A→B，权重为 c。
+
+- 对任意一条从 1 到 N 的路径 $1=v_0→v_1→⋯→v_k=N$，都有
+
+  $x_N−x_1≤ \sum_{i=0}^{k−1}c_{v_i v_{i+1}}$.
+
+- 要使 $x_N−x_1$ 尽可能大，就要取所有路径权重之中的最小值──也就是在这张有向图上求从 1 到 N 的最短路。
+
+因为所有 $c≥0$，可以直接用 Dijkstra 算法。下面给出一个 $O(Mlog⁡N)$ 的实现：
+
+```python
+import sys
+import threading
+import heapq
+
+def main():
+    input = sys.stdin.readline
+    N, M = map(int, input().split())
+    graph = [[] for _ in range(N+1)]
+    for _ in range(M):
+        A, B, c = map(int, input().split())
+        graph[A].append((B, c))
+    INF = 10**30
+    dist = [INF] * (N+1)
+    dist[1] = 0
+    pq = [(0, 1)]  # (当前距离, 节点)
+    while pq:
+        d, u = heapq.heappop(pq)
+        if d > dist[u]:
+            continue
+        if u == N:
+            break    # 提前退出
+        for v, w in graph[u]:
+            nd = d + w
+            if nd < dist[v]:
+                dist[v] = nd
+                heapq.heappush(pq, (nd, v))
+    # 输出从 1 到 N 的最短路距离，即为最大可实现的 x_N - x_1
+    print(dist[N])
+
+if __name__ == "__main__":
+    threading.Thread(target=main).start()
+```
+
+**说明：**
+
+1. 我们把每条约束 xB≤xA+c 转化为图中的一条边 A→B，权重为 c。
+2. 用 Dijkstra 从节点 1 出发，算出到节点 N 的最短距离 `dist[N]`。
+3. 这个最短距离恰好就是在所有满足约束的分配方案中，xN−x1 能达到的最大值。
 
 
 
