@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1603 GMT+8 May 23, 2025
+Updated 1603 GMT+8 May 27, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -4104,6 +4104,124 @@ aloha.arachnid.dog.gopher.rat.tiger
 来源
 
 Waterloo local 2003.01.25
+
+
+
+
+
+
+
+问题建模
+
+1. **图的构造**
+   - 顶点：26 个字母 `'a'–'z'`。
+   - 有向边：每个单词 `w` 视为一条从 `w[0]` 指向 `w[-1]` 的边，边上存储整个单词。
+2. **欧拉路径的必要条件**
+   - 最多一个顶点满足 `出度 = 入度 + 1`（起点）。
+   - 最多一个顶点满足 `入度 = 出度 + 1`（终点）。
+   - 其余顶点都满足 `入度 = 出度`。
+   - 涉及到的所有顶点在“无向”意义上必须连通。
+3. **字典序最小**
+   - 对每个出发字母，用一个 **最小堆**（`heapq`）按完整单词排序，取边时总是弹出堆顶，保证当前能选的最小单词优先使用。
+4. **Hierholzer 算法**
+   - 从合法的起点（如果不存在“`出度 = 入度 + 1`”则从最小字母出发）出发，DFS 弹栈构造路径，最后逆序输出。
+
+------
+
+代码实现
+
+```python
+import sys
+import heapq
+from collections import defaultdict, deque
+
+
+def find_eulerian_path(words):
+    indeg = defaultdict(int)
+    outdeg = defaultdict(int)
+    adj = defaultdict(list)
+    used_letters = set()
+
+    # 1. 构造图：入度、出度，并在 adj[u] 中维护 (word, v) 的最小堆
+    for w in words:
+        u, v = w[0], w[-1]
+        outdeg[u] += 1
+        indeg[v] += 1
+        used_letters |= {u, v}
+        heapq.heappush(adj[u], (w, v))
+
+    # 2. 检查度数条件，找可能的起点
+    start, plus1, minus1 = None, 0, 0
+    for ch in used_letters:
+        o, i = outdeg[ch], indeg[ch]
+        if o == i + 1:
+            plus1 += 1
+            start = ch
+        elif i == o + 1:
+            minus1 += 1
+        elif i != o:
+            return None
+    if not ((plus1 == 1 and minus1 == 1) or (plus1 == 0 and minus1 == 0)):
+        return None
+
+    # 3. 如果没有唯一起点，就从最小的有出度的字母开始
+    if start is None:
+        start = min(ch for ch in used_letters if outdeg[ch] > 0)
+
+    # 4. 连通性检查（无向图）
+    seen = {start}
+    q = deque([start])
+    undirected = defaultdict(list)
+    for u in adj:
+        for _, v in adj[u]:
+            undirected[u].append(v)
+            undirected[v].append(u)
+    while q:
+        u = q.popleft()
+        for v in undirected[u]:
+            if v not in seen:
+                seen.add(v)
+                q.append(v)
+    if seen != used_letters:
+        return None
+
+    # 5. Hierholzer：DFS 弹栈
+    path = deque()
+
+    def dfs(u):
+        heap = adj[u]
+        while heap:
+            w, v = heapq.heappop(heap)
+            dfs(v)
+            path.appendleft(w)
+
+    dfs(start)
+
+    # 6. 检查是否用了所有单词
+    if len(path) != len(words):
+        return None
+    return '.'.join(path)
+
+
+def solve():
+    input = sys.stdin.readline
+    t = int(input())
+    for _ in range(t):
+        n = int(input())
+        words = [input().strip() for _ in range(n)]
+        ans = find_eulerian_path(words)
+        print(ans if ans is not None else "***")
+
+
+if __name__ == "__main__":
+    sys.setrecursionlimit(1000000)
+    solve()
+```
+
+- **复杂度**：
+  - 建图和入度/出度统计：O(N log N)（每个单词入堆）。
+  - DFS（Hierholzer）：O(N log N)。
+- 能正确处理最大 N=1000 的用例，并保证字典序最小。
 
 
 
