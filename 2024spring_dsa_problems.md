@@ -29,9 +29,9 @@ Updated 1603 GMT+8 May 28, 2025
 
 # 01094~02299
 
-## 01094: Sorting It All Out
+## T01094: Sorting It All Out
 
-http://cs101.openjudge.cn/practice/01094/
+topological sort, http://cs101.openjudge.cn/practice/01094/
 
 An ascending sorted sequence of distinct values is one in which some form of a less-than operator is used to order the elements from smallest to largest. For example, the sorted sequence A, B, C, D implies that A < B, B < C and C < D. in this problem, we will give you a set of relations of the form A < B and ask you to determine whether a sorted order has been specified or not. 
 
