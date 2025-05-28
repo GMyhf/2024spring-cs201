@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1603 GMT+8 May 27, 2025
+Updated 1603 GMT+8 May 28, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -171,9 +171,9 @@ while True:
 
 
 
-## 01145: Tree Summing
+## T01145: Tree Summing
 
-http://cs101.openjudge.cn/practice/01145/
+tree, http://cs101.openjudge.cn/practice/01145/
 
 LISP was one of the earliest high-level programming languages and, with FORTRAN, is one of the oldest languages currently being used. Lists, which are the fundamental data structures in LISP, can easily be adapted to represent other important data structures such as trees. 
 
@@ -321,6 +321,156 @@ while True:
     else:
         print("no")
 ```
+
+
+
+下面给出一个**基于递归直接解析 S-表达式**的版本，不再依赖 `eval`。
+
+```python
+import sys
+
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val        # 节点的数值
+        self.left = left      # 左子树
+        self.right = right    # 右子树
+
+def has_path_sum(root, target_sum):
+    """
+    判断从 root 出发，是否存在一条根->叶路径，其节点值之和等于 target_sum
+    """
+    if root is None:
+        return False
+    # 到达叶子节点，直接比较剩余 target
+    if root.left is None and root.right is None:
+        return root.val == target_sum
+    # 递归地在左右子树中寻找，更新剩余 target_sum
+    return (
+        has_path_sum(root.left, target_sum - root.val)
+        or has_path_sum(root.right, target_sum - root.val)
+    )
+
+def parse_s_expr(s, i):
+    """
+    递归解析 S-表达式：
+    输入：字符串 s，以及当前读取位置 i（指向一个 '('）
+    输出：解析出的 TreeNode 或 None，以及新的读取位置 j（指向该子表达式末尾后一个位置）
+    """
+    # 跳过所有空白
+    while i < len(s) and s[i].isspace():
+        i += 1
+    # 必须以 '(' 开头
+    if i >= len(s) or s[i] != '(':
+        raise ValueError("格式错误：期待 '('，但在位置 %d 遇到 '%s'" % (i, s[i] if i < len(s) else 'EOF'))
+    i += 1  # 跳过 '('
+
+    # 跳过空格，检查是不是空树 "()"
+    while i < len(s) and s[i].isspace():
+        i += 1
+    if i < len(s) and s[i] == ')':
+        # 这是一个空树
+        return None, i + 1
+
+    # 读整数（可能为负数）
+    neg = False
+    if s[i] == '-':
+        neg = True
+        i += 1
+    if i >= len(s) or not s[i].isdigit():
+        raise ValueError("格式错误：期待数字，但在位置 %d 遇到 '%s'" % (i, s[i] if i < len(s) else 'EOF'))
+    num = 0
+    while i < len(s) and s[i].isdigit():
+        num = num * 10 + int(s[i])
+        i += 1
+    if neg:
+        num = -num
+
+    # 创建当前节点
+    node = TreeNode(num)
+
+    # 解析左子树
+    node.left, i = parse_s_expr(s, i)
+    # 解析右子树
+    node.right, i = parse_s_expr(s, i)
+
+    # 跳过空白，接着应有一个 ')'
+    while i < len(s) and s[i].isspace():
+        i += 1
+    if i >= len(s) or s[i] != ')':
+        raise ValueError("格式错误：期待 ')'，但在位置 %d 遇到 '%s'" % (i, s[i] if i < len(s) else 'EOF'))
+    return node, i + 1
+
+def read_one_case():
+    """
+    从标准输入读取一个测试用例：
+      - 先读包含 target_sum 的那一行
+      - 然后根据括号配对读取完整的 S-表达式
+    返回 (target_sum, expr_string)，若 EOF 则返回 (None, None)
+    """
+    line = ''
+    # 跳过空行
+    while True:
+        line = sys.stdin.readline()
+        if not line:
+            return None, None
+        if line.strip():
+            break
+
+    parts = line.strip().split(None, 1)
+    target_sum = int(parts[0])
+    expr = parts[1] if len(parts) > 1 else ''
+    # 统计当前括号平衡情况
+    balance = expr.count('(') - expr.count(')')
+    # 如果还没配对完，就继续读
+    while balance > 0:
+        nxt = sys.stdin.readline()
+        if not nxt:
+            break
+        expr += nxt.strip()
+        balance = expr.count('(') - expr.count(')')
+    return target_sum, expr
+
+def main():
+    while True:
+        target_sum, expr = read_one_case()
+        if target_sum is None:
+            break  # EOF 退出
+
+        # 解析整棵树
+        try:
+            root, _ = parse_s_expr(expr, 0)
+        except ValueError as e:
+            # 格式有问题，当作空树处理
+            root = None
+
+        # 空树直接 no
+        if root is None:
+            print("no")
+            continue
+
+        # 判断并输出
+        print("yes" if has_path_sum(root, target_sum) else "no")
+
+if __name__ == "__main__":
+    main()
+```
+
+> **核心思路**
+>
+> 1. **直接递归解析 S-表达式**
+>    - `parse_s_expr` 从一个 `(` 开始，跳过空格
+>    - 如果下一个字符立刻是 `)`，就是空树 `()`
+>    - 否则先读一个整数值，构造节点
+>    - 递归解析左子树，再递归解析右子树
+>    - 最后跳过空格、匹配右括号 `)`
+> 2. **准确控制读取位置**
+>    不再拼接、`eval`、再转回字符串，避免中间出错；而是一次性读入完整字符串并用索引控制解析。
+> 3. **输入驱动**
+>    `read_one_case` 保证：
+>    - 先读含目标值的一行
+>    - 根据括号数量动态读剩余行，直到配对完整
+>
+> 这样凡是合法的 LISP 树，都能被准确地转成二叉树、再去判断根—叶路径和。
 
 
 
