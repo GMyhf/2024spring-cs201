@@ -18194,6 +18194,40 @@ dp, http://cs101.openjudge.cn/practice/24637/
 
 
 
+```python
+class Solution:
+    def rob(self, values):
+        from functools import lru_cache
+
+        n = len(values)
+
+        #@lru_cache(None)
+        def dfs(i):
+            if i > n:
+                return 0, 0  # (rob, not_rob)
+
+            # 左右孩子编号
+            left = 2 * i
+            right = 2 * i + 1
+
+            l_rob, l_not_rob = dfs(left)
+            r_rob, r_not_rob = dfs(right)
+
+            rob_i = values[i - 1] + l_not_rob + r_not_rob
+            not_rob_i = max(l_rob, l_not_rob) + max(r_rob, r_not_rob)
+
+            return rob_i, not_rob_i
+
+        return max(dfs(1))  # 根节点编号为1
+
+sol = Solution()
+n = int(input())
+values = list(map(int, input().split()))
+print(sol.rob(values))  
+```
+
+
+
 可以把这棵完全二叉树看成一个树形上的「最大权独立集」问题——也就是在树上选若干个节点，使得没有一条边的两个端点同时被选中，且被选中节点权值之和最大。
 
 对于任意一个节点 \(i\)，定义两个状态：
