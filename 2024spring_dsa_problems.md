@@ -9414,11 +9414,11 @@ for result in results:
 
 
 
-## 04140: 方程求解
+## M04140: 方程求解
 
-http://cs101.openjudge.cn/practice/04140/
+牛顿迭代法, AI, binary search, http://cs101.openjudge.cn/practice/04140/
 
-求下面方程的根：f(x) = x3- 5x2+ 10x - 80 = 0。
+求下面方程的根：$ f(x) = x^3 - 5x^2 + 10x - 80 = 0 $。
 
 **输入**
 
@@ -9448,7 +9448,7 @@ http://cs101.openjudge.cn/practice/04140/
 
 
 
-**方法 1：牛顿迭代法**
+**方法 1：牛顿迭代法**（Newton-Raphson Method）
 
 牛顿法适用于方程可微的情况，需要计算导数：
 
@@ -9461,28 +9461,44 @@ x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}
 $$
 
 
+
+Python 实现，输出保留到小数点后 9 位：
+
 ```python
 def f(x):
     return x**3 - 5*x**2 + 10*x - 80
-def df(x):
-    """计算 f(x) 的导数"""
+
+def f_prime(x):
     return 3*x**2 - 10*x + 10
 
-def newton_method(x0, tol=1e-9, max_iter=1000):
-    """牛顿迭代法求根"""
+def newton_method(x0, eps=1e-10, max_iter=1000):
     x = x0
     for _ in range(max_iter):
         fx = f(x)
-        dfx = df(x)
-        if abs(fx) < tol:
-            return x
-        x -= fx / dfx  # 牛顿迭代公式
-    return x
+        fpx = f_prime(x)
+        if abs(fpx) < 1e-12:
+            raise ValueError("Derivative too small, method fails.")
+        x_new = x - fx / fpx
+        if abs(x_new - x) < eps:
+            return x_new
+        x = x_new
+    raise ValueError("Newton method did not converge.")
 
-# 选择初始值
-root2 = newton_method(3)
-print(f"{root2:.9f}")
+# 初始猜测（可以图像估计或经验选择）
+initial_guess = 4.0
+root = newton_method(initial_guess)
+
+# 输出结果，保留9位小数
+print(f"{root:.9f}")
 ```
+
+说明：
+
+- 使用初始猜测 `x0 = 4.0`，该函数在 x=4 附近有根。
+- 精度设置为 `1e-10`，确保输出时小数点后 9 位准确。
+- 若牛顿法不收敛，会抛出异常。
+
+这个程序没有输入，因此运行时直接输出结果即可，符合题目要求。
 
 
 
@@ -9591,12 +9607,12 @@ def binary_search(a, b, tol=1e-9):
         mid = (a + b) / 2
         if f(mid) == 0:
             return mid
-        elif f(mid) * f(a) < 0:
+        elif f(mid) * f(a) < 0: # 说明区间内有根
             b = mid
         else:
             a = mid
 
-    return (a + b) / 2
+    return (a + b) / 2 # 根就在这个很小的区间里
 
 
 # 选择合适的区间（先观察 f(x) 在不同区间的符号变化）
@@ -17946,9 +17962,9 @@ for _ in range(n):
 
 
 
-## 24591: 中序表达式转后序表达式
+## T24591: 中序表达式转后序表达式
 
-http://cs101.openjudge.cn/practice/24591/
+stack, http://cs101.openjudge.cn/practice/24591/
 
 中序表达式是运算符放在两个数中间的表达式。乘、除运算优先级高于加减。可以用"()"来提升优先级 --- 就是小学生写的四则算术运算表达式。中序表达式可用如下方式递归定义：
 
