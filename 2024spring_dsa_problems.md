@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-Updated 1603 GMT+8 May 28, 2025
+Updated 1603 GMT+8 Jun 4, 2025
 
 2024 spring, Complied by Hongfei Yan
 
@@ -19896,6 +19896,7 @@ http://cs101.openjudge.cn/practice/26572/
 ```
 (1+11)
 ((1+2))+3*(4+5)
+1+(2+3)
 ```
 
 样例输出
@@ -19903,175 +19904,260 @@ http://cs101.openjudge.cn/practice/26572/
 ```
 1+11
 1+2+3*(4+5)
+1+(2+3)
 ```
 
 来源: lxp
 
 
 
-2024/5/30 修正过测试数据。正确方法应该是中缀转后缀，后缀再转中缀表达式（同时满足题面要求：不改变算式运算顺序）。
+2025/6/4 修正过测试数据。正确方法应该是中缀转后缀，后缀再转中缀表达式（同时满足题面要求：不改变算式运算顺序）。
 
-正确能够AC代码
+基于 中缀表达式转后缀表达式（也叫逆波兰表示法，Reverse Polish Notation，RPN）的思想，并在后缀表达式的基础上再转回中缀表达式，同时去除冗余的括号。下面代码也可以 AC。
 
 ```python
 import re
 
-def infix_to_postfix(expression):
-    opStack = []
-    postfixList = []
-    prec = {"+": 0, "*": 1}
-    for i in expression:
-        if i.isalnum():
-            postfixList.append(i)
-        elif i == "(":
-            opStack.append(i)
-        elif i == ")":
-            while opStack and opStack[-1] != "(":
-                postfixList.append(opStack.pop())
-            opStack.pop()  # Remove '('
+def infix_to_postfix(tokens):
+    """
+    中缀（tokens）→ 后缀：
+    - 使用栈存运算符，根据优先级（+：1，*：2）和左结合性来出栈与入栈。
+    - 数字直接输出到 postfixList，遇到 '(' 入栈，遇到 ')' 则依次弹出运算符直到遇到 '('。
+    """
+    op_stack = []
+    postfix = []
+    prec = {"+": 1, "*": 2}
+
+    for tk in tokens:
+        if tk.isdigit():
+            # 数字（包括多位）直接放到后缀列表
+            postfix.append(tk)
+        elif tk == "(":
+            op_stack.append(tk)
+        elif tk == ")":
+            # 右括号时，把栈顶运算符都弹出直到遇到左括号
+            while op_stack and op_stack[-1] != "(":
+                postfix.append(op_stack.pop())
+            op_stack.pop()  # 弹出 '('
         else:
-            while opStack and opStack[-1] != "(" and prec[i] <= prec[opStack[-1]]:
-                postfixList.append(opStack.pop())
-            opStack.append(i)
-    while opStack:
-        postfixList.append(opStack.pop())
-    return postfixList
+            # 运算符：比较优先级，优先级低（或相等）的运算符先出栈
+            while (op_stack and op_stack[-1] != "("
+                   and prec[tk] <= prec[op_stack[-1]]):
+                postfix.append(op_stack.pop())
+            op_stack.append(tk)
 
-def postfix_to_infix(expression):
+    # 最后把栈里剩余的运算符都弹出
+    while op_stack:
+        postfix.append(op_stack.pop())
+
+    return postfix
+
+def postfix_to_infix(postfix):
+    """
+    后缀 → 中缀（去冗余括号）：
+    - 每次遇到数字就把 (字符串, “自身优先级”) 入栈。这里设计：
+        数字的“自身优先级”设为 3，
+        '+' 的优先级设为 1，
+        '*' 的优先级设为 2。
+    - 每次遇到 '+' 或 '*'：
+        从栈顶弹出右操作数 (右子表达式, right_prec)，
+                   再弹出左操作数 (左子表达式, left_prec)。
+        设当前运算符 op 的优先级为 prec_op（'+'→1，'*'→2）。
+        
+        1) 左子表达式需要加括号的条件是：left_prec < prec_op  
+           （也就是子表达式的根运算符优先级更低，一定要加括号）。
+        2) 右子表达式需要加括号的条件是：
+           - 子表达式的根运算符优先级更低： right_prec < prec_op  
+             （相当于 “1 * (2+3)” 这种情况，子表达式是加法、优先级 < 乘法，必须加括号），
+           - 或者 子表达式的根运算符优先级等于当前运算符且 “当前运算符是左结合”：
+             right_prec == prec_op  
+             （例如 “a + (b + c)” 里，右边如果也是 ‘+’，没有括号会变成 “a + b + c” 
+              （即 (a+b)+c），这改变了原先“先算 b+c 再加 a”的顺序，必须保留）。  
+              
+        这样就能保证：在重建中缀字符串时，只加必要的括号，不会破坏原始运算顺序。
+    """
     stack = []
-    for token in expression:
-        if token.isalnum(): # Operand
-            stack.append(token)
-        elif token in ["*", "+"]:
-            if token == "*":
-                if "+" in stack[-2]:
-                    stack[-2] = "(" + stack[-2] + ")"
-                if "+" in stack[-1]:
-                    stack[-1] = "(" + stack[-1] + ")"
-            operand2 = stack.pop()
-            operand1 = stack.pop()
-            stack.append(operand1 + token + operand2)
-    return stack.pop()
+    for tk in postfix:
+        if tk.isdigit():
+            # 数字本身优先级设为 3
+            stack.append((tk, 3))
+        else:
+            # tk 是 '+' 或 '*'
+            right_str, right_prec = stack.pop()
+            left_str, left_prec = stack.pop()
+            prec_op = 2 if tk == "*" else 1
 
+            # 左子表达式加括号的条件：left_prec < prec_op
+            if left_prec < prec_op:
+                left_str = f"({left_str})"
+            # 右子表达式加括号的条件：
+            #   right_prec < prec_op    或
+            #   right_prec == prec_op  （因为 + 和 * 均为左结合，
+            #                           同级右侧子表达式必须加括号）
+            if right_prec < prec_op or right_prec == prec_op:
+                right_str = f"({right_str})"
 
-while True:
-    try:
-        expression = input()
-        tokens = [token for token in re.split(r"(\D)", expression) if token]
-    except EOFError:
-        break
+            merged = f"{left_str}{tk}{right_str}"
+            stack.append((merged, prec_op))
 
-    L = infix_to_postfix(tokens)
-    print(postfix_to_infix(L))
+    return stack.pop()[0]
+
+def simplify_expression(expr):
+    # 用正则把多位数字和运算符/括号拆开
+    tokens = re.findall(r'\d+|[()+*]', expr)
+    postfix = infix_to_postfix(tokens)
+    return postfix_to_infix(postfix)
+
+# 主流程：读每一行、输出简化后的结果
+if __name__ == "__main__":
+    import sys
+    for line in sys.stdin:
+        line = line.strip()
+        if not line:
+            continue
+        print(simplify_expression(line))
 ```
 
 
 
-2024/5/30 修正过测试数据，下面两个解法不能AC。
+
 
 ```python
-# 23n2300011031 黄源森23工院 version2
-"""
-parsing and evaluating mathematical expressions involving addition (+) and multiplication (*)
-with a simple form of precedence (multiplication before addition) without
-using the built-in eval function.
-"""
-import re
+import sys
+
+# 运算符优先级和结合性（左结合 = 'L'，右结合 = 'R'）
+PRECEDENCE = {
+    '+': (1, 'L'),
+    '-': (1, 'L'),
+    '*': (2, 'L'),
+    '/': (2, 'L'),
+    'NEG': (3, 'R'),  # 一元负号
+}
 
 class Node:
     def __init__(self, value, left=None, right=None):
-        self.value = value
+        self.value = value  # 运算符或数值
         self.left = left
         self.right = right
 
-def dfs(node):
-    if isinstance(node, str):
+    def is_leaf(self):
+        return self.left is None and self.right is None
+
+def tokenize(expr):
+    tokens = []
+    i = 0
+    while i < len(expr):
+        if expr[i].isspace():
+            i += 1
+        elif expr[i] in '+-*/()':
+            tokens.append(expr[i])
+            i += 1
+        elif expr[i].isdigit():
+            num = ''
+            while i < len(expr) and expr[i].isdigit():
+                num += expr[i]
+                i += 1
+            tokens.append(num)
+        else:
+            raise ValueError(f"Invalid character: {expr[i]}")
+    return tokens
+
+def parse_expr(tokens):
+    i = 0
+
+    def parse_primary():
+        nonlocal i
+        if tokens[i] == '-':
+            # 一元负号
+            i += 1
+            return Node('NEG', right=parse_primary())
+        elif tokens[i] == '(':
+            i += 1
+            node = parse_add_sub()
+            i += 1  # skip ')'
+            return node
+        else:
+            val = tokens[i]
+            i += 1
+            return Node(val)
+
+    def parse_unary():
+        return parse_primary()
+
+    def parse_mul_div():
+        nonlocal i
+        node = parse_unary()
+        while i < len(tokens) and tokens[i] in ('*', '/'):
+            op = tokens[i]
+            i += 1
+            node = Node(op, node, parse_unary())
         return node
-    if node.value == '*':
-        left = dfs(node.left)
-        right = dfs(node.right)
-        if isinstance(node.left, Node) and node.left.value == '+':
-            left = f'({left})'
-        if isinstance(node.right, Node) and node.right.value == '+':
-            right = f'({right})'
-        return left + '*' + right
-    else:
-        return dfs(node.left) + node.value + dfs(node.right)
 
-def build_tree(tokens):
-    def helper(tokens):
-        stack = []
-        for token in tokens:
-            if token == ')':
-                sub_expr = []
-                while stack and stack[-1] != '(':
-                    sub_expr.append(stack.pop())
-                stack.pop()  # Remove the '(' symbol
-                stack.append(build_tree(sub_expr[::-1]))
-            else:
-                stack.append(token)
-        return stack
+    def parse_add_sub():
+        nonlocal i
+        node = parse_mul_div()
+        while i < len(tokens) and tokens[i] in ('+', '-'):
+            op = tokens[i]
+            i += 1
+            node = Node(op, node, parse_mul_div())
+        return node
 
-    tokens = helper(tokens)
-    # Process multiplication with higher precedence
-    while '*' in tokens:
-        index = tokens.index('*')
-        node = Node('*', tokens[index - 1], tokens[index + 1])
-        tokens = tokens[:index - 1] + [node] + tokens[index + 2:]
-    # Process addition
-    if len(tokens) == 1:
-        return tokens[0]
-    left_operand = tokens[0]
-    for i in range(1, len(tokens), 2):
-        left_operand = Node(tokens[i], left_operand, tokens[i + 1])
-    return left_operand
+    return parse_add_sub()
 
-while True:
-    try:
-        expression = input()
-        tokens = [token for token in re.split(r"(\D)", expression) if token]
-        root = build_tree(tokens)
-        print(dfs(root))
-    except EOFError:
-        break
+def to_string(node, parent_op=None, is_right=False):
+    if node.is_leaf():
+        return node.value
 
+    if node.value == 'NEG':
+        expr = to_string(node.right, 'NEG', True)
+        if not node.right.is_leaf() and PRECEDENCE.get(node.right.value, (0,))[0] < PRECEDENCE['NEG'][0]:
+            expr = f'({expr})'
+        return f'-{expr}'
+
+    left_expr = to_string(node.left, node.value, False) if node.left else ''
+    right_expr = to_string(node.right, node.value, True)
+
+    def need_paren(child, parent, is_right_child):
+        if child.is_leaf():
+            return False
+        child_prec, _ = PRECEDENCE.get(child.value, (0, 'L'))
+        parent_prec, parent_assoc = PRECEDENCE.get(parent, (0, 'L'))
+
+        if child_prec < parent_prec:
+            return True
+        if child_prec == parent_prec:
+            if parent_assoc == 'L' and is_right_child:
+                return True
+            if parent_assoc == 'R' and not is_right_child:
+                return True
+        return False
+
+    if need_paren(node.left, node.value, False):
+        left_expr = f'({left_expr})'
+    if need_paren(node.right, node.value, True):
+        right_expr = f'({right_expr})'
+
+    return f'{left_expr}{node.value}{right_expr}'
+
+def simplify_expression(expr):
+    tokens = tokenize(expr)
+    ast = parse_expr(tokens)
+    return to_string(ast)
+
+if __name__ == '__main__':
+    for line in sys.stdin:
+        line = line.strip()
+        if line:
+            print(simplify_expression(line))
 ```
 
 
 
-```python
-#  23 元培 夏天明
-"""
-用栈搜索括号，然后暴力枚举尝试去掉每个括号，检验是否改变表达式本身。
 
-但是数据弱了，例如：
-(1+1)*1
-1+1*1
-"""
-import re
 
-while True:
-    try:
-        s = re.split(r"(\D)", input())
-    except EOFError:
-        break
-    pf = eval(''.join(s))
-    parenthesis = []
-    stack = []
-    for i, token in enumerate(s):
-        if token == '(':
-            stack.append(len(parenthesis))
-            parenthesis.append([i])
-        elif token == ')':
-            parenthesis[stack.pop()].append(i)
-    for l, r in parenthesis:
-        s[l] = ''
-        s[r] = ''
-        if pf != eval(''.join(s)):
-            s[l] = '('
-            s[r] = ')'
-    print(''.join(s))
-```
+
+
+
 
 
 
