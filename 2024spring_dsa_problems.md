@@ -8,6 +8,8 @@ Updated 1003 GMT+8 Jun 6, 2025
 
 > **Logs：**
 >
+> 2025/01/01: 题目编号前的英文字母大写表示题目的难度等级，分别对应 Easy、Medium 和 Tough。
+>
 > 2024/4/12: 因为不断汇总进来数算题目，2024_dsapre.md 更名为 2024spring_dsa_problems.md
 >
 > 2024/2/18:
@@ -23728,6 +23730,160 @@ print(min_armor(n, m, T, edges))
 ```
 
 
+
+## T29702:二叉的水管
+
+topological order, tree, http://cs101.openjudge.cn/practice/29702/
+
+现在有一根形状为完全二叉树的水管，根结点为总进水口。由于重力朝向原因，这根水管的流量非常不均衡。这根水管总共有k层，从根节点开始，分别是第0层，第1层，...，第k-1层。具体来说，第i层的结点会把它$10^{-2^{(k-i)}}$的流量分配给左子树，余下的给右子树。若只有左子树，视为右侧全部流入泥土中。
+
+现在有一位管道工被安排来维护这条管道。问题是，这条管道中众多节点的对应图已经遗失不见。他手里的检测工具也非常有限，只能对两个结点的流量进行大小比较，希望以此来判断结点位置。请你帮助他重建这个二叉树形状的水管。
+
+**输入**
+
+第一行是节点数m和关系数n
+第2~n+1行给出n个关系，以“A > B”的形式表示结点A的流量大于结点B的。
+
+**输出**
+
+如果你能够通过检测数据重建二叉树，则输出二叉树的中序遍历结果
+如果你发现检测结果不合逻辑，说明仪器坏了，请输出"Device error."
+如果不能重建二叉树，则请输出"Not determined."
+
+样例输入
+
+```
+3 3
+1 > 2
+2 > 3
+1 > 3
+```
+
+样例输出
+
+```
+3 1 2
+```
+
+提示
+
+按这样的流量分配，左子树的根结点都要小于右子树的最小结点。
+
+
+
+用逐行读取、`split('>')` 来解析 `A > B`，避免了“`1>2`”或多余空格导致的拆分错误。
+
+```python
+import sys
+from collections import defaultdict, deque
+
+
+def solve():
+    data = sys.stdin.readline().strip().split()
+    if not data:
+        return
+    m, n = map(int, data)
+
+    # 1) 读入所有 “A > B” 关系，建图
+    edges = defaultdict(list)
+    indegree = [0] * (m + 1)
+    for _ in range(n):
+        line = sys.stdin.readline().strip()
+        if not line:
+            continue
+        left_str, right_str = line.split('>')
+        A = int(left_str.strip())
+        B = int(right_str.strip())
+        edges[A].append(B)
+        indegree[B] += 1
+
+    # 2) 拓扑排序：检查矛盾（环）和是否唯一
+    q = deque()
+    for u in range(1, m + 1):
+        if indegree[u] == 0:
+            q.append(u)
+
+    topo_list = []
+    multiple = False
+    while q:
+        if len(q) > 1:
+            multiple = True
+        u = q.popleft()
+        topo_list.append(u)
+        for v in edges[u]:
+            indegree[v] -= 1
+            if indegree[v] == 0:
+                q.append(v)
+
+    if len(topo_list) < m:
+        print("Device error.")
+        return
+    if multiple:
+        print("Not determined.")
+        return
+
+    # 3) 生成“位置从大到小”的序列 pos_order（前序 根→右→左）
+    pos_order = []
+
+    def dfs(u):
+        if u > m:
+            return
+        pos_order.append(u)
+        dfs(2 * u + 1)
+        dfs(2 * u)
+
+    dfs(1)
+
+    # 4) 给这些位置分配流量编号（topo_list 为从大到小的编号）
+    assigned = [0] * (m + 1)
+    for i in range(m):
+        assigned[pos_order[i]] = topo_list[i]
+
+    # 5) 使用递归方式中序遍历 assigned[]
+    res = []
+
+    def inorder(u):
+        if u > m:
+            return
+        inorder(2 * u)
+        res.append(str(assigned[u]))
+        inorder(2 * u + 1)
+
+    inorder(1)
+    print(" ".join(res))
+
+
+if __name__ == "__main__":
+    solve()
+```
+
+------
+
+关键点说明
+
+1. **输入解析更健壮**
+   - 用 `line.split('>')` 而不是按空格拆 `A > B`，可以兼容用户输入 `1>2`、`1 > 2`、` 1 > 2` 等多种格式，避免因空格不一致导致的 ValueError 或拆分错误。
+2. **拓扑排序判断“有环”与“是否唯一”**
+   - `edges[A].append(B)` 表示 “A 的流量要大于 B（A→B）”。
+   - 维护 `indegree[B] += 1`，把所有 `indegree[u]==0` 的节点先入队。
+   - 如果某一步队列中超过 1 个节点，就说明有多种合法的拓扑结果（`multiple = True`）。
+   - 最终若拿出的节点数 `< m`，说明有环 → `Device error.`
+   - 否则若 `multiple == True` → `Not determined.`
+   - 否则，`topo_list` 就是“标签从大到小”的**唯一**线性序列。
+3. **“位置从大到小”的序列 pos_order**
+   - 题目保证这颗水管形状是一棵“完全二叉树”共 `k` 层，节点数正好是 $2^k−1$。在堆式编号下，节点编号是 `1..m`，且父节点编号比子节点都要小。
+   - 根据题意：
+     - 根节点的流量最大；
+     - “任意一个节点” 的右子树里所有节点都要大于它的左子树里所有节点；
+     - 而且子节点肯定流量小于父节点。
+   - 由此可以推导，整棵树的“从大到小”的**位置次序**便是“先访问根→再访问右子树（整棵）→再访问左子树（整棵）”。
+4. **把“标签从大到小”的拓扑序，填入“位置从大到小”**
+   - `topo_list[0]`（流量最大的标签）对应 `pos_order[0]`（位置最大的编号1）；
+   - `topo_list[1]`（第二大）对应 `pos_order[1]`（位置第二大的编号，是根的右孩子）；
+   - ……依此类推，最后最小的标签放在最小位置（最深最左）。
+   - 这样，所有关系 `A > B`（即标签 A 的流量大于标签 B）都会自动满足，因为如果 A 比 B 大，A 在 `topo_list` 中下标更靠前，就会被放到“更靠前（流量更大）的树位置”。
+5. **中序遍历输出**
+   - 最后，把 `assigned[]` 看作“堆式”存放了标签值的数组。我们需要按照“左→根→右”的顺序打印标签。
 
 
 
