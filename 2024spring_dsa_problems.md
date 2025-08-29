@@ -1,8 +1,7 @@
 # 数算（数据结构与算法）题目
 
-Updated 1003 GMT+8 Jun 6, 2025
-
-2024 spring, Complied by Hongfei Yan
+*Updated 2025-08-29 20:39 GMT+8*
+ *Compiled by Hongfei Yan (2024 Spring)*
 
 
 
@@ -20237,6 +20236,290 @@ n = int(input())
 
 # Generate and print the Cantor set
 print(print_cantor_set(n))
+```
+
+
+
+## T27018: 康托展开
+
+http://cs101.openjudge.cn/practice/27018/
+
+总时间限制: 3000ms 单个测试点时间限制: 2000ms 内存限制: 90112kB
+描述
+求 1∼N 的一个给定全排列在所有 1∼N 全排列中的排名。结果对 998244353取模。
+
+**输入**
+第一行一个正整数 N。
+
+第二行 N 个正整数，表示 1∼N 的一种全排列。
+**输出**
+一行一个非负整数，表示答案对 998244353 取模的值。
+样例输入
+
+```
+Sample1 in:
+3
+2 1 3
+
+Sample1 output:
+3
+```
+
+样例输出
+
+```
+Sample2 in:
+4
+1 2 4 3
+
+Sample2 output:
+2
+```
+
+提示: 对于100%数据，$1≤N≤1000000$。
+来源: https://www.luogu.com.cn/problem/P5367
+
+
+
+思路：容易想到的方法是把所有排列求出来后再进行排序，但事实上有更简单高效的算法来解决这个问题，那就是康托展开。
+
+> **康托展开**是一个全排列到一个自然数的双射，常用于构建特定哈希表时的空间压缩。 康托展开的实质是计算当前排列在所有由小到大全排列中的次序编号，因此是可逆的。即由全排列可得到其次序编号（康托展开），由次序编号可以得到对应的第几个全排列（逆康托展开）。
+>
+> 康托展开的**表达式为**：
+>
+> $X＝a_n×(n-1)!＋a_{n-1}×(n-2)!＋…＋a_i×(i-1)!＋…＋a_2×1!＋a_1×0!$
+>
+> 其中：X 为比当前排列小的全排列个数（X+1即为当前排列的次序编号）；n 表示全排列表达式的字符串长度；$a_i$ 表示原排列表达式中的第 i 位（由右往左数），前面（其右侧） i-1 位数有多少个数的值比它小。
+
+例如求 5 2 3 4 1 在 {1, 2, 3, 4, 5} 生成的排列中的次序可以按如下步骤计算。
+从右往左数，i 是5时候，其右侧比5小的数有1、2、3、4这4个数，所以有4×4！。
+是2，比2小的数有1一个数，所以有 1×3！。
+是3，比3小的数有1一个数，为1×2！。
+是4，比4小的数有1一个数，为1×1！。
+最后一位数右侧没有比它小的数，为 0×0！＝0。
+则 4×4！＋1×3！＋1×2！＋1×1！＝105。
+这个 X 只是这个排列之前的排列数，而题目要求这个排列的位置，即 5 2 3 4 1排在第 106 位。
+
+同理，4 3 5 2 1的排列数：3×4!＋2×3!＋2×2!＋1×1!＝89，即 4 3 5 2 1 排在第90位。
+因为比4小的数有3个：3、2、1；比3小的数有2个：2、1；比5小的数有2个：2、1；比2小的数有1个：1。
+
+参考代码如下。
+
+
+
+```python
+MOD = 998244353								# Time Limit Exceeded, 内存7140KB, 时间18924ms
+fac = [1]
+
+def cantor_expand(a, n):
+    ans = 0
+    
+    for i in range(1, n + 1):
+        count = 0
+        for j in range(i + 1, n + 1):
+            if a[j] < a[i]:
+                count += 1				# 计算有几个比他小的数
+        ans = (ans + (count * fac[n - i]) % MOD) % MOD
+    return ans + 1
+
+a = [0]
+N = int(input())		# 用大写N，因为spyder的debug，执行下一条指令的命令是 n/next。与变量n冲突。
+
+for i in range(1, N + 1):
+    fac.append((fac[i - 1] * i) % MOD)		# 整数除法具有分配律
+
+*perm, = map(int, input().split())
+a.extend(perm)
+
+print(cantor_expand(a, N))
+```
+
+
+
+用C++也是超时
+
+```c++
+#include<iostream>							// Time Limit Exceeded, 内存960KB, 时间1986ms
+using namespace std;
+
+const long long MOD = 998244353;
+long long fac[1000005]={1};
+
+int cantor_expand (int a[],int n){
+    int i, j, count;
+    long long ans = 0 ;
+
+    for(i = 1; i <= n; i ++){
+        count = 0;
+        for(j = i + 1; j <= n; j ++){
+            if(a[j] < a[i]) count ++;						// 计算有几个比它小的数
+        }
+        ans = (ans + (count * fac[n-i]) % MOD ) % MOD;
+    }
+    return ans + 1;
+}
+
+
+int a[1000005];
+
+int main()
+{
+  int N;
+  //cin >> N;
+  scanf("%d", &N);
+  for (int i=1; i<=N; i++){
+      fac[i] = (fac[i-1]*i)%MOD;
+  }
+
+  for (int i=1; i<=N; i++)
+      //cin >> a[i];
+      scanf("%d",&a[i]);
+  cout << cantor_expand(a,N) << endl;
+  return 0;
+}
+```
+
+
+
+### 优化
+
+康托展开用 $O(n^2)$ 算法超时，需要把时间复杂度降到$O(nLogn)$。“计算有几个比他小的数”，时间复杂度由 $O(n)$ 降到 $O(Logn)$。
+
+### 树状数组（Binary Indexed Tree）
+
+实现树状数组的核心部分，包括了三个重要的操作：lowbit、修改和求和。
+
+1. lowbit函数：`lowbit(x)` 是用来计算 `x` 的二进制表示中最低位的 `1` 所对应的值。它的运算规则是利用位运算 `(x & -x)` 来获取 `x` 的最低位 `1` 所对应的值。例如，`lowbit(6)` 的结果是 `2`，因为 `6` 的二进制表示为 `110`，最低位的 `1` 所对应的值是 `2`。
+
+   > `-x` 是 `x` 的补码表示。
+   >
+   > 对于正整数 `x`，`-x` 的二进制表示是 `x` 的二进制表示取反后加 1。
+   >
+   > `6` 的二进制表示为 `110`，取反得到 `001`，加 1 得到 `010`。
+   >
+   > `-6` 的二进制表示为 `11111111111111111111111111111010`（假设 32 位整数）。
+   >
+   > `6 & -6` 的结果：
+   >
+   > `110` 与 `11111111111111111111111111111010` 按位与运算，结果为 `010`，即 `2`。
+
+2. update函数：这个函数用于修改树状数组中某个位置的值。参数 `x` 表示要修改的位置，参数 `y` 表示要增加/减少的值。函数使用一个循环将 `x` 的所有对应位置上的值都加上 `y`。具体的操作是首先将 `x` 位置上的值与 `y` 相加，然后通过 `lowbit` 函数找到 `x` 的下一个需要修改的位置，将该位置上的值也加上 `y`，然后继续找下一个位置，直到修改完所有需要修改的位置为止。这样就完成了数组的修改。
+
+3. getsum函数：这个函数用于求解树状数组中某个范围的前缀和。参数 `x` 表示要求解前缀和的位置。函数使用一个循环将 `x` 的所有对应位置上的值累加起来，然后通过 `lowbit` 函数找到 `x` 的上一个位置（即最后一个需要累加的位置），再将该位置上的值累加起来，然后继续找上一个位置，直到累加完所有需要累加的位置为止。这样就得到了从位置 `1` 到位置 `x` 的前缀和。
+
+这就是树状数组的核心操作，通过使用这三个函数，我们可以实现树状数组的各种功能，如求解区间和、单点修改等。
+
+```python
+n, MOD, ans = int(input()), 998244353, 1						# 内存69832KB, 时间2847ms
+a, fac = list(map(int, input().split())), [1]
+
+tree = [0] * (n + 1)
+
+def lowbit(x):
+    return x & -x
+
+def update(x, y):
+    while x <= n:
+        tree[x] += y
+        x += lowbit(x)
+
+def getsum(x):
+    tot = 0
+    while x:
+        tot += tree[x]
+        x -= lowbit(x)
+    return tot
+
+
+for i in range(1, n):
+    fac.append(fac[i-1] * i % MOD)
+
+for i in range(1, n + 1):
+    cnt = getsum(a[i-1])
+    update(a[i-1], 1)
+    ans = (ans + ((a[i-1] - 1 - cnt) * fac[n - i]) % MOD) % MOD
+    
+print(ans)
+```
+
+
+
+
+
+### 线段树（Segment tree）
+
+线段树 segment tree 来计算第i位右边比该数还要小的数的个数。
+
+```python
+n, MOD, ans = int(input()), 998244353, 1					# 内存69900KB, 时间5162ms
+a, fac = list(map(int, input().split())), [1]
+
+tree = [0] * (2*n)
+
+
+def build(arr):
+
+    # insert leaf nodes in tree
+    for i in range(n):
+        tree[n + i] = arr[i]
+
+    # build the tree by calculating parents
+    for i in range(n - 1, 0, -1):
+        tree[i] = tree[i << 1] + tree[i << 1 | 1]
+
+
+# function to update a tree node
+def updateTreeNode(p, value):
+
+    # set value at position p
+    tree[p + n] = value
+    p = p + n
+
+    # move upward and update parents
+    i = p
+    while i > 1:
+
+        tree[i >> 1] = tree[i] + tree[i ^ 1]
+        i >>= 1
+
+
+# function to get sum on interval [l, r)
+def query(l, r):
+
+    res = 0
+
+    l += n
+    r += n
+
+    while l < r:
+
+        if (l & 1):
+            res += tree[l]
+            l += 1
+
+        if (r & 1):
+            r -= 1
+            res += tree[r]
+
+        l >>= 1
+        r >>= 1
+
+    return res
+
+
+#build([0]*n)
+
+for i in range(1, n):
+    fac.append(fac[i-1] * i % MOD)
+
+for i in range(1, n + 1):
+    cnt = query(0, a[i-1])
+    updateTreeNode(a[i-1]-1, 1)
+    
+    ans = (ans + (a[i-1] -1 - cnt) * fac[n - i]) % MOD
+    
+print(ans)
+
 ```
 
 
