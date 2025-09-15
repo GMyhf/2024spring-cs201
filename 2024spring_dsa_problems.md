@@ -15410,7 +15410,7 @@ print(longest_common_subsequence(s1, s2))
 
 
 
-## 20742: 泰波拿契數
+## E20742: 泰波拿契數
 
 http://cs101.openjudge.cn/practice/20742/
 
