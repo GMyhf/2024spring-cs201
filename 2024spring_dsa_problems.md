@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-08-29 20:39 GMT+8*
+*Updated 2025-09-16 12:02 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -15407,65 +15407,6 @@ print(longest_common_subsequence(s1, s2))
 ```
 
 
-
-
-
-## E20742: 泰波拿契數
-
-http://cs101.openjudge.cn/practice/20742/
-
-泰波拿契数列 Tn 定义是
-
-$T_0 = 0, T_1 = 1, T_2 = 1, and T_{n+3} = T_n + T_{n+1} + T_{n+2} \space for \space n >= 0$.
-
-给定n请算出Tn
-
-n的范围:1<=n<=30
-
-
-
-**输入**
-
-一个正整数n
-
-**输出**
-
-一个正整数k
-
-样例输入
-
-```
-4
-```
-
-样例输出
-
-```
-4
-```
-
-提示
-
-T3=0 + 1 + 1 = 2
-T4=1 + 1 + 2 = 4
-
-
-
-```python
-def tribonacci(n):
-    if n == 0:
-        return 0
-    elif n <= 2:
-        return 1
-    trib = [0, 1, 1] + [0] * (n - 2)
-    for i in range(3, n + 1):
-        trib[i] = trib[i - 1] + trib[i - 2] + trib[i - 3]
-    return trib[n]
-
-# 读取输入并处理
-n = int(input())
-print(tribonacci(n))
-```
 
 
 
