@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-09-16 12:02 GMT+8*
+*Updated 2025-09-18 22:50 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -1340,9 +1340,9 @@ while True:
 
 
 
-## 01321: 棋盘问题
+## M01321: 棋盘问题
 
-backtracking, http://cs101.openjudge.cn/practice/01321/
+backtracking, http://cs101.openjudge.cn/pctbook/M01321/
 
 在一个给定形状的棋盘（形状可能是不规则的）上面摆放棋子，棋子没有区别。要求摆放时任意的两个棋子不能放在棋盘中的同一行或者同一列，请编程求解对于给定形状和大小的棋盘，摆放k个棋子的所有可行的摆放方案C。
 
@@ -1378,13 +1378,143 @@ backtracking, http://cs101.openjudge.cn/practice/01321/
 1
 ```
 
-来源
-
-蔡错@pku
+来源：蔡错@pku
 
 
 
-这个题目有点描述不清楚吧？没看出来要往#摆棋子。
+这个题是一个典型的 **回溯搜索（DFS + 剪枝）** 问题，类似于不规则棋盘上的「n 皇后」变形版：
+
+- 棋盘是 n×n，但有些位置不可用（用 `.` 表示）。
+- 要摆放 `k` 个棋子。
+- 限制条件：任意两个棋子不能在同一行或同一列。
+- 要输出所有可行方案的个数。
+
+------
+
+**思路解析**
+
+1. **状态表示**
+   - 从第 `row=0` 行开始，一行一行往下考虑是否放棋子。
+   - 用一个布尔数组 `used_col[j]` 标记某一列是否已经放过棋子。
+2. **搜索分支**
+   - 在第 `row` 行：
+     - 可以选择不放棋子，继续搜索下一行。
+     - 可以在这一行的某一列放棋子（前提是：该格是 `#`，并且该列还没用过），然后继续搜索下一行。
+3. **边界条件**
+   - 如果已经放了 `k` 个棋子 → 计数 +1。
+   - 如果行数到头，还没放够 `k` → 剪枝返回。
+4. **复杂度**
+   - n ≤ 8，搜索规模不大，DFS完全可行。
+
+------
+
+Python 实现
+
+```python
+def solve():
+    import sys
+    sys.setrecursionlimit(10000)
+    input_data = sys.stdin.read().splitlines()
+
+    idx = 0
+    while True:
+        n, k = map(int, input_data[idx].split())
+        idx += 1
+        if n == -1 and k == -1:
+            break
+
+        board = [list(input_data[idx + i]) for i in range(n)]
+        idx += n
+
+        used_col = [False] * n
+        res = 0
+
+        def dfs(row, placed):
+            nonlocal res
+            if placed == k:
+                res += 1
+                return
+            if row == n:
+                return
+
+            # 选择不在这一行放棋子
+            dfs(row + 1, placed)
+
+            # 在这一行某个可行位置放棋子
+            for col in range(n):
+                if board[row][col] == '#' and not used_col[col]:
+                    used_col[col] = True
+                    dfs(row + 1, placed + 1)
+                    used_col[col] = False
+
+        dfs(0, 0)
+        print(res)
+
+solve()
+```
+
+
+
+**位运算优化版**（把列状态用一个整数 bitmask 表示）
+ 核心思路是：用一个整数的二进制位来表示列是否被占用。这样就不需要维护 `used_col[]` 数组，速度和内存都会更快。
+
+------
+
+关键优化点
+
+- `n ≤ 8`，所以最多 8 列，可以用一个 **int 的低 8 位** 表示列状态。
+  - 第 j 位 = 1 → 第 j 列已放棋子。
+  - 第 j 位 = 0 → 第 j 列还可用。
+- 搜索时，如果能放棋子，就把对应列位置 1，再递归。
+- 回溯时直接恢复，不需要 `used_col` 数组。
+
+------
+
+Python 位运算版本
+
+```python
+def solve():
+    import sys
+    sys.setrecursionlimit(10000)
+    input_data = sys.stdin.read().splitlines()
+    
+    idx = 0
+    while True:
+        n, k = map(int, input_data[idx].split())
+        idx += 1
+        if n == -1 and k == -1:
+            break
+
+        board = [list(input_data[idx + i]) for i in range(n)]
+        idx += n
+        
+        res = 0
+        
+        def dfs(row, placed, colmask):
+            nonlocal res
+            if placed == k:
+                res += 1
+                return
+            if row == n:
+                return
+            
+            # 这一行不放棋子
+            dfs(row + 1, placed, colmask)
+            
+            # 尝试在这一行放一个棋子
+            for col in range(n):
+                if board[row][col] == '#' and not (colmask & (1 << col)):
+                    dfs(row + 1, placed + 1, colmask | (1 << col))
+        
+        dfs(0, 0, 0)
+        print(res)
+
+solve()
+```
+
+
+
+
 
 ```python
 # 石贤泽2300012407
