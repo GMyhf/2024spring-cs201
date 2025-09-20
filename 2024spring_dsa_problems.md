@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-09-18 22:51 GMT+8*
+*Updated 2025-09-20 22:51 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -17708,9 +17708,9 @@ while True:
 
 # 23563~30000
 
-## 23563: 多项式时间复杂度
+## E23563: 多项式时间复杂度
 
-http://cs101.openjudge.cn/practice/23563/
+string, implementation, http://cs101.openjudge.cn/practice/23563/
 
 请参看 2020fall_cs101.openjudge.cn_problems.md 的 Easy 部分的相同题目。
 
@@ -18740,59 +18740,9 @@ print(min_houses_to_buy(W, n, prices))
 
 
 
-## 24684: 直播计票
+## M24684: 直播计票
 
-http://cs101.openjudge.cn/practice/24684/
-
-直播间发起了投票活动：在屏幕上列出若干选项，观众通过发送弹幕向自己支持的选项投票。在幕后工作的你需要根据弹幕信息，向直播间的观众们展示哪个选项得票最多。
-
-这里每个选项用一个正整数编号表示。
-
-**输入**
-
-输入只有一行，由若干正整数组成，每个正整数表示这条弹幕是投票给哪个选项的。
-
-输入的正整数个数不超过100,000，且满足最多有100个不同的选项，选项的编号不超过100,000。
-
-**输出**
-
-输出只有一行，为得票最多的选项。若有并列第一的情况出现，则按编号从小到大依次输出所有得票数最多的选项，用空格隔开。
-
-样例输入
-
-```
-1 10 2 3 3 10
-```
-
-样例输出
-
-```
-3 10
-```
-
-
-
-```python
-from collections import defaultdict
-
-# 读取输入并转换成整数列表
-votes = list(map(int, input().split()))
-
-# 使用字典统计每个选项的票数
-vote_counts = defaultdict(int)
-for vote in votes:
-    vote_counts[vote] += 1
-
-# 找出得票最多的票数
-max_votes = max(vote_counts.values())
-
-# 按编号顺序收集得票最多的选项
-winners = sorted([item for item in vote_counts.items() if item[1] == max_votes])
-
-# 输出得票最多的选项，如果有多个则并列输出
-print(' '.join(str(winner[0]) for winner in winners))
-
-```
+dict, sorting, http://cs101.openjudge.cn/pctbook/M24684/
 
 
 
