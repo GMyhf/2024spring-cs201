@@ -18740,9 +18740,9 @@ print(min_houses_to_buy(W, n, prices))
 
 
 
-## M24684: 直播计票
+## E24684: 直播计票
 
-dict, sorting, http://cs101.openjudge.cn/pctbook/M24684/
+dict, sorting, http://cs101.openjudge.cn/pctbook/E24684/
 
 
 
