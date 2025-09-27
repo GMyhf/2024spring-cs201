@@ -2401,7 +2401,7 @@ for _ in range(T):
 
 ## 01724: ROADS
 
-Dijkstra, dfs with pruning, http://cs101.openjudge.cn/2024sp_routine/01724/
+Dijkstra, dfs with pruning, http://cs101.openjudge.cn/practice/01724/
 
 同 07735: 道路，http://cs101.openjudge.cn/practice/07735/
 
