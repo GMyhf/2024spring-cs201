@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-09-20 22:51 GMT+8*
+*Updated 2025-10-01 01:28 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -11851,9 +11851,9 @@ print(second_round_cows[0][2])
 
 
 
-## 06640: 倒排索引
+## M06640: 倒排索引
 
-data structure, http://cs101.openjudge.cn/practice/06640/
+string, implementation, data structure, http://cs101.openjudge.cn/practice/06640/
 
 给定一些文档，要求求出某些单词的倒排表。
 
@@ -11934,6 +11934,26 @@ def main():
 
 if __name__ == "__main__":
     main()
+```
+
+
+
+其实每行第一个数字根本没用，读成一个str列表之后取[1:]就行了
+其他数据结构也完全不需要
+
+```python
+N = int(input())
+lst = []
+for _ in range(N):
+    lst.append(list(input().split())[1:])
+M = int(input())
+for _ in range(M):
+    s = input().strip()
+    ans = []
+    for i,m in enumerate(lst):
+        if s in m:
+            ans.append(i+1)
+    print(' '.join(map(str,ans)))
 ```
 
 
