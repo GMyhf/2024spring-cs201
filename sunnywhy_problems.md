@@ -1,8 +1,7 @@
 # 晴问编程题目
 
-Updated 1228 GMT+8 Apr 15, 2025
-
-2024 spring, Complied by Hongfei Yan
+*Updated 2025-10-02 09:49 GMT+8*
+ *Compiled by Hongfei Yan (2024 Spring)*
 
 
 
@@ -2059,7 +2058,7 @@ if __name__ == "__main__":
 
 
 
-### sy569: 双向喜欢
+### sy569: 双向喜欢 入门
 
 https://sunnywhy.com/sfbj/3/7/569
 
@@ -2156,7 +2155,7 @@ if __name__ == "__main__":
 
 
 
-### sy570: 三方欢喜
+### sy570: 三方欢喜 简单
 
 https://sunnywhy.com/sfbj/3/7/570
 
@@ -2245,7 +2244,7 @@ if __name__ == "__main__":
 
 
 
-### sy571:  四方坐标
+### sy571:  四方坐标 入门
 
 https://sunnywhy.com/sfbj/3/7/571
 
@@ -2296,7 +2295,7 @@ print(abs(x1 - x2) * abs(y1 - y2))
 
 
 
-### sy572:  五次求导
+### sy572:  五次求导 简单
 
 https://sunnywhy.com/sfbj/3/7/572
 
@@ -2397,7 +2396,7 @@ if __name__ == "__main__":
 
 
 
-### sy573: 六小时差
+### sy573: 六小时差 入门
 
 https://sunnywhy.com/sfbj/3/7/573
 
@@ -2483,7 +2482,7 @@ if __name__ == "__main__":
 
 
 
-### sy574: 周七迷踪
+### sy574: 周七迷踪 简单
 
 https://sunnywhy.com/sfbj/3/7/574
 
@@ -2546,7 +2545,7 @@ if __name__ == "__main__":
 
 
 
-### sy575: 八次翻转 
+### sy575: 八次翻转 入门
 
 https://sunnywhy.com/sfbj/3/7/575
 
@@ -2616,7 +2615,7 @@ if __name__ == "__main__":
 
 
 
-### sy576: 九阵寻词
+### sy576: 九阵寻词 简单
 
 https://sunnywhy.com/sfbj/3/7/576
 
@@ -2691,7 +2690,7 @@ if __name__ == "__main__":
 
 
 
-### sy577: 一O交错
+### sy577: 一O交错 入门
 
 https://sunnywhy.com/sfbj/3/7/577
 
@@ -2786,7 +2785,7 @@ if __name__ == "__main__":
 
 
 
-### sy578: 一一相依
+### sy578: 一一相依 简单
 
 https://sunnywhy.com/sfbj/3/7/578
 
@@ -2878,7 +2877,7 @@ if __name__ == "__main__":
 
 
 
-### sy579: 二三乃大
+### sy579: 二三乃大 入门
 
 https://sunnywhy.com/sfbj/3/7/579
 
@@ -2945,7 +2944,7 @@ if __name__ == "__main__":
 
 
 
-### sy580: 四面楚歌
+### sy580: 四面楚歌 简单
 
 https://sunnywhy.com/sfbj/3/7/580
 
@@ -3046,6 +3045,8 @@ if __name__ == "__main__":
 
 https://sunnywhy.com/sfbj/3/7/581
 
+> 该网站上，这个题目不见了
+
 已知一个非负整数的所有数位相加，如果结果是3的倍数，那么这个数字能被3整除。
 
 现在问一个数字x，问它是否能被6整除。
@@ -3120,6 +3121,8 @@ if __name__ == "__main__":
 
 https://sunnywhy.com/sfbj/3/7/582
 
+> 该网站上，这个题目不见了
+
 求组合数$C_n^7$。
 
 其中$C_n^7 = \frac{n!}{7!(n-7)!}$。
@@ -3175,6 +3178,8 @@ if __name__ == "__main__":
 ### sy583: 抽象三角图形
 
 https://sunnywhy.com/sfbj/3/7/583
+
+> 该网站上，这个题目不见了
 
 输出一个腰长为$n (n \ge 2)$的抽象等腰直角三角形。
 
