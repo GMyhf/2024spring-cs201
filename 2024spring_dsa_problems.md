@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-10-01 01:28 GMT+8*
+*Updated 2025-10-07 10:07 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -20238,7 +20238,7 @@ print(maximalRectangle(a))
 
 
 
-## 27256: 当前队列中位数
+## T27256: 当前队列中位数
 
 data structures, OOP, http://cs101.openjudge.cn/practice/27256/
 
@@ -20544,6 +20544,146 @@ for _ in range(int(input())):
         v = b[now]
         now += 1
         a.pop(bisect_left(a, [v, 0]))
+```
+
+
+
+沈俊丞25。AC后，用AI修了一下。
+
+```python
+from heapq import heappop, heappush
+from collections import deque
+import sys
+input = sys.stdin.readline
+
+def lazy_delete(heap, del_num):
+    # 清理堆顶那些逻辑上已被删除（index < del_num）的元素
+    while heap and heap[0][1] < del_num:
+        heappop(heap)
+
+n = int(input().strip())
+arr = deque()        # 存 (value, idx)
+heap_low = []        # 小根堆：存“较大的一半”（直接存 value, idx）
+heap_high = []       # 用负值表示的大根堆：存“较小的一半”（存 -value, idx）
+
+del_num = 0          # 已删除计数阈值（所有 index < del_num 的元素视为已删除）
+addi = 0             # 插入编号，用作唯一索引
+
+# 记录每个 idx 当前属于哪一侧（'low' 或 'high'）
+pos = {}
+
+# 有效计数（不含堆中尚未物理弹出的过期项）
+size_low = 0
+size_high = 0
+
+for _ in range(n):
+    order = input().strip()
+    if not order:
+        continue
+
+    # 每次操作前先清理堆顶过期项（保证堆顶可用）
+    lazy_delete(heap_low, del_num)
+    lazy_delete(heap_high, del_num)
+
+    if order[0] == 'a':  # add x
+        x = int(order.split()[1])
+        arr.append((x, addi))
+
+        # 决定放哪一堆：保持 heap_low 存较大一半（min-heap）， heap_high 存较小一半（max via -v）
+        if not heap_low or x >= heap_low[0][0]:
+            heappush(heap_low, [x, addi])
+            pos[addi] = 'low'
+            size_low += 1
+        else:
+            heappush(heap_high, [-x, addi])
+            pos[addi] = 'high'
+            size_high += 1
+
+        # 物理清理堆顶（保险）
+        lazy_delete(heap_low, del_num)
+        lazy_delete(heap_high, del_num)
+
+        # 根据**有效计数**平衡两堆：允许 heap_low 比 heap_high 多 1
+        if size_low > size_high + 1:
+            # 从 low 移动到 high
+            lazy_delete(heap_low, del_num)
+            v, i = heappop(heap_low)
+            heappush(heap_high, [-v, i])
+            pos[i] = 'high'
+            size_low -= 1
+            size_high += 1
+        elif size_high > size_low:
+            # 从 high 移动到 low
+            lazy_delete(heap_high, del_num)
+            vneg, i = heappop(heap_high)
+            v = -vneg
+            heappush(heap_low, [v, i])
+            pos[i] = 'low'
+            size_high -= 1
+            size_low += 1
+
+        addi += 1
+
+    elif order[0] == 'd':  # del
+        # 题目保证删除时队列非空
+        val, idx_del = arr.popleft()
+        # 标记逻辑删除的阈值
+        del_num += 1
+
+        # 减少对应堆的有效计数（我们在插入时用 pos 记录了它属哪堆）
+        side = pos.get(idx_del)
+        if side == 'low':
+            size_low -= 1
+        elif side == 'high':
+            size_high -= 1
+        # 删除 pos 记录（此元素已逻辑删除）
+        if idx_del in pos:
+            del pos[idx_del]
+
+        # 物理清理堆顶（把堆顶的过期项弹掉）
+        lazy_delete(heap_low, del_num)
+        lazy_delete(heap_high, del_num)
+
+        # 根据有效计数重新平衡（同上）
+        if size_low > size_high + 1:
+            lazy_delete(heap_low, del_num)
+            v, i = heappop(heap_low)
+            heappush(heap_high, [-v, i])
+            pos[i] = 'high'
+            size_low -= 1
+            size_high += 1
+        elif size_high > size_low:
+            lazy_delete(heap_high, del_num)
+            vneg, i = heappop(heap_high)
+            v = -vneg
+            heappush(heap_low, [v, i])
+            pos[i] = 'low'
+            size_high -= 1
+            size_low += 1
+
+    else:  # query
+        lazy_delete(heap_low, del_num)
+        lazy_delete(heap_high, del_num)
+
+        total = size_low + size_high
+        if total == 0:
+            print("Empty")
+            continue
+
+        # 如果 low 比 high 多一个，则中位数是 low 的堆顶（最小的右侧元素）
+        if size_low > size_high:
+            # low 存原值
+            print(heap_low[0][0])
+        else:
+            a = heap_low[0][0]
+            b = -heap_high[0][0]
+            s = a + b
+            if s % 2 == 0:
+                print(s // 2)
+            else:
+                # 输出 1.5 之类的一位小数（避免 2.0）
+                print(f"{s / 2:.1f}")
+
 ```
 
 
