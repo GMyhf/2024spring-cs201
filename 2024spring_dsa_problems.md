@@ -20599,10 +20599,6 @@ for _ in range(n):
             pos[addi] = 'high'
             size_high += 1
 
-        # 物理清理堆顶（保险）
-        lazy_delete(heap_low, del_num)
-        lazy_delete(heap_high, del_num)
-
         # 根据**有效计数**平衡两堆：允许 heap_low 比 heap_high 多 1
         if size_low > size_high + 1:
             # 从 low 移动到 high
@@ -20640,10 +20636,6 @@ for _ in range(n):
         if idx_del in pos:
             del pos[idx_del]
 
-        # 物理清理堆顶（把堆顶的过期项弹掉）
-        lazy_delete(heap_low, del_num)
-        lazy_delete(heap_high, del_num)
-
         # 根据有效计数重新平衡（同上）
         if size_low > size_high + 1:
             lazy_delete(heap_low, del_num)
@@ -20662,14 +20654,6 @@ for _ in range(n):
             size_low += 1
 
     else:  # query
-        lazy_delete(heap_low, del_num)
-        lazy_delete(heap_high, del_num)
-
-        total = size_low + size_high
-        if total == 0:
-            print("Empty")
-            continue
-
         # 如果 low 比 high 多一个，则中位数是 low 的堆顶（最小的右侧元素）
         if size_low > size_high:
             # low 存原值
