@@ -11811,6 +11811,28 @@ NOT FOUND
 
 
 
+思路：用字典将word作为key，在value中进行文件索引的存储。利用0表示不存在。利用setdefault方法设置默认值。
+
+```python
+n = int(input())  
+dic = {}  
+for i in range(n):  
+    s = input()[1:].split()  
+    for j in set(s):  
+        dic.setdefault(j,[]).append(i+1)  
+  
+m = int(input())  
+for i in range(m):  
+    word = input()  
+    out = sorted(dic.setdefault(word,[0]))  
+    out = list(map(str,out))  
+    print(' '.join(out) if out[0]!='0' else 'NOT FOUND')
+```
+
+
+
+
+
 要实现一个程序来创建和查询倒排索引，可以使用 字典结构来高效地完成任务。以下是具体的步骤：
 
 1. 首先，解析输入，为每个单词构建倒排索引，即记录每个单词出现在哪些文档中。
