@@ -4927,6 +4927,60 @@ TUD Programming Contest 2005, Darmstadt, Germany
 
 
 
+思路：通过回溯法枚举所有可能路径，并优化提高搜索效率。
+
+回溯法：从起点开始，尝试所有合法移动方向。标记已访问方格，递归探索下一个位置。若访问完所有方格，记录路径；若无路可走，回溯并尝试其他方向。
+
+优化：按列字母（A, B, ...）和行号（1, 2, ...）升序尝试移动，确保找到的第一条路径即为字典序最小。并且，若当前路径无法覆盖所有方格，提前终止该分支。
+
+```python
+def knight_tour(p, q):
+    moves = [(-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1)]
+    
+    total = p * q
+    path = []
+    visited = [[False for _ in range(q)] for _ in range(p)]
+    
+    def backtrack(row, col):
+        path.append(f"{chr(ord('A') + col)}{row + 1}")
+        visited[row][col] = True
+        
+        if len(path) == total:
+            return True
+        
+        next_steps = []
+        for dr, dc in moves:
+            nr, nc = row + dr, col + dc
+            if 0 <= nr < p and 0 <= nc < q and not visited[nr][nc]:
+                next_steps.append((nc, nr))
+        
+        for nc, nr in sorted(next_steps):
+            if backtrack(nr, nc):
+                return True
+        
+        path.pop()
+        visited[row][col] = False
+        return False
+    
+    for start_row in range(p):
+        for start_col in range(q):
+            if backtrack(start_row, start_col):
+                return ''.join(path)
+    return "impossible"
+
+n = int(input())
+for i in range(n):
+    p, q = map(int, input().split())
+    result = knight_tour(p, q)
+    print(f"Scenario #{i+1}:")
+    print(result)
+    print()
+```
+
+
+
+
+
 【陈宣之 23生科】思路：Dijstra，把路径放在第一位，用heapq取字典序最小
 
 ```python
