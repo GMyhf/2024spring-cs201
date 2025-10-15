@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-*Updated 2025-10-02 09:49 GMT+8*
+*Updated 2025-10-15 22:23 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -2785,7 +2785,7 @@ if __name__ == "__main__":
 
 
 
-### sy578: 一一相依 简单
+### sy578: 一一相依 中等
 
 https://sunnywhy.com/sfbj/3/7/578
 
@@ -2824,7 +2824,53 @@ $0 \le k \le 30$
 
 说明
 
-本题有时间复杂度为的算法，请比赛期间独立思考。
+本题有时间复杂度为O(n)的算法，请比赛期间独立思考。
+
+
+
+这是一个经典的“双指针 / 滑动窗口”问题，可以用 **O(n)** 的时间复杂度解决。
+
+------
+
+思路讲解
+
+题目要求：
+
+> 最多将 k 个 `'0'` 翻转为 `'1'`，求操作后最长连续 `'1'` 子串长度。
+
+滑动窗口思路：
+
+- 维护一个窗口 `[left, right)`。
+- `right` 指针向右移动，每加入一个字符：
+  - 若它是 `'0'`，我们就让可用的 `k` 减 1；
+  - 如果此时 `k < 0`，说明窗口中 0 的数量超过可翻转上限，我们就需要移动 `left`：
+    - 当左端离开一个 `'0'`，我们就恢复一个翻转机会 (`k += 1`)。
+- 过程中记录窗口最大长度即可。
+
+
+
+```python
+n, k = map(int, input().split())
+s = input().strip()
+
+left = 0
+max_len = 0
+
+for right in range(n):
+    if s[right] == '0':
+        k -= 1
+    while k < 0:
+        if s[left] == '0':
+            k += 1
+        left += 1
+    max_len = max(max_len, right - left + 1)
+
+print(max_len)
+```
+
+时间复杂度：O(n)
+
+
 
 
 
@@ -4456,7 +4502,7 @@ if __name__ == "__main__":
 
 
 
-### sy146: 判断八皇后
+### sy146: 判断八皇后 简单
 
 https://sunnywhy.com/sfbj/4/3/146
 
@@ -4511,6 +4557,54 @@ YES
 ```
 NO
 ```
+
+
+
+这个题可以直接用集合判断是否有冲突，非常简洁。 解题思路：
+
+对于八皇后问题：
+
+- 每一行必须恰好有 1 个皇后。
+- 任意两个皇后不能在同一列。
+- 任意两个皇后不能在同一条对角线上。
+
+对角线分为两种：
+
+- 主对角线（左上 ↘ 右下）：行号 - 列号 相同。
+- 副对角线（左下 ↗ 右上）：行号 + 列号 相同。
+
+我们只要收集所有皇后的位置 `(r, c)`，然后看：
+
+- 行数、列数、(r-c)、(r+c) 四个集合的长度是否都是 8。
+
+
+
+```python
+board = [list(map(int, input().split())) for _ in range(8)]
+
+rows = set()
+cols = set()
+diag1 = set()  # r - c
+diag2 = set()  # r + c
+
+queens = 0
+
+for r in range(8):
+    for c in range(8):
+        if board[r][c] == 1:
+            queens += 1
+            rows.add(r)
+            cols.add(c)
+            diag1.add(r - c)
+            diag2.add(r + c)
+
+if queens == 8 and len(rows) == len(cols) == len(diag1) == len(diag2) == 8:
+    print("YES")
+else:
+    print("NO")
+```
+
+
 
 
 
@@ -4950,7 +5044,7 @@ print(cnt)
 
 
 
-#### sy176: 序列合并
+#### sy176: 序列合并 简单
 
 https://sunnywhy.com/sfbj/4/6/176
 
