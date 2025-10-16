@@ -20599,6 +20599,8 @@ for _ in range(n):
 
 
 
+修改了时间限制，现在二分的做法应该是超时。因为这个方法最坏时间复杂度是O(n^2)。
+
 ```python
 # 2300011742 张展皓 化院
 from bisect import bisect_left
