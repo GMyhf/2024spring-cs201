@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-10-07 10:07 GMT+8*
+*Updated 2025-11-02 10:03 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -12511,7 +12511,7 @@ bfs, http://cs101.openjudge.cn/practice/07206/
 
 
 
-<img src="/Users/hfyan/Library/Application Support/typora-user-images/image-20240525200326139.png" alt="image-20240525200326139" style="zoom: 50%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/b4c01a0068041117b4a1c0fe66cb4e04.png" alt="b4c01a0068041117b4a1c0fe66cb4e04" style="zoom:50%;" />
 
 
 
