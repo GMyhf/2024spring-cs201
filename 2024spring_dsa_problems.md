@@ -17726,7 +17726,7 @@ for _ in range(n):
 
 ## T24591: 中序表达式转后序表达式
 
-stack, http://cs101.openjudge.cn/practice/24591/
+stack, ast, http://cs101.openjudge.cn/practice/24591/
 
 中序表达式是运算符放在两个数中间的表达式。乘、除运算优先级高于加减。可以用"()"来提升优先级 --- 就是小学生写的四则算术运算表达式。中序表达式可用如下方式递归定义：
 
@@ -17936,6 +17936,80 @@ for _ in range(case):
 for o in output:
     print(o)
 ```
+
+
+
+思路：利用 Python 的自带的语法解析模块 `ast` 模块把中序表达式解析成抽象语法树（AST，Abstract Syntax Tree），把原本需要自己写“运算符优先级”和“栈”的问题，交给 Python 的语法分析器自动完成。
+然后递归遍历语法树，按照“左子树 → 右子树 → 根节点”的顺序输出，这正是 **后序遍历** 的顺序，也正对应 **后缀表达式** 的结构。
+
+`mode='eval'` 让 `ast.parse()` 解析的是“单个表达式”，不会把它当成程序。
+
+返回的 `tree` 是 `ast.Expression` 对象；
+
+真正的表达式节点（`BinOp` / `Constant`）在 `tree.body` 里，所以我们要从 `tree.body` 开始递归遍历。
+
+`ast` 中的运算符是类（如 `ast.Add`, `ast.Mult`），
+需要映射成我们要打印的符号 `"+"`、`"-"`、`"*"`、`"/"`。
+
+```python
+import ast
+
+# 定义运算符到字符串的映射
+operator_to_str = {
+ ast.Add: '+',
+ ast.Sub: '-',
+ ast.Mult: '*',
+ ast.Div: '/'
+}
+
+def postfix(node):
+ # 如果节点是常量，则直接返回其值
+ if isinstance(node, ast.Constant):
+     return str(node.value)
+ # 如果节点是二元运算符，则递归处理左右子节点并拼接运算符
+ elif isinstance(node, ast.BinOp):
+     return f'{postfix(node.left)} {postfix(node.right)} {operator_to_str[type(node.op)]}'
+
+# 主程序部分
+n = int(input())
+for i in range(n):
+ expr = input()
+ tree = ast.parse(expr, mode='eval')
+ print(postfix(tree.body))
+```
+
+> **对照示意图：**
+>
+> ```
+> tree = ast.parse("3+4.5*(7+2)", mode='eval')
+> ```
+>
+> 结构：
+>
+> ```
+> Expression
+> └── body → BinOp(+)
+>       ├── left: Constant(3)
+>       └── right: BinOp(*)
+>               ├── left: Constant(4.5)
+>               └── right: BinOp(+)
+>                       ├── left: Constant(7)
+>                       └── right: Constant(2)
+> ```
+>
+> 调用：
+>
+> ```
+> postfix(tree.body)
+> ```
+>
+> 从 `BinOp(+)` 开始递归，就能正确生成：
+>
+> ```
+> 3 4.5 7 2 + * +
+> ```
+
+
 
 
 
