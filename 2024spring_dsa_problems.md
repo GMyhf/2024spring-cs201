@@ -21775,6 +21775,39 @@ sample2 output:
 
 
 
+递归天然是深度优先
+
+```python
+def traverse(x, tree):
+    # 当前节点及其所有子节点值
+    group = [x] + tree[x]
+    # 从小到大排序
+    for val in sorted(group):
+        if val == x:
+            print(x)
+        else:
+            traverse(val, tree)
+
+
+n = int(input())
+tree = {}
+all_children = set()
+
+for _ in range(n):
+    line = list(map(int, input().split()))
+    val = line[0]
+    tree[val] = line[1:]
+    all_children.update(line[1:])
+
+# 根节点 = 未作为子节点出现的节点
+root = (set(tree.keys()) - all_children).pop()
+
+traverse(root, tree)
+
+```
+
+
+
 ```python
 # 李思哲 物理学院
 class TreeNode:
