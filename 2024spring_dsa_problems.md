@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-11-02 10:03 GMT+8*
+*Updated 2025-11-03 10:03 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -14662,7 +14662,18 @@ not ( True or False ) and ( False or True and True )
 
 
 
-这三个操作符：`not`：优先级最高，`and`：其次，`or`：优先级最低。
+题意：<mark>这三个操作符：`not`：优先级最高，`and`：其次，`or`：优先级最低。</mark>手写一个完整的**Shunting Yard + AST 构造 + 打印**
+
+
+
+**思路：基于优先级的通用中缀打印**
+
+核心思想：
+
+- 给每个节点定义一个**优先级值**（`not=3, and=2, or=1`）。
+- 打印时，**仅当子节点的优先级低于父节点时加括号**。
+- `not` 是单目操作符，只处理一个子节点。
+- `True`、`False` 优先级设为 4（最高，永远不加括号）。
 
 ```python
 class BinaryTree:
@@ -14671,32 +14682,20 @@ class BinaryTree:
         self.leftChild = left
         self.rightChild = right
 
-    def getrightchild(self):
-        return self.rightChild
-
-    def getleftchild(self):
-        return self.leftChild
-
-    def getroot(self):
-        return self.root
-
-def postorder(string):    #中缀改后缀 Shunting yard algorightm
-    opStack = []
-    postList = []
+def postorder(string):  # 中缀改后缀 (Shunting Yard)
+    opStack, postList = [], []
     inList = string.split()
-    prec = { '(': 0, 'or': 1,'and': 2,'not': 3}
-
+    prec = {'(': 0, 'or': 1, 'and': 2, 'not': 3}
     for word in inList:
         if word == '(':
             opStack.append(word)
         elif word == ')':
-            topWord = opStack.pop()
-            while topWord != '(':
-                postList.append(topWord)
-                topWord = opStack.pop()
-        elif word == 'True' or word == 'False':
+            while opStack and opStack[-1] != '(':
+                postList.append(opStack.pop())
+            opStack.pop()
+        elif word in ('True', 'False'):
             postList.append(word)
-        else:
+        else:  # operator
             while opStack and prec[word] <= prec[opStack[-1]]:
                 postList.append(opStack.pop())
             opStack.append(word)
@@ -14704,216 +14703,161 @@ def postorder(string):    #中缀改后缀 Shunting yard algorightm
         postList.append(opStack.pop())
     return postList
 
-def buildParseTree(infix):       #以后缀表达式为基础建树
+def buildParseTree(infix):
     postList = postorder(infix)
     stack = []
     for word in postList:
         if word == 'not':
-            newTree = BinaryTree(word)
-            newTree.leftChild = stack.pop()
-            stack.append(newTree)
-        elif word == 'True' or word == 'False':
+            child = stack.pop()
+            stack.append(BinaryTree('not', child))
+        elif word in ('True', 'False'):
             stack.append(BinaryTree(word))
         else:
-            right = stack.pop()
-            left = stack.pop()
-            newTree = BinaryTree(word)
-            newTree.leftChild = left
-            newTree.rightChild = right
-            stack.append(newTree)
-    currentTree = stack[-1]
-    return currentTree
+            right, left = stack.pop(), stack.pop()
+            stack.append(BinaryTree(word, left, right))
+    return stack[-1]
 
-def printTree(parsetree: BinaryTree):
-    if parsetree.getroot() == 'or':
-        return printTree(parsetree.getleftchild()) + ['or'] + printTree(parsetree.getrightchild())
-    elif parsetree.getroot() == 'not':
-        return ['not'] + (
-            ['('] + printTree(parsetree.getleftchild()) + [')']
-            if parsetree.leftChild.getroot() not in ['True', 'False']
-            else printTree(parsetree.getleftchild())
-        )
-    elif parsetree.getroot() == 'and':
-        leftpart = (
-            ['('] + printTree(parsetree.getleftchild()) + [')']
-            if parsetree.leftChild.getroot() == 'or'
-            else printTree(parsetree.getleftchild())
-        )
-        rightpart = (
-            ['('] + printTree(parsetree.getrightchild()) + [')']
-            if parsetree.rightChild.getroot() == 'or'
-            else printTree(parsetree.getrightchild())
-        )
-        return leftpart + ['and'] + rightpart
-    else:
-        return [str(parsetree.getroot())]
+# 定义运算符优先级
+priority = {'or': 1, 'and': 2, 'not': 3, 'True': 4, 'False': 4}
+
+def printTree(tree):
+    """返回 token 列表"""
+    root = tree.root
+    if root in ('True', 'False'):
+        return [root]
+
+    if root == 'not':
+        child = tree.leftChild
+        # 若子优先级更低则加括号
+        child_tokens = printTree(child)
+        if priority[child.root] < priority[root]:
+            child_tokens = ['('] + child_tokens + [')']
+        return ['not'] + child_tokens
+
+    # 二元操作符 and/or
+    left, right = tree.leftChild, tree.rightChild
+    left_tokens = printTree(left)
+    right_tokens = printTree(right)
+    if priority[left.root] < priority[root]:
+        left_tokens = ['('] + left_tokens + [')']
+    if priority[right.root] < priority[root]:
+        right_tokens = ['('] + right_tokens + [')']
+    return left_tokens + [root] + right_tokens
 
 def main():
-    infix = input()
+    infix = input().strip()
     Tree = buildParseTree(infix)
     print(' '.join(printTree(Tree)))
 
-main()
+if __name__ == "__main__":
+    main()
+
 ```
 
-`printTree`函数是一个递归函数，接收一个`BinaryTree`对象作为参数，然后根据树的结构和节点的值生成一个字符串列表。
 
-函数的工作方式如下：
 
-1. 首先，检查树的根节点的值。根据值的不同，函数会执行不同的操作。
+直接利用 Python 自带的 `ast` 模块来完成解析与遍历，无需手写语法分析器。
+因为 `ast.parse()` 能正确识别 Python 布尔表达式（and/or/not/True/False）的语法树。
 
-2. 如果根节点的值为"or"，函数会递归地调用自身来处理左子树和右子树，然后将结果合并，并在两个结果之间插入"or"。
+------
 
-3. 如果根节点的值为"not"，函数会递归地调用自身来处理左子树。<mark>如果左子树的根节点的值不是"True"或"False"，则会在左子树的结果周围添加括号。</mark>
+✅ 改写思路（使用 `ast`）
 
-4. 如果根节点的值为"and"，函数会递归地调用自身来处理左子树和右子树。<mark>如果左子树或右子树的根节点的值为"or"，则会在相应子树的结果周围添加括号。</mark>
+1. 直接用 `ast.parse(expr, mode='eval')` 将输入的布尔表达式解析为抽象语法树（AST）。
+2. 递归遍历 AST，根据节点类型 (`BoolOp`, `UnaryOp`, `NameConstant` 等) 输出字符串。
+3. 根据运算符优先级，**仅在必要时加括号**。
 
-5. 如果根节点的值为"True"或"False"，函数会直接返回一个包含该值的列表。
+优先级设定为：
 
-6. 最后，函数会将生成的字符串列表合并为一个字符串，并返回。
+```
+not: 3
+and: 2
+or : 1
+```
 
-> `printTree` 函数的确是这个程序的关键部分，它负责**把表达式树重新转成中缀表达式**，而且在这个过程中要**去掉不必要的括号，只保留必要的括号**，以保证表达式的优先级正确。
->
-> 我们来**一行行分析这个函数**，并且结合优先级规则来详细解释。
->
-> ---
->
-> ✅ 背景知识（非常重要）
->
-> 我们有 3 个操作符：
->
-> - `not`：优先级最高（3）
-> - `and`：中间（2）
-> - `or`：最低（1）
->
-> 所以当我们重建中缀表达式时，如果低优先级的操作被嵌套在高优先级的操作里面，那就**需要加括号**来保持原来的优先顺序。
->
-> ---
->
-> 💡 函数签名
->
-> ```python
-> def printTree(parsetree: BinaryTree):
-> ```
->
-> 这是一个递归函数。每次调用会处理一个子树，返回一个**字符串列表**（最后用 `' '.join()` 组合成结果）。
->
-> ---
->
-> 🧩 情况 1：当前节点是 `or`
->
-> ```python
-> if parsetree.getroot() == 'or':
->     return printTree(parsetree.getleftchild()) + ['or'] + printTree(parsetree.getrightchild())
-> ```
->
-> - `or` 是最低优先级，所以它**永远不会被其他操作包裹住**（不需要加括号）
-> - 左右子树分别处理就好，中间加上 `'or'`
->
-> ---
->
-> 🧩 情况 2：当前节点是 `not`
->
-> ```python
-> elif parsetree.getroot() == 'not':
->     return ['not'] + (
->         ['('] + printTree(parsetree.getleftchild()) + [')']
->         if parsetree.leftChild.getroot() not in ['True', 'False']
->         else printTree(parsetree.getleftchild())
->     )
-> ```
->
-> - `not` 是单目操作符（只有一个子节点）
->
-> - 如果它的子节点是 `'True'` 或 `'False'`，就直接写：
->
->   ```
->   not True
->   ```
->
-> - 但如果子节点是像 `True or False` 这样的表达式，需要加括号包住它：
->
->   ```
->   not (True or False)
->   ```
->
-> 👉 这是为了防止表达式优先级出错！
->
-> ---
->
-> 🧩 情况 3：当前节点是 `and`
->
-> ```python
-> elif parsetree.getroot() == 'and':
->     leftpart = (
->         ['('] + printTree(parsetree.getleftchild()) + [')']
->         if parsetree.leftChild.getroot() == 'or'
->         else printTree(parsetree.getleftchild())
->     )
->     rightpart = (
->         ['('] + printTree(parsetree.getrightchild()) + [')']
->         if parsetree.rightChild.getroot() == 'or'
->         else printTree(parsetree.getrightchild())
->     )
->     return leftpart + ['and'] + rightpart
-> ```
->
-> - `and` 的优先级高于 `or`
->
-> - 如果它的某个子节点是 `or`，就必须加括号：
->
->   ```
->   (A or B) and C
->   ```
->
-> 否则表达式优先级就会错了！
->
-> **例子：**
->
-> - 正确的：`(True or False) and True`
-> - 错误的：`True or False and True`（这个意思不一样）
->
-> ---
->
-> 🧩 情况 4：叶子节点（True 或 False）
->
-> ```python
-> else:
->     return [str(parsetree.getroot())]
-> ```
->
-> 这个就是递归到底了，返回布尔值（字符串形式）
->
-> ---
->
-> 🔁 总结：如何判断加不加括号？
->
-> - `or` 最低优先级，从不加括号。
-> - `and` 如果操作的是 `or`，要加括号。
-> - `not` 如果操作的是复杂表达式（不是布尔常量），要加括号。
->
-> ---
->
-> ✨举个完整例子
->
-> 输入：
->
-> ```plaintext
-> ( not ( True or False ) ) and ( False or True and True )
-> ```
->
-> 输出：
->
-> ```plaintext
-> not ( True or False ) and ( False or True and True )
-> ```
->
-> 说明：
->
-> - `not` 操作 `True or False` → 加括号 ✅
-> - `and` 的左右：
->   - 左是 `not (...)`：不需要额外括号
->   - 右是 `False or True and True`，按优先级就是 `False or (True and True)`，不需要额外括号
+当子表达式优先级低于父表达式时，才加括号。
+
+```python
+import ast
+import sys
+
+# 优先级： or=1, and=2, not=3
+PREC = {
+    ast.Or: 1,
+    ast.And: 2,
+    ast.Not: 3
+}
+
+def get_prec(node):
+    """返回节点的优先级（数字越大优先级越高）。默认常量/名称优先级最高。"""
+    if isinstance(node, ast.BoolOp):
+        return PREC[type(node.op)]
+    if isinstance(node, ast.UnaryOp):
+        return PREC[type(node.op)]
+    # 常量或其它原子表达式
+    return 4
+
+def to_str(node, parent_prec=0):
+    """将 AST 节点转为 token 风格的字符串（带空格），根据 parent_prec 决定是否需要外层括号。"""
+    # BoolOp: values 列表（and/or）
+    if isinstance(node, ast.BoolOp):
+        op = 'and' if isinstance(node.op, ast.And) else 'or'
+        prec = PREC[type(node.op)]
+        parts = [to_str(v, prec) for v in node.values]
+        s = f' {op} '.join(parts)
+        if prec < parent_prec:
+            return f'( {s} )'
+        return s
+
+    # UnaryOp: only support Not here
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.Not):
+        prec = PREC[type(node.op)]
+        # 直接让子节点以 prec 作为 parent_prec 决定是否加括号（避免重复加括号）
+        operand_str = to_str(node.operand, prec)
+        return f'not {operand_str}'
+
+    # Constant (Python 3.8+)
+    if isinstance(node, ast.Constant):
+        # 确保 True/False 以首字母大写形式输出
+        val = node.value
+        if val is True:
+            return 'True'
+        if val is False:
+            return 'False'
+        # 一般不会出现其他常量，但保底
+        return str(val)
+
+    # 兼容旧版本 (ast.NameConstant)
+    if hasattr(ast, 'NameConstant') and isinstance(node, ast.NameConstant):
+        if node.value is True:
+            return 'True'
+        if node.value is False:
+            return 'False'
+        return str(node.value)
+
+    # 也兼容像直接写 True/False 作为 Name（极少见）
+    if isinstance(node, ast.Name):
+        return node.id
+
+    # 比较/其他表达式：简单用 ast.unparse (若可用) 或回退到手动
+    # 为了本题只需支持布尔表达式 True/False/and/or/not，所以其余类型抛错
+    raise TypeError(f"Unsupported node type: {type(node)}")
+
+def main():
+    data = sys.stdin.read().strip()
+    if not data:
+        return
+    # ast.parse 解析为 Expression
+    tree = ast.parse(data, mode='eval')
+    out = to_str(tree.body)
+    print(out)
+
+if __name__ == '__main__':
+    main()
+
+```
+
+
 
 
 
