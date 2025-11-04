@@ -4231,7 +4231,7 @@ for ans in arrange(l):
 
 
 
-### sy133: 全排列II
+### sy133: 全排列II 中等
 
 https://sunnywhy.com/sfbj/4/3/133
 
@@ -4290,27 +4290,27 @@ https://sunnywhy.com/sfbj/4/3/133
 
 
 ```python
-def quan(yu, a):
-    b = []
-    if len(a) == 1:
-        b.append(' '.join(map(str, yu+a)))
-        return b
-
-    for i in a:
-        f = quan(yu+[i], [j for j in a if j != i])
-        b.extend(f)
-
-    return b
-
 n = int(input())
-a = list(map(int, input().split()))
-ans = quan([], a)
-print("\n".join(ans))
+nums = list(map(int, input().split()))
+
+ans, sol = [], []
+def backtrack():
+    if len(sol) == n:
+        ans.append(sol[:])
+        return
+    for i in nums:
+        if i not in sol:
+            sol.append(i)
+            backtrack()
+            sol.pop()
+backtrack()
+for a in ans:
+    print(*a)
 ```
 
 
 
-### sy134: 全排列III
+### sy134: 全排列III 中等
 
 https://sunnywhy.com/sfbj/4/3/134
 
@@ -4348,6 +4348,32 @@ https://sunnywhy.com/sfbj/4/3/134
 ```
 
 
+
+```python
+n = int(input())
+nums = list(map(int, input().split()))
+
+ans, sol = set(), []
+used = [False] * n
+
+def backtrack():
+    if len(sol) == n:
+        ans.add(tuple(sol))
+        return
+
+    for i in range(n):
+        if not used[i]:
+            used[i] = True
+            sol.append(nums[i])
+            backtrack()
+            sol.pop()
+            used[i] = False
+
+backtrack()
+
+for a in sorted(ans):
+    print(*a)
+```
 
 
 
@@ -4387,7 +4413,7 @@ if __name__ == "__main__":
 
 
 
-### sy135: 组合I
+### sy135: 组合I 中等
 
 https://sunnywhy.com/sfbj/4/3/135
 
@@ -4428,7 +4454,7 @@ if __name__ == "__main__":
 
 https://sunnywhy.com/sfbj/4/3/136
 
-给定一个长度为的序列，其中有n个互不相同的正整数，再给定一个正整数k，求从序列中任选个的所有可能结果。
+给定一个长度为的序列，其中有n个互不相同的正整数，再给定一个正整数k，求从序列中任选k个的所有可能结果。
 
 
 
