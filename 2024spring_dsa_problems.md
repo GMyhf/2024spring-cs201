@@ -5943,6 +5943,96 @@ for n,test in enumerate(tests,1):
 ```
 
 
+上面代码逻辑非常清晰、可读性也很好。整体上已经是一个标准的 DFS 树结构构建 + 递归打印的写法。下面保持原有风格的前提下，做一些 **优化与精简**（主要是性能、结构与边界处理方面）：
+**优化版代码**
+
+```python
+class Node:
+    __slots__ = ('name', 'dirs', 'files')
+    def __init__(self, name):
+        self.name = name
+        self.dirs = []
+        self.files = []
+
+def print_tree(node, depth=0):
+    prefix = '|     ' * depth
+    print(prefix + node.name)
+    for d in node.dirs:               # 子目录按出现顺序
+        print_tree(d, depth + 1)
+    for f in sorted(node.files):      # 文件按字母序
+        print(prefix + f)
+
+def parse_dataset(lines):
+    root = Node('ROOT')
+    stack = [root]
+    for s in lines:
+        if s[0] == 'd':               # 目录
+            new_dir = Node(s)
+            stack[-1].dirs.append(new_dir)
+            stack.append(new_dir)
+        elif s[0] == 'f':             # 文件
+            stack[-1].files.append(s)
+        elif s == ']':                # 目录结束
+            stack.pop()
+    return root
+
+def main():
+    datasets, current = [], []
+    while True:
+        try:
+            s = input().strip()
+        except EOFError:
+            break
+        if s == '#':
+            if current:
+                datasets.append(current)
+            break
+        elif s == '*':
+            datasets.append(current)
+            current = []
+        else:
+            current.append(s)
+
+    for i, data in enumerate(datasets, 1):
+        print(f'DATA SET {i}:')
+        print_tree(parse_dataset(data))
+        print()
+
+if __name__ == "__main__":
+    main()
+```
+
+**改进要点说明**
+
+1. **更轻量的类定义**
+    
+    - 使用 `__slots__` 节省内存，避免动态属性创建。
+        
+    - 不改变你原来的面向对象思路。
+        
+2. **逻辑结构更清晰**
+    
+    - `parse_dataset()` 专职解析输入 → 返回树结构；
+        
+    - `print_tree()` 专职输出；
+        
+    - `main()` 负责输入输出流程。
+        
+3. **更安全的输入处理**
+    
+    - 用 `try/except EOFError` 避免 OJ 环境下读空出错；
+        
+    - 处理最后一组未以 `*` 结尾但以 `#` 终止的情况。
+        
+4. **性能小优化**
+    
+    - 仅对子文件进行 `sorted()`；
+        
+    - 栈式构建比递归解析更稳定；
+        
+    - 少量字符串拼接用局部变量缓存（`prefix`）。
+        
+
 
 考虑递归，对于输入文件 f 开头则存起来，d 开头则多记一个缩进递归，] 结尾则将存贮的files排序输出并结束该字典。
 
