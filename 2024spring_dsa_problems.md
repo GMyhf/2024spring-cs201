@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-11-03 10:03 GMT+8*
+*Updated 2025-11-08 15:42 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -21268,6 +21268,85 @@ for _ in range(n):
 print("\n".join(results))  # 按格式输出
 
 ```
+
+
+**优化版代码**（精简高效 + O(n) 解析）
+
+```python
+class TreeNode:
+    __slots__ = ("val", "left", "right")
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+
+def parse_tree(s):
+    """将括号嵌套形式解析为二叉树，使用流式指针解析避免重复切片"""
+    i = 0
+    n = len(s)
+
+    def parse():
+        nonlocal i
+        if i >= n or s[i] == '*':
+            i += 1  # 跳过空树符号
+            return None
+
+        node = TreeNode(s[i])
+        i += 1
+
+        if i < n and s[i] == '(':
+            i += 1  # 跳过 '('
+            node.left = parse()  # 左子树
+            if i < n and s[i] == ',':
+                i += 1  # 跳过 ','
+                node.right = parse()  # 右子树
+            if i < n and s[i] == ')':
+                i += 1  # 跳过 ')'
+        return node
+
+    return parse()
+
+
+def preorder(root):
+    res = []
+    def dfs(node):
+        if not node: return
+        res.append(node.val)
+        dfs(node.left)
+        dfs(node.right)
+    dfs(root)
+    return ''.join(res)
+
+
+def inorder(root):
+    res = []
+    def dfs(node):
+        if not node: return
+        dfs(node.left)
+        res.append(node.val)
+        dfs(node.right)
+    dfs(root)
+    return ''.join(res)
+
+
+# 主程序
+if __name__ == "__main__":
+    n = int(input().strip())
+    for _ in range(n):
+        s = input().strip().replace(" ", "")
+        tree = parse_tree(s)
+        print(preorder(tree))
+        print(inorder(tree))
+```
+**优点总结**
+
+| 优化项   | 原实现         | 优化后                       |
+| ----- | ----------- | ------------------------- |
+| 解析复杂度 | O(n²)（切片多次） | O(n)（指针推进）                |
+| 递归逻辑  | 需要查找逗号、维护栈  | 自动语法驱动，简洁直观               |
+| 拼接性能  | 字符串相加       | `list.append + ''.join()` |
+| 可读性   | 多层嵌套逻辑      | 层次清晰、容易扩展                 |
 
 
 
