@@ -21887,9 +21887,9 @@ while True:
 
 
 
-## 27928: 遍历树
+## M27928: 遍历树
 
-http://cs101.openjudge.cn/practice/27928/
+dfs + sortings, http://cs101.openjudge.cn/practice/27928/
 
 请你对输入的树做遍历。遍历的规则是：遍历到每个节点时，按照该节点和所有子节点的值从小到大进行遍历，例如：
 
