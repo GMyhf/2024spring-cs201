@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-11-08 15:42 GMT+8*
+*Updated 2025-11-10 15:39 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -14950,6 +14950,273 @@ if __name__ == '__main__':
 
 ```
 
+
+
+
+
+
+思路：**只依赖运算符优先级，不建AST，一遍扫描、直接根据运算符优先级输出去除不必要括号的中缀表达式**。
+这其实就是一个 **Shunting Yard 的变体**：仍然利用两个栈（操作数、操作符），但在“弹出并组合”时直接构造字符串，而不是树。
+关键是：**在构造时根据优先级动态决定是否加括号**。
+
+------
+
+✅ 最简洁、可通过、仅用优先级控制的版本
+
+```python
+# T20576: printExp. 不建AST，直接基于运算符优先级一遍扫描输出最简括号中缀表达式
+
+def priority(op):
+    if op == 'not':
+        return 3
+    if op == 'and':
+        return 2
+    if op == 'or':
+        return 1
+    return 0
+
+def is_op(x):
+    return x in ('not', 'and', 'or')
+
+expr = input().strip()
+tokens = expr.replace('(', ' ( ').replace(')', ' ) ').split()
+
+vals, ops = [], []
+
+def apply():
+    op = ops.pop()
+    if op == 'not':
+        a, pa = vals.pop()
+        # 右操作数优先级 < 当前优先级 才加括号
+        if pa < priority(op):
+            a = f"( {a} )"
+        vals.append((f"not {a}", priority(op)))
+    else:
+        b, pb = vals.pop()
+        a, pa = vals.pop()
+        # 左右侧根据优先级判断是否加括号
+        if pa < priority(op):
+            a = f"( {a} )"
+        if pb <= priority(op):
+            b = f"( {b} )"
+        vals.append((f"{a} {op} {b}", priority(op)))
+
+for t in tokens:
+    if t == '(':
+        ops.append(t)
+    elif t == ')':
+        while ops and ops[-1] != '(':
+            apply()
+        ops.pop()
+    elif is_op(t):
+        while ops and is_op(ops[-1]) and \
+              ((t != 'not' and priority(ops[-1]) >= priority(t)) or
+               (t == 'not' and priority(ops[-1]) > priority(t))):
+            apply()
+        ops.append(t)
+    else:
+        vals.append((t, 4))  # 操作数优先级最高（常数4）
+
+while ops:
+    apply()
+
+print(vals[-1][0])
+```
+
+🔍 说明
+
+- **两个栈：**
+
+  - `vals` 存 `(表达式字符串, 优先级)`；
+  - `ops` 存操作符。
+
+- **apply()**：
+  每次弹出一个操作符，根据优先级决定是否给子表达式加括号。
+
+- **优先级规则**：
+
+  ```
+  not > and > or
+  ```
+
+  `not` 是右结合（所以当后面的操作符优先级相等时不提前计算）。
+
+- **括号控制逻辑：**
+
+  - 左子式：若优先级 < 当前操作符，则加括号。
+  - 右子式：若优先级 ≤ 当前操作符，则加括号。
+  - 单目 `not`：若子式优先级 < 当前操作符，则加括号。
+
+------
+
+
+
+解读：
+
+```python
+    elif is_op(t):
+        while ops and is_op(ops[-1]) and \
+              ((t != 'not' and priority(ops[-1]) >= priority(t)) or
+               (t == 'not' and priority(ops[-1]) > priority(t))):
+            apply()
+        ops.append(t)
+```
+
+非常好的问题 👍
+这几行是整个算法的**核心关键**，控制了**操作符出栈的时机**（即：当前要进来的运算符 `t`，是否要先让栈顶运算符计算完）。
+
+我们来逐句完全拆解说明。
+
+------
+
+🎯 背景：Shunting Yard 的“运算符优先级处理规则”
+
+Shunting Yard（调度场算法）：
+
+> 当读到一个新的运算符时，要决定是否把**栈顶运算符**先弹出（并计算），还是**暂时压栈**等待以后处理。
+
+逻辑：
+
+- 如果**栈顶运算符的优先级 ≥ 当前运算符**，
+  并且两者是左结合 → 弹出。
+- 如果**栈顶运算符的优先级 > 当前运算符**，
+  并且两者是右结合 → 弹出。
+- 否则，直接把当前运算符压栈。
+
+------
+
+🧩 我们的代码片段
+
+```python
+elif is_op(t):
+    while ops and is_op(ops[-1]) and \
+          ((t != 'not' and priority(ops[-1]) >= priority(t)) or
+           (t == 'not' and priority(ops[-1]) > priority(t))):
+        apply()
+    ops.append(t)
+```
+
+------
+
+🪄 一行一行解释
+
+1️⃣ `elif is_op(t):`
+
+如果当前 token 是运算符（`not`, `and`, `or`）。
+
+------
+
+2️⃣ `while ops and is_op(ops[-1]) and ...`
+
+只要：
+
+- 栈中还有运算符；
+- 栈顶也是运算符（而不是括号）；
+- 满足**优先级出栈条件**（下一步解释），
+  就**先执行 apply()**。
+
+也就是说，我们在进入新的运算符前，会清理掉该弹出的旧操作符。
+
+------
+
+3️⃣ 出栈条件（最重要）
+
+```python
+((t != 'not' and priority(ops[-1]) >= priority(t)) or
+ (t == 'not' and priority(ops[-1]) > priority(t)))
+```
+
+意思是：
+
+| 当前运算符             | 栈顶运算符        | 何时弹出栈顶？ |
+| ---------------------- | ----------------- | -------------- |
+| `and` / `or`（左结合） | 优先级 **≥** 当前 | 弹出           |
+| `not`（右结合）        | 优先级 **>** 当前 | 弹出           |
+
+解释：
+
+- **左结合运算符**（`and`, `or`） → 如果栈顶优先级相同或更高，就该先算；
+- **右结合运算符**（`not`） → 只在栈顶优先级**更高**时才弹出，
+  避免例如 `not not True` 被提前计算成 `(not not) True` 这样的错误。
+
+------
+
+4️⃣ `apply()`
+
+执行一次实际的计算（在我们这里，是拼接表达式字符串）。
+比如遇到：
+
+```
+not True or False
+```
+
+当处理 `or` 时，
+会先弹出 `not`（因为 `not` 优先级更高），执行 `apply()` 变为 `"not True"`。
+
+------
+
+5️⃣ `ops.append(t)`
+
+最后把当前运算符压栈（因为还没执行完）。
+
+------
+
+🧠 举个例子理解整个 while 循环
+
+输入：
+
+```
+not True or False
+```
+
+扫描到每个 token：
+
+| token   | ops                   | vals                          | 动作                                            |
+| ------- | --------------------- | ----------------------------- | ----------------------------------------------- |
+| `not`   | [] → ['not']          | []                            | 压入 not                                        |
+| `True`  | ['not']               | [('True',4)]                  | 压入值                                          |
+| `or`    | ['not'] → [] → ['or'] | [('not True',3)]              | 因为栈顶 not 优先级高，先 apply 一次，然后压 or |
+| `False` | ['or']                | [('not True',3), ('False',4)] | 压入值                                          |
+
+最终 apply `'or'`：
+→ 输出 `not True or False`
+
+------
+
+⚙️ 对比右结合例子
+
+输入：
+
+```
+not not True
+```
+
+当处理第二个 `not` 时：
+
+- 栈顶运算符也是 `not`
+- 由于 `not` 是**右结合**
+- 出栈条件是 `priority(ops[-1]) > priority(t)`（严格大于）
+- 这时两者优先级相等 → **不会弹出**
+
+所以两个 not 会顺序压栈：
+
+```
+ops = ['not', 'not']
+```
+
+等遇到 `True` 后再按顺序 apply → 正确输出 `not not True`。
+如果我们用 `>=`，就会错误地提前算出 `(not not) True`。
+
+------
+
+✅ 小结表格
+
+| 运算符      | 结合性 | 出栈条件          | 解释                            |
+| ----------- | ------ | ----------------- | ------------------------------- |
+| `not`       | 右结合 | 栈顶优先级 > 当前 | 保证 `not not X` 不被提前执行   |
+| `and`, `or` | 左结合 | 栈顶优先级 ≥ 当前 | 保证 `A and B and C` 从左往右算 |
+
+------
 
 
 
