@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-*Updated 2025-10-15 22:23 GMT+8*
+*Updated 2025-11-15 23:59 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -17730,3 +17730,79 @@ print(matrix_power(M, k))
 - **动态规划**：某些动态规划问题可以通过构建适当的转移矩阵并求其幂来优化解决方案。
 
 这种方法极大地减少了所需的时间复杂度，特别是当指数很大时。
+
+
+
+# 其他
+
+## M1100.机器人流水线调整
+
+greedy, https://sunnywhy.com/problem/1100
+
+在一个流水线数轴上有 个机器人，每个机器人的初始位置用整数数组 中的元素表示。接下来会有一次调整指令，每个机器人必须选择向左或向右移动恰好 个单位。
+
+请编写函数 `long long f(int* C, int N, int K)`，计算所有可能的调整方案中，机器人调整后位置的最小可能跨度，即所有机器人中最大位置与最小位置的差值。
+
+输入描述
+
+1 <= N <= 150
+
+-2 * 10e8 <= Ci <= 2 * 10e8
+
+0 <= K <= 2* 10e8
+
+样例1
+
+输入
+
+```
+3
+0 4 0
+1
+```
+
+输出
+
+```
+2
+```
+
+样例2
+
+输入
+
+```
+2
+5 10
+0
+```
+
+输出
+
+```
+5
+```
+
+
+
+```python
+def f(C, N, K):
+    if N == 1:
+        return 0  # 单机器人，跨度为0
+
+    C.sort()
+    ans = C[-1] - C[0]  # 初始跨度
+    for i in range(N - 1):
+        # 前 i 个向右(+K)，后 N-i 个向左(-K)
+        high = max(C[i] + K, C[-1] - K)
+        low = min(C[0] + K, C[i+1] - K)
+        ans = min(ans, high - low)
+    return ans
+
+# 输入处理
+n = int(input())
+C = list(map(int, input().split()))
+k = int(input())
+print(f(C, n, k))
+```
+
