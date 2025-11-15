@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-*Updated 2025-11-15 23:59 GMT+8*
+*Updated 2025-11-15 22:52 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -4377,36 +4377,51 @@ for a in sorted(ans):
 
 
 
+有2处剪枝。必须按 **位置（索引）** 来判断是否使用过，而不是按 **值**。
+
 ```python
-def generate_permutations(nums):
-    def backtrack(path, used):
-        if len(path) == len(nums):
-            permutations.add(tuple(path))
-            return
-        
-        for i in range(len(nums)):
-            if not used[i]:
+from typing import List
+
+class Solution:
+    #def permute(self, nums: List[int]) -> List[List[int]]:
+    def permute(self, nums: List[int]) -> set[tuple]:
+        n = len(nums)
+        # ans, sol = [], []
+        ans, sol = set(), []
+        used = [False] * n  # ← 新增：记录每个位置是否用过
+
+        def backtrack():
+            # 终止条件：当前排列已满
+            if len(sol) == n:
+                # ans.append(sol[:])  # 深拷贝
+                ans.add(tuple(sol))
+                return
+
+            # 尝试每个未被使用的数
+            #for x in nums:
+            for i in range(n):
+                if used[i]:
+                    continue
+                # 去重剪枝：相同值且前一个未使用，则跳过（保证字典序+去重）
+                if i>0 and nums[i-1]==nums[i] and used[i-1]:
+                    continue
                 used[i] = True
-                path.append(nums[i])
-                backtrack(path, used)
-                path.pop()
+                sol.append(nums[i])  # 选择
+                backtrack()  # 递归
+                sol.pop()  # 回溯
                 used[i] = False
-    
-    permutations = set()
-    used = [False] * len(nums)
-    backtrack([], used)
-    return sorted(permutations)
 
-def main():
+        nums.sort()
+        backtrack()
+        return ans
+
+if __name__ == '__main__':
+    sol = Solution()
     n = int(input())
-    nums = list(map(int, input().split()))
-    permutations = generate_permutations(nums)
-    
-    for perm in permutations:
-        print(" ".join(map(str, perm)))
-
-if __name__ == "__main__":
-    main()
+    a = list(map(int, input().split()))
+    result = sol.permute(a)
+    for perm in sorted(result):
+        print(*perm)
 ```
 
 
