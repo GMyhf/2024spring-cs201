@@ -4511,11 +4511,103 @@ if __name__ == "__main__":
 
 
 
-### sy136: 组合II
+### sy136: 组合II 中等
 
 https://sunnywhy.com/sfbj/4/3/136
 
-给定一个长度为的序列，其中有n个互不相同的正整数，再给定一个正整数k，求从序列中任选k个的所有可能结果。
+给定一个长度为n的序列，其中有n个互不相同的正整数，再给定一个正整数k，求从序列中任选k个的所有可能结果。
+
+**输入描述**
+
+两个正整数n、k（$1 \le k \le n \le 12$）。
+
+第二行按升序给出n个互不相同的正整数（每个正整数均不超过100）。
+
+**输出描述**
+
+每个组合一行，输出所有组合。
+
+输出顺序为：两个组合A和B，若各自升序后满足前项对应相同，但有$A_k < B_k$，那么将组合优先输出（例如比优先输出）。
+
+在输出组合时，组合内部按升序输出，组合中的每个数之间用一个空格隔开，行末不允许有多余的空格。不允许出现相同的组合。
+
+样例1
+
+输入
+
+```
+3 2
+1 2 3
+```
+
+输出
+
+```
+1 2
+1 3
+2 3
+```
+
+样例2
+
+输入
+
+```
+2 1
+3 5
+```
+
+输出
+
+```
+3
+5
+```
+
+
+
+
+
+```python
+def combine(n, k, nums):
+    ans, sol = [], []
+    N = len(nums)
+
+    def backtrack(i):
+        # 当前组合已满
+        if len(sol) == k:
+            ans.append(sol[:])
+            return
+        # 剩余元素不足以凑满 k 个，剪枝
+        if len(sol) + (N - i) < k:
+            return
+        # 到达末尾
+        if i == N:
+            return
+
+        # 先“选” nums[i]
+        sol.append(nums[i])
+        backtrack(i + 1)
+        sol.pop()
+
+        # 再“不选” nums[i]
+        backtrack(i + 1)
+
+    backtrack(0)
+    return ans
+
+
+# 读取并输出
+if __name__ == "__main__":
+    n, k = map(int, input().split())
+    a = list(map(int, input().split()))
+    res = combine(n, k, a)
+    for comb in res:
+        print(*comb)
+
+```
+
+
 
 
 
