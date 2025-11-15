@@ -4643,11 +4643,88 @@ if __name__ == "__main__":
 
 
 
-### sy137: 组合III
+### sy137: 组合III 中等
 
 https://sunnywhy.com/sfbj/4/3/137
 
 给定一个长度为n的序列，其中有n个可能重复的正整数k，再给定一个正整数k，求从序列中任选k个的所有可能结果。
+
+**输入描述**
+
+两个正整数n、k（$1 \le k \le n \le 12$）。
+
+第二行按升序给出n个互不相同的正整数（每个正整数均不超过100）。
+
+**输出描述**
+
+每个组合一行，输出所有组合。
+
+输出顺序为：两个组合A和B，若各自升序后满足前项对应相同，但有$A_k < B_k$，那么将组合优先输出（例如比优先输出）。
+
+在输出组合时，组合内部按升序输出，组合中的每个数之间用一个空格隔开，行末不允许有多余的空格。不允许出现相同的组合。
+
+样例1
+
+输入
+
+```
+3 2
+1 1 3
+```
+
+输出
+
+```
+1 1
+1 3
+```
+
+
+
+
+
+```python
+def solve():
+    n, k = map(int, input().split())
+    nums = list(map(int, input().split()))
+    nums.sort()  # 输入已升序，但保险
+    
+    sol = []
+    ans = set()   # 用 set 去重
+    N = len(nums)
+
+    def backtrack(i):
+        # 选满 k 个则加入 set
+        if len(sol) == k:
+            ans.add(tuple(sol))
+            return
+        # 剩余元素不足以凑够 k 个，剪枝
+        if len(sol) + (N - i) < k:
+            return
+        if i == N:
+            return
+
+        # 1. 选 nums[i]
+        sol.append(nums[i])
+        backtrack(i + 1)
+        sol.pop()
+
+        # 2. 不选 nums[i]
+        backtrack(i + 1)
+
+    backtrack(0)
+
+    # 将所有组合按字典序排序
+    res = sorted(ans)
+
+    # 输出
+    for comb in res:
+        print(*comb)
+
+solve()
+```
+
+
 
 
 
