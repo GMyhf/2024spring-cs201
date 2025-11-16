@@ -6008,33 +6008,33 @@ if __name__ == "__main__":
 **改进要点说明**
 
 1. **更轻量的类定义**
-    
+   
     - 使用 `__slots__` 节省内存，避免动态属性创建。
-        
+      
     - 不改变你原来的面向对象思路。
-        
+    
 2. **逻辑结构更清晰**
-    
+   
     - `parse_dataset()` 专职解析输入 → 返回树结构；
-        
+      
     - `print_tree()` 专职输出；
-        
+      
     - `main()` 负责输入输出流程。
-        
+    
 3. **更安全的输入处理**
-    
+   
     - 用 `try/except EOFError` 避免 OJ 环境下读空出错；
-        
+      
     - 处理最后一组未以 `*` 结尾但以 `#` 终止的情况。
-        
-4. **性能小优化**
     
+4. **性能小优化**
+   
     - 仅对子文件进行 `sorted()`；
-        
+      
     - 栈式构建比递归解析更稳定；
-        
+      
     - 少量字符串拼接用局部变量缓存（`prefix`）。
-        
+      
 
 
 考虑递归，对于输入文件 f 开头则存起来，d 开头则多记一个缩进递归，] 结尾则将存贮的files排序输出并结束该字典。
@@ -22095,6 +22095,70 @@ Sample2 output:
 来源
 
 acwing 小组队列 https://www.acwing.com/problem/content/description/134/
+
+
+
+这题是 **Team Queue / 小组队列**，不能把所有人放一个队列，因为插队规则是“排在本组最后一个人后面”，因此：核心思路（经典做法）
+
+1. **用一个 dict：member → group_id**
+   每个人属于哪个组。
+2. **用一个 deque：group_queue**
+   记录哪些组当前在队列中，以及它们的顺序。
+3. **用一个 dict：group → deque of members**
+   保存该组当前队列里的成员顺序。
+4. **ENQUEUE x**
+   - 找到 x 的组 g
+   - 如果该组当前不在总队列中，则把 g 加入 group_queue
+   - 把 x 加入 group_members[g]
+5. **DEQUEUE**
+   - 找 group_queue 的第一个组 g
+   - 弹出 group_members[g] 的第一个人
+   - 如果这个组空了，把它从 group_queue 中移除
+
+时间复杂度：所有操作都是 **O(1)**，非常快，可以轻松通过 5 万行操作。
+
+```python
+import sys
+from collections import deque
+
+input = sys.stdin.readline
+
+t = int(input())
+group_of = {}
+for gid in range(t):
+    for x in map(int, input().split()):
+        group_of[x] = gid   # 记录每个人所属的组
+
+group_queue = deque()       # 当前排队的组顺序
+group_members = {}          # 每组自己的队列
+in_queue = set()            # 当前有哪些组在 group_queue 中
+
+while True:
+    cmd = input().strip()
+    if cmd == "STOP":
+        break
+
+    if cmd.startswith("ENQUEUE"):
+        _, x = cmd.split()
+        x = int(x)
+        g = group_of.get(x, -1)   # -1 表示散客
+
+        if g not in in_queue:
+            in_queue.add(g)
+            group_queue.append(g)
+            group_members[g] = deque()
+
+        group_members[g].append(x)
+
+    else:  # DEQUEUE
+        g = group_queue[0]
+        x = group_members[g].popleft()
+        print(x)
+
+        if not group_members[g]:  # 该组没人了，移除该组
+            group_queue.popleft()
+            in_queue.remove(g)
+```
 
 
 
