@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-11-10 15:39 GMT+8*
+*Updated 2025-11-16 21:44 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -8873,9 +8873,89 @@ if __name__ == "__main__":
 
 
 
+最优解（不需要Trie）：排序+相邻比较。排序后所有前缀关系只可能出现在相邻元素之间。
+
+```python
+t = int(input())
+for _ in range(t):
+    n = int(input())
+    nums = [input().strip() for _ in range(n)]
+    nums.sort()                           # 字典序排序
+
+    ok = True
+    for i in range(n-1):
+        # 如果前一个是后一个的前缀 → 冲突
+        if nums[i+1].startswith(nums[i]):
+            ok = False
+            break
+
+    print("YES" if ok else "NO")
+
+```
+
+
+
+
+
 https://www.geeksforgeeks.org/trie-insert-and-search/
 
 **Definition:** A trie (prefix tree, derived from retrieval) is a multiway tree data structure used for storing strings over an alphabet. It is used to store a large amount of strings. The pattern matching can be done efficiently using tries.
+
+
+
+**Trie思路**，逻辑：
+
+- 插入号码时，如果你的路径上遇到“终止标记”，则表示已有短号码是你的前缀 → 冲突
+- 插入完毕后，如果你自己是前缀（有子节点）→ 冲突
+
+⚠️：如果有重复号码存在，→ 冲突
+
+```python
+class Node:
+    def __init__(self):
+        self.child = {}
+        self.end = False
+
+def insert(root, s):
+    cur = root
+    for c in s:
+        # 如果在路径上遇到已结束的号码，说明已有短号码是当前号码的前缀 -> 冲突
+        if cur.end:
+            return False
+        if c not in cur.child:
+            cur.child[c] = Node()
+        cur = cur.child[c]
+    # 到达末尾：若这个节点已有结束标记，说明完全相同的号码已存在 -> 冲突
+    if cur.end:
+        return False
+    # 若这个节点有子节点，说明当前号码是已有更长号码的前缀 -> 冲突
+    if cur.child:
+        return False
+    cur.end = True
+    return True
+
+import sys
+input = sys.stdin.readline
+
+t = int(input().strip())
+for _ in range(t):
+    n = int(input().strip())
+    nums = [input().strip() for _ in range(n)]
+    nums.sort()  # 升序排序（短的前面）
+
+    root = Node()
+    ok = True
+    for num in nums:
+        if not insert(root, num):
+            ok = False
+            break
+    print("YES" if ok else "NO")
+
+```
+
+
+
+
 
 使用字典实现的字典树（Trie）。它的主要功能是插入和搜索字符串。
 
@@ -8929,8 +9009,6 @@ for _ in range(t):
 
 
 
-
-方法二：排序后直接比较。即更简单的方法是对号码排序后逐个检查是否为前缀。
 
 ```python
 # 雷逸鸣 物理学院
@@ -14949,7 +15027,6 @@ if __name__ == '__main__':
     main()
 
 ```
-
 
 
 
