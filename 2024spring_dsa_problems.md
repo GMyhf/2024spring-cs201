@@ -16874,6 +16874,45 @@ print(' '.join(map(str, ans)))
 
 
 
+【黄鹤鸣 2025fall-cs201 光华管理学院】思路：
+
+前序的方式的访问顺序：从根节点到左子树再到右子树
+
+中序的方式的访问顺序：从左子树到根节点再到右子树
+
+后序的方式的访问顺序：从左子树到右子树再到根节点
+
+
+
+二叉搜索树有大小的特点    ，通过以下while循环分左右子树
+
+```python
+while i<len(pre) and pre[i]<root:
+    i+=1
+```
+
+代码：
+
+```python
+def build_postorder(pre):
+    if not pre:
+        return []
+
+    root=pre[0]
+    i=1
+    while i<len(pre) and pre[i]<root:
+        i+=1
+
+    left=pre[1:i]
+    right=pre[i:]
+    return build_postorder(left)+build_postorder(right)+[root]
+n=int(input())
+pre=list(map(int,input().split()))
+print(' '.join(map(str,build_postorder(pre))))
+```
+
+
+
 
 
 ## 22359: Goldbach Conjecture
