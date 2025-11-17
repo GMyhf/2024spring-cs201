@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-11-16 21:44 GMT+8*
+*Updated 2025-11-17 10:24 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -16788,6 +16788,91 @@ ans = hou(root)
 # 输出结果
 print(' '.join(map(str, ans)))
 ```
+
+
+
+【龚正宁 2025fall-cs201 工学院】思路：灵机一动发现可以先提取根节点然后找到左右两部分，接着分治（因为左<根<右的性质即使在子树也成立），所以直接递归秒了。犯脑残了，定义的时候写了left = right = []，这样的话left和right指向同一个东西了，糖丸了。
+
+```python
+n = int(input())
+lst = list(map(int,input().split()))
+ans = []
+def back(s):
+    root = s[0]
+    left= []
+    right = []
+    for ch in s:
+        if ch<root:
+            left.append(ch)
+        elif ch>root:
+            right.append(ch)
+    if left:
+        back(left[:])
+    if right:
+        back(right[:])
+    ans.append(root)
+back(lst)
+print(' '.join(map(str,ans)))
+```
+
+
+
+
+
+**上面思路（回顾）**
+
+二叉搜索树的**前序**是 `根 左 右`，后序是 `左 右 根`。给出前序序列，要恢复出后序，可以按“当前子序列第一个是根，左子树是所有 `< 根` 的继续前序，右子树是所有 `> 根` 的继续前序”来分治。
+
+你原来代码的两个问题：
+
+1. 写成 `left = right = []` 会让 `left` 和 `right` 指向同一个列表（共享可变对象），导致数据混乱。
+2. 每次递归都在循环里构造新的 `left/right` 并切片 `back(left[:])` 等，最坏情况（退化为链）会退化到 O(n^2) 时间并且频繁分配内存。
+
+**优化（O(n) 且只遍历一次）**
+
+用 **前序 + 值上界 bound** 的方法：维护一个全局指针 `i` 遍历前序数组。递归函数 `dfs(bound)` 的含义是：从当前位置 `i`开始，构造（并输出）所有值小于 `bound` 的节点的后序。步骤：
+
+- 如果 `i == n` 或 `pre[i] > bound`：当前子树为空，返回。
+- 取 `root = pre[i]`，`i += 1`。
+- 先递归构造左子树：`dfs(root)`（左子树的节点必须 < root）
+- 再递归构造右子树：`dfs(bound)`（右子树节点 < 原 bound 且 > root，因遍历顺序保证了它们会被正确处理）
+- 最后把 `root` 输出到答案（后序顺序）。
+
+这个方法只遍历 `pre` 一次，时间 O(n)，空间为递归栈深度（最坏 O(n)，平均 O(log n)）。
+
+```python
+import sys
+sys.setrecursionlimit(10000)
+
+n = int(sys.stdin.readline().strip())
+pre = list(map(int, sys.stdin.readline().split()))
+
+ans = []
+i = 0  # 全局索引
+
+def dfs(bound):
+    global i
+    if i >= n or pre[i] > bound:
+        return
+    root = pre[i]
+    i += 1
+    # 左子树所有节点 < root
+    dfs(root)
+    # 右子树所有节点在 (root, bound)
+    dfs(bound)
+    ans.append(root)
+
+# 初始 bound = +inf（这里用比可能值大的数）
+dfs(10**9 + 7)
+print(' '.join(map(str, ans)))
+```
+
+复杂度
+
+- 时间：O(n)（每个元素只被读取一次并处理一次）
+- 空间：O(n) 递归栈（最坏），额外输出数组 O(n)
+
+
 
 
 
