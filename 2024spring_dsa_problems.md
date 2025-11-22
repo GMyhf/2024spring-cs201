@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-11-17 10:24 GMT+8*
+*Updated 2025-11-22 12:18 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -18735,7 +18735,7 @@ for i in range(n):
 
 
 
-## M24637:宝藏二叉树
+## M24637: 宝藏二叉树
 
 dp, http://cs101.openjudge.cn/practice/24637/
 
@@ -21033,7 +21033,7 @@ print(ans)
 
 
 
-## 27205: 护林员盖房子 加强版
+## T27205: 护林员盖房子 加强版
 
 monotonous stack, http://cs101.openjudge.cn/practice/27205
 
@@ -23698,7 +23698,7 @@ else:print('NO')
 
 
 
-## 28050: 骑士周游
+## T28050: 骑士周游
 
 Warnsdorff, 回溯, http://cs101.openjudge.cn/practice/28050/
 
@@ -24544,7 +24544,7 @@ if __name__ == "__main__":
 
 
 
-## 29468.实现散列表
+## 29468: 实现散列表
 
 http://cs101.openjudge.cn/practice/29468/
 
@@ -24670,7 +24670,7 @@ print(" ".join(result))
 
 
 
-## T29803:穿越火线
+## T29803: 穿越火线
 
 Dijkstra, binary search, http://cs101.openjudge.cn/practice/29803/
 
@@ -24823,7 +24823,7 @@ print(min_armor(n, m, T, edges))
 
 
 
-## T29702:二叉的水管
+## T29702: 二叉的水管
 
 topological order, tree, http://cs101.openjudge.cn/practice/29702/
 
