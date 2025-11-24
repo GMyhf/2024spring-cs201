@@ -41,7 +41,7 @@ class Graph:
 class Vertex:
     def __init__(self, num):
         self.key = num
-        self.connectedTo = {}
+        self.neighbors = {}
         self.color = 'white'
         self.distance = sys.maxsize
         self.previous = None
@@ -49,7 +49,7 @@ class Vertex:
         self.fin = 0
 
     def add_neighbor(self, nbr, weight=0):
-        self.connectedTo[nbr] = weight
+        self.neighbors[nbr] = weight
 
     # def __lt__(self,o):
     #     return self.id < o.id
@@ -67,10 +67,10 @@ class Vertex:
     #     return self.disc
 
     def get_neighbors(self):
-        return self.connectedTo.keys()
+        return self.neighbors.keys()
 
     # def getWeight(self, nbr):
-    #     return self.connectedTo[nbr]
+    #     return self.neighbors[nbr]
 
     # def __str__(self):
     #     return str(self.key) + ":color " + self.color + ":disc " + str(self.disc) + ":fin " + str(
@@ -82,12 +82,13 @@ class Vertex:
 def build_graph(filename):
     buckets = {}
     the_graph = Graph()
-    with open(filename, "r", encoding="utf8") as file_in:
-        all_words = file_in.readlines()
-    # all_words = ["bane", "bank", "bunk", "cane", "dale", "dunk", "foil", "fool", "kale",
-    #              "lane", "male", "mane", "pale", "pole", "poll", "pool", "quip",
-    #              "quit", "rain", "sage", "sale", "same", "tank", "vain", "wane"
-    #              ]
+    # with open(filename, "r", encoding="utf8") as file_in:
+    #     all_words = file_in.readlines()
+    all_words = ["BANE", "BANK", "BUNK", "CANE", "DALE", "DUNK", "FOIL", "FOOL", "KALE",
+                 "LANE", "MALE", "MANE", "PALE", "POLE", "POLL", "POOL", "QUIP",
+                 "QUIT", "RAIN", "SAGE", "SALE", "SAME", "TANK", "VAIN", "WANE"
+                 "PAGE", "POPE", "PALL", "COOL", "FALL", "FAIL"
+                 ]
 
     # create buckets of words that differ by 1 letter
     for line in all_words:
@@ -111,7 +112,7 @@ print(len(g))
 
 
 def bfs(start):
-    start.distnce = 0
+    start.distance = 0
     start.previous = None
     vert_queue = deque()
     vert_queue.append(start)
@@ -161,6 +162,10 @@ def traverse(starting_vertex):
 # ans = traverse(g.get_vertex("sage"))
 ans = traverse(g.get_vertex("SAGE")) # 从SAGE开始回溯，逆向打印路径，直到FOOL
 print(*ans[::-1])
+"""
+29
+FOOL POOL POLL POLE PALE SALE SAGE
+"""
 """
 3867
 FOOL TOOL TOLL TALL SALL SALE SAGE
