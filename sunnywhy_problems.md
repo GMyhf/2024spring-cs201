@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-*Updated 2025-11-18 20:54 GMT+8*
+*Updated 2025-11-29 16:56 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -8736,6 +8736,72 @@ if __name__ == '__main__':
 
 
 
+```python
+from collections import deque
+import sys
+
+def main():
+    data = iter(sys.stdin.read().splitlines())
+    m, n = map(int, next(data).split())
+    grid = [list(map(int, next(data).split())) for _ in range(m)]
+    
+    # 方向映射：(dx, dy) -> char
+    directions = [(-1, 0, 'u'), (1, 0, 'd'), (0, -1, 'l'), (0, 1, 'r')]
+    
+    # BFS 队列：(x, y)
+    q = deque()
+    q.append((0, 0))
+    grid[0][0] = 1  # 入队即标记
+    
+    # 记录每个点的父节点和进入方向
+    parent = {}
+    parent[(0, 0)] = (None, None)  # (parent_coord, move_char)
+
+    found = False
+    while q:
+        x, y = q.popleft()
+        if x == m - 1 and y == n - 1:
+            found = True
+            break
+        for dx, dy, move in directions:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < m and 0 <= ny < n and grid[nx][ny] == 0:
+                grid[nx][ny] = 1  # 立即标记，防止重复入队
+                parent[(nx, ny)] = ((x, y), move)
+                q.append((nx, ny))
+    
+    if not found:
+        # 如果题目保证有解，可省略；否则应处理无解情况
+        return
+
+    # 回溯路径
+    path_moves = []
+    curr = (m - 1, n - 1)
+    while parent[curr][0] is not None:
+        _, move = parent[curr]
+        path_moves.append(move)
+        curr = parent[curr][0]
+    
+    path_moves.reverse()  # 从起点到终点
+
+    # 输出路径（1-indexed）
+    x, y = 1, 1
+    print(f"{x} {y}")
+    for move in path_moves:
+        if move == 'u':
+            x -= 1
+        elif move == 'd':
+            x += 1
+        elif move == 'l':
+            y -= 1
+        elif move == 'r':
+            y += 1
+        print(f"{x} {y}")
+
+if __name__ == "__main__":
+    main()
+```
+
 
 
 ### sy322: 跨步迷宫 中等
@@ -9130,6 +9196,63 @@ https://sunnywhy.com/sfbj/8/2/325
 解释
 
 显然从左上角无法到达右下角。
+
+
+
+
+
+```python
+from collections import deque
+
+# 读取输入
+size = list(map(int, input().split()))
+rows, cols = size[0], size[1]
+mymap = []
+portals = []  # 存所有传送门坐标
+
+for i in range(rows):
+    row = list(map(int, input().split()))
+    mymap.append(row)
+    for j, val in enumerate(row):
+        if val == 2:
+            portals.append((i, j))
+
+# BFS
+visited = [[False] * cols for _ in range(rows)]
+queue = deque()
+queue.append((0, 0, 0))
+visited[0][0] = True
+
+# 标记是否已经“激活”传送网络（即是否已经把所有 portal 加入过队列）
+portals_used = False
+
+while queue:
+    x, y, dist = queue.popleft()
+    
+    # 到达终点
+    if x == rows - 1 and y == cols - 1:
+        print(dist)
+        exit(0)
+    
+    # 如果当前是传送门，且还没广播过所有传送门
+    if mymap[x][y] == 2 and not portals_used:
+        portals_used = True
+        for px, py in portals:
+            if not visited[px][py]:
+                visited[px][py] = True
+                queue.append((px, py, dist))  # 传送不增加步数
+    
+    # 四方向移动
+    for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+        nx, ny = x + dx, y + dy
+        if 0 <= nx < rows and 0 <= ny < cols:
+            if not visited[nx][ny] and mymap[nx][ny] != 1:
+                visited[nx][ny] = True
+                queue.append((nx, ny, dist + 1))
+
+# 无法到达
+print(-1)
+```
 
 
 
