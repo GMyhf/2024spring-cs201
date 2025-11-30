@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-11-26 12:18 GMT+8*
+*Updated 2025-11-30 16:40 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -10363,7 +10363,7 @@ print(kruskal(n, edges))
 
 
 
-## 05443: 兔子与樱花
+## M05443: 兔子与樱花
 
 dijkstra, Floyd-Warshall, http://cs101.openjudge.cn/practice/05443/
 
@@ -10815,6 +10815,130 @@ for start, end in requests:
     print(output)
 
 ```
+
+
+
+【郭奕凯、2025fall-cs201, 元培学院】思路：
+
+```mermaid
+graph LR
+    V0((V0)) -->|100| V5((V5))
+    V0 -->|30| V4((V4))
+    V0 -->|10| V2((V2))
+    V1((V1)) -->|5| V2
+    V2 -->|50| V3((V3))
+    V5 -->|10| V3
+    V4 -->|60| V5
+    V4 -->|20| V3
+```
+
+以上面的带权有向图为例，要计算V0到V5的最短路径，思路如下：
+
+首先，记录V0到V5每个节点的距离，如果没有连接就用$+\infin$表示。由下图可知，V0-V2肯定是最短路径（证明采用反证法，如果不是最短路径，则需由V0-其他节点-V2，而V0-其他节点的距离已经大于V0-V2距离了，矛盾）。
+
+|              | V1       | <span style="color:red">V2</span>  | V3       | V4    | V5    |
+| ------------ | -------- | ---------------------------------- | -------- | ----- | ----- |
+| **权值**     | $\infin$ | <span style="color:red;">10</span> | $\infin$ | 30    | 100   |
+| **路径**     | V0-V1    | V0-V2                              | V0-V3    | V0-V4 | V0-V5 |
+| **最短路径** |          | <span style="color:red;">√</span>  |          |       |       |
+
+然后从V2出发，以V2作为中介点，更新V0到其他节点的最短路径。确定V0-V4是最短路径，证明过程如上。
+
+|              | V1       | V2    | <span style="color:green">V3</span>        | <span style="color:red;">V4</span>    | V5    |
+| ------------ | -------- | ----- | ------------------------------------------ | ------------------------------------- | ----- |
+| **权值**     | $\infin$ | 10    | <span style="color:green;">60</span>       | <span style="color:red;">30</span>    | 100   |
+| **路径**     | V0-V1    | V0-V2 | <span style="color:green;">V0-V2-V3</span> | <span style="color:red;">V0-V4</span> | V0-V5 |
+| **最短路径** |          | √     |                                            | <span style="color:red;">√</span>     |       |
+
+然后沿着V0-V4的路径，更新到其他节点的最短路径。确定V0-V4-V3为最短路径。
+
+|              | V1       | V2    | <span style="color:red;">V3</span>       | V4    | <span style="color:green;">V5</span>       |
+| ------------ | -------- | ----- | ---------------------------------------- | ----- | ------------------------------------------ |
+| **权值**     | $\infin$ | 10    | <span style="color:red;">50</span>       | 30    | <span style="color:green;">90</span>       |
+| **路径**     | V0-V1    | V0-V2 | <span style="color:red;">V0-V4-V3</span> | V0-V4 | <span style="color:green;">V0-V4-V5</span> |
+| **最短路径** |          | √     | <span style="color:red;">√</span>        | √     |                                            |
+
+然后沿着V0-V4-V3路径，更新到剩余节点的最短路径。这一次更新后，V0-V4-V3-V5为最短路径。
+
+|              | V1       | V2    | V3       | V4    | <span style="color:red;">V5</span>          |
+| ------------ | -------- | ----- | -------- | ----- | ------------------------------------------- |
+| **权值**     | $\infin$ | 10    | 50       | 30    | <span style="color:red;">60</span>          |
+| **路径**     | V0-V1    | V0-V2 | V0-V4-V3 | V0-V4 | <span style="color:red;">V0-V4-V5-V3</span> |
+| **最短路径** |          | √     | √        | √     | <span style="color:red;">√</span>           |
+
+```python
+import heapq
+
+class Vertex:
+    def __init__(self, name, neighbors=None):
+        self.name = name
+        self.neighbors = {} if not neighbors else neighbors
+
+class Graph:
+    def __init__(self, park):
+        self.graph = {place: Vertex(place) for place in park}
+    
+    def add_edge(self, x, y, dis):
+        self.graph[x].neighbors[y] = dis
+        self.graph[y].neighbors[x] = dis
+
+def Dijkstra(depart, dest):
+    dist = {v:float("inf") for v in g.graph}
+    prev = {v:None for v in g.graph}
+    dist[depart] = 0
+
+    pq = [(0, depart)]
+
+    while pq:
+        d, u = heapq.heappop(pq)
+        if d > dist[u]:
+            continue
+        if u == dest:
+            break
+
+        for v, w in g.graph[u].neighbors.items():
+            if dist[v] > d+w:
+                dist[v] = d+w
+                prev[v] = u
+                heapq.heappush(pq, (dist[v], v))
+    
+    path = []
+    cur = dest
+    while cur and prev[cur] is not None:
+        path.append(cur)
+        cur = prev[cur]
+    path.append(depart)
+    path.reverse()
+
+    ans = []
+    for i in range(len(path) - 1):
+        ans.append(path[i])
+        ans.append(f"({g.graph[path[i]].neighbors[path[i+1]]})")
+    ans.append(path[-1])
+    return ("->".join(ans))
+
+p = int(input())
+park = [input().strip() for _ in range(p)]
+g = Graph(park)
+q = int(input())
+for _ in range(q):
+    x, y, dis = input().split()
+    dis = int(dis)
+    g.add_edge(x, y, dis)
+queries = []
+a = []
+r = int(input())
+for _ in range(r):
+    queries.append(input().split())
+for x, y in queries:
+    if x == y:
+        a.append(x)
+    else:
+        a.append(Dijkstra(x, y))
+print("\n".join(a))
+```
+
+
 
 
 
