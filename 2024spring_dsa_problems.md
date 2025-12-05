@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-11-30 16:40 GMT+8*
+*Updated 2025-12-05 21:28 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -16052,9 +16052,87 @@ http://cs101.openjudge.cn/practice/01664/
 
 
 
-## 21515: 电话线路
+## M21509:序列的中位数
 
-http://cs101.openjudge.cn/practice/21515/
+heap, http://cs101.openjudge.cn/practice/21509
+
+给出一个长度为N的非负整数序列A，对于所有1≤k≤(N+1)/2，输出A1, A1∼A3, …, A1∼A2k−1的中位数。即前1,3,5,...个数的中位数。中位数是指将一组数据从小到大排列后，位于中间的那个数。
+
+**输入**
+
+第1行为一个正整数N，表示了序列长度。第2行包含N个非负整数Ai(Ai ≤ 109)。
+
+**输出**
+
+共(N+1)/2行，分别为前1,3,5,...个数的中位数。
+
+样例输入
+
+```
+7
+1 3 5 7 9 11 6
+```
+
+样例输出
+
+```
+1
+3
+5
+6
+```
+
+提示
+
+对于20%的数据，N ≤ 100；
+对于40%的数据，N ≤ 3000；
+对于100%的数据，N ≤ 100000;
+
+
+
+```python
+import heapq
+import sys
+
+def main():
+    data = sys.stdin.read().split()
+    n = int(data[0])
+    A = list(map(int, data[1:1+n]))
+    
+    lo = []  # max-heap: store negative values
+    hi = []  # min-heap
+    
+    result = []
+    
+    for i, num in enumerate(A):
+        # Push to lo first
+        heapq.heappush(lo, -num)
+        
+        # Move the largest in lo to hi to maintain order
+        heapq.heappush(hi, -heapq.heappop(lo))
+        
+        # If hi has more elements, move smallest back to lo
+        if len(hi) > len(lo):
+            heapq.heappush(lo, -heapq.heappop(hi))
+        
+        # After processing odd number of elements (1st, 3rd, 5th, ...)
+        if i % 2 == 0:  # 0-indexed: i=0 -> 1 element, i=2 -> 3 elements, etc.
+            median = -lo[0]
+            result.append(str(median))
+    
+    print("\n".join(result))
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+
+
+## T21515: 电话线路
+
+dijkstra, binary search, http://cs101.openjudge.cn/practice/21515/
 
 有N座通信基站，P条双向电缆，第i条电缆连接基站Ai和Bi。特别地，1号基站是通信公司的总站，N号基站位于一座农场中。现在，农场主希望对通信线路进行升级，其中升级第i条电缆需要花费Li。
 
@@ -16092,6 +16170,84 @@ http://cs101.openjudge.cn/practice/21515/
 
 0 ≤ K < N ≤ 1000
 1 ≤ P ≤ 2000
+
+
+
+```python
+import sys
+from collections import deque
+
+
+def main():
+    data = sys.stdin.read().split()
+    if not data:
+        return
+
+    it = iter(data)
+    n = int(next(it));
+    p = int(next(it));
+    k = int(next(it))
+
+    graph = [[] for _ in range(n + 1)]
+    max_edge = 0
+    for _ in range(p):
+        a = int(next(it));
+        b = int(next(it));
+        l = int(next(it))
+        graph[a].append((b, l))
+        graph[b].append((a, l))
+        if l > max_edge:
+            max_edge = l
+
+    # 特殊情况：如果 1 和 n 不连通？0-1 BFS 会处理（dist[n] 保持 inf）
+
+    def can(x):
+        # dist[i] = 从 1 到 i 路径上 权重 > x 的边的最小数量
+        INF = 10 ** 9
+        dist = [INF] * (n + 1)
+        dist[1] = 0
+        dq = deque([1])
+
+        while dq:
+            u = dq.popleft()
+            for v, w in graph[u]:
+                # 如果 w <= x，这条边免费（不计入代价）；否则代价为1
+                cost = 1 if w > x else 0
+                new_cost = dist[u] + cost
+                if new_cost < dist[v] and new_cost <= k:  # 剪枝：超过k没必要继续
+                    dist[v] = new_cost
+                    if cost == 0:
+                        dq.appendleft(v)
+                    else:
+                        dq.append(v)
+        return dist[n] <= k
+
+    # 二分答案：最小的 x 使得 can(x) 为 True
+    lo = 0
+    hi = max_edge + 1  # 注意：答案可能为0，也可能需要比max_edge更大？但题目允许K>=0，所以max_edge足够
+
+    # 但注意：有可能最优解是0（所有边<=0？但Li>=0），或甚至不需要任何边>lim
+    # 另外，有可能即使 lim = max_edge 也不连通 → 输出 -1
+
+    if not can(hi):
+        print(-1)
+        return
+
+    ans = -1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if can(mid):
+            ans = mid
+            hi = mid
+        else:
+            lo = mid + 1
+
+    print(ans)
+
+
+if __name__ == "__main__":
+    main()
+```
 
 
 
@@ -21550,6 +21706,150 @@ for _ in range(n):
                 # 输出 1.5 之类的一位小数（避免 2.0）
                 print(f"{s / 2:.1f}")
 
+```
+
+
+
+## T27351:01最小生成树
+
+mst, http://cs101.openjudge.cn/practice/27351/
+
+给定一张 n 个点的完全图. 图中所有边的边权均为 0/1, 且有且仅有 m 条边边权为 1.
+
+求解该完全图的最小生成树, 你只需要输出最小生成树的边权和即可.
+
+**输入**
+
+第一行两个数字 n, m 表示点数,以及边权为 1 的边数。(m <= min{200000, n(n-1)/2})
+
+接下来 m 行, 一行两个数字 a[i],b[i], 表示连接 a[i],b[i] 的边,其边权为 1(1 <= a[i] < b[i] <= n). 保证输入的边两两不同.
+
+**输出**
+
+一行一个数字,表示最小生成树的边权和.
+
+样例输入
+
+```
+6 11
+1 3
+1 4
+1 5
+1 6
+2 3
+2 4
+2 5
+2 6
+3 4
+3 5
+3 6
+===========
+3 0
+```
+
+样例输出
+
+```
+2
+===========
+0
+```
+
+提示
+
+Subtask1 (20%): n <= 300。
+
+Subtask2 (80%): n <= 100000。
+
+
+
+```python
+from collections import deque
+
+n, m = map(int, input().split())
+graph1 = [set() for _ in range(n+1)]
+for _ in range(m):
+    a, b = map(int, input().split())
+    graph1[a].add(b)
+    graph1[b].add(a)
+
+unvisited = set(range(1, n+1))
+components = 0
+
+while unvisited:
+    start = unvisited.pop()
+    components += 1
+    queue = deque([start])
+    while queue:
+        u = queue.popleft()
+        good = unvisited - graph1[u]  # 所有未访问且与 u 有 0-边的点
+        for v in good:
+            queue.append(v)
+        unvisited -= good
+
+print(components - 1)
+```
+
+
+
+并查集方法
+
+```python
+import sys
+sys.setrecursionlimit((1 << 30) - 1)
+
+# 输入节点数n和边数m
+n, m = map(int, input().split())
+
+# 初始化邻接集合（存储每个节点的邻居）
+li = [set() for _ in range(n)]
+for _ in range(m):
+    a, b = map(int, input().split())
+    # 转换为0-based索引
+    li[a-1].add(b-1)
+    li[b-1].add(a-1)
+
+# 并查集父节点数组初始化
+di = list(range(n))
+# 连通n个节点需要的最少边数（初始为n-1）
+edges = n - 1
+# 标记已处理的节点
+checked = set()
+
+# 并查集查找函数（带路径压缩）
+def fin(i):
+    if di[i] != i:
+        di[i] = fin(di[i])
+    return di[i]
+
+# 并查集合并函数
+def union(i, j):
+    # 若已连通，返回True；否则合并并返回False
+    if fin(i) == fin(j):
+        return True
+    di[fin(i)] = fin(j)
+    return False
+
+# 遍历所有节点处理补图边
+for i in range(n):
+    if i in checked:
+        continue
+    checked.add(i)
+    # 当前节点的邻居集合
+    j = li[i]
+    # 补图节点：所有非邻居节点（排除自身）
+    for u in set(range(n)) - j:
+        # 合并i和u，若合并成功则减少需要的边数
+        if not union(i, u):
+            edges -= 1
+            checked.add(u)
+        # 提前终止：已满足连通条件
+        if edges == 0:
+            print(0)
+            exit()
+
+# 输出最终需要补充的边数
+print(edges)
 ```
 
 
