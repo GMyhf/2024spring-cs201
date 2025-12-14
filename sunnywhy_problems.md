@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-*Updated 2025-11-29 16:56 GMT+8*
+*Updated 2025-12-14 20:07 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -17367,49 +17367,64 @@ No
 
 
 
-这个问题可以通过使用拓扑排序来解决。拓扑排序是对有向无环图的顶点的一种排序，它使得如果存在一条从顶点 u 到顶点 v 的路径，那么在排序中 u 一定在 v 的前面。如果在进行拓扑排序的过程中，发现存在没有被访问的顶点，但是已经没有入度为0的顶点，那么就说明图中存在环，也就是存在不能学习的课程。
+这是一个 **拓扑排序** 问题，但有一个特殊要求：**在可选课程中总是优先选择编号最小的课程**。这提示我们使用 **基于优先队列（最小堆）的 Kahn 算法** 来实现拓扑排序。
 
-以下是使用拓扑排序判断有向图是否存在环并输出学习课程顺序的Python代码：
+此外，题目还要求：
+
+- 如果能完成所有课程，输出 `Yes` 和学习顺序；
+- 如果不能，输出 `No` 和 **无法学习的课程数量**（即不在拓扑序列中的课程数）。
 
 ```python
-from collections import defaultdict
+import heapq
+import sys
 
-def courseSchedule(n, edges):
-    graph = defaultdict(list)
-    indegree = [0] * n
-    for u, v in edges:
+def main():
+    data = sys.stdin.read().split()
+    if not data:
+        return
+    
+    n = int(data[0])
+    m = int(data[1])
+    
+    graph = [[] for _ in range(n)]
+    indeg = [0] * n
+    
+    idx = 2
+    for _ in range(m):
+        u = int(data[idx])
+        v = int(data[idx + 1])
+        idx += 2
         graph[u].append(v)
-        indegree[v] += 1
-
-    queue = [i for i in range(n) if indegree[i] == 0]
-    queue.sort()
-    result = []
-
-    while queue:
-        u = queue.pop(0)
-        result.append(u)
+        indeg[v] += 1
+    
+    # 最小堆：存储当前可学的课程（入度为0）
+    heap = []
+    for i in range(n):
+        if indeg[i] == 0:
+            heapq.heappush(heap, i)
+    
+    topo_order = []
+    
+    while heap:
+        u = heapq.heappop(heap)
+        topo_order.append(u)
         for v in graph[u]:
-            indegree[v] -= 1
-            if indegree[v] == 0:
-                queue.append(v)
-        queue.sort()
-
-    if len(result) == n:
-        return "Yes", result
+            indeg[v] -= 1
+            if indeg[v] == 0:
+                heapq.heappush(heap, v)
+    
+    if len(topo_order) == n:
+        print("Yes")
+        print(" ".join(map(str, topo_order)))
     else:
-        return "No", n - len(result)
+        print("No")
+        print(n - len(topo_order))
 
-n, m = map(int, input().split())
-edges = [list(map(int, input().split())) for _ in range(m)]
-res, courses = courseSchedule(n, edges)
-print(res)
-if res == "Yes":
-    print(*courses)
-else:
-    print(courses)
+if __name__ == "__main__":
+    main()
 ```
 
-在这段代码中，我们首先构建了一个图，并计算了每个顶点的入度。然后我们将所有入度为0的顶点添加到队列中，并对队列进行排序。然后在循环中，我们每次从队列中取出一个顶点，将其添加到结果中，然后遍历其所有的邻接顶点，将邻接顶点的入度减1，如果邻接顶点的入度变为0，那么就将其添加到队列中。最后，我们检查访问的顶点数是否等于总的顶点数，如果等于，那么说明可以学完所有课程，否则说明存在不能学习的课程。
+
 
 
 
