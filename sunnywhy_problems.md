@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-*Updated 2025-12-19 17:55 GMT+8*
+*Updated 2025-12-19 21:40 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -18705,6 +18705,168 @@ C = list(map(int, input().split()))
 k = int(input())
 print(f(C, n, k))
 ```
+
+
+
+## M10065.独特蘑菇
+
+sliding window, https://sunnywhy.com/problem/10065
+
+熊熊和他的朋友晴天在森林里发现了一排神奇的蘑菇，每朵蘑菇都有一个独特的颜色值。熊熊想知道，从这排蘑菇中选取一段连续的蘑菇，且这段蘑菇的颜色种类不超过 种，这样的选取方式有多少种。
+
+**输入描述**
+
+第一行包含两个整数 和 （），分别表示蘑菇的数量和允许的最大颜色种类数。
+
+第二行包含 个整数 （），表示每朵蘑菇的颜色值。
+
+**输出描述**
+
+输出一个整数，表示满足条件的选取方式的数量。
+
+样例1
+
+输入
+
+```
+5 2
+1 2 1 3 4
+```
+
+输出
+
+```
+10
+```
+
+解释
+
+满足条件的选取方式有：
+
+- 单独选取每朵蘑菇（5 种）
+- 选取连续的 2 朵蘑菇：1-2, 2-1, 1-3, 3-4（4 种）
+- 选取连续的 3 朵蘑菇：1-2-1（1 种）
+
+总共有 10 种满足条件的选取方式。
+
+样例2
+
+输入
+
+```
+6 3
+1 2 1 2 3 4
+```
+
+输出
+
+```
+18
+```
+
+解释
+
+满足条件的选取方式有：
+
+- 单独选取每朵蘑菇（6 种）
+- 选取连续的 2 朵蘑菇（5 种）
+- 选取连续的 3 朵蘑菇（4 种）
+- 选取连续的 4 朵蘑菇（2 种）
+- 选取连续的 5 朵蘑菇（1 种）
+
+总共有 18 种满足条件的选取方式。
+
+
+
+这是一个经典的**滑动窗口（Two Pointers / Sliding Window）**问题。
+
+**核心思路**
+
+需要找到所有的连续子数组，使得子数组内的不同数字（颜色）个数不超过 $K$。
+
+1.  **双指针维护窗口**：
+    *   使用两个指针 `left` 和 `right`，分别表示当前连续区间的左右边界。
+    *   `right` 指针主动向右移动，每次将新的蘑菇加入窗口。
+    *   `left` 指针被动向右移动，当窗口内的颜色种类超过 $K$ 时，`left` 需要收缩，直到颜色种类回到 $K$ 或以下。
+
+2.  **计算满足条件的子数组数量**：
+    *   对于每一个固定的 `right`，如果区间 `[left, right]` 内的颜色种类 $\le K$，那么以 `right` 为结尾、且满足条件的所有子数组都是合法的。
+    *   这些合法的子数组具体是：`[right, right]`, `[right-1, right]`, ..., `[left, right]`。
+    *   这个数量恰好是 `right - left + 1`。
+    *   我们将每次移动 `right` 后的这个增量累加起来，就是最终答案。
+
+3.  **统计颜色种类**：
+    *   使用一个哈希表（Python 中的 `dict` 或 `collections.defaultdict`）来记录当前窗口内每种颜色出现的次数。
+    *   一个计数器 `distinct_count` 记录当前有多少种不同的颜色（或者直接使用 `len(window_dict)`）。
+
+**Python 代码实现**
+
+```python
+import sys
+from collections import defaultdict
+
+def solve():
+    # 读取所有输入数据
+    input = sys.stdin.read
+    data = input().split()
+    
+    if not data:
+        return
+
+    # 解析 N 和 K
+    n = int(data[0])
+    k = int(data[1])
+    
+    # 解析蘑菇颜色数组
+    mushrooms = []
+    idx = 2
+    # 处理输入可能分多行的情况
+    while idx < len(data):
+        mushrooms.append(int(data[idx]))
+        idx += 1
+    
+    # 颜色计数器
+    color_counts = defaultdict(int)
+    # 当前窗口内不同颜色的数量
+    distinct_colors = 0
+    
+    left = 0
+    total_ways = 0
+    
+    # 滑动窗口：right 从 0 到 n-1
+    for right in range(n):
+        # 1. 将当前 right 指向的蘑菇加入窗口
+        color = mushrooms[right]
+        if color_counts[color] == 0:
+            distinct_colors += 1
+        color_counts[color] += 1
+        
+        # 2. 如果不同颜色数量超过 K，移动 left 收缩窗口
+        while distinct_colors > k:
+            left_color = mushrooms[left]
+            color_counts[left_color] -= 1
+            if color_counts[left_color] == 0:
+                distinct_colors -= 1
+            left += 1
+        
+        # 3. 累加合法子数组数量
+        # 以 right 结尾的合法子数组个数为 (right - left + 1)
+        total_ways += (right - left + 1)
+        
+    print(total_ways)
+
+if __name__ == "__main__":
+    solve()
+```
+
+**代码详解**
+
+1.  **输入处理**：使用 `sys.stdin.read().split()` 一次性读取所有输入，这在处理大量数据时比 `input()` 更快且更稳健。
+2.  **数据结构**：`color_counts` 用来记录窗口里每种颜色出现了几次。
+3.  **主要逻辑**：
+    *   `right` 每向右移一步，我们就把新进来的颜色计数加 1。如果是新出现的颜色（计数从0变1），`distinct_colors` 加 1。
+    *   检查 `distinct_colors > k`。如果超过了，就开始移动 `left`。每移出一个左边的颜色，计数减 1。如果某个颜色计数变回 0，说明这个颜色彻底从窗口消失了，`distinct_colors` 减 1。
+    *   每次循环结束时，窗口 `[left, right]` 是满足条件的**最长**区间。包含在其中的、以 `right` 结尾的所有子区间都满足条件，数量为 `right - left + 1`。
 
 
 
