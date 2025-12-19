@@ -18870,6 +18870,68 @@ if __name__ == "__main__":
 
 
 
+```python
+import sys
+
+# 设置快速IO
+input = sys.stdin.read
+
+def solve():
+    data = input().split()
+    if not data:
+        return
+    
+    # 解析 N 和 K
+    n = int(data[0])
+    k = int(data[1])
+    
+    # 剩下的数据是蘑菇颜色
+    # 使用迭代器避免切片产生的内存开销
+    iterator = iter(data)
+    next(iterator) # 跳过 n
+    next(iterator) # 跳过 k
+    
+    ans = 0
+    point = 0
+    
+    # color_pos 充当 LRU 缓存
+    # key: 颜色, value: 该颜色最后一次出现的下标
+    # 字典的顺序就是颜色最后出现位置的先后顺序
+    color_pos = {}
+    
+    # 模拟 enumerate，idx 是下标
+    idx = 0
+    for val_str in iterator:
+        color = int(val_str)
+        
+        # 1. 如果颜色已存在，删除旧记录，以便稍后重新插入到字典末尾
+        if color in color_pos:
+            del color_pos[color]
+        
+        # 2. 记录当前颜色的最新下标（这会将它放到字典末尾）
+        color_pos[color] = idx
+        
+        # 3. 如果颜色种类超过 K，移除“最老”的那个颜色
+        if len(color_pos) > k:
+            # 获取字典里最早插入的一个键（也就是最后出现位置最小的那个颜色）
+            oldest_color = next(iter(color_pos))
+            # 左指针跳跃到该颜色结束位置的下一位
+            point = color_pos[oldest_color] + 1
+            # 彻底移除该颜色
+            del color_pos[oldest_color]
+            
+        # 4. 累加答案
+        ans += idx - point + 1
+        idx += 1
+        
+    print(ans)
+
+if __name__ == "__main__":
+    solve()
+```
+
+
+
 ## M51044.火星购物
 
 https://sunnywhy.com/problem/51044
