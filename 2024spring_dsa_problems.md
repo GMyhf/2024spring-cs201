@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-12-20 19:01 GMT+8*
+*Updated 2025-12-24 19:12 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -21359,6 +21359,414 @@ for _ in range(n):
                 print(f"{s / 2:.1f}")
 
 ```
+
+
+
+
+
+**【马健文 25 元陪】**
+
+### 1. 问题概述
+
+给定一个动态变化的队列，支持三种操作：
+
+1. `add x`：在队列末尾添加元素 `x`
+2. `del`：删除队列开头的元素
+3. `query`：查询当前队列的中位数
+
+需要实现一个高效的数据结构，能在最多 100,000 次操作中快速响应查询请求。
+
+
+### 2. 核心思路：双堆 + 延迟删除
+
+#### 数据结构：
+
+使用双端队列（deque）来维护主体的队列
+
+使用两个堆来维护队列元素：
+
+- **最大堆（maxheap）**：存储队列中较小的一半元素，堆顶是这部分的最大值
+- **最小堆（minheap）**：存储队列中较大的一半元素，堆顶是这部分的最小值
+
+这样设计可以保证：
+
+- 当队列大小为奇数时，中位数就是最大堆的堆顶元素
+- 当队列大小为偶数时，中位数是最大堆堆顶和最小堆堆顶的平均值
+
+```python
+dequeue = deque([])        # 实际的队列，用于按顺序存储元素
+maxheap = []               # 最大堆（存储较小一半元素）
+minheap = []               # 最小堆（存储较大一半元素）
+maxheap_size = 0           # 最大堆中有效元素数量
+minheap_size = 0           # 最小堆中有效元素数量
+head = 0                   # 队列头部指针
+tail = 0                   # 队列尾部指针
+```
+
+
+#### 延迟删除
+
+传统的双堆算法支持高效插入和查询，但删除任意元素（特别是队列头部）比较困难。我们需要一种机制来处理队首元素的删除。
+
+###### 实现方法
+
+- 不直接从堆中删除元素，而是通过标记为"无效"
+- 查询时**跳过**无效元素，保持堆结构的完整性
+- 避免频繁的堆重建操作，提高效率
+
+**此处的具体解决方案**：给每个元素标记一个"位置索引"，通过维护 `head` 和 `tail` 指针来判断元素是否仍在队列中。
+
+### 3. 算法详细设计
+
+#### 1. 元素插入（add 操作）
+
+```python
+def add(x):
+    # 1. 将元素加入实际队列
+    dequeue.append(x)
+    
+    # 2. 确定元素应该加入哪个堆
+    C = leftmax()  # 获取最大堆的最大值（较小一半的最大值）
+    if C == None or x <= C:
+        # 如果元素小于等于最大堆的最大值，加入最大堆
+        heappush(maxheap, (-x, tail))  # 存储负值以实现最大堆
+        maxheap_size += 1
+    else:
+        # 否则加入最小堆
+        heappush(minheap, (x, tail))
+        minheap_size += 1
+    
+    # 3. 更新尾部指针
+    tail += 1
+    
+    # 4. 重新平衡两个堆的大小
+    rebalance()
+```
+
+**插入策略**：新元素根据与最大堆堆顶的比较结果，决定加入哪个堆，保证最大堆的所有元素 ≤ 最小堆的所有元素。
+
+
+#### 2. 元素删除（del 操作）
+
+这是算法中最复杂的部分，需要处理多种情况：
+
+```python
+def delete():
+    # 1. 从实际队列中弹出队首元素
+    x = dequeue.popleft()
+    
+    # 2. 获取当前两个堆的有效极值
+    L = leftmax()  # 最大堆的最大值
+    R = rightmin() # 最小堆的最小值
+    
+    # 3. 判断被删除元素属于哪个堆
+    if maxheap and minheap:
+        if x < R:
+            # 如果x小于最小堆的最小值，一定在最大堆
+            maxheap_size -= 1
+        elif x > L:
+            # 如果x大于最大堆的最大值，一定在最小堆
+            minheap_size -= 1 
+        else:
+            # 如果x等于某个极值，需要根据位置判断
+            if head == maxheap[0][1]:
+                maxheap_size -= 1
+            elif head == minheap[0][1]:
+                minheap_size -= 1
+    elif maxheap:
+        # 只有最大堆有元素
+        maxheap_size -= 1
+    elif minheap:
+        # 只有最小堆有元素
+        minheap_size -= 1
+    
+    # 4. 更新头部指针
+    head += 1
+    
+    # 5. 重新平衡
+    rebalance()
+```
+
+**删除判断逻辑**：
+
+- 比较被删除元素与两个堆的极值
+- 小于最小堆最小值 → 在最大堆
+- 大于最大堆最大值 → 在最小堆
+- 等于极值 → 检查堆顶元素位置是否匹配被删除位置
+
+
+#### 3. 查询中位数（query 操作）
+
+```python
+def query():
+    # 1. 获取当前两个堆的有效极值
+    left = leftmax()
+    right = rightmin()
+    
+    # 2. 根据堆的大小计算中位数
+    if not maxheap_size and not minheap_size:
+        return None
+    if maxheap_size == minheap_size:
+        # 偶数个元素：取平均值
+        return (left + right) / 2
+    # 奇数个元素：取最大堆的堆顶（因为最大堆多一个元素）
+    return left
+```
+
+#### 4. 辅助函数
+
+**返回堆顶的同时清理无效元素**
+
+```python
+def leftmax():
+    # 清理最大堆顶部的无效元素
+    while maxheap and not inqueue(maxheap[0][1]):
+        heappop(maxheap)
+    if maxheap:
+        return -maxheap[0][0]  # 返回正值
+    return None
+
+def rightmin():
+    # 清理最小堆顶部的无效元素
+    while minheap and not inqueue(minheap[0][1]):
+        heappop(minheap)
+    if minheap:
+        return minheap[0][0]
+    return None
+```
+
+**重新平衡双堆 rebalance**
+
+```python
+def rebalance():
+    # 1. 先清理两个堆顶的无效元素
+    leftmax()
+    rightmin()
+    
+    # 2. 调整大小差不超过1，保证最大堆的大小 >= 最小堆的大小
+    while maxheap_size > minheap_size + 1:
+        # 从最大堆移动元素到最小堆
+        value, pos = heappop(maxheap)
+        value = -value
+        heappush(minheap, (value, pos))
+        maxheap_size -= 1
+        minheap_size += 1
+        
+    while maxheap_size < minheap_size:
+        # 从最小堆移动元素到最大堆
+        value, pos = heappop(minheap)
+        value = -value
+        heappush(maxheap, (value, pos))
+        maxheap_size += 1
+        minheap_size -= 1
+```
+
+### 4. 最终代码：
+
+```python
+from collections import deque
+from heapq import *
+dequeue = deque([])
+maxheap = []
+minheap = []
+maxheap_size = minheap_size = 0
+head = 0
+tail = 0
+
+def inqueue(pos):
+    return head <= pos < tail
+
+def leftmax():
+    while maxheap and not inqueue(maxheap[0][1]):
+        heappop(maxheap)
+    if maxheap:
+        return -maxheap[0][0]
+    return None
+
+def rightmin():
+    while minheap and not inqueue(minheap[0][1]):
+        heappop(minheap)
+    if minheap:
+        return minheap[0][0]
+    return None
+
+def rebalance():
+    global head,tail,maxheap_size,minheap_size
+    
+    leftmax()
+    rightmin()
+    while maxheap_size > minheap_size + 1:
+        leftmax()
+        value,pos = heappop(maxheap)
+        value = -value
+        heappush(minheap,(value,pos))
+        maxheap_size -= 1
+        minheap_size += 1
+    while maxheap_size < minheap_size:
+        rightmin()
+        value,pos = heappop(minheap)
+        value = -value
+        heappush(maxheap,(value,pos))
+        maxheap_size += 1
+        minheap_size -= 1
+        
+def add(x):
+    global head,tail,maxheap_size,minheap_size
+    dequeue.append(x)
+    
+    C = leftmax()
+    if C == None or x <= C:
+        heappush(maxheap,(-x,tail))
+        maxheap_size += 1
+    else:
+        heappush(minheap,(x,tail))
+        minheap_size += 1
+    
+    tail += 1
+
+    rebalance()
+
+def delete():
+    global head,tail,maxheap_size,minheap_size
+    x = dequeue.popleft()
+    L = leftmax()
+    R = rightmin()
+
+    if maxheap and minheap:
+        if x < R:
+            maxheap_size -= 1
+        elif x > L:
+            minheap_size -= 1 
+        else:
+            if head == maxheap[0][1]:
+                maxheap_size -= 1
+            elif head == minheap[0][1]:
+                minheap_size -= 1
+            else:
+                print('Error: popped element mismatched!')
+    elif maxheap:
+        maxheap_size -= 1
+    elif minheap:
+        minheap_size -= 1
+    else:
+        print('Error: deleting from empty heaps')
+    
+    head += 1
+    
+    rebalance()
+
+def query():
+    left = leftmax()
+    right = rightmin()
+
+    if not maxheap_size and not minheap_size:
+        return None
+    if maxheap_size == minheap_size:
+        return (left+right)/2
+    
+    return left
+
+n = int(input())
+results = []
+for _ in range(n):
+    a = input().split()
+    if a[0] == 'add':
+        add(int(a[1]))
+    elif a[0] == 'del':
+        delete()
+    else:
+        result = query()
+        if isinstance(result, float) and result.is_integer():
+            results.append(str(int(result)))
+        else:
+            results.append(str(result))
+print('\n'.join(results))
+
+```
+
+### 5. 注意事项
+
+### 需要注意的点很多！
+
+#### (1) dequeue的head和tail
+
+由于一开始的时候初始化`head = tail = 0`
+
+且每个元素在插入时获得一个唯一的索引（`tail`值）
+
+所以inqueue函数判断的时候应该是：
+
+`head <= pos < tail`
+
+这样正好和左闭右开原则匹配
+
+#### (2) 先进行判断左右再进行size变化
+
+由于通过head和tail判断inqueue，所以应该先进行判断左右再进行size变化，不然的话你都取不出来这个元素（直接被清理了）
+
+#### (3) 快读快写防止TLE
+
+#### (4) 保留小数的问题：
+
+需要判断是否是float，如果是float能不能变成整数（`isinstance`）
+
+```python
+result = query()
+    if isinstance(result, float) and result.is_integer():
+        results.append(str(int(result)))
+    else:
+        results.append(str(result))
+```
+
+#### (5) delete的时候有重复元素的问题
+
+边界处的重复元素需要判断在两侧究竟哪一边存在。由于`heapq`的最小堆性质，相同大小的元素中，一定是索引最小的元素出现在堆顶的位置，自然也就满足了从`tail`进行删除的要求
+
+```python
+	# 3. 判断被删除元素属于哪个堆
+    if maxheap and minheap:
+        if x < R:
+            # 如果x小于最小堆的最小值，一定在最大堆
+            maxheap_size -= 1
+        elif x > L:
+            # 如果x大于最大堆的最大值，一定在最小堆
+            minheap_size -= 1 
+        else:
+            # 此时x == L == R，需要根据位置判断
+            if head == maxheap[0][1]:
+                maxheap_size -= 1
+            elif head == minheap[0][1]:
+                minheap_size -= 1
+    elif maxheap:
+        # 只有最大堆有元素
+        maxheap_size -= 1
+    elif minheap:
+        # 只有最小堆有元素
+        minheap_size -= 1
+    
+```
+
+#### (6) rebalance的时候得把堆顶清理了，不要对无效元素进行转移
+
+### 6.复杂度分析
+
+#### 时间复杂度：
+
+| 操作  | 时间复杂度 | 说明         |
+| ----- | ---------- | ------------ |
+| add   | O(log n)   | 堆插入操作   |
+| del   | O(log n)   | 堆调整操作   |
+| query | O(1)       | 直接访问堆顶 |
+
+其中 n 是当前队列中的元素数量。每个操作都涉及到堆的调整，但通过延迟删除策略，避免了最坏情况下的 O(n) 删除操作。
+
+#### 空间复杂度
+
+O(n)，需要存储所有队列元素及其位置信息。
+
+
+
+
 
 
 
