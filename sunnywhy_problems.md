@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-*Updated 2025-12-20 00:40 GMT+8*
+*Updated 2026-01-10 13:30 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -6823,6 +6823,105 @@ if __name__ == "__main__":
 ```
 
 In this program, we define a `Node` class to represent a node in the linked list. The `main` function reads the number of nodes, the id of the first node, and the data value to delete from the input, then reads each node's id, data, and next id, and stores them in a dictionary. The program then starts from the first node and follows the `next` pointers to delete each node with the specified data value. The program prints the remaining nodes in the order they appear in the linked list.
+
+
+
+**核心思路**
+
+Python 中没有指针的概念，且题目给出的节点编号是离散的（虽然范围是 $1$ 到 $n$，但顺序打乱）。最好的方式是使用 **字典 (Dictionary)** 来模拟内存。
+
+1.  **存储**：使用字典 `nodes`，其中 `key` 是节点的 ID，`value` 是一个元组或列表 `(data, next_id)`。这样可以实现 $O(1)$ 的查找速度。
+2.  **遍历**：从给定的 `head` 开始，通过 `next_id` 不断查找字典中的下一个节点，直到 `-1`。
+3.  **筛选**：在遍历过程中，如果当前节点的 `data` 不等于待删除的 $k$，则将该节点的 ID 加入到一个列表 `res` 中。
+4.  **输出**：遍历列表 `res`，依次输出。注意输出时的 `next` 必须指向列表中的下一个元素；如果是列表最后一个元素，`next` 输出 `-1`。
+
+**Python 代码实现**
+
+为了应对可能的大量输入（$N$ 可达 $10^5$），使用了 `sys.stdin.read` 进行快速 I/O。
+
+```python
+import sys
+
+def main():
+    # 1. 快速读取所有输入
+    input_data = sys.stdin.read().split()
+    
+    if not input_data:
+        return
+
+    iterator = iter(input_data)
+    
+    try:
+        # 读取头信息：节点数、头结点ID、待删除的值 k
+        n = int(next(iterator))
+        head = int(next(iterator))
+        k = int(next(iterator))
+        
+        # 2. 构建字典存储链表节点
+        # nodes[id] = (data, next_node_id)
+        nodes = {}
+        for _ in range(n):
+            node_id = int(next(iterator))
+            data = int(next(iterator))
+            next_node = int(next(iterator))
+            nodes[node_id] = (data, next_node)
+            
+    except StopIteration:
+        return
+
+    # 3. 遍历链表并进行过滤
+    valid_nodes = [] # 存储保留下来的节点ID
+    curr = head
+    
+    # 顺着链表 next 指针走
+    while curr != -1:
+        # 获取当前节点的数据
+        # 注意：题目描述有“多余节点”，但顺着 next 指针走自然会忽略掉那些不在主链上的点
+        if curr in nodes:
+            data, next_id = nodes[curr]
+            
+            # 如果数据不等于 k，则保留
+            if data != k:
+                valid_nodes.append(curr)
+            
+            # 无论是否删除，都要走向原链表的下一个节点
+            curr = next_id
+        else:
+            # 理论上不应该走到这里，除非输入数据有误（next指到了不存在的ID）
+            break
+
+    # 4. 输出重构后的链表
+    # 需要重新建立 next 关系
+    count = len(valid_nodes)
+    for i in range(count):
+        curr_id = valid_nodes[i]
+        curr_data = nodes[curr_id][0] # 从字典里取回原始数据
+        
+        # 确定新的 next 指向
+        if i < count - 1:
+            # 指向结果列表中的下一个 ID
+            next_output_id = valid_nodes[i+1]
+        else:
+            # 最后一个节点指向 -1
+            next_output_id = -1
+            
+        print(f"{curr_id} {curr_data} {next_output_id}")
+
+if __name__ == "__main__":
+    main()
+```
+
+**代码解析**
+
+1.  **`sys.stdin.read().split()`**：将所有输入一次性读入并按空白字符分割成列表。这比在循环中使用 `input()` 快得多，能有效防止超时。
+2.  **字典映射**：`nodes[node_id] = (data, next_node)` 这一步相当于将乱序的输入整理成了可随机访问的“内存”。
+3.  **逻辑删除**：我们没有去修改字典里原本的 `next` 值，而是建立了一个新的列表 `valid_nodes`。只要数据不等于 $k$，就入队。
+4.  **重构输出**：这是关键的一步。原链表中，A 指向 B，B 指向 C。如果 B 被删除了，输出时 A 的 `next` 应该直接变成 C 的 ID。这一点通过 `valid_nodes[i+1]` 自动实现了。
+
+**复杂度**
+
+*   **时间复杂度**：$O(N)$。建立字典、遍历链表、输出结果各遍历一次。
+*   **空间复杂度**：$O(N)$。用于存储字典和结果列表。
 
 
 
