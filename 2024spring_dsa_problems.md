@@ -12447,7 +12447,7 @@ dfs + bfs, http://cs101.openjudge.cn/practice/07161/
 
 例如对于以下森林：
 
-<img src="http://media.openjudge.cn/images/upload/1401904592.png" alt="img" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1401904592.png" alt="img" style="zoom:50%;" />
 
 两棵树的层次遍历序列分别为：C E F G K H J / D X I
 
