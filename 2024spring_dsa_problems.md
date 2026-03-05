@@ -25829,7 +25829,7 @@ To move in the lair, Holedox chooses an adjacent vacant square of its head, whic
 For example, in the Figure 2, at the beginning the body of Holedox can be represented as B1(4,1) B2(4,2) B3(3,2)B4(3,1). During the next step, observing that B1'(5,1) is the only square that the head can be moved into, Holedox moves its head into B1'(5,1), then moves B2 into B1, B3 into B2, and B4 into B3. Thus after one step, the body of Holedox locates in B1(5,1)B2(4,1)B3(4,2) B4(3,2) (see the Figure 3).
 
 Given the map of the lair and the original location of each block of Holedox's body, your task is to write a program to tell the minimal number of steps that Holedox has to take to move its head to reach the square of exit (1,1).
-![img](http://media.openjudge.cn/images/g326/1324_1.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1324_1.jpg)
 
 **输入**
 
