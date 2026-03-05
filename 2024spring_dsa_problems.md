@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-12-24 19:12 GMT+8*
+*Updated 2026-03-05 16:47 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -11095,9 +11095,9 @@ This code reads the sequence of numbers from the input, removes duplicates, cons
 
 
 
-## 05467: 多项式加法
+## E05467: 多项式加法
 
-http://cs101.openjudge.cn/dsapre/05467/
+dict, http://cs101.openjudge.cn/practice/05467/
 
 我们经常遇到两多项式相加的情况，在这里，我们就需要用程序来模拟实现把两个多项式相加到一起。首先，我们会有两个多项式，每个多项式是独立的一行，每个多项式由系数、幂数这样的多个整数对来表示。
 
