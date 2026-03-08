@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-03-05 16:47 GMT+8*
+*Updated 2026-03-08 23:20 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -326,7 +326,7 @@ LISP was one of the earliest high-level programming languages and, with FORTRAN,
 This problem deals with determining whether binary trees represented as LISP S-expressions possess a certain property. 
 Given a binary tree of integers, you are to write a program that determines whether there exists a root-to-leaf path whose nodes sum to a specified integer. For example, in the tree shown below there are exactly four root-to-leaf paths. The sums of the paths are 27, 22, 26, and 18. 
 
-![img](http://media.openjudge.cn/images/1145/1145_1.gif)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1145_1.gif)
 
 Binary trees are represented in the input file as LISP S-expressions having the following form. 
 
@@ -782,7 +782,7 @@ while True:
 
 Centuries ago, King Arthur and the Knights of the Round Table used to meet every year on New Year's Day to celebrate their fellowship. In remembrance of these events, we consider a board game for one player, on which one king and several knight pieces are placed at random on distinct squares.
 The Board is an 8x8 array of squares. The King can move to any adjacent square, as shown in Figure 2, as long as it does not fall off the board. A Knight can jump as shown in Figure 3, as long as it does not fall off the board.
-![img](http://media.openjudge.cn/images/g180/1178_1.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1178_1.jpg)
 During the play, the player can place more than one piece in the same square. The board squares are assumed big enough so that a piece is never an obstacle for other piece to move freely.
 The player?s goal is to move the pieces so as to gather them all in the same square, in the smallest possible number of moves. To achieve this, he must move the pieces as prescribed above. Additionally, whenever the king and one or more knights are placed in the same square, the player may choose to move the king and one of the knights together henceforth, as a single knight, up to the final gathering point. Moving the knight together with the king counts as a single move.
 
@@ -1616,7 +1616,7 @@ The input consists of blocks of lines. The first line of each block contains two
 **输出**
 
 The output contains one line for each block except the last block in the input. The lines are in the order corresponding to the blocks in the input. The line contains minimal number of seconds in which the robot can reach the destination point from the starting point. If there does not exist any path from the starting point to the destination point the line will contain -1. 
-![img](http://media.openjudge.cn/images/g378/1376_1.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1376_1.jpg)
 
 样例输入
 
@@ -1982,7 +1982,7 @@ http://cs101.openjudge.cn/practice/01577/
 
 
 
-![img](http://media.openjudge.cn/images/g579/1577_1.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1577_1.jpg)
 Figure 1
 
 Figure 1 shows a graphical representation of a binary tree of letters. People familiar with binary trees can skip over the definitions of a binary tree of letters, leaves of a binary tree, and a binary search tree of letters, and go right to The problem.
@@ -2026,7 +2026,7 @@ Remove the leaves and list the data removed
 Repeat this procedure until the tree is empty
 Starting from the tree below on the left, we produce the sequence of trees shown, and then the empty tree 
 
-![img](http://media.openjudge.cn/images/g579/1577_2.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1577_2.jpg)
 
 by removing the leaves with data
 
@@ -3619,7 +3619,7 @@ Nemo is a naughty boy. One day he went into the deep sea all by himself. Unfortu
 After checking the map, Marlin found that the sea is like a labyrinth with walls and doors. All the walls are parallel to the X-axis or to the Y-axis. The thickness of the walls are assumed to be zero.
 All the doors are opened on the walls and have a length of 1. Marlin cannot go through a wall unless there is a door on the wall. Because going through a door is dangerous (there may be some virulent medusas near the doors), Marlin wants to go through as few doors as he could to find Nemo.
 Figure-1 shows an example of the labyrinth and the path Marlin went through to find Nemo.
-![img](http://media.openjudge.cn/images/2049_1.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/2049_1.jpg)
 We assume Marlin's initial position is at (0, 0). Given the position of Nemo and the configuration of walls and doors, please write a program to calculate the minimum number of doors Marlin has to go through in order to reach Nemo.
 
 **输入**
@@ -4889,7 +4889,7 @@ http://cs101.openjudge.cn/practice/02488/
 The knight is getting bored of seeing the same black and white squares again and again and has decided to make a journey
 around the world. Whenever a knight moves, it is two squares in one direction and one square perpendicular to this. The world of a knight is the chessboard he is living on. Our knight lives on a chessboard that has a smaller area than a regular 8 * 8 board, but it is still rectangular. Can you help this adventurous knight to make travel plans?
 
-![img](http://media.openjudge.cn/images/g1490/2488_1.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/2488_1.jpg)
 
 **Problem**
 Find a path such that the knight visits every square once. The knight can start and end on any square of the board.
@@ -5637,7 +5637,7 @@ http://cs101.openjudge.cn/practice/02756/
 
 
 
-![img](http://media.openjudge.cn/images/2756_1.jpg)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/2756_1.jpg" alt="img" style="zoom:75%;" />
 如上图所示，由正整数1, 2, 3, ...组成了一棵无限大的二叉树。从某一个结点到根结点（编号是1的结点）都有一条唯一的路径，比如从10到根结点的路径是(10, 5, 2, 1)，从4到根结点的路径是(4, 2, 1)，从根结点1到根结点的路径上只包含一个结点1，因此路径就是(1)。对于两个结点x和y，假设他们到根结点的路径分别是(x1, x2, ... ,1)和(y1, y2, ... ,1)（这里显然有x = x1，y = y1），那么必然存在两个正整数i和j，使得从xi和 yj开始，有$x_i = y_j , x_{i + 1} = y_{j + 1}, x_{i + 2} = y_{j + 2},...$ 现在的问题就是，给定x和y，要求xi（也就是yj)。
 
 **输入**
@@ -6251,7 +6251,7 @@ http://cs101.openjudge.cn/practice/02788/
 
 
 
-![img](http://media.openjudge.cn/images/2756_1.jpg)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/2756_1-20260308231756775.jpg" alt="img" style="zoom:75%;" />
 
 如上图所示，由正整数1，2，3……组成了一颗二叉树。我们已知这个二叉树的最后一个结点是n。现在的问题是，结点m所在的子树中一共包括多少个结点。
 
@@ -10230,7 +10230,7 @@ prim, kruskal, http://cs101.openjudge.cn/practice/05442/
 
 
 
-![img](http://media.openjudge.cn/images/upload/1353513346.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1353513346.jpg)
 
 **输入**
 
@@ -13150,7 +13150,7 @@ tree, dfs, http://cs101.openjudge.cn/practice/08581/
 
 由于先序、中序和后序序列中的任一个都不能唯一确定一棵二叉树，所以对二叉树做如下处理，将二叉树的空结点用·补齐，如图所示。我们把这样处理后的二叉树称为原二叉树的扩展二叉树，扩展二叉树的先序和后序序列能唯一确定其二叉树。 现给出扩展二叉树的先序序列，要求输出其中序和后序序列。
 
-![img](http://media.openjudge.cn/images/upload/1440300244.png)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1440300244.png" alt="img" style="zoom:48%;" />
 
 **输入**
 
@@ -13541,11 +13541,11 @@ Pachi已经得到了海域的地图，地图上标识了一些既定目标和它
 
 例如下面这个海域就是无环的：
 
-![img](http://media.openjudge.cn/images/upload/1450686482.png)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1450686482.png)
 
 而下面这个海域则是有环的（C-E-G-D-C）：
 
-![img](http://media.openjudge.cn/images/upload/1450686544.png)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1450686544.png)
 
 
 
@@ -13983,7 +13983,7 @@ http://cs101.openjudge.cn/practice/19943/
 
 将度数矩阵与邻接矩阵逐位相减，可以求得图的拉普拉斯矩阵。具体可见下图示意。
 
-![img](http://media.openjudge.cn/images/upload/1575881364.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1575881364-20260308231939868.jpg)
 
 现给出一个图中的所有边的信息，需要你输出该图的拉普拉斯矩阵。
 
@@ -14115,11 +14115,11 @@ for row in laplacianMatrix:	# 输出结果
 
 ## 20018: 蚂蚁王国的越野跑
 
-merge sort, binary search, http://cs101.openjudge.cn/practice/20018
+merge sort, binary indexed tree, binary search, http://cs101.openjudge.cn/practice/20018
 
 为了促进蚂蚁家族身体健康，提高蚁族健身意识，蚂蚁王国举行了越野跑。假设越野跑共有N个蚂蚁参加，在一条笔直的道路上进行。N个蚂蚁在起点处站成一列，相邻两个蚂蚁之间保持一定的间距。比赛开始后，N个蚂蚁同时沿着道路向相同的方向跑去。换句话说，这N个蚂蚁可以看作x轴上的N个点，在比赛开始后，它们同时向X轴正方向移动。假设越野跑的距离足够远，这N个蚂蚁的速度有的不相同有的相同且保持匀速运动，那么会有多少对参赛者之间发生“赶超”的事件呢？此题结果比较大，需要定义long long类型。请看备注。
 
-<img src="http://media.openjudge.cn/images/upload/1576506586.jpg" alt="img" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1576506586.jpg" alt="img" style="zoom:50%;" />
 
 **输入**
 
@@ -14133,6 +14133,7 @@ merge sort, binary search, http://cs101.openjudge.cn/practice/20018
 样例输入
 
 ```
+sample1 input:
 5
 1
 5
@@ -14140,6 +14141,7 @@ merge sort, binary search, http://cs101.openjudge.cn/practice/20018
 7
 6
 
+sample2 input:
 5
 1
 5
@@ -14151,8 +14153,10 @@ merge sort, binary search, http://cs101.openjudge.cn/practice/20018
 样例输出
 
 ```
+sample1 output:
 7
 
+sample2 output:
 8
 ```
 
@@ -14168,7 +14172,283 @@ long long，有符号 64位整数，所占8个字节(Byte)
 
 
 
-出题人太随意了。题目中的样例数据是 2 组样例数据。
+> 出题人太随意了。题目中的样例数据是 2 组样例数据。
+>
+
+
+
+这题本质上是 **统计逆序对**。
+
+**关键观察**
+
+蚂蚁一开始按位置从前到后排好：
+若前面的蚂蚁 `i` 速度 `v[i]` **小于** 后面的蚂蚁 `j` 速度 `v[j]`，那么 `j` 一定会追上 `i`。
+
+因此需要统计：`i < j` 且 `v[i] < v[j]` 的对数。
+
+
+
+### 直觉解（bisect）
+
+> 复杂度：O(N^2)**
+>
+> ```python
+> from bisect import bisect_left
+> n=int(input())
+> v=[]
+> ans=0
+> for i in range(n):
+>     p=int(input())
+>     index=bisect_left(v,p)
+>     v.insert(index,p)
+>     ans+=index
+> print(ans)
+> ```
+>
+> > **bisect_left 的作用**
+> >
+> > ```
+> > index = bisect_left(v, p)
+> > ```
+> >
+> > 含义：在有序数组 `v` 中找到 **p 应该插入的位置**
+> >
+> > 并且这个位置满足：
+> >
+> > ```
+> > v[0:index] < p
+> > v[index:] >= p
+> > ```
+> >
+> > 因此：
+> >
+> > ```
+> > index = 已有元素中 < p 的个数
+> > ```
+> >
+> > 这正好就是需要统计的数量。
+>
+> 
+
+
+
+### 分治解（归并统计）
+
+而 **归并排序统计逆序对**通常统计的是：`i < j` 且 `v[i] > v[j]`
+
+所以只要把速度 **取负数**，就能直接用逆序对模板。
+
+时间复杂度：O(N log N)，适合 N ≤ 100000。
+
+------
+
+**Python实现（归并排序统计）**
+
+```python
+import sys
+sys.setrecursionlimit(1000000)
+
+def merge_sort(arr):
+    n = len(arr)
+    if n <= 1:
+        return arr, 0
+
+    mid = n // 2
+    left, cnt1 = merge_sort(arr[:mid])
+    right, cnt2 = merge_sort(arr[mid:])
+
+    i = j = 0
+    merged = []
+    cnt = cnt1 + cnt2
+
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            merged.append(left[i])
+            i += 1
+        else:
+            merged.append(right[j])
+            cnt += len(left) - i
+            j += 1
+
+    merged.extend(left[i:])
+    merged.extend(right[j:])
+
+    return merged, cnt
+
+
+def main():
+    input = sys.stdin.readline
+    n = int(input())
+    v = [int(input()) for _ in range(n)]
+
+    # 转成负数，把 v[i] < v[j] 转成逆序对
+    arr = [-x for x in v]
+
+    _, ans = merge_sort(arr)
+    print(ans)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+------
+
+思维图（非常关键）
+
+原序列：
+
+```
+位置: 1 2 3 4 5
+速度: 1 5 10 7 6
+```
+
+追赶发生条件：
+
+```
+前面慢，后面快
+v[i] < v[j]
+```
+
+例如：
+
+```
+1 < 5
+1 < 10
+1 < 7
+1 < 6
+...
+```
+
+统计这种对数即可。
+
+------
+
+**为什么题目提示归并排序**
+
+因为：
+
+- N 最大 **100000**
+- 暴力 O(N^2) 会 **超时**
+- 归并统计逆序对是经典 O(N log N)
+
+------
+
+
+
+### 数据结构解（BIT）
+
+下面给出 **BIT（树状数组）版本**。这个题其实非常适合讲 **树状数组统计顺序对**。
+
+我们要统计：`i < j` 且 `v[i] < v[j]` 
+
+思路是 **从左到右扫描**：
+
+- 已经扫描过的蚂蚁速度放进树状数组
+- 当前蚂蚁速度为 `v`
+- 查询 **之前有多少速度 < v**
+
+这样就得到所有 `(i,j)`。但速度范围可能很大，所以需要 **离散化**。
+
+------
+
+**Python（BIT实现）**
+
+```python
+import sys
+input = sys.stdin.readline
+
+class BIT:
+    def __init__(self, n):
+        self.n = n
+        self.tree = [0]*(n+1)
+
+    def update(self, i, v=1):
+        while i <= self.n:
+            self.tree[i] += v
+            i += i & -i
+
+    def query(self, i):
+        s = 0
+        while i > 0:
+            s += self.tree[i]
+            i -= i & -i
+        return s
+
+
+n = int(input())
+v = [int(input()) for _ in range(n)]
+
+# 1. 离散化
+vals = sorted(set(v))
+rank = {x:i+1 for i,x in enumerate(vals)}
+
+# 2. BIT
+bit = BIT(len(vals))
+
+ans = 0
+
+# 3. 从左到右扫描
+for x in v:
+    r = rank[x]
+    
+    # 统计之前速度 < x
+    ans += bit.query(r-1)
+    
+    # 当前速度加入
+    bit.update(r)
+
+print(ans)
+```
+
+------
+
+**运行逻辑示例**
+
+输入：
+
+```
+1 5 10 7 6
+```
+
+扫描过程：
+
+| 当前蚂蚁 | 速度 | 之前更慢的数量 | 累计 |
+| -------- | ---- | -------------- | ---- |
+| 1        | 1    | 0              | 0    |
+| 2        | 5    | 1              | 1    |
+| 3        | 10   | 2              | 3    |
+| 4        | 7    | 2              | 5    |
+| 5        | 6    | 2              | 7    |
+
+结果：
+
+```
+7
+```
+
+------
+
+复杂度
+
+- 离散化：O(N log N)
+- BIT操作：O(N log N)
+
+总体：O(N log N)，适合 N=10^5。
+
+------
+
+**课堂讲解建议**
+
+这题特别适合讲三种方法的对比：
+
+1️⃣ 暴力 O(N^2)
+
+2️⃣ 归并排序统计逆序对 O(N log N)
+
+3️⃣ 树状数组统计顺序对 O(N log N)
+
+
 
 
 
@@ -14327,6 +14607,8 @@ print(ans)
 
 
 
+**直觉解（bisect），复杂度：O(N^2)**
+
 ```python
 from bisect import bisect_left
 n=int(input())
@@ -14339,6 +14621,29 @@ for i in range(n):
     ans+=index
 print(ans)
 ```
+
+> **bisect_left 的作用**
+>
+> ```
+> index = bisect_left(v, p)
+> ```
+>
+> 含义：在有序数组 `v` 中找到 **p 应该插入的位置**
+>
+> 并且这个位置满足：
+>
+> ```
+> v[0:index] < p
+> v[index:] >= p
+> ```
+>
+> 因此：
+>
+> ```
+> index = 已有元素中 < p 的个数
+> ```
+>
+> 这正好就是需要统计的数量。
 
 
 
@@ -17036,11 +17341,11 @@ http://cs101.openjudge.cn/practice/22485/
 
 例如对于如下的二叉树烟花，从右侧看到的结果为[1, 3, 4]。
 
-![img](http://media.openjudge.cn/images/upload/5167/1622035106.png)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1622035106.png" alt="img" style="zoom:67%;" />
 
 再如，对于如下的二叉树烟花，从右侧看到的结果为[1, 7, 5, 6, 2]。
 
-![img](http://media.openjudge.cn/images/upload/6408/1622728596.png)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1622728596.png" alt="img" style="zoom:67%;" />
 
 **输入**
 
@@ -18557,7 +18862,7 @@ dp, http://cs101.openjudge.cn/practice/24637/
 
 探险家小B发现了一颗宝藏二叉树。这棵树的树根为Root，除了Root节点之外，每个节点均只有一个父节点，因此形成了一颗二叉树。宝藏二叉树的每个节点都有宝藏，每个宝藏具有相应的价值。小B希望摘取这些宝藏，使自己的收益最大。可是，宝藏二叉树有一个奇怪的性质，在摘取宝藏的时候，如果两个节点之间有边，那么最多只能摘取其中一个节点上的宝藏，如果因为贪婪而把两个节点上的宝藏都摘取，二叉树就会立即消失，丧失所有奖励。为此，小B求助于你，希望你能给出，小B在不使宝藏二叉树消失的前提下，能够获得宝藏的最大价值。
 
-为了简化题目，规定宝藏二叉树均为完全二叉树，树中节点如图所示自上而下，自左向右，从1-N编号。<img src="http://media.openjudge.cn/images/upload/8154/1652369676.png" alt="img" style="zoom:33%;" />
+为了简化题目，规定宝藏二叉树均为完全二叉树，树中节点如图所示自上而下，自左向右，从1-N编号。<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1652369676.png" alt="img" style="zoom:33%;" />
 
 **输入**
 
@@ -19267,7 +19572,7 @@ http://cs101.openjudge.cn/practice/24729/
 
 输入样例代表的树如下图：
 
-![img](http://media.openjudge.cn/images/upload/5805/1653472173.png)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1653472173.png)
 
 **输入**
 
@@ -22227,7 +22532,7 @@ dfs, stack, http://cs101.openjudge.cn/practice/27637/
 
 给出一棵树的括号嵌套表示形式，请输出其前序遍历序列、中序遍历序列、后序遍历序列。例如，`A(B(*,C),D(E))`表示的二叉树如图所示
 
-![img](http://media.openjudge.cn/images/upload/1636/1707558029.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1707558029.jpg)
 
 **输入**
 
@@ -22569,7 +22874,7 @@ http://cs101.openjudge.cn/practice/27862/
 
 我们知道每个人做抉择时都希望获得此时的最大收益，所以可以从博弈树中逆推求出2人的策略。如下图中左边子树博弈者2选择E可以获得最大收益1，右边子树博弈者2选择H可以获得最大收益3，而博弈者1在C,D中选择的时候应该考虑到自己选C则博弈者2会选择E，自己选D博弈者2会选择H，所以他为了自己收益最大会选择C-->E可以获得2的收益。
 
-<img src="http://media.openjudge.cn/images/upload/6442/1710986373.jpg" alt="img" style="zoom:67%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1710986373.jpg" alt="img" style="zoom:67%;" />
 
 **输入**
 
@@ -23720,7 +24025,7 @@ bfs, http://cs101.openjudge.cn/practice/28046/
 
 注意，它是无向图，并且边没有权重。
 
-![img](http://media.openjudge.cn/images/upload/2596/1712744630.jpg)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1712744630.jpg" alt="img" style="zoom:67%;" />
 
 
 
@@ -24074,7 +24379,7 @@ Warnsdorff, 回溯, http://cs101.openjudge.cn/practice/28050/
 
 采用图搜索算法，是解决骑士周游问题最容易理解和编程的方案之一，解决方案分为两步： 首先用图表示骑士在棋盘上的合理走法； 采用图搜索算法搜寻一个长度为（行 × 列-1）的路径，路径上包含每个顶点恰一次。
 
-<img src="http://media.openjudge.cn/images/upload/9136/1712843793.jpg" alt="img" style="zoom:67%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1712843793.jpg" alt="img" style="zoom:67%;" />
 
 **输入**
 
@@ -26430,7 +26735,7 @@ http://dsbpython.openjudge.cn/dspythonbook/P0560/
 
 输入样例的二叉树如下图:
 
-![img](http://media.openjudge.cn/images/upload/1709/1662288791.png)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1662288791.png)
 
 输入
 
