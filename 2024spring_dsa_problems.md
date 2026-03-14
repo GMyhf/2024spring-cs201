@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-03-08 23:20 GMT+8*
+*Updated 2026-03-15 00:43 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -9311,6 +9311,51 @@ for _ in range(m):
     else:
         print(' '.join(map(str, sorted(result_set))))
 
+```
+
+
+
+
+
+【王天纵 25地空学院】我写了个位运算的方法
+
+```python
+from collections import defaultdict
+
+n = int(input())
+dd = defaultdict(int)
+
+for i in range(n):
+    ls = set(input().split()[1:])
+    for s in ls:
+        dd[s] |= 1<<i
+
+dd_res = defaultdict(list)
+for k,v in dd.items():
+    dd_res[v].append(k)
+
+m = int(input())
+
+for _ in range(m):
+    q = input().split()
+
+    must1 = 0
+    must0 = 0
+
+    for i,s in enumerate(q):
+        if s=='1':
+            must1 |= 1<<i
+        elif s=='-1':
+            must0 |= 1<<i
+
+    res = []
+
+    for mask,docs in dd_res.items():
+        if (mask & must1) == must1 and (mask & must0) == 0:
+            res += docs
+
+    res = [str(x) for x in sorted(map(int,res))]
+    print(' '.join(res) if res else 'NOT FOUND')
 ```
 
 
