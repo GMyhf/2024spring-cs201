@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-03-15 00:43 GMT+8*
+*Updated 2026-03-17 12:15 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -9043,7 +9043,7 @@ for i in range(t):
 
 ## 04093: 倒排索引查询
 
-data structures, http://cs101.openjudge.cn/practice/04093/
+Inverted Index, http://cs101.openjudge.cn/practice/04093/
 
 现在已经对一些文档求出了倒排索引，对于一些词得出了这些词在哪些文档中出现的列表。
 
