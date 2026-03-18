@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-03-17 12:15 GMT+8*
+*Updated 2026-03-18 11:06 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -21190,6 +21190,52 @@ for i in range(1, n + 1):
     
 print(ans)
 
+```
+
+
+
+【汤立祥 25物理学院 】思路：要推断一个置换（包含 $1\sim N$ 的所有数，长度为 $N$ 的序列）排序后的位次，可以注意到如下重要的观察：
+每前进 $(N-1)!$ 位，那么第一个数字改变一次：
+$$1,2,3,\dots,N \overset{(N-1)!}{\longrightarrow}2,1,3,\dots,N$$ 因此序列的第一个数表示我们的置换在第几个 $(N-1)!$ 组内。接着来看第 $2$ 到第 $N$ 个数，可以看到每前进 $(N-2)!$ 位，第二个数字改变一次。由此类推，若我们设 $a_{i}$ 在 $a_i\sim a_N$ 中排在第 $b_i$ 个位置（1-indexed），那么有置换的位次为：$$\text{rank}=1+\sum_{i=1}^N (b_{i}-1)(N-i)! $$
+整个算法的核心就是以 $\mathcal{O}(\log N)$ 的速度计算 $b_i$。注意到如果我们建立一个长度为 $N$ 的列表，其中元素都是 $1$。如果我们将第 $a_1,a_2,\dots,a_{i-1}$ 位都设为 $0$，则 $a_i$ 的排位就是上述列表的前缀和第 $i$ 位，故我们可以直接使用一个树状数组建立这个前缀和快速更新 + 查询的数据结构。
+
+```python
+class BIT:
+    def __init__(self, N):
+        self.N = N
+        self.BIT = [1] * (N + 1)
+        
+        for i in range(1, N+1):
+            j = i + (i & (-i))
+            if j <= N:
+                self.BIT[j] += self.BIT[i]
+        
+    def update(self, index):
+        while index <= self.N:
+            self.BIT[index] -= 1
+            index += index & (-index)
+    
+    def prefixSum(self, index):
+        sum = 0
+        while index:
+            sum += self.BIT[index]
+            index -= index & (-index)
+        return sum
+
+INF = 998244353
+N = int(input())
+fact = [1]
+for _ in range(1, N):
+    fact.append(fact[-1] * _ % INF)
+bit = BIT(N)
+arr = list(map(int, input().split()))
+rank = 0
+for i in range(N):
+    factorial = fact[N-i-1]
+    rank += factorial * (bit.prefixSum(arr[i]) - 1) % INF
+    bit.update(arr[i])
+
+print((rank + 1) % INF)    
 ```
 
 
