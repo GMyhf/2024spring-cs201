@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-03-18 11:06 GMT+8*
+*Updated 2026-04-07 11:06 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -22604,7 +22604,7 @@ print('loop:yes' if l else 'loop:no')
 
 
 
-## 27637: 括号嵌套二叉树
+## M27637: 括号嵌套二叉树
 
 dfs, stack, http://cs101.openjudge.cn/practice/27637/
 
