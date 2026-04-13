@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-04-11 20:47 GMT+8*
+*Updated 2026-04-13 20:43 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -2077,6 +2077,8 @@ BAC
 Mid-Central USA 2000
 
 
+
+思路: 事实上，拔掉叶子的顺序即为插入叶子顺序的reversed，并且保证左右顺序由字母表顺序决定，用插入顺序构建出一个树。
 
 ```python
 class TreeNode:
@@ -11376,7 +11378,7 @@ http://cs101.openjudge.cn/practice/05804/
     我们可以使用递推的思想。先找前两个节点的 LCA，得到的结果再与第三个节点找 LCA，以此类推。
     例如：`LCA(a, b, c) = LCA(LCA(a, b), c)`。
 
-**Python 代码实现**
+    **Python 代码实现**
 
 ```python
 import sys
