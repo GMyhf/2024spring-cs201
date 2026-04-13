@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2025-12-24 19:12 GMT+8*
+*Updated 2026-04-11 20:47 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -326,7 +326,7 @@ LISP was one of the earliest high-level programming languages and, with FORTRAN,
 This problem deals with determining whether binary trees represented as LISP S-expressions possess a certain property. 
 Given a binary tree of integers, you are to write a program that determines whether there exists a root-to-leaf path whose nodes sum to a specified integer. For example, in the tree shown below there are exactly four root-to-leaf paths. The sums of the paths are 27, 22, 26, and 18. 
 
-![img](http://media.openjudge.cn/images/1145/1145_1.gif)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1145_1.gif)
 
 Binary trees are represented in the input file as LISP S-expressions having the following form. 
 
@@ -782,7 +782,7 @@ while True:
 
 Centuries ago, King Arthur and the Knights of the Round Table used to meet every year on New Year's Day to celebrate their fellowship. In remembrance of these events, we consider a board game for one player, on which one king and several knight pieces are placed at random on distinct squares.
 The Board is an 8x8 array of squares. The King can move to any adjacent square, as shown in Figure 2, as long as it does not fall off the board. A Knight can jump as shown in Figure 3, as long as it does not fall off the board.
-![img](http://media.openjudge.cn/images/g180/1178_1.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1178_1.jpg)
 During the play, the player can place more than one piece in the same square. The board squares are assumed big enough so that a piece is never an obstacle for other piece to move freely.
 The player?s goal is to move the pieces so as to gather them all in the same square, in the smallest possible number of moves. To achieve this, he must move the pieces as prescribed above. Additionally, whenever the king and one or more knights are placed in the same square, the player may choose to move the king and one of the knights together henceforth, as a single knight, up to the final gathering point. Moving the knight together with the king counts as a single move.
 
@@ -1616,7 +1616,7 @@ The input consists of blocks of lines. The first line of each block contains two
 **输出**
 
 The output contains one line for each block except the last block in the input. The lines are in the order corresponding to the blocks in the input. The line contains minimal number of seconds in which the robot can reach the destination point from the starting point. If there does not exist any path from the starting point to the destination point the line will contain -1. 
-![img](http://media.openjudge.cn/images/g378/1376_1.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1376_1.jpg)
 
 样例输入
 
@@ -1976,88 +1976,83 @@ while True:
 
 
 
-## 01577: Falling Leaves
+## M01577: Falling Leaves
 
-http://cs101.openjudge.cn/practice/01577/
+tree, bst, http://cs101.openjudge.cn/practice/01577/
 
 
 
-![img](http://media.openjudge.cn/images/g579/1577_1.jpg)
-Figure 1
-
-Figure 1 shows a graphical representation of a binary tree of letters. People familiar with binary trees can skip over the definitions of a binary tree of letters, leaves of a binary tree, and a binary search tree of letters, and go right to The problem.
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1577_1.jpg)Figure 1 shows a graphical representation of a binary tree of letters. People familiar with binary trees can skip over the definitions of a binary tree of letters, leaves of a binary tree, and a binary search tree of letters, and go right to The problem.
 
 A binary tree of letters may be one of two things:
 
-1. It may be empty.
-2. It may have a root node. A node has a letter as data and refers to a left and a right subtree. The left and right subtrees are also binary trees of letters.
+```
+1.It may be empty.
+2.It may have a root node. A node has a letter as data and refers to a left and a right subtree. The left and right subtrees are also binary trees of letters.
+```
 
 In the graphical representation of a binary tree of letters:
 
-1. Empty trees are omitted completely.
-2. Each node is indicated by
-   - Its letter data,
-   - A line segment down to the left to the left subtree, if the left subtree is nonempty,
-   - A line segment down to the right to the right subtree, if the right subtree is nonempty.
+```
+1.Empty trees are omitted completely.
+2.Each node is indicated by
+	Its letter data,
+	A line segment down to the left to the left subtree, if the left subtree is nonempty,
+	A line segment down to the right to the right subtree, if the right subtree is nonempty.
+```
 
-   A leaf in a binary tree is a node whose subtrees are both empty. In the example in Figure 1, this would be the five nodes with data B, D, H, P, and Y.
+A leaf in a binary tree is a node whose subtrees are both empty. In the example in Figure 1, this would be the five nodes with data B, D, H, P, and Y.
 
-   The preorder traversal of a tree of letters satisfies the defining properties:
+The preorder traversal of a tree of letters satisfies the defining properties:
 
-1. If the tree is empty, then the preorder traversal is empty. 
-2. If the tree is not empty, then the preorder traversal consists of the following, in order
-   - The data from the root node,
-   - The preorder traversal of the root's left subtree,
-   - The preorder traversal of the root's right subtree.
+```
+1.If the tree is empty, then the preorder traversal is empty. 
+2.If the tree is not empty, then the preorder traversal consists of the following, in order
+	The data from the root node,
+	The preorder traversal of the root's left subtree,
+	The preorder traversal of the root's right subtree.
+```
 
-   The preorder traversal of the tree in Figure 1 is KGCBDHQMPY.
+The preorder traversal of the tree in Figure 1 is KGCBDHQMPY.
 
-   A tree like the one in Figure 1 is also a binary search tree of letters. A binary search tree of letters is a binary tree of letters in which each node satisfies:
+A tree like the one in Figure 1 is also a binary search tree of letters. A binary search tree of letters is a binary tree of letters in which each node satisfies:
 
-   The root's data comes later in the alphabet than all the data in the nodes in the left subtree.
+The root's data comes later in the alphabet than all the data in the nodes in the left subtree.
 
-   The root's data comes earlier in the alphabet than all the data in the nodes in the right subtree.
+The root's data comes earlier in the alphabet than all the data in the nodes in the right subtree.
 
-   The problem:
+The problem:
 
-   Consider the following sequence of operations on a binary search tree of letters
+Consider the following sequence of operations on a binary search tree of letters
 
-   Remove the leaves and list the data removed
-   Repeat this procedure until the tree is empty
-   Starting from the tree below on the left, we produce the sequence of trees shown, and then the empty tree 
+Remove the leaves and list the data removed
+Repeat this procedure until the tree is empty
+Starting from the tree below on the left, we produce the sequence of trees shown, and then the empty tree 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 ![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1577_2.jpg)
-=======
-   ![img](http://media.openjudge.cn/images/g579/1577_2.jpg)
->>>>>>> 84096c0 (19:52)
-=======
-   ![img](http://media.openjudge.cn/images/g579/1577_2.jpg)
->>>>>>> f20299e (19:52)
 
-   by removing the leaves with data
+by removing the leaves with data
 
    BDHPY
    CM
    GQ
    K
 
-   Your problem is to start with such a sequence of lines of leaves from a binary search tree of letters and output the preorder traversal of the tree.
+Your problem is to start with such a sequence of lines of leaves from a binary search tree of letters and output the preorder traversal of the tree.
 
-   **输入**
+**输入**
 
-   The input will contain one or more data sets. Each data set is a sequence of one or more lines of capital letters.
+The input will contain one or more data sets. Each data set is a sequence of one or more lines of capital letters.
 
-   The lines contain the leaves removed from a binary search tree in the stages described above. The letters on a line will be listed in increasing alphabetical order. Data sets are separated by a line containing only an asterisk ('*').
+The lines contain the leaves removed from a binary search tree in the stages described above. The letters on a line will be listed in increasing alphabetical order. Data sets are separated by a line containing only an asterisk ('*').
 
-   The last data set is followed by a line containing only a dollar sign ('$'). There are no blanks or empty lines in the input.
+The last data set is followed by a line containing only a dollar sign ('$'). There are no blanks or empty lines in the input.
 
-   **输出**
+**输出**
 
-   For each input data set, there is a unique binary search tree that would produce the sequence of leaves. The output is a line containing only the preorder traversal of that tree, with no blanks.
+For each input data set, there is a unique binary search tree that would produce the sequence of leaves. The output is a line containing only the preorder traversal of that tree, with no blanks.
 
-   样例输入
+样例输入
 
 ```
 BDHPY
@@ -2082,8 +2077,6 @@ BAC
 Mid-Central USA 2000
 
 
-
-思路: 事实上，拔掉叶子的顺序即为插入叶子顺序的reversed，并且保证左右顺序由字母表顺序决定，用插入顺序构建出一个树。
 
 ```python
 class TreeNode:
@@ -2150,6 +2143,85 @@ while True:
     if flag:
         break
 ```
+
+
+
+【沈俊丞25工院】思路：单调栈做法
+
+本题给出的树是一棵二叉搜索树，给出每个节点的高度而要求还原其前序遍历。
+实际上，二叉搜索树条件等于给出了一个中序遍历，因此实际上本题要求由中序遍历和节点高度两个信息求前序遍历。
+而凭这两个信息并不能唯一确定一个二叉搜索树。我们不妨直接从这两个信息出发求一个前序遍历，而不经建树。
+我们已经知道中序遍历，那么不妨以这个中序遍历出发，看看怎样求前序遍历。
+我们考虑题目样例中给的这个中序遍历（前后顺序代表中序遍历顺序，高度代表节点深度）：
+     K
+   G    Q
+ C    M
+B D H  P Y
+我们把其前i个数组成的子树的前序遍历写出来：
+B
+CB
+CBD
+GCBD
+GCBDH
+KGCBDH
+KGCBDHM
+KGCBDHMP
+KGCBDHQMP
+KGCBDHQMPY
+我们会发现这样一件事：当我们把中序遍历中的一个新字符加入前序遍历时，如果它的高度小于或等于前一个字符的高度，
+那么它会被直接加在字符串的后面；而如果它的高度大于前一个字符的高度，它会被加在前一段字符的前面。
+这个“前一段”是由到上一个更高字符的距离所决定的。比如在上例中，当我们把Q加入时，就将Q放在M前。因为M再前一个就是K了。
+这很像单调栈的操作方式！只是这里我们的“出栈”实质上变成字符段合并操作了。于是以下是我们的思路：
+    我们让一个字符代表它左侧连续且高度小于它的字符段。如果右侧出现了一个高度高于它的字符，则这个字符会发动一系列兼并，
+    更新高度，并且自己排在它所兼并的一系列字符的左边。
+比如，还是考虑刚才的题目样例，这个操作就变为（用空格隔开每一组字符串，并且将每一个字符段末尾加上它的高度：
+B1  <-C2
+CB2  <-D1
+CB2 D1  <-G3
+GCBD3  <-H1
+GCBD3 H1  <-K4
+KGCBDH4  <-M2
+KGCBDH4 M2  <-P1
+KGCBDH4 M2 P1  <-Q3
+KGCBDH4 QMP3  <-Y1
+KGCBDH4 QMP3 Y1
+=>KGCBDHQMPY
+代码的撰写就简单了。
+
+```python
+#单调栈做法
+while True:
+    mat = []
+    while True:
+        inp = input()
+        if inp == "*" : break
+        if inp == "$" : break
+        mat.append(inp)
+    
+    arr = []
+    for i, li in enumerate(mat):
+        for ch in li:
+            arr.append((ch,i))
+    arr.sort()
+    
+    stack = []
+    for ch in arr:
+        x = ""
+        while stack and stack[-1][1] < ch[1]:
+            x = stack.pop()[0] + x
+        x = ch[0] + x
+        stack.append((x,ch[1]))
+
+    ans = ""
+    for i in stack:
+        ans += i[0]
+    print(ans)
+
+    if inp == "$" : break
+
+```
+
+> 思路中提到了“单调栈做法”。这种做法非常有创意，它通过利用“中序遍历（字母表顺序）+ 节点高度（所在行数）”这两个信息来直接构造前序遍历。在二叉树问题中，如果已知节点的层级和中序位置，确实可以唯一确定一棵树。这种方法在处理大规模数据时效率更高O(N)，但在本题字母规模（最多26个）下，标准的 BST 插入法更为直观且易于实现。
 
 
 
@@ -3629,7 +3701,7 @@ Nemo is a naughty boy. One day he went into the deep sea all by himself. Unfortu
 After checking the map, Marlin found that the sea is like a labyrinth with walls and doors. All the walls are parallel to the X-axis or to the Y-axis. The thickness of the walls are assumed to be zero.
 All the doors are opened on the walls and have a length of 1. Marlin cannot go through a wall unless there is a door on the wall. Because going through a door is dangerous (there may be some virulent medusas near the doors), Marlin wants to go through as few doors as he could to find Nemo.
 Figure-1 shows an example of the labyrinth and the path Marlin went through to find Nemo.
-![img](http://media.openjudge.cn/images/2049_1.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/2049_1.jpg)
 We assume Marlin's initial position is at (0, 0). Given the position of Nemo and the configuration of walls and doors, please write a program to calculate the minimum number of doors Marlin has to go through in order to reach Nemo.
 
 **输入**
@@ -4899,7 +4971,7 @@ http://cs101.openjudge.cn/practice/02488/
 The knight is getting bored of seeing the same black and white squares again and again and has decided to make a journey
 around the world. Whenever a knight moves, it is two squares in one direction and one square perpendicular to this. The world of a knight is the chessboard he is living on. Our knight lives on a chessboard that has a smaller area than a regular 8 * 8 board, but it is still rectangular. Can you help this adventurous knight to make travel plans?
 
-![img](http://media.openjudge.cn/images/g1490/2488_1.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/2488_1.jpg)
 
 **Problem**
 Find a path such that the knight visits every square once. The knight can start and end on any square of the board.
@@ -5647,7 +5719,7 @@ http://cs101.openjudge.cn/practice/02756/
 
 
 
-![img](http://media.openjudge.cn/images/2756_1.jpg)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/2756_1.jpg" alt="img" style="zoom:75%;" />
 如上图所示，由正整数1, 2, 3, ...组成了一棵无限大的二叉树。从某一个结点到根结点（编号是1的结点）都有一条唯一的路径，比如从10到根结点的路径是(10, 5, 2, 1)，从4到根结点的路径是(4, 2, 1)，从根结点1到根结点的路径上只包含一个结点1，因此路径就是(1)。对于两个结点x和y，假设他们到根结点的路径分别是(x1, x2, ... ,1)和(y1, y2, ... ,1)（这里显然有x = x1，y = y1），那么必然存在两个正整数i和j，使得从xi和 yj开始，有$x_i = y_j , x_{i + 1} = y_{j + 1}, x_{i + 2} = y_{j + 2},...$ 现在的问题就是，给定x和y，要求xi（也就是yj)。
 
 **输入**
@@ -6261,7 +6333,7 @@ http://cs101.openjudge.cn/practice/02788/
 
 
 
-![img](http://media.openjudge.cn/images/2756_1.jpg)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/2756_1-20260308231756775.jpg" alt="img" style="zoom:75%;" />
 
 如上图所示，由正整数1，2，3……组成了一颗二叉树。我们已知这个二叉树的最后一个结点是n。现在的问题是，结点m所在的子树中一共包括多少个结点。
 
@@ -9053,7 +9125,7 @@ for i in range(t):
 
 ## 04093: 倒排索引查询
 
-data structures, http://cs101.openjudge.cn/practice/04093/
+Inverted Index, http://cs101.openjudge.cn/practice/04093/
 
 现在已经对一些文档求出了倒排索引，对于一些词得出了这些词在哪些文档中出现的列表。
 
@@ -9321,6 +9393,51 @@ for _ in range(m):
     else:
         print(' '.join(map(str, sorted(result_set))))
 
+```
+
+
+
+
+
+【王天纵 25地空学院】我写了个位运算的方法
+
+```python
+from collections import defaultdict
+
+n = int(input())
+dd = defaultdict(int)
+
+for i in range(n):
+    ls = set(input().split()[1:])
+    for s in ls:
+        dd[s] |= 1<<i
+
+dd_res = defaultdict(list)
+for k,v in dd.items():
+    dd_res[v].append(k)
+
+m = int(input())
+
+for _ in range(m):
+    q = input().split()
+
+    must1 = 0
+    must0 = 0
+
+    for i,s in enumerate(q):
+        if s=='1':
+            must1 |= 1<<i
+        elif s=='-1':
+            must0 |= 1<<i
+
+    res = []
+
+    for mask,docs in dd_res.items():
+        if (mask & must1) == must1 and (mask & must0) == 0:
+            res += docs
+
+    res = [str(x) for x in sorted(map(int,res))]
+    print(' '.join(res) if res else 'NOT FOUND')
 ```
 
 
@@ -10240,7 +10357,7 @@ prim, kruskal, http://cs101.openjudge.cn/practice/05442/
 
 
 
-![img](http://media.openjudge.cn/images/upload/1353513346.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1353513346.jpg)
 
 **输入**
 
@@ -11105,9 +11222,9 @@ This code reads the sequence of numbers from the input, removes duplicates, cons
 
 
 
-## 05467: 多项式加法
+## E05467: 多项式加法
 
-http://cs101.openjudge.cn/dsapre/05467/
+dict, http://cs101.openjudge.cn/practice/05467/
 
 我们经常遇到两多项式相加的情况，在这里，我们就需要用程序来模拟实现把两个多项式相加到一起。首先，我们会有两个多项式，每个多项式是独立的一行，每个多项式由系数、幂数这样的多个整数对来表示。
 
@@ -11179,6 +11296,140 @@ for _ in range(int(input())):
             print(f'[ {res[i]} {i} ] ',end='')
     print()
 ```
+
+
+
+## M05804: 公共祖先
+
+http://cs101.openjudge.cn/practice/05804/
+
+完全二叉树的定义如下：除最后一层外其它各层的节点都是满的，并且最后一层都连续集中在最左边。如下图
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1365909358.jpg" alt="img" style="zoom:75%;" />
+
+一个节点从自己开始沿父节点方向走到树的根节点，中间途径的所有节点称为该节点的祖先节点。
+
+节点12的祖先依次是12、6、3、1，节点5的祖先依次是5、2、1。
+
+给出若干个节点，找出它们编号最大的公共祖先。
+
+
+
+**输入**
+
+第一行输入一个整数t，表示测试数据的个数。
+对于每组测试数据，第一行输入一个整数n，代表节点个数。
+随后的第二行输入n个整数，代表n个节点的编号，
+1<=n<=10 , 每个节点编号的取值范围[1,10000]。
+
+**输出**
+
+对于每组测试数据，输出这些节点最大的公共祖先。
+
+样例输入
+
+```
+3
+2
+8 5
+3
+8 5 6
+3
+4 10 11
+```
+
+样例输出
+
+```
+2
+1
+2
+```
+
+提示
+
+本题不需要去建立一颗真实的二叉树。仅考查完全二叉树的一个基本性质。
+应用题目中所说的子节点与父节点编号关系就可以解决本题， 即“对于一个编号为i的节点，其父节点是[i/2]，[x]代表给x向下取整”。解题思路如下：
+
+以找两个节点45、17的公共祖先为例，
+45的祖先节点依次为：45、22、11、5、2、1。所以从树的根节点开始到45号节点的路径为：
+1 -> 2 -> 5 -> 11 -> 22
+17的祖先节点依次为：17、8、4、2、1。所以从树的根节点开始到17号节点的路径为：
+1 -> 2 -> 4 -> 8 -> 17
+两个序列最后的公共元素2便是45和17号节点编号最大的公共祖先节点。
+
+多个节点的情况可以转换成两个节点的情况，比如5个节点A1，A2，A3，A4，A5：
+先找到A1，A2的最大公共祖先节点f( A1 , A2 )
+然后找A3与f(A1,A2)的最大公共祖先节点f( f(A1 , A2) , A3 )
+……
+程序始终只需要找两个节点的最大公共祖先节点。
+
+
+
+这个问题利用了**完全二叉树**的一个核心性质：**对于任意编号为 $i$ 的节点，其父节点的编号为 $\lfloor i/2 \rfloor$（即 $i$ 向下取整除以 2）。**
+
+**解题思路**
+
+1.  **找两个节点的 LCA**：
+    由于父节点编号总是比子节点小，我们可以让编号较大的那个节点不断地“向上爬”（即 `node //= 2`），直到两个节点的编号相等为止。此时相遇的编号就是它们的最近公共祖先。
+2.  **找多个节点的 LCA**：
+    我们可以使用递推的思想。先找前两个节点的 LCA，得到的结果再与第三个节点找 LCA，以此类推。
+    例如：`LCA(a, b, c) = LCA(LCA(a, b), c)`。
+
+**Python 代码实现**
+
+```python
+import sys
+
+def find_lca_of_two(a, b):
+    """查找两个节点 a 和 b 的最近公共祖先"""
+    while a != b:
+        if a > b:
+            a //= 2  # 较大者向上爬
+        else:
+            b //= 2  # 较大者向上爬
+    return a
+
+def solve():
+    # 使用 sys.stdin.read().split() 处理所有空格/换行符分割的输入
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    ptr = 0
+    t_str = input_data[ptr]
+    ptr += 1
+    t = int(t_str)
+    
+    for _ in range(t):
+        n = int(input_data[ptr])
+        ptr += 1
+        
+        # 读取当前组的 n 个节点
+        nodes = []
+        for _ in range(n):
+            nodes.append(int(input_data[ptr]))
+            ptr += 1
+            
+        if not nodes:
+            continue
+        
+        # 迭代处理：先取第一个数作为初始 LCA，然后不断与后面的数求 LCA
+        res_lca = nodes[0]
+        for i in range(1, n):
+            res_lca = find_lca_of_two(res_lca, nodes[i])
+        
+        # 输出结果
+        print(res_lca)
+
+if __name__ == "__main__":
+    solve()
+```
+
+**复杂度分析**
+
+*   **时间复杂度**：对于每个节点，向上爬到根节点最多需要 $\log_2(10000) \approx 14$ 步。总复杂度为 $O(T \times N \times \log(\text{MaxID}))$。在本题数据范围内（$N \le 10$, $ID \le 10000$），运行速度极快。
+*   **空间复杂度**：$O(N)$，用于存储当前测试用例的节点。
 
 
 
@@ -12457,7 +12708,7 @@ dfs + bfs, http://cs101.openjudge.cn/practice/07161/
 
 例如对于以下森林：
 
-<img src="http://media.openjudge.cn/images/upload/1401904592.png" alt="img" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1401904592.png" alt="img" style="zoom:50%;" />
 
 两棵树的层次遍历序列分别为：C E F G K H J / D X I
 
@@ -12493,6 +12744,55 @@ D 2 X 0 I 0
 
 ```
 K H J E F G C X I D
+```
+
+
+
+【马振博 物院】长子-兄弟法
+
+```python
+from collections import deque
+
+n = int(input())
+ans = []
+
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.first_child = None
+        self.next_sibling = None
+    def __str__(self):
+        return str(self.val)
+
+def postorder(x):
+    global ans
+    if x is None:
+        return
+    y = x.first_child
+    while y:
+        postorder(y)
+        y = y.next_sibling
+    ans.append(x.val)
+
+for _ in range(n):
+    s = input().split()
+    root = TreeNode(s[0])
+    q = deque([[root, int(s[1])]])
+    i = 2
+    while q:
+        front = q.popleft()
+        cur = front[0]
+        for j in range(front[1]):
+            if j == 0:
+                cur.first_child = TreeNode(s[i])
+                cur = cur.first_child
+            else:
+                cur.next_sibling = TreeNode(s[i])
+                cur = cur.next_sibling
+            q.append((cur, int(s[i+1])))
+            i += 2
+    postorder(root)
+print(*ans)
 ```
 
 
@@ -13160,7 +13460,7 @@ tree, dfs, http://cs101.openjudge.cn/practice/08581/
 
 由于先序、中序和后序序列中的任一个都不能唯一确定一棵二叉树，所以对二叉树做如下处理，将二叉树的空结点用·补齐，如图所示。我们把这样处理后的二叉树称为原二叉树的扩展二叉树，扩展二叉树的先序和后序序列能唯一确定其二叉树。 现给出扩展二叉树的先序序列，要求输出其中序和后序序列。
 
-![img](http://media.openjudge.cn/images/upload/1440300244.png)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1440300244.png" alt="img" style="zoom:48%;" />
 
 **输入**
 
@@ -13551,11 +13851,11 @@ Pachi已经得到了海域的地图，地图上标识了一些既定目标和它
 
 例如下面这个海域就是无环的：
 
-![img](http://media.openjudge.cn/images/upload/1450686482.png)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1450686482.png)
 
 而下面这个海域则是有环的（C-E-G-D-C）：
 
-![img](http://media.openjudge.cn/images/upload/1450686544.png)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1450686544.png)
 
 
 
@@ -13993,7 +14293,7 @@ http://cs101.openjudge.cn/practice/19943/
 
 将度数矩阵与邻接矩阵逐位相减，可以求得图的拉普拉斯矩阵。具体可见下图示意。
 
-![img](http://media.openjudge.cn/images/upload/1575881364.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1575881364-20260308231939868.jpg)
 
 现给出一个图中的所有边的信息，需要你输出该图的拉普拉斯矩阵。
 
@@ -14125,11 +14425,11 @@ for row in laplacianMatrix:	# 输出结果
 
 ## 20018: 蚂蚁王国的越野跑
 
-merge sort, binary search, http://cs101.openjudge.cn/practice/20018
+merge sort, binary indexed tree, binary search, http://cs101.openjudge.cn/practice/20018
 
 为了促进蚂蚁家族身体健康，提高蚁族健身意识，蚂蚁王国举行了越野跑。假设越野跑共有N个蚂蚁参加，在一条笔直的道路上进行。N个蚂蚁在起点处站成一列，相邻两个蚂蚁之间保持一定的间距。比赛开始后，N个蚂蚁同时沿着道路向相同的方向跑去。换句话说，这N个蚂蚁可以看作x轴上的N个点，在比赛开始后，它们同时向X轴正方向移动。假设越野跑的距离足够远，这N个蚂蚁的速度有的不相同有的相同且保持匀速运动，那么会有多少对参赛者之间发生“赶超”的事件呢？此题结果比较大，需要定义long long类型。请看备注。
 
-<img src="http://media.openjudge.cn/images/upload/1576506586.jpg" alt="img" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1576506586.jpg" alt="img" style="zoom:50%;" />
 
 **输入**
 
@@ -14143,6 +14443,7 @@ merge sort, binary search, http://cs101.openjudge.cn/practice/20018
 样例输入
 
 ```
+sample1 input:
 5
 1
 5
@@ -14150,6 +14451,7 @@ merge sort, binary search, http://cs101.openjudge.cn/practice/20018
 7
 6
 
+sample2 input:
 5
 1
 5
@@ -14161,8 +14463,10 @@ merge sort, binary search, http://cs101.openjudge.cn/practice/20018
 样例输出
 
 ```
+sample1 output:
 7
 
+sample2 output:
 8
 ```
 
@@ -14178,7 +14482,283 @@ long long，有符号 64位整数，所占8个字节(Byte)
 
 
 
-出题人太随意了。题目中的样例数据是 2 组样例数据。
+> 出题人太随意了。题目中的样例数据是 2 组样例数据。
+>
+
+
+
+这题本质上是 **统计逆序对**。
+
+**关键观察**
+
+蚂蚁一开始按位置从前到后排好：
+若前面的蚂蚁 `i` 速度 `v[i]` **小于** 后面的蚂蚁 `j` 速度 `v[j]`，那么 `j` 一定会追上 `i`。
+
+因此需要统计：`i < j` 且 `v[i] < v[j]` 的对数。
+
+
+
+### 直觉解（bisect）
+
+> 复杂度：O(N^2)**
+>
+> ```python
+> from bisect import bisect_left
+> n=int(input())
+> v=[]
+> ans=0
+> for i in range(n):
+>     p=int(input())
+>     index=bisect_left(v,p)
+>     v.insert(index,p)
+>     ans+=index
+> print(ans)
+> ```
+>
+> > **bisect_left 的作用**
+> >
+> > ```
+> > index = bisect_left(v, p)
+> > ```
+> >
+> > 含义：在有序数组 `v` 中找到 **p 应该插入的位置**
+> >
+> > 并且这个位置满足：
+> >
+> > ```
+> > v[0:index] < p
+> > v[index:] >= p
+> > ```
+> >
+> > 因此：
+> >
+> > ```
+> > index = 已有元素中 < p 的个数
+> > ```
+> >
+> > 这正好就是需要统计的数量。
+>
+> 
+
+
+
+### 分治解（归并统计）
+
+而 **归并排序统计逆序对**通常统计的是：`i < j` 且 `v[i] > v[j]`
+
+所以只要把速度 **取负数**，就能直接用逆序对模板。
+
+时间复杂度：O(N log N)，适合 N ≤ 100000。
+
+------
+
+**Python实现（归并排序统计）**
+
+```python
+import sys
+sys.setrecursionlimit(1000000)
+
+def merge_sort(arr):
+    n = len(arr)
+    if n <= 1:
+        return arr, 0
+
+    mid = n // 2
+    left, cnt1 = merge_sort(arr[:mid])
+    right, cnt2 = merge_sort(arr[mid:])
+
+    i = j = 0
+    merged = []
+    cnt = cnt1 + cnt2
+
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            merged.append(left[i])
+            i += 1
+        else:
+            merged.append(right[j])
+            cnt += len(left) - i
+            j += 1
+
+    merged.extend(left[i:])
+    merged.extend(right[j:])
+
+    return merged, cnt
+
+
+def main():
+    input = sys.stdin.readline
+    n = int(input())
+    v = [int(input()) for _ in range(n)]
+
+    # 转成负数，把 v[i] < v[j] 转成逆序对
+    arr = [-x for x in v]
+
+    _, ans = merge_sort(arr)
+    print(ans)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+------
+
+思维图（非常关键）
+
+原序列：
+
+```
+位置: 1 2 3 4 5
+速度: 1 5 10 7 6
+```
+
+追赶发生条件：
+
+```
+前面慢，后面快
+v[i] < v[j]
+```
+
+例如：
+
+```
+1 < 5
+1 < 10
+1 < 7
+1 < 6
+...
+```
+
+统计这种对数即可。
+
+------
+
+**为什么题目提示归并排序**
+
+因为：
+
+- N 最大 **100000**
+- 暴力 O(N^2) 会 **超时**
+- 归并统计逆序对是经典 O(N log N)
+
+------
+
+
+
+### 数据结构解（BIT）
+
+下面给出 **BIT（树状数组）版本**。这个题其实非常适合讲 **树状数组统计顺序对**。
+
+我们要统计：`i < j` 且 `v[i] < v[j]` 
+
+思路是 **从左到右扫描**：
+
+- 已经扫描过的蚂蚁速度放进树状数组
+- 当前蚂蚁速度为 `v`
+- 查询 **之前有多少速度 < v**
+
+这样就得到所有 `(i,j)`。但速度范围可能很大，所以需要 **离散化**。
+
+------
+
+**Python（BIT实现）**
+
+```python
+import sys
+input = sys.stdin.readline
+
+class BIT:
+    def __init__(self, n):
+        self.n = n
+        self.tree = [0]*(n+1)
+
+    def update(self, i, v=1):
+        while i <= self.n:
+            self.tree[i] += v
+            i += i & -i
+
+    def query(self, i):
+        s = 0
+        while i > 0:
+            s += self.tree[i]
+            i -= i & -i
+        return s
+
+
+n = int(input())
+v = [int(input()) for _ in range(n)]
+
+# 1. 离散化
+vals = sorted(set(v))
+rank = {x:i+1 for i,x in enumerate(vals)}
+
+# 2. BIT
+bit = BIT(len(vals))
+
+ans = 0
+
+# 3. 从左到右扫描
+for x in v:
+    r = rank[x]
+    
+    # 统计之前速度 < x
+    ans += bit.query(r-1)
+    
+    # 当前速度加入
+    bit.update(r)
+
+print(ans)
+```
+
+------
+
+**运行逻辑示例**
+
+输入：
+
+```
+1 5 10 7 6
+```
+
+扫描过程：
+
+| 当前蚂蚁 | 速度 | 之前更慢的数量 | 累计 |
+| -------- | ---- | -------------- | ---- |
+| 1        | 1    | 0              | 0    |
+| 2        | 5    | 1              | 1    |
+| 3        | 10   | 2              | 3    |
+| 4        | 7    | 2              | 5    |
+| 5        | 6    | 2              | 7    |
+
+结果：
+
+```
+7
+```
+
+------
+
+复杂度
+
+- 离散化：O(N log N)
+- BIT操作：O(N log N)
+
+总体：O(N log N)，适合 N=10^5。
+
+------
+
+**课堂讲解建议**
+
+这题特别适合讲三种方法的对比：
+
+1️⃣ 暴力 O(N^2)
+
+2️⃣ 归并排序统计逆序对 O(N log N)
+
+3️⃣ 树状数组统计顺序对 O(N log N)
+
+
 
 
 
@@ -14337,6 +14917,8 @@ print(ans)
 
 
 
+**直觉解（bisect），复杂度：O(N^2)**
+
 ```python
 from bisect import bisect_left
 n=int(input())
@@ -14349,6 +14931,29 @@ for i in range(n):
     ans+=index
 print(ans)
 ```
+
+> **bisect_left 的作用**
+>
+> ```
+> index = bisect_left(v, p)
+> ```
+>
+> 含义：在有序数组 `v` 中找到 **p 应该插入的位置**
+>
+> 并且这个位置满足：
+>
+> ```
+> v[0:index] < p
+> v[index:] >= p
+> ```
+>
+> 因此：
+>
+> ```
+> index = 已有元素中 < p 的个数
+> ```
+>
+> 这正好就是需要统计的数量。
 
 
 
@@ -17046,11 +17651,11 @@ http://cs101.openjudge.cn/practice/22485/
 
 例如对于如下的二叉树烟花，从右侧看到的结果为[1, 3, 4]。
 
-![img](http://media.openjudge.cn/images/upload/5167/1622035106.png)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1622035106.png" alt="img" style="zoom:67%;" />
 
 再如，对于如下的二叉树烟花，从右侧看到的结果为[1, 7, 5, 6, 2]。
 
-![img](http://media.openjudge.cn/images/upload/6408/1622728596.png)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1622728596.png" alt="img" style="zoom:67%;" />
 
 **输入**
 
@@ -18567,7 +19172,7 @@ dp, http://cs101.openjudge.cn/practice/24637/
 
 探险家小B发现了一颗宝藏二叉树。这棵树的树根为Root，除了Root节点之外，每个节点均只有一个父节点，因此形成了一颗二叉树。宝藏二叉树的每个节点都有宝藏，每个宝藏具有相应的价值。小B希望摘取这些宝藏，使自己的收益最大。可是，宝藏二叉树有一个奇怪的性质，在摘取宝藏的时候，如果两个节点之间有边，那么最多只能摘取其中一个节点上的宝藏，如果因为贪婪而把两个节点上的宝藏都摘取，二叉树就会立即消失，丧失所有奖励。为此，小B求助于你，希望你能给出，小B在不使宝藏二叉树消失的前提下，能够获得宝藏的最大价值。
 
-为了简化题目，规定宝藏二叉树均为完全二叉树，树中节点如图所示自上而下，自左向右，从1-N编号。<img src="http://media.openjudge.cn/images/upload/8154/1652369676.png" alt="img" style="zoom:33%;" />
+为了简化题目，规定宝藏二叉树均为完全二叉树，树中节点如图所示自上而下，自左向右，从1-N编号。<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1652369676.png" alt="img" style="zoom:33%;" />
 
 **输入**
 
@@ -19277,7 +19882,7 @@ http://cs101.openjudge.cn/practice/24729/
 
 输入样例代表的树如下图：
 
-![img](http://media.openjudge.cn/images/upload/5805/1653472173.png)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1653472173.png)
 
 **输入**
 
@@ -20576,9 +21181,6 @@ print(print_cantor_set(n))
 ## T27018: 康托展开
 
 http://cs101.openjudge.cn/practice/27018/
-
-总时间限制: 3000ms 单个测试点时间限制: 2000ms 内存限制: 90112kB
-描述
 求 1∼N 的一个给定全排列在所有 1∼N 全排列中的排名。结果对 998244353取模。
 
 **输入**
@@ -20853,6 +21455,52 @@ for i in range(1, n + 1):
     
 print(ans)
 
+```
+
+
+
+【汤立祥 25物理学院 】思路：要推断一个置换（包含 $1\sim N$ 的所有数，长度为 $N$ 的序列）排序后的位次，可以注意到如下重要的观察：
+每前进 $(N-1)!$ 位，那么第一个数字改变一次：
+$$1,2,3,\dots,N \overset{(N-1)!}{\longrightarrow}2,1,3,\dots,N$$ 因此序列的第一个数表示我们的置换在第几个 $(N-1)!$ 组内。接着来看第 $2$ 到第 $N$ 个数，可以看到每前进 $(N-2)!$ 位，第二个数字改变一次。由此类推，若我们设 $a_{i}$ 在 $a_i\sim a_N$ 中排在第 $b_i$ 个位置（1-indexed），那么有置换的位次为：$$\text{rank}=1+\sum_{i=1}^N (b_{i}-1)(N-i)! $$
+整个算法的核心就是以 $\mathcal{O}(\log N)$ 的速度计算 $b_i$。注意到如果我们建立一个长度为 $N$ 的列表，其中元素都是 $1$。如果我们将第 $a_1,a_2,\dots,a_{i-1}$ 位都设为 $0$，则 $a_i$ 的排位就是上述列表的前缀和第 $i$ 位，故我们可以直接使用一个树状数组建立这个前缀和快速更新 + 查询的数据结构。
+
+```python
+class BIT:
+    def __init__(self, N):
+        self.N = N
+        self.BIT = [1] * (N + 1)
+        
+        for i in range(1, N+1):
+            j = i + (i & (-i))
+            if j <= N:
+                self.BIT[j] += self.BIT[i]
+        
+    def update(self, index):
+        while index <= self.N:
+            self.BIT[index] -= 1
+            index += index & (-index)
+    
+    def prefixSum(self, index):
+        sum = 0
+        while index:
+            sum += self.BIT[index]
+            index -= index & (-index)
+        return sum
+
+INF = 998244353
+N = int(input())
+fact = [1]
+for _ in range(1, N):
+    fact.append(fact[-1] * _ % INF)
+bit = BIT(N)
+arr = list(map(int, input().split()))
+rank = 0
+for i in range(N):
+    factorial = fact[N-i-1]
+    rank += factorial * (bit.prefixSum(arr[i]) - 1) % INF
+    bit.update(arr[i])
+
+print((rank + 1) % INF)    
 ```
 
 
@@ -22221,7 +22869,7 @@ print('loop:yes' if l else 'loop:no')
 
 
 
-## 27637: 括号嵌套二叉树
+## M27637: 括号嵌套二叉树
 
 dfs, stack, http://cs101.openjudge.cn/practice/27637/
 
@@ -22237,7 +22885,7 @@ dfs, stack, http://cs101.openjudge.cn/practice/27637/
 
 给出一棵树的括号嵌套表示形式，请输出其前序遍历序列、中序遍历序列、后序遍历序列。例如，`A(B(*,C),D(E))`表示的二叉树如图所示
 
-![img](http://media.openjudge.cn/images/upload/1636/1707558029.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1707558029.jpg)
 
 **输入**
 
@@ -22579,7 +23227,7 @@ http://cs101.openjudge.cn/practice/27862/
 
 我们知道每个人做抉择时都希望获得此时的最大收益，所以可以从博弈树中逆推求出2人的策略。如下图中左边子树博弈者2选择E可以获得最大收益1，右边子树博弈者2选择H可以获得最大收益3，而博弈者1在C,D中选择的时候应该考虑到自己选C则博弈者2会选择E，自己选D博弈者2会选择H，所以他为了自己收益最大会选择C-->E可以获得2的收益。
 
-<img src="http://media.openjudge.cn/images/upload/6442/1710986373.jpg" alt="img" style="zoom:67%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1710986373.jpg" alt="img" style="zoom:67%;" />
 
 **输入**
 
@@ -23730,7 +24378,7 @@ bfs, http://cs101.openjudge.cn/practice/28046/
 
 注意，它是无向图，并且边没有权重。
 
-![img](http://media.openjudge.cn/images/upload/2596/1712744630.jpg)
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1712744630.jpg" alt="img" style="zoom:67%;" />
 
 
 
@@ -24084,7 +24732,7 @@ Warnsdorff, 回溯, http://cs101.openjudge.cn/practice/28050/
 
 采用图搜索算法，是解决骑士周游问题最容易理解和编程的方案之一，解决方案分为两步： 首先用图表示骑士在棋盘上的合理走法； 采用图搜索算法搜寻一个长度为（行 × 列-1）的路径，路径上包含每个顶点恰一次。
 
-<img src="http://media.openjudge.cn/images/upload/9136/1712843793.jpg" alt="img" style="zoom:67%;" />
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1712843793.jpg" alt="img" style="zoom:67%;" />
 
 **输入**
 
@@ -25839,7 +26487,7 @@ To move in the lair, Holedox chooses an adjacent vacant square of its head, whic
 For example, in the Figure 2, at the beginning the body of Holedox can be represented as B1(4,1) B2(4,2) B3(3,2)B4(3,1). During the next step, observing that B1'(5,1) is the only square that the head can be moved into, Holedox moves its head into B1'(5,1), then moves B2 into B1, B3 into B2, and B4 into B3. Thus after one step, the body of Holedox locates in B1(5,1)B2(4,1)B3(4,2) B4(3,2) (see the Figure 3).
 
 Given the map of the lair and the original location of each block of Holedox's body, your task is to write a program to tell the minimal number of steps that Holedox has to take to move its head to reach the square of exit (1,1).
-![img](http://media.openjudge.cn/images/g326/1324_1.jpg)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1324_1.jpg)
 
 **输入**
 
@@ -26440,7 +27088,7 @@ http://dsbpython.openjudge.cn/dspythonbook/P0560/
 
 输入样例的二叉树如下图:
 
-![img](http://media.openjudge.cn/images/upload/1709/1662288791.png)
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/1662288791.png)
 
 输入
 
