@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-04-13 20:43 GMT+8*
+*Updated 2026-04-17 21:21 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -20090,6 +20090,88 @@ if __name__ == '__main__':
 - **parse_tree 函数**：采用递归下降的方式解析字符串。遇到大写字母创建结点；若后续遇到 '(' 则说明存在子树，解析所有子树直到遇到 ')'。
 - **preorder 和 postorder 函数**：分别实现前序遍历（先访问结点，再遍历所有子树）和后序遍历（先遍历所有子树，最后访问结点）。
 - **main 函数**：读取输入，构造树，然后输出前序遍历和后序遍历的结果。
+
+
+
+这道题的核心在于理解**左孩子右兄弟（Left-Child Right-Sibling, LCRS）**表示法中，二叉树遍历与原多叉树遍历的关系：
+
+1. **二叉树的前序遍历 (Root, Left, Right)** = **原多叉树的前序遍历**。在 LCRS 中，先访问根，再访问第一个孩子，再访问兄弟，这恰好对应多叉树“根-子树1-子树2...”的顺序。
+2. **二叉树的中序遍历 (Left, Root, Right)** = **原多叉树的后序遍历**。这是最巧妙的一点。在二叉树中序遍历中，你会先遍历左子树（原多叉树的所有子孙），然后访问根节点，最后遍历右子树（原多叉树的后续兄弟节点）。对于多叉树的一个节点来说，它的“后序”意味着：先处理完它所有的子节点，再处理它自己。在二叉树结构中，处理完左子树（子孙）后紧接着访问根节点，正好完成了这个逻辑。
+3. 递归构建逻辑：多叉树转二叉树（左孩子右兄弟法）时，父节点只指向第一个子节点，而后续的兄弟节点应该链接在第一个子节点的右指针链上。
+
+```python
+class Node:
+    def __init__(self, val):
+        self.val = val
+        self.left = None    # 指向第一个孩子
+        self.right = None   # 指向下一个兄弟
+
+
+def buildTree(s):
+    i = 0
+    n = len(s)
+
+    def build():
+        nonlocal i
+        if i >= n:
+            return None
+
+        # 创建当前节点
+        node = Node(s[i])
+        i += 1
+
+        # 如果遇到 '('，表示接下来是子节点列表
+        if i < n and s[i] == "(":
+            i += 1  # 跳过 '('
+
+            # 第一个子节点作为左孩子
+            node.left = build()
+            curr = node.left
+
+            # 剩下的子节点（由逗号隔开）作为前一个子节点的右兄弟
+            while i < n and s[i] == ",":
+                i += 1  # 跳过 ','
+                curr.right = build()
+                curr = curr.right
+
+            # 处理完所有子节点，跳过 ')'
+            if i < n and s[i] == ")":
+                i += 1
+
+        return node
+
+    return build()
+
+
+def Print(root):
+    pre_out = []
+    post_out = []  # 原多叉树的后序 = 二叉树的中序
+
+    def traverse(curr):
+        if not curr:
+            return
+        # 二叉树前序 = 原树前序
+        pre_out.append(curr.val)
+
+        # 递归左子树（原树的孩子）
+        traverse(curr.left)
+
+        # 二叉树中序位置 = 原树后序
+        post_out.append(curr.val)
+
+        # 递归右子树（原树的兄弟）
+        traverse(curr.right)
+
+    traverse(root)
+    print("".join(pre_out))
+    print("".join(post_out))
+
+
+# 主程序
+s = input().strip()
+root = buildTree(s)
+Print(root)
+```
 
 
 
