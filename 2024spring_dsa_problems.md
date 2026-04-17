@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-04-17 21:21 GMT+8*
+*Updated 2026-04-17 22:21 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -12776,6 +12776,14 @@ def postorder(x):
         y = y.next_sibling
     ans.append(x.val)
 
+def inorder(x):
+    global ans
+    if x:
+        inorder(x.first_child)
+        ans.append(x.val)
+        inorder(x.next_sibling)
+
+
 for _ in range(n):
     s = input().split()
     root = TreeNode(s[0])
@@ -12793,7 +12801,8 @@ for _ in range(n):
                 cur = cur.next_sibling
             q.append((cur, int(s[i+1])))
             i += 2
-    postorder(root)
+    #postorder(root)
+    inorder(root)   #二叉树的中序遍历 = 原多叉树的后序遍历
 print(*ans)
 ```
 
