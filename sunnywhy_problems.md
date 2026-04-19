@@ -1,6 +1,6 @@
 # 晴问编程题目
 
-*Updated 2026-01-10 13:30 GMT+8*
+*Updated 2026-04-19 21:30 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -12741,7 +12741,7 @@ This code reads the sequence from the input, inserts its values into an AVL tree
 
 ## 6 并查集 5题
 
-### sy360: 学校的班级个数（1）
+### sy360: 学校的班级个数（统计连通分量）中等
 
 https://sunnywhy.com/sfbj/9/6/360
 
@@ -12753,7 +12753,7 @@ https://sunnywhy.com/sfbj/9/6/360
 
 第一行两个整数 $m、n (1 \le n \le 100, 1 \le m \le 100)$，分别表示学生个数、学生关系个数；
 
-接下来 m 行，每行两个整数 a 和 b $ (1 \le a \le n, 1 \le b \le n, a \ne b)$，表示编号为`a`的学生和编号为`b`的学生处于一个班级。
+接下来 m 行，每行两个整数 a 和 b $(1 \le a \le n, 1 \le b \le n, a \ne b)$，表示编号为`a`的学生和编号为`b`的学生处于一个班级。
 
 **输出**
 
@@ -12782,15 +12782,7 @@ https://sunnywhy.com/sfbj/9/6/360
 
 
 
-To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each student is initially in their own set (or class). When a relationship between two students is given, you unite their sets. The number of disjoint sets at the end will be the number of classes.
-
-Here is a step-by-step plan:
-
-1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each student is in their own class.
-2. For each student relationship, unite their sets using the union operation.
-3. Count the number of unique parents. This will be the number of classes.
-
-Here is the Python code that implements this plan:
+统计最后有多少个根
 
 ```python
 def find(x):
@@ -12812,13 +12804,9 @@ classes = set(find(x) for x in range(1, n + 1))
 print(len(classes))
 ```
 
-This code reads the number of students and relationships from the input, initializes each student to be in their own class, unites the classes of each pair of students that have a relationship, and then counts and prints the number of unique classes.
 
 
-
-
-
-### sy361: 学校的班级人数（2）
+### sy361: 学校的班级人数（维护集合大小）中等
 
 https://sunnywhy.com/sfbj/9/6/361
 
@@ -12830,7 +12818,7 @@ https://sunnywhy.com/sfbj/9/6/361
 
 第一行两个整数 $m、n (1 \le n \le 100, 1 \le m \le 100)$，分别表示学生个数、学生关系个数；
 
-接下来 m 行，每行两个整数 a 和 b $ (1 \le a \le n, 1 \le b \le n, a \ne b)$，表示编号为`a`的学生和编号为`b`的学生处于一个班级。
+接下来 m 行，每行两个整数 a 和 b $(1 \le a \le n, 1 \le b \le n, a \ne b)$，表示编号为`a`的学生和编号为`b`的学生处于一个班级。
 
 **输出**
 
@@ -12864,17 +12852,7 @@ https://sunnywhy.com/sfbj/9/6/361
 
 
 
-To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each student is initially in their own set (or class). When a relationship between two students is given, you unite their sets. The number of disjoint sets at the end will be the number of classes. You can also maintain a count of the number of students in each class.
-
-Here is a step-by-step plan:
-
-1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each student is in their own class.
-2. Initialize an array `size` of size `n+1` where `size[i]` is initially `1`. This means each class initially has one student.
-3. For each student relationship, unite their sets using the union operation and update the size of the new set.
-4. Count the number of unique parents. This will be the number of classes.
-5. Print the sizes of the classes in descending order.
-
-Here is the Python code that implements this plan:
+**核心：** 合并时更新 `size` 数组。
 
 ```python
 def find(x):
@@ -12903,13 +12881,9 @@ print(len(classes))
 print(' '.join(map(str, sorted(classes, reverse=True))))
 ```
 
-This code reads the number of students and relationships from the input, initializes each student to be in their own class, unites the classes of each pair of students that have a relationship, counts and prints the number of unique classes, and prints the sizes of the classes in descending order.
 
 
-
-
-
-### sy362: 是否相同班级
+### sy362: 是否相同班级（连通） 中等
 
 https://sunnywhy.com/sfbj/9/6/362
 
@@ -12960,15 +12934,7 @@ No
 
 
 
-To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each student is initially in their own set (or class). When a relationship between two students is given, you unite their sets. For each query, you check if the two students are in the same set.
-
-Here is a step-by-step plan:
-
-1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each student is in their own class.
-2. For each student relationship, unite their sets using the union operation.
-3. For each query, check if the two students are in the same set using the find operation.
-
-Here is the Python code that implements this plan:
+**相同班级**：直接判断 `find(a) == find(b)`。
 
 ```python
 def find(x):
@@ -12995,11 +12961,9 @@ for _ in range(k):
         print('No')
 ```
 
-This code reads the number of students and relationships from the input, initializes each student to be in their own class, unites the classes of each pair of students that have a relationship, and then for each query, checks and prints whether the two students are in the same class.
 
 
-
-### sy363: 迷宫连通性
+### sy363: 迷宫连通性 中等
 
 https://sunnywhy.com/sfbj/9/6/363
 
@@ -13009,7 +12973,7 @@ https://sunnywhy.com/sfbj/9/6/363
 
 第一行两个整数$n、m (1 \le n \le 100, 1 \le m \le 100)$，分别表示房间个数、连通关系个数；
 
-接下来行，每行两个整数 a 和 b $ (1 \le a \le n, 1 \le b \le n)$，表示编号为`a`的房间和编号为`b`的房间是连通的。
+接下来行，每行两个整数 a 和 b $(1 \le a \le n, 1 \le b \le n)$，表示编号为`a`的房间和编号为`b`的房间是连通的。
 
 **输出**
 
@@ -13060,15 +13024,7 @@ No
 
 
 
-To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each room is initially in its own set. When a connection between two rooms is given, you unite their sets. If at the end there is only one set, then all rooms are connected.
-
-Here is a step-by-step plan:
-
-1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each room is in its own set.
-2. For each connection, unite their sets using the union operation.
-3. Check if all rooms are in the same set.
-
-Here is the Python code that implements this plan:
+**连通性**：若最终集合个数为 1，则全连通。
 
 ```python
 def find(x):
@@ -13093,13 +13049,9 @@ else:
     print('No')
 ```
 
-This code reads the number of rooms and connections from the input, initializes each room to be in its own set, unites the sets of each pair of rooms that have a connection, and then checks and prints whether all rooms are in the same set.
 
 
-
-
-
-### sy364: 班级最高分
+### sy364: 班级最高分 中等
 
 https://sunnywhy.com/sfbj/9/6/364
 
@@ -13113,7 +13065,7 @@ https://sunnywhy.com/sfbj/9/6/364
 
 第二行为用空格隔开的 n 个整数（$0 \le 每个整数 \le 100$），表示个学生的考试分数；
 
-接下来 m 行，每行两个整数 a 和 b $ (1 \le a \le n, 1 \le b \le n)$，表示编号为`a`的学生和编号为`b`的学生处于一个班级。
+接下来 m 行，每行两个整数 a 和 b $(1 \le a \le n, 1 \le b \le n)$，表示编号为`a`的学生和编号为`b`的学生处于一个班级。
 
 **输出**
 
@@ -13148,18 +13100,7 @@ https://sunnywhy.com/sfbj/9/6/364
 
 
 
-To solve this problem, you can use the concept of disjoint sets (also known as union-find). Each student is initially in their own set (or class). When a relationship between two students is given, you unite their sets. The number of disjoint sets at the end will be the number of classes. You can also maintain a list of scores for each class and find the maximum score for each class.
-
-Here is a step-by-step plan:
-
-1. Initialize an array `parent` of size `n+1` where `parent[i]` is initially `i`. This means each student is in their own class.
-2. Initialize an array `scores` of size `n+1` to store the scores of each student.
-3. For each student relationship, unite their sets using the union operation.
-4. For each class, find the maximum score.
-5. Count the number of unique parents. This will be the number of classes.
-6. Print the maximum scores of the classes in descending order.
-
-Here is the Python code that implements this plan:
+这个问题是一个典型的**连通性问题**。我们需要把具有关系的学生归到同一个集合（班级）中。并查集是处理这类问题最高效的数据结构。
 
 ```python
 def find(x):
@@ -13172,6 +13113,8 @@ def union(x, y):
     root_y = find(y)
     if root_x != root_y:
         parent[root_x] = root_y
+        
+        # 每个班级的“根节点”位置上存储的 scores 永远是该班级所有成员中的最高分。
         scores[root_y] = max(scores[root_y], scores[root_x])
 
 n, m = map(int, input().split())
@@ -13188,11 +13131,13 @@ print(len(classes_scores))
 print(' '.join(map(str, sorted(classes_scores, reverse=True))))
 ```
 
-This code reads the number of students and relationships from the input, initializes each student to be in their own class, unites the classes of each pair of students that have a relationship, finds the maximum score for each class, counts and prints the number of unique classes, and prints the maximum scores of the classes in descending order.
+**复杂度分析**
 
+- **时间复杂度**：`O(m⋅α(n))`，其中 `α` 是反阿克曼函数（几乎可以看作常数）。对于 `n=100,m=100` 的规模，性能绰绰有余
 
+- **空间复杂度**：`O(n)`，用于存储父节点数组和分数。
 
-
+  
 
 ## 7 堆 6题
 
