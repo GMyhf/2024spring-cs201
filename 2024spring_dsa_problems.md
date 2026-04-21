@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-04-17 22:21 GMT+8*
+*Updated 2026-04-21 10:22 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -2145,6 +2145,119 @@ while True:
     if flag:
         break
 ```
+
+
+
+【段睿瞳 信管系】思路：单调栈构建笛卡尔树。
+
+利用**二叉搜索树（BST）的一个核心性质**：**中序遍历（Inorder）结果是升序排列的。**掌握了所有节点的**中序位置**（字母排序）和它们在树中的**相对深度/优先级**（由输入行号决定）时，这个问题就转化为了构建一棵**笛卡尔树（Cartesian Tree）**。
+
+**1. 单调栈构造算法**
+
+**核心逻辑：**
+
+1.  **中序序列**：题目给出的字母是全集，将其按字母表排序，即得到了 BST 的中序遍历。
+2.  **优先级（Height）**：输入中先出现的行是叶子，后出现的行是父节点。因此，**行号越大，优先级越高（越靠近根）**。
+3.  **单调栈的作用**：
+    *   对于中序序列中相邻的两个节点 $A$ 和 $B$：
+        *   如果 $A$ 的优先级低于 $B$，说明 $A$ 可能是 $B$ 的左子树成员。
+        *   如果 $A$ 的优先级高于 $B$，说明 $B$ 可能是 $A$ 的右子树成员。
+    *   **左子节点规则**：遍历中序序列，当前节点 `node` 会“吞掉”栈中所有比它高度低的节点，最后一个被吞掉的（也就是高度最大且小于 `node` 的）就是 `node` 的**直接左孩子**。
+    *   **右子节点规则**：反向遍历中序序列，同理可得**直接右孩子**。
+
+**巧妙之处：**它通过两次单调栈扫描，一次性确定了所有节点的左右父子关系。这种构造方法的时间复杂度是 $O(N)$，比逐个插入的 $O(N \log N)$ 或 $O(N^2)$ 更高效。
+
+**2. 代码实现**
+
+```python
+import sys
+
+class Node:
+    def __init__(self, data, h):
+        self.val = data
+        self.left = None
+        self.right = None
+        self.height = h  # 这里的 height 代表优先级，行号越大优先级越高
+
+def get_preorder(root):
+    if not root:
+        return ""
+    return root.val + get_preorder(root.left) + get_preorder(root.right)
+
+def process_data(all_nodes):
+    if not all_nodes:
+        return
+    
+    # 1. 按照字母排序，获取中序遍历序列
+    inorder_nodes = sorted(all_nodes, key=lambda x: x.val)
+    
+    # 2. 寻找根节点：height 最大的节点是整棵树的根
+    root = max(all_nodes, key=lambda x: x.height)
+    
+    # 3. 正向单调栈确定左孩子
+    # 对于每个节点，它左侧高度比它小的节点中，高度最大的那个是它的左孩子
+    stack = []
+    for node in inorder_nodes:
+        last_popped = None
+        while stack and stack[-1].height < node.height:
+            last_popped = stack.pop()
+        node.left = last_popped
+        stack.append(node)
+        
+    # 4. 反向单调栈确定右孩子
+    # 对于每个节点，它右侧高度比它小的节点中，高度最大的那个是它的右孩子
+    stack = []
+    for node in reversed(inorder_nodes):
+        last_popped = None
+        while stack and stack[-1].height < node.height:
+            last_popped = stack.pop()
+        node.right = last_popped
+        stack.append(node)
+        
+    print(get_preorder(root))
+
+def solve():
+    all_nodes = []
+    current_height = 0
+    # 使用 sys.stdin 提高读取效率
+    lines = sys.stdin.read().splitlines()
+    
+    for line in lines:
+        line = line.strip()
+        if not line: continue
+        
+        if line == '*' or line == '$':
+            process_data(all_nodes)
+            all_nodes = []
+            current_height = 0
+            if line == '$':
+                break
+        else:
+            # 记录节点及其所在的行号（高度）
+            for c in line:
+                all_nodes.append(Node(c, current_height))
+            current_height += 1
+
+if __name__ == '__main__':
+    solve()
+```
+
+**3. 关键点解读**
+
+1.  **根节点的确定**：使用 `max(all_nodes, key=lambda x: x.height)` 准确找到行号最大（最后输入）的节点作为根。
+
+2.  **单调栈逻辑**：
+    *   **左孩子**：在中序遍历中，一个节点的左孩子必须在它的**左边**。因此，我们正向扫描，当遇到一个高节点时，它左边被它“遮盖”的那些低节点里，最高的那一个是它的直接左孩子。
+    *   **右孩子**：同理，反向扫描，一个节点右边被它“遮盖”的低节点里，最高的是它的直接右孩子。
+
+3.  **笛卡尔树思想**：
+    *   这种“中序位置+优先级”构建树的方法本质就是构建笛卡尔树。这在处理诸如“范围最值查询（RMQ）”转化为树结构问题时非常经典。
+
+**4. 复杂度与优势**
+
+*   **时间复杂度**：$O(N \log N)$ 主要消耗在字母排序上（即获取中序序列）。单调栈构造过程是 $O(N)$。
+*   **空间复杂度**：$O(N)$。
+*   **优势**：这种解法展现了对 BST 结构的深刻理解，即**BST 是以 Key 为中序序列、以插入顺序/深度为优先级的笛卡尔树**。
 
 
 
