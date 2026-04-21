@@ -5180,6 +5180,103 @@ for i in range(n):
 
 
 
+在 Python 中实现该算法时，我们需要注意递归深度以及 Python 对象的开销。题目约束 $P \times Q \le 26$ 非常小，使用 **DFS + 贪心策略（按字典序排列方向）** 可以通过。
+
+以下是对应的 Python 代码实现：
+
+```python
+import sys
+
+# 增加递归深度限制，防止深层搜索时溢出
+sys.setrecursionlimit(2000)
+
+def solve():
+    # 读取所有输入数据
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    n_test_cases = int(input_data[0])
+    current_idx = 1
+    
+    # 定义骑士的 8 个跳跃方向
+    # 关键点：为了保证字典序最小，必须严格按照以下顺序排列：
+    # 优先选择列偏移（字母）最小的方向；若列偏移相同，选择行偏移（数字）最小的方向。
+    moves = [
+        (-2, -1), (-2, 1), (-1, -2), (-1, 2),
+        (1, -2), (1, 2), (2, -1), (2, 1)
+    ]
+
+    for case_num in range(1, n_test_cases + 1):
+        # p 是行数 (数字 1-p)，q 是列数 (字母 A-...)
+        p = int(input_data[current_idx])
+        q = int(input_data[current_idx + 1])
+        current_idx += 2
+        
+        total_cells = p * q
+        path = []
+        
+        # 记录已访问格子的位掩码 (Bitmask)
+        # 位索引计算公式: col_index * p + (row_index - 1)
+        
+        def dfs(curr_c, curr_r, mask, count):
+            # 如果访问的格子数等于总数，说明找到了路径
+            if count == total_cells:
+                return True
+            
+            for dc, dr in moves:
+                nc, nr = curr_c + dc, curr_r + dr
+                
+                # 边界检查
+                if 0 <= nc < q and 1 <= nr <= p:
+                    bit_pos = nc * p + (nr - 1)
+                    # 检查该位置是否已访问
+                    if not (mask & (1 << bit_pos)):
+                        # 记录当前路径
+                        path.append(f"{chr(ord('A') + nc)}{nr}")
+                        # 递归搜索
+                        if dfs(nc, nr, mask | (1 << bit_pos), count + 1):
+                            return True
+                        # 回溯：如果该方向不通，弹出路径
+                        path.pop()
+            return False
+
+        print(f"Scenario #{case_num}:")
+        
+        # 字典序剪枝：直接从 A1 (col=0, row=1) 开始搜索
+        # 如果从 A1 出发无解，则由于对称性，其他起点的解字典序必然更大或同样无解
+        start_col, start_row = 0, 1
+        path.append("A1")
+        initial_mask = 1 << (0 * p + (1 - 1))
+        
+        if dfs(start_col, start_row, initial_mask, 1):
+            print("".join(path))
+        else:
+            print("impossible")
+        
+        # 每组案例后输出一个空行（题目要求）
+        print()
+
+if __name__ == "__main__":
+    solve()
+```
+
+**代码解读与优化要点：**
+
+1.  **方向数组 (Move Ordering)：**
+    *   `moves` 列表中的顺序是解题的核心。例如 `(-2, -1)` 代表列向左移动 2 格，行向上移动 1 格。这在所有 8 个方向中是字典序最小的（字母减得最多，数字减得也多）。
+    *   只要按此顺序搜索，找到的第一个有效解就一定是字典序最小的解。
+2.  **位掩码 (Bitmask)：**
+    *   在 Python 中，整数是任意精度的，因此我们可以像 C++ 那样使用位运算。
+    *   `mask | (1 << bit_pos)` 用于标记格子，`mask & (1 << bit_pos)` 用于检查。这比使用二维列表 `visited[p][q]` 性能更好。
+3.  **坐标映射：**
+    *   题目中的 `p` 表示数字（行），`q` 表示字母（列）。
+    *   在代码中，我将列索引映射为 `0` 到 `q-1`，行映射为 `1` 到 `p`。
+    *   输出时，使用 `chr(ord('A') + nc)` 将数字列索引转回大写字母。
+4.  **起点固定策略：**
+    *   由于需要字典序最小，起点必为 `A1`。
+    *   本题限制 $P \times Q \le 26$，这意味着搜索空间虽然理论上很大，但在实际运行中，由于路径必须覆盖所有格子，约束极强，DFS 会很快触发回溯或找到解。
+
 
 
 【陈宣之 23生科】思路：Dijstra，把路径放在第一位，用heapq取字典序最小
