@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-04-23 11:48 GMT+8*
+*Updated 2026-04-23 20:22 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -1123,7 +1123,7 @@ print(ans)
 
 ## M01258: Agri-Net
 
-prim, http://cs101.openjudge.cn/dsapre/01258/
+MST, http://cs101.openjudge.cn/dsapre/01258/
 
 Farmer John has been elected mayor of his town! One of his campaign promises was to bring internet connectivity to all farms in the area. He needs your help, of course. 
 Farmer John ordered a high speed connection for his farm and is going to share his connectivity with the other farmers. To minimize cost, he wants to lay the minimum amount of optical fiber to connect his farm to all the other farms. 
@@ -26556,7 +26556,7 @@ Dijkstra, binary search, http://cs101.openjudge.cn/practice/29803/
 
 ------
 
-✅ **问题理解**
+**问题理解**
 
 我们要：
 
@@ -26569,7 +26569,7 @@ Dijkstra, binary search, http://cs101.openjudge.cn/practice/29803/
 
 ------
 
-🧠 解题思路
+解题思路
 
 步骤一：二分答案
 
@@ -26597,7 +26597,7 @@ Dijkstra, binary search, http://cs101.openjudge.cn/practice/29803/
 
 ------
 
-✅ 实现代码（Python）
+实现代码（Python）
 
 ```python
 import heapq
