@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-04-21 10:22 GMT+8*
+*Updated 2026-04-23 11:48 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -26662,8 +26662,6 @@ edges = [tuple(map(int, input().split())) for _ in range(m)]
 
 print(min_armor(n, m, T, edges))
 ```
-
-
 
 
 
