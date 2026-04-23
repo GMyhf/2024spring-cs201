@@ -13614,6 +13614,132 @@ http://cs101.openjudge.cn/practice/07576/
 
 
 
+
+
+**败方树 (Loser Tree) 的定义**
+
+败方树是一种用于多路归并排序的二叉树数据结构。它是胜者树的一种变体。
+
+*   **叶子节点**：表示参加比较的元素（或者是来自不同归并段的当前最小元素）。
+*   **内部节点**：存储该场比赛的**败者**（Loser，数值较大者）。
+*   **胜者**：每一场比赛的**胜者**（Winner，数值较小者）继续向上层移动，去和父节点中存储的“上一届败者”进行比赛。
+*   **最终胜者**：为了方便获取整棵树的冠军，通常会在树根之上再增加一个节点（通常是 `ls[0]`），用来存储整棵树的**最终胜者**。
+
+---
+
+**示例演示 (以样例输入为例)**
+
+输入数组：`[10, 9, 20, 6, 16, 12, 90, 17]`
+
+1.  **第一层比赛 (叶子两两对决)：**
+    *   10 vs 9：胜者 9，败者 **10**
+    *   20 vs 6：胜者 6，败者 **20**
+    *   16 vs 12：胜者 12，败者 **16**
+    *   90 vs 17：胜者 17，败者 **90**
+2.  **第二层比赛 (胜者晋级)：**
+    *   9 vs 6：胜者 6，败者 **9**
+    *   12 vs 17：胜者 12，败者 **17**
+3.  **第三层比赛 (决赛)：**
+    *   6 vs 12：最终胜者 **6**，败者 **12**
+
+**最终败方树结构（逻辑上）：**
+
+*   最终胜者：6
+*   内部节点（按层次）：12, 9, 17, 10, 20, 16, 90
+*   **输出结果：** `6 12 9 17 10 20 16 90`
+
+
+
+思路：
+
+1. **静态结构优化**：败方树在构建后，其**拓扑结构（节点的父子关系）是固定不变的**。变化的是节点内存储的数值。因此，我们可以预先通过 BFS 确定所有内部节点的先后顺序，后续修改时只需更新数值并按顺序读取即可，无需重复搜索。
+2. **局部路径更新**：利用 parent 指针实现 `O(log⁡n)` 更新。每次修改叶子节点，只需向上追溯到根部，重新计算路径上每一场“比赛”的胜者和败者。
+
+```python
+import sys
+from collections import deque
+
+class Node:
+    # 使用 __slots__ 减少内存占用，加快属性访问
+    __slots__ = ['val', 'win', 'left', 'right', 'parent']
+    def __init__(self, v=0):
+        self.val = v      # 内部节点存储：败者 (Loser)
+        self.win = v      # 内部节点存储：该场胜者 (Winner)，用于向上传递
+        self.left = None
+        self.right = None
+        self.parent = None
+
+def solve():
+    # 快速读取所有输入
+    input_data = sys.stdin.read().split()
+    if not input_data: return
+    n, m = int(input_data[0]), int(input_data[1])
+    vals = [int(x) for x in input_data[2:2+n]]
+    
+    # 1. 初始构建树：O(n)
+    # 将初始值包装为叶子节点
+    leaves = [Node(v) for v in vals]
+    queue = deque(leaves)
+    
+    # 两两分组模拟比赛，构建完全二叉树
+    while len(queue) > 1:
+        l = queue.popleft()
+        r = queue.popleft()
+        # 创建比赛节点：val存大值(败者)，win存小值(胜者)
+        match = Node()
+        match.val, match.win = max(l.win, r.win), min(l.win, r.win)
+        match.left, match.right = l, r
+        l.parent = r.parent = match
+        queue.append(match)
+    
+    # 创建顶层冠军节点 (只有一个左孩子)
+    battle_root = queue.popleft()
+    root = Node(battle_root.win)
+    root.left, battle_root.parent = battle_root, root
+
+    # 2. 预处理：确定内部节点的输出顺序
+    # 题目要求输出内部节点（从上到下，从左到右），且结构不变
+    internal_nodes = []
+    bfs_q = deque([root])
+    while bfs_q and len(internal_nodes) < n:
+        curr = bfs_q.popleft()
+        internal_nodes.append(curr)
+        if curr.left: bfs_q.append(curr.left)
+        if curr.right: bfs_q.append(curr.right)
+
+    # 辅助函数：按序输出当前树的所有内部节点值
+    def print_internal_nodes():
+        sys.stdout.write(" ".join(str(node.val) for node in internal_nodes) + "\n")
+
+    # 输出初始状态
+    print_internal_nodes()
+
+    # 3. 处理修改：每次 O(log n + n)
+    ptr = 2 + n
+    for _ in range(m):
+        idx, new_val = int(input_data[ptr]), int(input_data[ptr+1])
+        ptr += 2
+        
+        # 向上更新路径
+        curr_leaf = leaves[idx]
+        curr_leaf.win = new_val
+        p = curr_leaf.parent
+        while p:
+            if p.right: # 普通比赛节点：有两个孩子
+                p.val = max(p.left.win, p.right.win)
+                p.win = min(p.left.win, p.right.win)
+            else:       # 顶层冠军节点：只有一个孩子
+                p.val = p.win = p.left.win
+            p = p.parent
+        
+        print_internal_nodes()
+
+if __name__ == "__main__":
+    solve()
+```
+
+
+
 从Python 3.7开始，提供了一个新的内置装饰器——`@dataclass`
 
 `@dataclass` 自动为 `Product` 类生成了几种基础方法。例如，用于初始化对象的 `__init__` 方法、用于生成对象的字符串表示形式的 `__repr__` 方法，以及用于比较对象相等性的 `__eq__` 方法。
