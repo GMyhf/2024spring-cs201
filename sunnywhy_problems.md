@@ -14812,7 +14812,7 @@ else:
 
 ### sy382: 有向图判环 中等
 
-https://sunnywhy.com/sfbj/10/3/382
+Karn, dfs, Floyd-Warshall, https://sunnywhy.com/sfbj/10/3/382
 
 现有一个共n个顶点、m条边的有向图（假设顶点编号为从`0`到`n-1`），如果从图中一个顶点出发，沿着图中的有向边前进，最后能回到这个顶点，那么就称其为图中的一个环。判断图中是否有环。
 
@@ -14920,6 +14920,208 @@ print(has_cycle(n, edges))
 ```
 
 在这个函数中，我们首先构建了一个邻接列表来表示图。然后，我们对每个节点执行深度优先搜索。如果在搜索过程中，我们遇到了一个正在访问的节点，那么就存在一个环。如果我们遍历完所有的节点都没有找到环，那么就返回"No"。
+
+
+
+这个问题可以通过**拓扑排序（Topological Sort）**或**深度优先遍历（DFS）**来解决。对于有向图判环，最经典的算法是**拓扑排序**。
+
+#### 方法一：BFS（Kahn 算法/拓扑排序）
+
+> 在有向图中，判定环的逻辑与无向图不同。在有向图中，**BFS 如果只是简单记录是否访问过，是无法准确判环的**（因为多个点指向同一个点并不代表有环，比如 A→C,B→C）。
+
+1.  **入度统计**：统计图中每个顶点的入度（即有多少条边指向该顶点）。
+2.  **队列初始化**：将所有入度为 `0` 的顶点放入一个队列中。入度为 0 意味着没有边指向它，它不可能是环的一部分。
+3.  **循环处理**：
+    *   从队列中取出一个顶点 $u$。
+    *   遍历从 $u$ 出发的所有边 $(u, v)$。
+    *   将顶点 $v$ 的入度减 1。如果 $v$ 的入度减到了 0，说明在去掉 $u$ 之后，$v$ 也没有前驱了，将其加入队列。
+4.  **结果判断**：
+    *   如果最终被移出队列的顶点数量等于图中顶点的总数 $n$，说明所有顶点都可以排成一个拓扑序列，图中**没有环**。
+    *   如果移出队列的顶点数量小于 $n$，说明剩下的顶点之间存在相互依赖关系（即存在环），输出 `Yes`。
+
+**Python 代码实现**
+
+```python
+import sys
+from collections import deque
+
+def solve():
+    # 读取所有输入数据
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    # 顶点数 n, 边数 m
+    n = int(input_data[0])
+    m = int(input_data[1])
+    
+    # 邻接表表示图
+    adj = [[] for _ in range(n)]
+    # 记录每个顶点的入度
+    in_degree = [0] * n
+    
+    # 构建图
+    current = 2
+    for _ in range(m):
+        u = int(input_data[current])
+        v = int(input_data[current + 1])
+        adj[u].append(v)
+        in_degree[v] += 1
+        current += 2
+        
+    # 将所有入度为 0 的顶点入队
+    queue = deque([i for i in range(n) if in_degree[i] == 0])
+    
+    # 记录拓扑序列中的顶点数量
+    count = 0
+    
+    while queue:
+        u = queue.popleft()
+        count += 1
+        
+        # 遍历邻接点
+        for v in adj[u]:
+            in_degree[v] -= 1
+            # 如果入度变为 0，入队
+            if in_degree[v] == 0:
+                queue.append(v)
+                
+    # 如果 count 等于 n，说明可以完成拓扑排序，即无环
+    if count == n:
+        print("No")
+    else:
+        print("Yes")
+
+if __name__ == "__main__":
+    solve()
+```
+
+**复杂度分析**
+
+*   **时间复杂度**：$O(n + m)$，其中 $n$ 是顶点数，$m$ 是边数。我们需要遍历所有的点和边来建立入度表，并进行一次拓扑排序。
+*   **空间复杂度**：$O(n + m)$，用于存储邻接表和入度数组。
+
+**为什么这个方法有效？**
+
+在有向无环图（DAG）中，一定至少存在一个入度为 0 的点。当我们不断移除入度为 0 的点时，如果图中没有环，最终所有点都会被移除。如果图中存在环，环上的点其入度永远不会降为 0（因为环中的点总被环内前一个点指向），因此它们永远不会进入队列，最终处理的点数 `count` 就会小于 `n`。
+
+
+
+
+
+#### 方法二：DFS 染色法（三色标记法）
+
+这是有向图判环最标准、最高效的 DFS 方法。我们将每个节点标记为三种颜色之一：
+
+1.  **白色 (0)**：尚未访问。
+2.  **灰色 (1)**：正在访问中（递归栈中）。如果我们在 DFS 过程中遇到了一个灰色的点，说明找到了一个**后向边（Back Edge）**，即**存在环**。
+3.  **黑色 (2)**：已完全访问结束（该节点及其所有子孙节点都已遍历完，且没发现环）。
+
+**Python 实现：**
+
+```python
+import sys
+
+# 增加递归深度限制，防止深搜溢出（虽然本题 n=100 没问题）
+sys.setrecursionlimit(2000)
+
+def solve():
+    input_data = sys.stdin.read().split()
+    if not input_data: return
+    n, m = int(input_data[0]), int(input_data[1])
+    
+    adj = [[] for _ in range(n)]
+    idx = 2
+    for _ in range(m):
+        u, v = int(input_data[idx]), int(input_data[idx+1])
+        adj[u].append(v)
+        idx += 2
+
+    # 状态数组：0-未访问，1-访问中，2-访问结束
+    color = [0] * n
+
+    def has_cycle_dfs(u):
+        color[u] = 1  # 标记为访问中（进入递归栈）
+        
+        for v in adj[u]:
+            if color[v] == 1:
+                return True  # 发现后向边，有环
+            if color[v] == 0:
+                if has_cycle_dfs(v):
+                    return True
+        
+        color[u] = 2  # 标记为访问结束（移出递归栈）
+        return False
+
+    # 遍历所有节点，防止图是不连通的
+    found_cycle = False
+    for i in range(n):
+        if color[i] == 0:
+            if has_cycle_dfs(i):
+                found_cycle = True
+                break
+    
+    print("Yes" if found_cycle else "No")
+
+solve()
+```
+
+
+
+#### 方法三：Floyd-Warshall 算法（适用于 $n$ 较小）
+
+如果 $n$ 非常小（比如 $n \le 100$），还可以使用类似 Floyd 的动态规划方法来检测。
+
+**逻辑**：如果从 $u$ 出发能到达 $v$，且从 $v$ 出发能回到 $u$，或者存在 $u$ 能够到达自身（$dist[i][i]$ 为真），则有环。
+
+```python
+import sys
+
+
+def solve_floyd():
+    input_data = sys.stdin.read().split()
+    if not input_data: return
+    n, m = int(input_data[0]), int(input_data[1])
+
+    reachable = [[False] * n for _ in range(n)]
+    idx = 2
+    for _ in range(m):
+        u, v = int(input_data[idx]), int(input_data[idx + 1])
+        reachable[u][v] = True
+        idx += 2
+
+    # Floyd 传递闭包
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if reachable[i][k] and reachable[k][j]:
+                    reachable[i][j] = True
+
+    # 检查是否存在任意一点 i 满足 reachable[i][i]
+    # 注意：本题要求 u != v，所以环至少由两个点或间接路径组成
+    # 在执行过程中，如果 i 能到 k，k 能到 i，则 reachable[i][i] 会变 True
+    has_cycle = any(reachable[i][i] for i in range(n))
+
+    print("Yes" if has_cycle else "No")
+
+
+solve_floyd()
+
+```
+
+*注：这种方法复杂度为 $O(n^3)$，本题 $n=100$ 勉强可以用，但不如 DFS/拓扑排序高效。*
+
+
+
+### 总结比较
+
+| 方法               | 复杂度   | 推荐场景                                 |
+| :----------------- | :------- | :--------------------------------------- |
+| **拓扑排序 (BFS)** | $O(n+m)$ | 最常用，逻辑清晰，且能顺便求出拓扑序列。 |
+| **染色法 (DFS)**   | $O(n+m)$ | 递归实现简单，在寻找特定环路径时很有用。 |
+| **Floyd (DP)**     | $O(n^3)$ | 仅在 $n$ 极小且需要求全图连通性时考虑。  |
+
+**对于本题，拓扑排序（Kahn's BFS）和染色法（DFS）是最佳选择。**
 
 
 
