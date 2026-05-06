@@ -9869,7 +9869,7 @@ for result in results:
 
 牛顿迭代法, AI, binary search, http://cs101.openjudge.cn/practice/04140/
 
-求下面方程的根：$ f(x) = x^3 - 5x^2 + 10x - 80 = 0 $。
+求下面方程的根：$f(x) = x^3 - 5x^2 + 10x - 80 = 0$。
 
 **输入**
 
