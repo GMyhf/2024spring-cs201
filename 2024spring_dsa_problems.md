@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-04-23 20:22 GMT+8*
+*Updated 2026-05-06 18:44 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -26610,6 +26610,332 @@ print(min_armor(n, m, T, edges))
 ```
 
 
+
+## T30720: 败方树的构建与维护
+
+tree, http://cs101.openjudge.cn/practice/30720/
+
+**败方树（Loser Tree）** 是一种用于多路归并排序的完全二叉树结构。它通过维护每场“比赛”的失败者，使得获取当前所有元素中的最小值以及在修改元素后更新状态的效率达到最优。
+
+**构建规则：**
+
+1. **叶子结点（外部结点）**：数组中的 n 个元素作为败方树的叶子结点。
+2. **内部结点**：败方树有 n 个内部结点（包含一个位于根部上方的“冠军结点”）。
+   - 每个内部结点存储该场比赛的**败者**（数值较大者）。
+   - 每场比赛的**胜者**（数值较小者）将继续向上晋级，与父结点中记录的上一轮败者进行比较。
+   - **根部上方结点**：存储最终的全局胜者（冠军）。
+3. **树形结构**：本题要求构建一棵基于数组位置的**完全二叉树**。对于 n=8 的情况，第一轮由数组相邻元素 `(0,1), (2,3), (4,5), (6,7)` 两两对决，胜者进入下一轮，直至选出冠军。
+
+**任务：** 给定一个长度为 n 的整数数组，构建初始败方树。随后进行 m 次修改操作，每次修改数组中的一个元素，并同步更新败方树。要求输出初始状态及每次修改后，所有**内部结点（含冠军结点）**代表的数值。
+
+**输入**
+
+第一行：两个整数 n 和 m。n 代表数组元素个数，m 代表修改次数。
+第二行：n 个整数，代表数组的初始元素。
+接下来 m 行：每行包含两个整数 idx 和 val，表示将数组下标为 idx 的元素修改为 val（下标从 0 开始）。
+
+**输出**
+
+输出共 m+1 行。
+第一行：初始构建后，败方树内部结点的整数序列。
+随后 m 行：每次修改后，败方树内部结点的整数序列。
+注意：输出顺序为内部结点的层次遍历顺序（从上到下，从左到右，第一位是全局冠军）。
+
+样例输入
+
+```
+8 1
+10 9 20 6 16 12 90 17
+3 15
+```
+
+样例输出
+
+```
+6 12 9 17 10 20 16 90
+9 12 15 17 10 20 16 90
+
+#解释第一行输出
+第一轮对决 (叶子层)：
+10 vs 9 -> 胜者 9, 败者 10；20 vs 6 -> 胜者 6, 败者 20；
+16 vs 12 -> 胜者 12, 败者 16；90 vs 17 -> 胜者 17, 败者 90
+
+第二轮对决 (半决赛)：
+9 vs 6 -> 胜者 6, 败者 9；12 vs 17 -> 胜者 12, 败者 17
+
+第三轮对决 (决赛)：
+6 vs 12 -> 胜者 6, 败者 12
+
+冠军节点： 6
+
+层次遍历内部节点结果： 6 (冠军), 12 (决赛败者), 9 (半决赛败者L), 17 (半决赛败者R), 10, 20, 16, 90 (初始败者)
+```
+
+提示
+
+数据范围：1 <= n <= 10^5，0 <= m <= 10^5，注意：保证 (n+1)×(m+1)≤2×10^6
+数组元素为整数。
+
+来源
+
+yan, http://cs101.openjudge.cn/practice/07576/
+
+
+
+```python
+import sys
+from collections import deque
+
+
+class TreeNode:
+    # 使用 __slots__ 优化内存
+    __slots__ = ['value', 'min_win', 'left', 'right', 'parent']
+
+    # 构造函数支持四个参数及默认值
+    def __init__(self, value=0, min_win=0, left=None, right=None):
+        self.value = value
+        self.min_win = min_win
+        self.left = left
+        self.right = right
+        self.parent = None  # parent 通常在节点关联后设置
+
+
+def solve():
+    # 1. 快速读取
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+
+    it = iter(input_data)
+    n = int(next(it))
+    m = int(next(it))
+
+    # 2. 构建初始树
+    # 初始化叶子：value为0(无意义)，min_win存初始值
+    leaves = [TreeNode(0, int(next(it))) for _ in range(n)]
+    queue = deque(leaves)
+
+    while len(queue) > 1:
+        l = queue.popleft()
+        r = queue.popleft()
+
+        # 利用四个参数的构造函数直接创建比赛节点
+        # value 存败者(max), min_win 存胜者(min)
+        match_node = TreeNode(
+            max(l.min_win, r.min_win),
+            min(l.min_win, r.min_win),
+            l,
+            r
+        )
+        l.parent = r.parent = match_node
+        queue.append(match_node)
+
+    # 创建冠军节点 (唯一只有左孩子的内部节点)
+    battle_root = queue.popleft()
+    root = TreeNode(battle_root.min_win, battle_root.min_win, battle_root)
+    battle_root.parent = root
+
+    # 3. 预处理内部节点顺序
+    # 核心：必须通过 if node.left 过滤掉可能出现在浅层级的叶子节点
+    internal_nodes = []
+    bfs_q = deque([root])
+    while bfs_q and len(internal_nodes) < n:
+        curr = bfs_q.popleft()
+        if curr.left:  # 有孩子即为内部节点
+            internal_nodes.append(curr)
+            bfs_q.append(curr.left)
+            if curr.right:  # 只有比赛节点有右孩子，冠军节点没有
+                bfs_q.append(curr.right)
+
+    def print_internal_nodes():
+        sys.stdout.write(" ".join(str(node.value) for node in internal_nodes) + "\n")
+
+    # 输出初始
+    print_internal_nodes()
+
+    # 4. 修改与增量更新 O(log n)
+    for _ in range(m):
+        try:
+            idx = int(next(it))
+            new_val = int(next(it))
+        except StopIteration:
+            break
+
+        curr = leaves[idx]
+        curr.min_win = new_val
+
+        p = curr.parent
+        while p:
+            if p.right:  # 普通比赛节点更新
+                p.value = max(p.left.min_win, p.right.min_win)
+                p.min_win = min(p.left.min_win, p.right.min_win)
+            else:  # 顶层冠军节点更新
+                p.value = p.min_win = p.left.min_win
+            p = p.parent
+
+        print_internal_nodes()
+
+
+if __name__ == "__main__":
+    solve()
+```
+
+
+
+## T30669: 地铁换乘
+
+LCA（最近公共祖先） 和 倍增法（Binary Lifting）, http://cs101.openjudge.cn/practice/30669/
+
+B 市有 n 个地点，编号为 1 ~ n，可视为根节点为编号 t 的树，交通管理局在根节点上。
+
+记每个节点的深度为其到 t 的边数，如根节点 t 的深度为 0。
+
+作为交通管理局局长的小 W 计划修一趟地铁，线路 A 从编号为 p 的地点出发，线路 B 从编号为 q 的地点出发，修线路 A 的施工队 1 速度为一天修 v1 条边，修线路 B 的施工队 2 速度为一天修 v2 条边，而小 W 想构建一个换乘站，所以他指挥施工队 1 从 p 出发往 q 修，施工队 2 从 q 出发往 p 修，数据保证某一天他们一定会在一个节点相遇，该节点即为换乘站。
+
+小 W 想知道多少天后两个施工队会相遇，并且小 W 想知道换乘站的深度，以便于他能及时地从交通管理局赶到换乘站。
+
+
+
+数据范围：1 ≤ n ≤ 2×10^5, 1 ≤ t,p,q ≤ n, 1 ≤ v1,v2 ≤ 10^9, 1 ≤ u,v ≤ n,u≠v
+
+保证输入构成一棵树。保证 p 到q 的距离L 满足 L mod (v1+v2) = 0。
+
+保证相遇点一定在某个节点上，且相遇天数为整数。
+
+**输入**
+
+第一行两个正整数 n,t，代表地点个数与根节点编号。
+
+接下来 n-1 行，每行两个正整数 u,v，代表编号为 u,v 的两个地点相连。
+
+接下来一行四个正整数 p,q,v1,v2，分别代表施工队 1、施工队 2 的出发节点与施工速度。
+
+**输出**
+
+一行用空格隔开的两个正整数，分别代表相遇天数与换乘站深度。
+
+样例输入
+
+```
+7 1
+1 2
+1 3
+2 4
+2 5
+3 6
+3 7
+4 7 1 3
+```
+
+样例输出
+
+```
+1 1
+```
+
+提示
+
+LCA（最近公共祖先） 和 倍增法（Binary Lifting）
+
+来源
+
+2026 ZHAIBoen
+
+
+
+```python
+import sys
+
+# 增加递归深度
+sys.setrecursionlimit(200000)
+
+def solve():
+    # 读取 n 和 根节点 t
+    try:
+        line1 = sys.stdin.readline().split()
+        if not line1: return
+        n, t = map(int, line1)
+    except ValueError: return
+
+    adj = [[] for _ in range(n + 1)]
+    for _ in range(n - 1):
+        u, v = map(int, sys.stdin.readline().split())
+        adj[u].append(v)
+        adj[v].append(u)
+
+    p, q, v1, v2 = map(int, sys.stdin.readline().split())
+
+    # 倍增预处理
+    LOG = 18  # 2^18 > 200,000
+    depth = [0] * (n + 1)
+    up = [[0] * LOG for _ in range(n + 1)]
+
+    def dfs(u, fa, d):
+        depth[u] = d
+        up[u][0] = fa
+        for v in adj[u]:
+            if v != fa:
+                dfs(v, u, d + 1)
+
+    dfs(t, 0, 0)
+
+    # 构建倍增表
+    for i in range(1, LOG):
+        for u in range(1, n + 1):
+            if up[u][i-1] != 0:
+                up[u][i] = up[up[u][i-1]][i-1]
+
+    # 求 LCA 函数
+    def get_lca(u, v):
+        if depth[u] < depth[v]:
+            u, v = v, u
+        # 爬升到同一深度
+        diff = depth[u] - depth[v]
+        for i in range(LOG):
+            if (diff >> i) & 1:
+                u = up[u][i]
+        if u == v:
+            return u
+        # 同时向上跳
+        for i in range(LOG - 1, -1, -1):
+            if up[u][i] != up[v][i]:
+                u = up[u][i]
+                v = up[v][i]
+        return up[u][0]
+
+    # 求第 k 个祖先
+    def get_kth_ancestor(u, k):
+        for i in range(LOG):
+            if (k >> i) & 1:
+                u = up[u][i]
+        return u
+
+    # 1. 计算 LCA 和 距离
+    r = get_lca(p, q)
+    dist_p_r = depth[p] - depth[r]
+    dist_q_r = depth[q] - depth[r]
+    L = dist_p_r + dist_q_r
+
+    # 2. 计算天数
+    days = L // (v1 + v2)
+
+    # 3. 找到相遇节点
+    dist_from_p = v1 * days
+    if dist_from_p <= dist_p_r:
+        # 相遇点在 p 到 LCA 的链上，是 p 的祖先
+        meeting_node = get_kth_ancestor(p, dist_from_p)
+    else:
+        # 相遇点在 q 到 LCA 的链上，是 q 的祖先
+        dist_from_q = v2 * days
+        meeting_node = get_kth_ancestor(q, dist_from_q)
+
+    print(f"{days} {depth[meeting_node]}")
+    # 如果想知道编号，打印 meeting_node 即可
+
+# 示例运行
+if __name__ == "__main__":
+    solve()
+```
 
 
 
