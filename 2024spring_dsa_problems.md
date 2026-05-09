@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-05-06 18:44 GMT+8*
+*Updated 2026-05-09 20:00 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -26782,6 +26782,125 @@ if __name__ == "__main__":
 
 
 
+实现败方树（Loser Tree）最稳健、高效的方式是使用**数组堆索引映射法**。这种方法不仅能完美处理 $n$ 不是 2 的幂次的情况，还能保证其结构始终是一棵**完全二叉树**，且更新操作的时间复杂度严格控制在 $O(\log n)$。
+
+**数组实现逻辑**
+
+1.  **内部结点（`tree` 数组）**：
+    *   `tree[0]`：存储全局冠军（最小值）。
+    *   `tree[1...n-1]`：存储每一场比赛的**败者**（较大值）。
+    *   数组索引 $0, 1, \dots, n-1$ 的顺序正好对应完全二叉树的**层次遍历**顺序。
+2.  **胜者状态（`winners` 数组）**：
+    *   `winners[n...2n-1]`：存储 $n$ 个叶子结点。
+    *   `winners[1...n-1]`：存储每一场比赛产生的**胜者**，用于向上传递。
+3.  **完全二叉树性质**：
+    *   对于任何比赛结点 $i$，其参与对决的两个子来源索引一定是 $2i$ 和 $2i+1$。
+    *   这保证了即使 $n$ 不是 2 的幂，树也会自动处理“轮空”逻辑。
+
+**标准答案代码（Python 实现）**
+
+```python
+import sys
+
+def solve():
+    # 使用 sys.stdin.read().split() 解决大规模数据输入速度问题
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    it = iter(input_data)
+    try:
+        n = int(next(it))
+        m = int(next(it))
+    except StopIteration:
+        return
+    
+    # winners 数组模拟完全二叉树的所有结点
+    # winners[n...2n-1] 是叶子 (外部结点)
+    # winners[1...n-1] 是每一层比赛选出的胜者
+    winners = [0] * (2 * n)
+    for i in range(n):
+        winners[n + i] = int(next(it))
+        
+    # tree 数组存储败方树的内部状态 (按层次遍历顺序)
+    # tree[0] 是冠军, tree[1...n-1] 是对应索引比赛的败者
+    tree = [0] * n
+    
+    # 1. 初始构建 (O(n)): 从最后一个比赛结点向上构建
+    for i in range(n - 1, 0, -1):
+        left_val = winners[2 * i]
+        right_val = winners[2 * i + 1]
+        
+        if left_val <= right_val:
+            winners[i] = left_val  # 胜者向上晋级
+            tree[i] = right_val    # 败者留在该结点
+        else:
+            winners[i] = right_val
+            tree[i] = left_val
+            
+    # 全局冠军是根部比赛 (index 1) 的胜者
+    if n > 0:
+        tree[0] = winners[1]
+    
+    # 辅助函数：输出 tree 数组的所有内容
+    def output_state():
+        sys.stdout.write(" ".join(map(str, tree)) + "\n")
+        
+    # 输出初始构建后的状态
+    output_state()
+    
+    # 2. 增量维护 (O(m log n)): 每次修改只更新受影响的路径
+    for _ in range(m):
+        try:
+            idx = int(next(it))
+            val = int(next(it))
+        except StopIteration:
+            break
+            
+        # 更新叶子结点
+        pos = n + idx
+        winners[pos] = val
+        
+        # 向上追溯更新路径到根比赛结点
+        curr = pos // 2
+        while curr >= 1:
+            l_val = winners[2 * curr]
+            r_val = winners[2 * curr + 1]
+            
+            if l_val <= r_val:
+                winners[curr] = l_val
+                tree[curr] = r_val
+            else:
+                winners[curr] = r_val
+                tree[curr] = l_val
+            curr //= 2
+            
+        # 更新冠军
+        tree[0] = winners[1]
+        
+        # 输出每次修改后的状态
+        output_state()
+
+if __name__ == "__main__":
+    solve()
+```
+
+**为什么这个方案能 AC？**
+
+1.  **时间复杂度最优**：
+    *   构建时间：$O(n)$。
+    *   更新时间：$m \times O(\log n)$。
+    *   总时间：$O(n + m \log n)$。对于 $2 \times 10^6$ 的数据量，在 Python 2 秒的限制内非常充裕。
+2.  **空间复杂度最优**：
+    *   只使用了两个长度约 $2n$ 和 $n$ 的数组，没有复杂的对象引用开销。
+3.  **完全二叉树结构**：
+    *   利用 `2i` 和 `2i+1` 的索引规律，自动处理了 $n$ 为任意正整数的情况。
+    *   层次遍历的输出顺序（冠军 $\to$ 决赛败者 $\to$ 半决赛败者...）正好完全匹配 `tree[0...n-1]` 的数组存储顺序。
+4.  **IO 效率**：
+    *   使用了 `sys.stdin.read` 一次性读取和 `sys.stdout.write` 批量输出，这是 Python 处理百万级数据的标准做法。
+
+
+
 ## T30669: 地铁换乘
 
 LCA（最近公共祖先） 和 倍增法（Binary Lifting）, http://cs101.openjudge.cn/practice/30669/
@@ -26935,6 +27054,176 @@ def solve():
 # 示例运行
 if __name__ == "__main__":
     solve()
+```
+
+
+
+## T30830:地铁换乘（多组查询版）
+
+倍增法，http://cs101.openjudge.cn/practice/30830/
+
+B 市有 n 个地点，编号为 1∼n，可视为根节点为编号 t 的树，交通管理局在根节点上。
+
+记每个节点的深度为其到 t 的边数，根节点 t 的深度为 0。
+
+有 m 次询问，每次给出两个起点 p,q 与速度 v1,v2：
+
+线路 A 施工队从 p 出发往 q 修，每天修 v1 条边；
+
+线路 B 施工队从 q 出发往 p 修，每天修 v2 条边。
+
+数据保证：
+
+p 到 q 的路径长度 L 满足 Lmod(v1+v2)=0，
+
+两队一定在**某个整点、某个节点**相遇，该节点为换乘站。
+
+对每次询问，输出：相遇需要的天数、换乘站的深度。
+
+数据范围：1 ≤ n, m ≤ 2×10^5, 1 ≤ t,p,q ≤ n, 1 ≤ v1,v2 ≤ 10^9, 1 ≤ u,v ≤ n,u≠v
+
+保证输入构成一棵树。保证 p 到q 的距离L 满足 L mod (v1+v2) = 0。
+
+保证相遇点一定在某个节点上，且相遇天数为整数。
+
+输入
+
+第一行两个正整数 n,t，代表地点个数、根节点编号。
+
+接下来 n-1 行，每行两个正整数 u,v，表示两点连边。
+
+接下来一行一个正整数 m，表示询问组数。
+
+接下来 m 行，每行四个正整数 p,q,v1,v2。
+
+输出
+
+共 m 行，每行两个整数：相遇天数、换乘站深度。
+
+样例输入
+
+```
+7 1
+1 2
+1 3
+2 4
+2 5
+3 6
+3 7
+1
+4 7 1 3
+```
+
+样例输出
+
+```
+1 1
+```
+
+提示
+
+LCA（最近公共祖先） 和 倍增法（Binary Lifting）
+
+来源
+
+http://cs101.openjudge.cn/practice/30669/
+
+
+
+```python
+import sys
+input = sys.stdin.read
+data = input().split()
+
+def main():
+    ptr = 0
+    n, t = int(data[ptr]), int(data[ptr+1])
+    ptr += 2
+
+    # 建图
+    adj = [[] for _ in range(n + 1)]
+    for _ in range(n - 1):
+        u = int(data[ptr])
+        v = int(data[ptr+1])
+        adj[u].append(v)
+        adj[v].append(u)
+        ptr += 2
+
+    # 倍增预处理
+    LOG = 18
+    depth = [0] * (n + 1)
+    up = [[0] * LOG for _ in range(n + 1)]
+
+    # DFS 初始化
+    stack = [(t, 0, 0)]
+    while stack:
+        u, fa, d = stack.pop()
+        depth[u] = d
+        up[u][0] = fa
+        for v in adj[u]:
+            if v != fa:
+                stack.append((v, u, d + 1))
+
+    # 构建倍增表
+    for j in range(1, LOG):
+        for i in range(1, n + 1):
+            up[i][j] = up[up[i][j-1]][j-1]
+
+    # LCA
+    def lca(u, v):
+        if depth[u] < depth[v]:
+            u, v = v, u
+        # 对齐深度
+        for j in range(LOG-1, -1, -1):
+            if depth[u] - (1 << j) >= depth[v]:
+                u = up[u][j]
+        if u == v:
+            return u
+        for j in range(LOG-1, -1, -1):
+            if up[u][j] != up[v][j]:
+                u = up[u][j]
+                v = up[v][j]
+        return up[u][0]
+
+    # 第 k 个祖先
+    def kth_ancestor(u, k):
+        for j in range(LOG-1, -1, -1):
+            if k >= (1 << j):
+                u = up[u][j]
+                k -= (1 << j)
+        return u
+
+    # 读取查询数量 m
+    m = int(data[ptr])
+    ptr += 1
+
+    # 处理 m 组查询
+    res = []
+    for _ in range(m):
+        p = int(data[ptr])
+        q = int(data[ptr+1])
+        v1 = int(data[ptr+2])
+        v2 = int(data[ptr+3])
+        ptr += 4
+
+        r = lca(p, q)
+        L = (depth[p] - depth[r]) + (depth[q] - depth[r])
+        days = L // (v1 + v2)
+        s = v1 * days
+
+        # 找相遇点
+        if s <= depth[p] - depth[r]:
+            meet = kth_ancestor(p, s)
+        else:
+            s2 = L - s
+            meet = kth_ancestor(q, s2)
+
+        res.append(f"{days} {depth[meet]}")
+    
+    print('\n'.join(res))
+
+if __name__ == "__main__":
+    main()
 ```
 
 
