@@ -27058,6 +27058,145 @@ if __name__ == "__main__":
 
 
 
+这是一道典型的树上路径与距离计算问题。虽然提示提到了 **LCA（最近公共祖先）** 和 **倍增法**，但正如你所发现的，在保证“相遇点一定在节点上”且“路径唯一”的树结构中，使用 **BFS（广度优先搜索）** 同样可以有效解决，且逻辑更直观。
+
+**题目解读**
+
+1. **树结构**：$n$ 个点 $n-1$ 条边，连通且无环。$t$ 为根，决定了每个点的“深度”。
+2. **相遇逻辑**：$p$ 和 $q$ 之间只有唯一的一条路径。施工队 1 从 $p$ 出发，施工队 2 从 $q$ 出发，速度分别为 $v1, v2$。
+3. **关键公式**：
+   - 设 $p$ 到 $q$ 的路径长度（边数）为 $L$。
+   - 相遇天数 $T = \frac{L}{v1 + v2}$。
+   - 换乘站位置：从 $p$ 沿着往 $q$ 的路径走 $v1 \times T$ 步（或者从 $q$ 往 $p$ 走 $v2 \times T$ 步）。
+
+**优化思路**
+
+原代码使用了多次 BFS 且逻辑略显复杂（标记节点再寻找交点）。我们可以将其优化为 **两次 BFS**：
+1. **第一次 BFS（从根节点 $t$ 出发）**：遍历全树，记录每个节点到 $t$ 的**深度（depth）**。
+2. **第二次 BFS（从起点 $p$ 出发）**：寻找终点 $q$。在 BFS 过程中，记录每个节点的**前驱节点（parent）**。这样找到 $q$ 后，可以通过前驱节点回溯，直接还原出 $p$ 到 $q$ 的唯一路径。
+3. **计算与输出**：利用回溯得到的路径找到换乘站，并输出其天数和深度。
+
+**优化后的代码（Python）**
+
+```python
+import sys
+from collections import deque
+
+# 增加递归深度限制（虽然用BFS不需要，但处理树结构建议养成习惯）
+sys.setrecursionlimit(300000)
+
+def solve():
+    # 使用快速读取，处理大规模数据
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    idx = 0
+    n = int(input_data[idx]); idx += 1
+    t = int(input_data[idx]); idx += 1
+    
+    # 1. 构建邻接表
+    adj = [[] for _ in range(n + 1)]
+    for _ in range(n - 1):
+        u = int(input_data[idx]); idx += 1
+        v = int(input_data[idx]); idx += 1
+        adj[u].append(v)
+        adj[v].append(u)
+        
+    p = int(input_data[idx]); idx += 1
+    q = int(input_data[idx]); idx += 1
+    v1 = int(input_data[idx]); idx += 1
+    v2 = int(input_data[idx]); idx += 1
+
+    # 特殊情况：出发点相同
+    if p == q:
+        # 第一次BFS获取深度
+        depth_t = get_depth(n, t, adj)
+        print(0, depth_t[p])
+        return
+
+    # 2. 第一次 BFS：从根节点 t 出发，计算所有节点的深度
+    depths = [-1] * (n + 1)
+    depths[t] = 0
+    queue = deque([t])
+    while queue:
+        curr = queue.popleft()
+        for neighbor in adj[curr]:
+            if depths[neighbor] == -1:
+                depths[neighbor] = depths[curr] + 1
+                queue.append(neighbor)
+
+    # 3. 第二次 BFS：从 p 出发找到 q，并记录路径前驱
+    # parent_p[v] 表示在以 p 为起点的搜索树中 v 的父节点
+    parent_p = [0] * (n + 1)
+    dist_p = [-1] * (n + 1)
+    dist_p[p] = 0
+    queue = deque([p])
+    
+    found_q = False
+    while queue:
+        curr = queue.popleft()
+        if curr == q:
+            found_q = True
+            break
+        for neighbor in adj[curr]:
+            if dist_p[neighbor] == -1:
+                dist_p[neighbor] = dist_p[curr] + 1
+                parent_p[neighbor] = curr
+                queue.append(neighbor)
+        if found_q: break
+
+    # 4. 计算相遇天数和换乘站
+    L = dist_p[q]             # p 到 q 的总距离
+    days = L // (v1 + v2)      # 相遇天数
+    dist_from_q = v2 * days   # 换乘站距离 q 的步数
+    
+    # 从 q 开始沿着前驱数组往回走 dist_from_q 步，找到换乘站
+    transfer_station = q
+    for _ in range(dist_from_q):
+        transfer_station = parent_p[transfer_station]
+        
+    # 输出结果：相遇天数 换乘站深度
+    print(f"{days} {depths[transfer_station]}")
+
+def get_depth(n, t, adj):
+    """辅助函数：单独计算深度"""
+    depths = [-1] * (n + 1)
+    depths[t] = 0
+    dq = deque([t])
+    while dq:
+        u = dq.popleft()
+        for v in adj[u]:
+            if depths[v] == -1:
+                depths[v] = depths[u] + 1
+                dq.append(v)
+    return depths
+
+if __name__ == "__main__":
+    solve()
+```
+
+**核心优化点解读：**
+
+1.  **数据结构优化**：
+    *   将 `dict()` 改为 `list` 嵌套 `list` 的邻接表。在 $N=2 \times 10^5$ 的量级下，列表的索引访问比字典的哈希查找快得多，且内存占用更低。
+    *   使用 `sys.stdin.read().split()` 一次性读取数据，避免多次调用 `input()` 产生的 I/O 耗时。
+
+2.  **算法逻辑简化**：
+    *   **路径回溯法**：不再使用“多个 BFS 标记交点”的方法。在从 $p$ 到 $q$ 的 BFS 过程中，我们顺便记录了每个点的“爸爸”是谁（`parent_p`）。
+    *   一旦找到了 $q$，我们知道 $p \to q$ 的距离是 $L$，那么换乘站就在距离 $q$ 点 $v_2 \times T$ 步的位置。我们只需要拿着 `parent_p` 数组，从 $q$ 开始往回跳即可。这样直接定位，省去了后半段复杂的标记比对过程。
+
+3.  **时间复杂度分析**：
+    *   两次 BFS 均为 $O(N)$。
+    *   路径回溯最多 $O(N)$。
+    *   总体复杂度 $O(N)$，对于 $2 \times 10^5$ 的数据规模，可以在 1 秒左右完成计算，非常稳健。
+
+**关于倍增法的提示：**
+
+题目提到“倍增法”，是因为在标准的树算法中，求 $p, q$ 的距离通常用 `LCA`：$dist(p, q) = depth(p) + depth(q) - 2 \times depth(LCA(p, q))$。然后用倍增向上跳。但由于本题只需要求**一次**路径，直接 BFS 反而更简单直接。如果题目要求查询成千上万对不同的 $p, q$，那么倍增法才是必须的。
+
+
+
 ## T30830:地铁换乘（多组查询版）
 
 倍增法，http://cs101.openjudge.cn/practice/30830/
