@@ -9807,7 +9807,7 @@ http://cs101.openjudge.cn/dsapre/04136/
 
 ## M04137:最小新整数
 
-monotonous-stack, http://cs101.openjudge.cn/practice/04137/
+monotonous-stack, dfs, http://cs101.openjudge.cn/practice/04137/
 
 给定一个十进制正整数n(0 < n < 1000000000)，每个数位上数字均不为0。n的位数为m。
 现在从m位中删除k位(0<k < m)，求生成的新整数最小为多少？
@@ -9884,6 +9884,40 @@ for _ in range(t):
 for result in results:
     print(result)
 ```
+
+
+
+【金于珑 工学院】思路：直接递归实现，思路很清晰。如果要删除k个数，就检查前k+1个数，找到其中最小的那一个数，在它之前的全部数都删除，在它之后的数继续进行操作即可，然后处理一下边界条件。
+
+```python
+import sys
+def solve():
+    data = iter(sys.stdin.readlines())
+    t = int(next(data))
+    ans = []
+    def remove(num,cnt):
+        if cnt == 0:
+            return num
+        if cnt == len(num):
+            return ''
+        min_num = 9
+        pointer = 0
+        for index in range(cnt+1):
+            if int(num[index])  < min_num:
+                min_num = int(num[index])
+                pointer = index
+        return num[pointer] + remove(num[pointer+1:],cnt - pointer)
+    for i in range(t):
+        n,k = next(data).split()
+        ans.append(remove(n,int(k)))
+    for i in ans:
+        print(i)
+
+
+solve()
+```
+
+
 
 
 
