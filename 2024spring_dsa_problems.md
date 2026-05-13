@@ -16184,6 +16184,9 @@ def postorder(string):  # 中缀改后缀 (Shunting Yard)
     opStack, postList = [], []
     inList = string.split()
     prec = {'(': 0, 'or': 1, 'and': 2, 'not': 3}
+    # 定义结合性：L 为左结合，R 为右结合
+    assoc = {'or': 'L', 'and': 'L', 'not': 'R'}
+
     for word in inList:
         if word == '(':
             opStack.append(word)
@@ -16194,7 +16197,11 @@ def postorder(string):  # 中缀改后缀 (Shunting Yard)
         elif word in ('True', 'False'):
             postList.append(word)
         else:  # operator
-            while opStack and prec[word] <= prec[opStack[-1]]:
+            # while opStack and prec[word] <= prec[opStack[-1]]:
+            # while opStack and (word != "not" and prec[word] <= prec[opStack[-1]]):
+            while (opStack and opStack[-1] in prec and (
+                    (assoc[word] == 'L' and prec[word] <= prec[opStack[-1]]) or
+                    (assoc[word] == 'R' and prec[word] < prec[opStack[-1]]))):
                 postList.append(opStack.pop())
             opStack.append(word)
     while opStack:
@@ -16251,6 +16258,11 @@ if __name__ == "__main__":
     main()
 
 ```
+
+> 在调度场算法（Shunting Yard）中，处理操作符的核心逻辑是：
+>
+> - **左结合 (Left-associative)**：遇到优先级 ≤ 栈顶时，弹出并处理。
+> - **右结合 (Right-associative)**：遇到优先级 严格小于 (<) 栈顶时，才弹出并处理；如果优先级相等，则留在栈中。
 
 
 
