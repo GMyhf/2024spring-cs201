@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-05-11 18:50 GMT+8*
+*Updated 2026-05-13 19:42 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -4033,6 +4033,184 @@ while True:
             print(player, end=' ')
     print()
 ```
+
+
+
+## M02186: Popular Cows
+
+SCC, http://cs101.openjudge.cn/practice/02186/
+
+> **理由**：经典的 SCC 应用。题意是寻找被所有牛崇拜的牛。通过缩点后观察出度为 0 的点。
+
+Every cow's dream is to become the most popular cow in the herd. In a herd of N (1 <= N <= 10,000) cows, you are given up to M (1 <= M <= 50,000) ordered pairs of the form (A, B) that tell you that cow A thinks that cow B is popular. Since popularity is transitive, if A thinks B is popular and B thinks C is popular, then A will also think that C is popular, even if this is not explicitly specified by an ordered pair in the input. Your task is to compute the number of cows that are considered popular by every other cow.
+
+**输入**
+
+\* Line 1: Two space-separated integers, N and M
+
+\* Lines 2..1+M: Two space-separated numbers A and B, meaning that A thinks B is popular.
+
+**输出**
+
+\* Line 1: A single integer that is the number of cows who are considered popular by every other cow.
+
+样例输入
+
+```
+3 3
+1 2
+2 1
+2 3
+```
+
+样例输出
+
+```
+1
+```
+
+提示
+
+Cow 3 is the only cow of high popularity.
+
+来源
+
+USACO 2003 Fall
+
+
+
+这道题是强连通分量（SCC）的经典应用题。理解这道题的关键在于将“抽象的崇拜关系”转化为“图论的连通性”，并通过“缩点”简化问题。
+
+**核心解题思路**
+
+1.  **崇拜的传递性**：
+    如果 A 崇拜 B，B 崇拜 C，那么 A 崇拜 C。这说明如果图中存在一条从 A 到 B 的路径，则 A 崇拜 B。
+2.  **SCC 的性质**：
+    在一个强连通分量内部，任何两个点都可以互相到达。也就是说，同一个 SCC 里的所有牛都是互相崇拜的。
+3.  **缩点与 DAG（有向无环图）**：
+    我们将每个 SCC 缩成一个点。缩点后的图是一个 **DAG**。
+4.  **寻找被所有人崇拜的牛**：
+    *   在缩点后的 DAG 中，如果一个点的**出度为 0**，说明这个点（SCC）里的牛不再崇拜其他 SCC 里的牛了。
+    *   如果 **恰好只有一个** 出度为 0 的 SCC，那么这个 SCC 里的所有牛就是被其他所有牛崇拜的。因为在 DAG 中，从任何一个点出发，最终都会流向出度为 0 的点。
+    *   如果 **出度为 0 的 SCC 超过一个**（例如有两个点 A 和 B 出度都为 0），那么 A 无法到达 B，B 也无法到达 A。这意味着没有牛能被所有人崇拜，答案为 0。
+
+**算法步骤**
+
+1.  使用 **Tarjan 算法** 找到图中所有的 SCC。
+2.  统计每个 SCC 的**出度**（如果有一条原图边 $u \to v$ 且 $u, v$ 属于不同 SCC，则 $u$ 所在的 SCC 出度加 1）。
+3.  统计出度为 0 的 SCC 数量：
+    *   如果数量为 1，答案就是该 SCC 包含的牛的数量。
+    *   如果数量不为 1（或为 0，但在正常图中至少为 1），答案为 0。
+
+---
+
+**Python 代码实现**
+
+```python
+import sys
+
+# 增加递归深度
+sys.setrecursionlimit(100000)
+
+def solve():
+    # 使用快读
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    n = int(input_data[0])
+    m = int(input_data[1])
+    
+    adj = [[] for _ in range(n + 1)]
+    edges = []
+    idx = 2
+    for _ in range(m):
+        u = int(input_data[idx])
+        v = int(input_data[idx+1])
+        adj[u].append(v)
+        edges.append((u, v))
+        idx += 2
+
+    # --- Tarjan 算法变量 ---
+    dfn = [0] * (n + 1)
+    low = [0] * (n + 1)
+    stack = []
+    in_stack = [False] * (n + 1)
+    timer = 0
+    
+    scc_id = [0] * (n + 1)
+    scc_size = {} # 记录每个 SCC 包含的节点数
+    scc_count = 0
+
+    def tarjan(u):
+        nonlocal timer, scc_count
+        timer += 1
+        dfn[u] = low[u] = timer
+        stack.append(u)
+        in_stack[u] = True
+        
+        for v in adj[u]:
+            if not dfn[v]:
+                tarjan(v)
+                low[u] = min(low[u], low[v])
+            elif in_stack[v]:
+                low[u] = min(low[u], dfn[v])
+        
+        if dfn[u] == low[u]:
+            scc_count += 1
+            count = 0
+            while True:
+                node = stack.pop()
+                in_stack[node] = False
+                scc_id[node] = scc_count
+                count += 1
+                if node == u:
+                    break
+            scc_size[scc_count] = count
+
+    # 寻找 SCC
+    for i in range(1, n + 1):
+        if not dfn[i]:
+            tarjan(i)
+
+    # --- 统计缩点后各 SCC 的出度 ---
+    out_degree = [0] * (scc_count + 1)
+    for u, v in edges:
+        if scc_id[u] != scc_id[v]:
+            out_degree[scc_id[u]] += 1
+
+    # --- 分析结论 ---
+    zero_out_count = 0
+    target_scc = 0
+    
+    for i in range(1, scc_count + 1):
+        if out_degree[i] == 0:
+            zero_out_count += 1
+            target_scc = i
+            
+    if zero_out_count == 1:
+        # 只有一个出度为 0 的 SCC，该 SCC 里的牛就是答案
+        print(scc_size[target_scc])
+    else:
+        # 如果有多个出度为 0 的点，说明它们之间互不到达，没有牛能被所有人崇拜
+        print(0)
+
+if __name__ == "__main__":
+    solve()
+```
+
+**关键点总结：**
+
+1.  **为什么是出度为 0？**
+    在崇拜关系图中，$A \to B$ 表示 A 崇拜 B。信息流向是“崇拜的对象”。如果一个点（SCC）没有连向外面的边了，说明大家都崇拜它，但它不崇拜别人。如果这样的点只有一个，它就是“终点”，所有人的崇拜最终都会指向这里。
+2.  **复杂度分析**：
+    *   Tarjan 算法：$O(N + M)$
+    *   统计出度：$O(M)$
+    *   总时间复杂度 $O(N + M)$，对于 $N=10^4, M=50^4$ 来说非常轻松。
+3.  **注意点**：
+    Python 的递归深度限制需要手动上调。此外，若 $N$ 很大，`sys.stdin.read().split()` 比多次调用 `input()` 效率更高。
+
+> 【李思朋、工院】思路：感觉强连通分量的题是要想到可以利用强连通分量以及缩点后的操作，寻找强连通还是比较套路化的，包括下一题也一样，比如这题难点在要想到被所有牛崇拜的牛一定是单点或者一个强连通分量中的所有点，在缩点之后形成的有向无环图中找到所有出度为0的点（强连通分量），结合提前记录的强连通分量各自的size从而实现本题（需要注意的是缩点后找到出度为0的点或块只有1个，否则图是不连通的）
 
 
 
@@ -14360,6 +14538,314 @@ for _ in range(int(input())):
     flag = any(not vis[i] for i in range(1, n + 1))  
     print('Yes' if flag else 'No')
 
+```
+
+
+
+## T01236: Network of Schools
+
+SCC, http://cs101.openjudge.cn/practice/01236/
+
+> **理由**：非常经典的题。求至少要分发多少个软件（缩点后入度为 0 的点数）以及至少添加几条边使整幅图强连通（max(入度为0的点, 出度为0的点)）。
+
+A number of schools are connected to a computer network. Agreements have been developed among those schools: each school maintains a list of schools to which it distributes software (the “receiving schools”). Note that if B is in the distribution list of school A, then A does not necessarily appear in the list of school B
+You are to write a program that computes the minimal number of schools that must receive a copy of the new software in order for the software to reach all schools in the network according to the agreement (Subtask A). As a further task, we want to ensure that by sending the copy of new software to an arbitrary school, this software will reach all schools in the network. To achieve this goal we may have to extend the lists of receivers by new members. Compute the minimal number of extensions that have to be made so that whatever school we send the new software to, it will reach all other schools (Subtask B). One extension means introducing one new member into the list of receivers of one school.
+
+**输入**
+
+The first line contains an integer N: the number of schools in the network (2 <= N <= 100). The schools are identified by the first N positive integers. Each of the next N lines describes a list of receivers. The line i+1 contains the identifiers of the receivers of school i. Each list ends with a 0. An empty list contains a 0 alone in the line.
+
+**输出**
+
+Your program should write two lines to the standard output. The first line should contain one positive integer: the solution of subtask A. The second line should contain the solution of subtask B. 
+
+样例输入
+
+```
+5
+2 4 3 0
+4 5 0
+0
+0
+1 0
+```
+
+样例输出
+
+```
+1
+2
+```
+
+来源
+
+IOI 1996
+
+
+
+强连通分量（SCC）是解决这类图论问题的关键。这道题目要求你首先找出图中的所有强连通分量，然后将原图“缩点”成一个有向无环图（DAG），最后在这个DAG上分析入度和出度来解决两个子任务。
+
+**问题分析**
+
+1.  **子任务 A：最少分发多少个软件才能覆盖所有学校？**
+    *   在缩点后的DAG中，软件只能沿着有向边流动。
+    *   如果一个SCC在DAG中没有入边（即其入度为0），那么它就是DAG的一个“源点”。要确保这个SCC中的学校也能收到软件，就必须从这个SCC内部的某个学校开始分发。
+    *   因此，子任务A的答案是缩点后入度为0的SCC的数量。
+
+2.  **子任务 B：最少添加多少条边才能让整个网络强连通？**
+    *   要使整个图强连通，意味着从任何一个学校出发，都可以到达所有其他学校。在缩点后的DAG中，这意味着所有的SCC必须连接成一个大的环。
+    *   如果图已经是一个强连通分量（即 `scc_count == 1`），那么不需要添加任何边，答案是0。
+    *   如果存在多个SCC，我们需要添加边来连接所有入度为0的SCC（源点）和所有出度为0的SCC（汇点）。
+    *   设入度为0的SCC数量为 `num_source_sccs`，出度为0的SCC数量为 `num_sink_sccs`。
+    *   为了将所有源点和汇点连接起来形成一个大环，最少需要添加的边数是 `max(num_source_sccs, num_sink_sccs)`。
+
+**算法步骤**
+
+1.  **图的表示**：使用邻接列表 `graph` 来存储学校之间的分发关系。由于学校编号从1到N，使用1-based索引。
+2.  **寻找强连通分量 (SCC)**：
+    *   使用 Tarjan 算法。Tarjan 算法需要维护以下数组：
+        *   `dfn[u]`：节点 `u` 的发现时间（DFS访问顺序）。
+        *   `low[u]`：从节点 `u` 或其子树能够追溯到的最早的发现时间。
+        *   `stack`：DFS过程中访问的节点栈。
+        *   `in_stack[u]`：标记节点 `u` 是否在栈中。
+        *   `scc_id[u]`：节点 `u` 所属的SCC的ID。
+        *   `scc_count`：强连通分量的总数。
+    *   当 `dfn[u] == low[u]` 时，说明以 `u` 为根的子树构成了一个SCC，将栈中从 `u` 到栈顶的所有节点弹出，并分配相同的 `scc_id`。
+3.  **构建缩点后的DAG及计算入度/出度**：
+    *   遍历原图中的所有边 `(u, v)`。
+    *   如果 `scc_id[u] != scc_id[v]`，则表示在缩点后的DAG中存在一条从 `scc_id[u]` 到 `scc_id[v]` 的边。
+    *   为了避免重复计算（原图可能有多条边连接两个相同的SCC），使用一个 `set` 来存储已经添加的SCC间边 `(scc_id[u], scc_id[v])`。
+    *   维护 `scc_in_degree` 和 `scc_out_degree` 数组，分别记录每个SCC在DAG中的入度和出度。
+4.  **计算子任务 A 的答案**：统计 `scc_in_degree` 中值为0的SCC的数量。
+5.  **计算子任务 B 的答案**：
+    *   如果 `scc_count == 1`，答案是0。
+    *   否则，统计 `scc_in_degree` 中值为0的SCC数量（`num_source_sccs`）和 `scc_out_degree` 中值为0的SCC数量（`num_sink_sccs`），答案是 `max(num_source_sccs, num_sink_sccs)`。
+
+**Python 代码实现**
+
+```python
+import sys
+
+# 设置递归深度限制，以应对N=100的DFS调用
+# Python默认递归限制通常是1000，对于N=100的图，2000是绰绰有余的。
+sys.setrecursionlimit(2000)
+
+# 全局变量用于存储图和Tarjan算法的状态
+N = 0
+graph = []
+
+# Tarjan算法相关变量
+timer = 0
+dfn = []         # 节点的发现时间 (discovery time)
+low = []         # 从节点u或其子树能追溯到的最早的发现时间 (lowest reachable discovery time)
+stack = []       # DFS栈，存储当前正在访问的节点
+in_stack = []    # 布尔数组，标记节点是否在栈中
+scc_id = []      # 存储每个节点所属的SCC的ID
+scc_count = 0    # 已找到的SCC的总数
+
+def tarjan(u):
+    """
+    Tarjan算法的DFS实现，用于寻找强连通分量。
+    u: 当前正在访问的节点
+    """
+    global timer, scc_count
+    
+    timer += 1
+    dfn[u] = timer
+    low[u] = timer
+    stack.append(u)
+    in_stack[u] = True
+
+    # 遍历节点u的所有邻居v
+    for v in graph[u]:
+        if dfn[v] == -1: # 如果v尚未访问
+            tarjan(v)
+            # 递归返回后，更新low[u]。u可以到达v能到达的最早发现时间。
+            low[u] = min(low[u], low[v])
+        elif in_stack[v]: # 如果v已经在栈中，说明是回边，或者v在同一个SCC中
+            # 更新low[u]。u可以到达v，所以u可以到达v的发现时间。
+            # 这里必须使用dfn[v]而不是low[v]，因为low[v]可能已经被子树更新到更早的时间，
+            # 而我们关注的是u通过v能够直接回溯到的栈中祖先。
+            low[u] = min(low[u], dfn[v])
+
+    # 如果dfn[u] == low[u]，说明u是某个SCC的根节点
+    if dfn[u] == low[u]:
+        scc_count += 1
+        # 从栈中弹出所有属于当前SCC的节点，直到u被弹出
+        while True:
+            node = stack.pop()
+            in_stack[node] = False
+            scc_id[node] = scc_count # 分配SCC ID
+            if node == u:
+                break
+
+def solve():
+    """
+    主函数：读取输入，运行Tarjan算法，并解决两个子任务。
+    """
+    global N, graph, timer, dfn, low, stack, in_stack, scc_id, scc_count
+
+    # 读取学校数量N
+    N = int(sys.stdin.readline())
+    # 初始化邻接列表，使用1-based索引
+    graph = [[] for _ in range(N + 1)]
+
+    # 读取每个学校的分发列表，构建图
+    for i in range(1, N + 1):
+        line = list(map(int, sys.stdin.readline().split()))
+        # 输入列表以0结束，因此遍历到倒数第二个元素
+        for j in range(len(line) - 1):
+            graph[i].append(line[j])
+
+    # 初始化Tarjan算法所需变量
+    timer = 0
+    dfn = [-1] * (N + 1)
+    low = [-1] * (N + 1)
+    stack = []
+    in_stack = [False] * (N + 1)
+    scc_id = [0] * (N + 1) # scc_id[i] 表示节点i所属的SCC编号
+    scc_count = 0 # 强连通分量计数器
+
+    # 对所有未访问的节点运行Tarjan算法，确保处理所有连通分量
+    for i in range(1, N + 1):
+        if dfn[i] == -1: # 如果节点i尚未被访问
+            tarjan(i)
+
+    # --- 子任务 A: 计算最少需要从多少个学校分发软件 ---
+    # 这等价于计算缩点后DAG中入度为0的SCC的数量。
+    
+    # scc_in_degree[k] 存储第k个SCC在缩点图中的入度
+    # scc_out_degree[k] 存储第k个SCC在缩点图中的出度
+    scc_in_degree = [0] * (scc_count + 1)
+    scc_out_degree = [0] * (scc_count + 1)
+    
+    # 使用一个集合来存储缩点图中已添加的边，以避免重复计算入度和出度
+    condensation_graph_edges = set()
+
+    # 遍历原图的所有边，构建缩点图的入度和出度
+    for u in range(1, N + 1):
+        for v in graph[u]:
+            # 如果一条边连接了两个不同的SCC，则在缩点图中存在一条边
+            if scc_id[u] != scc_id[v]:
+                # 如果这条SCC间的边尚未被记录，则增加相应的入度和出度
+                if (scc_id[u], scc_id[v]) not in condensation_graph_edges:
+                    scc_out_degree[scc_id[u]] += 1
+                    scc_in_degree[scc_id[v]] += 1
+                    condensation_graph_edges.add((scc_id[u], scc_id[v]))
+
+    num_source_sccs = 0 # 入度为0的SCC数量
+    num_sink_sccs = 0   # 出度为0的SCC数量
+
+    # 统计入度为0和出度为0的SCC
+    for i in range(1, scc_count + 1):
+        if scc_in_degree[i] == 0:
+            num_source_sccs += 1
+        if scc_out_degree[i] == 0:
+            num_sink_sccs += 1
+
+    # 子任务A的答案是入度为0的SCC数量
+    # 从这些SCC中的任一学校开始分发，即可覆盖所有学校。
+    ans_A = num_source_sccs
+    print(ans_A)
+
+    # --- 子任务 B: 计算最少需要添加多少条边才能使整个网络强连通 ---
+    # 如果整个图本身就是一个SCC（scc_count == 1），则已经强连通，无需添加边。
+    if scc_count == 1:
+        print(0)
+    else:
+        # 否则，为了使整个图强连通，需要将所有“源”SCC连接到“汇”SCC，并最终形成一个大环。
+        # 最少需要添加的边数是源SCC数量和汇SCC数量的最大值。
+        ans_B = max(num_source_sccs, num_sink_sccs)
+        print(ans_B)
+
+# 执行主函数
+solve()
+
+```
+
+> 【李思朋、工院】思路：本题跟上面那题一样的，强连通分块的划分还是模版，难点在于后序的想法。Subtask A 即统计入度为0的块数，因为这一部分不能收到他人的传讯，必须是信息源；Subtask B 则是要将整个图整体化成强连通，容易想到每个出度为0的块至少要增加一出度，每个入度为0的块也至少要增加一入度，因此答案至少是max{in0，out0}，并且确实也能够实现
+
+
+
+双DFS
+
+```python
+class School:
+    def __init__(self, ident):
+        self.to = []
+        self.fro = []
+        self.leave_time = -1
+        self.visited1 = False
+        self.visited2 = False
+        self.of_scc = None
+        self.ident = ident
+
+    def __repr__(self):
+        return f"SC_{self.ident}"
+
+
+class SCC:
+    def __init__(self, ident):
+        self.ident = ident
+        self.to = set()
+        self.fro = set()
+    def __repr__(self):
+        return f"SCC_{self.ident}"
+
+
+n = int(input())
+schools = [School(i) for i in range(n + 1)]
+for i in range(1, n + 1):
+    l = list(map(int, input().split()))
+    for j in l[:-1]:
+        schools[i].to.append(schools[j])
+        schools[j].fro.append(schools[i])
+
+
+def dfs1(school: School, time: int):
+    school.visited1 = True
+    for nbr in school.to:
+        if not nbr.visited1:
+            time = dfs1(nbr, time)
+    school.leave_time = time
+    return time + 1
+
+
+time = 0
+for school in schools[1:]:
+    if school.visited1:
+        continue
+    time = dfs1(school, time)
+
+schools.sort(key=lambda x: x.leave_time, reverse=True)
+sccs = []
+
+
+def dfs2(school: School, scc: SCC):
+    school.visited2 = True
+    school.of_scc = scc
+    for nbr in school.fro:
+        if not nbr.visited2:
+            dfs2(nbr, scc)
+
+
+for school in schools[:-1]:
+    if school.visited2:
+        continue
+    sccs.append(SCC(len(sccs)))
+    dfs2(school, sccs[-1])
+
+for school in schools[:-1]:
+    for nbr in school.to:
+        if school.of_scc != nbr.of_scc:
+            school.of_scc.to.add(nbr.of_scc)
+            nbr.of_scc.fro.add(school.of_scc)
+
+s1 = len([scc for scc in sccs if len(scc.to) == 0])
+s2 = len([scc for scc in sccs if len(scc.fro) == 0])
+
+print(s2)
+print(0 if len(sccs) == 1 else max(s1, s2))
 ```
 
 
