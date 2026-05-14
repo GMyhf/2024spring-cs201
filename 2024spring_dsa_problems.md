@@ -13798,7 +13798,7 @@ solve_maze()
 
 ## 07734: 虫子的生活
 
-disjoint set, http://cs101.openjudge.cn/practice/07734/
+DSU, DFS/BFS 染色, http://cs101.openjudge.cn/practice/07734/
 
 Hopper 博士正在研究一种罕见种类的虫子的性行为。他假定虫子只表现为两种性别，并且虫子只与异性进行交互。在他的实验中，不同的虫子个体和虫子的交互行为很容易区分开来，因为这些虫子的背上都被标记有一些标号。
 
@@ -14033,7 +14033,7 @@ if __name__ == '__main__':
 
 
 
-DFS 染色法是将问题转化为**二分图判定**，提交超内存。核心思想：
+DFS 染色法是将问题转化为**二分图判定**。核心思想：
 
 *   **染色原理**：尝试给图中的每个节点（虫子）染上两种颜色之一（代表两种性别，比如 0 和 1）。
 *   **规则**：如果给节点 $u$ 染色为 $0$，那么与 $u$ 直接相连（有交互）的所有节点 $v$ 都必须染色为 $1$。反之亦然。
@@ -14042,72 +14042,69 @@ DFS 染色法是将问题转化为**二分图判定**，提交超内存。核心
 ```python
 import sys
 
-def solve():
-    # 使用 generator 快速读取所有数据
-    input_data = sys.stdin.read().split()
-    if not input_data:
-        return
-    
-    it = iter(input_data)
-    num_scenarios = int(next(it))
-    
-    output = []
-    
-    for s in range(1, num_scenarios + 1):
-        n = int(next(it))
-        m = int(next(it))
-        
-        # 构建邻接表
-        adj = [[] for _ in range(n + 1)]
-        for _ in range(m):
-            u = int(next(it))
-            v = int(next(it))
-            adj[u].append(v)
-            adj[v].append(u)
-        
-        # sex[i] 存储性别：-1 表示未染色，0 和 1 表示两种性别
-        sex = [-1] * (n + 1)
-        is_suspicious = False
-        
-        # 遍历所有节点，处理不连通的情况
-        for i in range(1, n + 1):
-            if is_suspicious:
-                break
-            
-            if sex[i] == -1:
-                # 发现未染色的连通分量，开始迭代式 DFS
-                stack = [i]
-                sex[i] = 0 # 初始颜色设为 0
-                
-                while stack:
-                    curr = stack.pop()
-                    
-                    for neighbor in adj[curr]:
-                        if sex[neighbor] == -1:
-                            # 如果邻居没染色，染上相反的颜色
-                            sex[neighbor] = 1 - sex[curr]
-                            stack.append(neighbor)
-                        elif sex[neighbor] == sex[curr]:
-                            # 如果邻居已染色且颜色相同，发现冲突
-                            is_suspicious = True
-                            break
-                    if is_suspicious:
-                        break
-        
-        # 结果格式化
-        output.append(f"Scenario #{s}:")
-        if is_suspicious:
-            output.append("Suspicious bugs found!")
-        else:
-            output.append("No suspicious bugs found!")
-        # 题目要求每组数据中间有个空行
-        output.append("")
 
-    # 一次性输出提高效率
-    sys.stdout.write("\n".join(output))
+def solve(t_case):
+    line = input().split()
+    while not line:
+        line = input().split()
+        if not line: return
+    n, m = map(int, line)
+
+    # 优化点：预先创建 1-N 的整数对象。
+    # 这样在 adj[u].append(nodes[v]) 时，存储的是这 2000 个对象的引用，
+    # 而不是每次 input 产生的新的整数对象。
+    nodes = list(range(n + 1))
+
+    adj = [[] for _ in range(n + 1)]
+    for _ in range(m):
+        u, v = map(int, input().split())
+        # 这里的 nodes[v] 和 nodes[u] 是关键
+        adj[u].append(nodes[v])
+        adj[v].append(nodes[u])
+
+    # sex[i] 存储性别：-1 表示未染色，0 和 1 表示两种性别
+    sex = [-1] * (n + 1)
+    is_suspicious = False
+
+    # 遍历所有节点，处理不连通的情况
+    for i in range(1, n + 1):
+        if is_suspicious:
+            break
+
+        if sex[i] == -1:
+            # 发现未染色的连通分量，开始迭代式 DFS
+            stack = [i]
+            sex[i] = 0  # 初始颜色设为 0
+
+            while stack:
+                curr = stack.pop()
+
+                for neighbor in adj[curr]:
+                    if sex[neighbor] == -1:
+                        # 如果邻居没染色，染上相反的颜色
+                        sex[neighbor] = 1 - sex[curr]
+                        stack.append(neighbor)
+                    elif sex[neighbor] == sex[curr]:
+                        # 如果邻居已染色且颜色相同，发现冲突
+                        is_suspicious = True
+                        break
+                if is_suspicious:
+                    break
+
+    sys.stdout.write(f"Scenario #{t_case}:\n")
+    sys.stdout.write("Suspicious bugs found!\n\n" if is_suspicious else "No suspicious bugs found!\n\n")
+
+
+def main():
+    line = input().strip()
+    if line:
+        for i in range(1, int(line) + 1):
+            solve(i)
+
 
 if __name__ == "__main__":
-    solve()
+    main()
+
 ```
 
 > 需要注意：
@@ -14120,7 +14117,7 @@ if __name__ == "__main__":
 
 
 
-思路：dfs 染色。python写的染色法，提交超内存，因为需要构建邻接表。C++对内存的控制紧凑，AC。
+思路：dfs 染色。构建邻接表。C++对内存的控制紧凑，AC。
 
 ```cpp
 #include <bits/stdc++.h>
@@ -14191,6 +14188,71 @@ int main() {
 ```
 
 
+
+BFS染色
+
+```python
+import sys
+from collections import deque
+
+input = sys.stdin.readline
+
+def solve(t_case):
+    line = input().split()
+    while not line:
+        line = input().split()
+        if not line: return
+    num, sex = map(int, line)
+
+    # 优化点：预先创建 1-N 的整数对象。
+    # 这样在 adj[u].append(nodes[v]) 时，存储的是这 2000 个对象的引用，
+    # 而不是每次 input 产生的新的整数对象。
+    nodes = list(range(num + 1)) 
+    
+    adj = [[] for _ in range(num + 1)]
+    for _ in range(sex):
+        u, v = map(int, input().split())
+        # 这里的 nodes[v] 和 nodes[u] 是关键
+        adj[u].append(nodes[v])
+        adj[v].append(nodes[u])
+
+    gender = [0] * (num + 1)
+    suspicious = False
+
+    for i in range(1, num + 1):
+        if suspicious: break
+        if gender[i] == 0:
+            gender[i] = 1
+            queue = deque([i])
+            q_pop = queue.popleft
+            q_add = queue.append
+            
+            while queue:
+                curr = q_pop()
+                curr_sex = gender[curr]
+                target_sex = 3 - curr_sex
+                
+                for neighbor in adj[curr]:
+                    if gender[neighbor] == 0:
+                        gender[neighbor] = target_sex
+                        q_add(neighbor)
+                    elif gender[neighbor] == curr_sex:
+                        suspicious = True
+                        break
+                if suspicious: break
+    
+    sys.stdout.write(f"Scenario #{t_case}:\n")
+    sys.stdout.write("Suspicious bugs found!\n\n" if suspicious else "No suspicious bugs found!\n\n")
+
+def main():
+    line = input().strip()
+    if line:
+        for i in range(1, int(line) + 1):
+            solve(i)
+
+if __name__ == '__main__':
+    main()
+```
 
 
 
