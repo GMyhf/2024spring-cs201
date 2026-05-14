@@ -13796,7 +13796,7 @@ solve_maze()
 
 
 
-## 07734: 虫子的生活
+## M07734: 虫子的生活
 
 DSU, DFS/BFS 染色, http://cs101.openjudge.cn/practice/07734/
 
