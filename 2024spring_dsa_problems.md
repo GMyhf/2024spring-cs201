@@ -13889,6 +13889,311 @@ solve_bug_life(scenarios)
 
 
 
+这是一个经典的**二分图判定（Bipartite Graph Check）**问题。
+
+**算法思路**
+
+根据题意，虫子只有两种性别，且只与异性进行交互。这意味着如果我们将虫子看作图中的点，交互看作边，那么这个图必须是一个**二分图**。
+
+如果在实验结果中发现了“同性恋”倾向（即不符合假设），则说明图中存在**奇环**（Odd Cycle）。
+
+为了高效解决这个问题，特别是面对多达 $1,000,000$ 次交互的情况，我们使用**并查集（Disjoint Set Union, DSU）**，并采用“扩展节点”或“偏移量（加权并查集）”的技巧。
+
+**扩展节点法（2N 策略）：**
+
+1. 为每个虫子 $i$ 创建两个节点：$i$（代表性别A）和 $i+N$（代表性别B）。
+2. 对于每一次交互 $(u, v)$：
+   - 检查 $u$ 和 $v$ 是否已经在同一个集合中。如果是，说明它们必须是同性，但现在发生了交互，违反了假设。
+   - 如果不在，则将 $u$ 与 $v+N$ 合并（说明 $u$ 和 $v$ 的异性属于同一类），将 $v$ 与 $u+N$ 合并。
+3. 这种方法能处理所有连通分量，并快速判断是否存在冲突。
+
+**优化：**
+
+*   **路径减半（Path Halving）**：`p[i] = p[p[i]]`，比递归快且避免栈溢出。
+*   **按秩合并（Union by Rank）**：防止树退化。
+*   **快速 IO**：使用 `sys.stdin` 迭代器处理百万级数据。
+
+为了提高代码的可复用性并确保在处理 $1,000,000$ 条数据时的执行效率，我们将并查集（Union-Find）封装为一个高效的类。
+
+```python
+import sys
+
+class UnionFind:
+    """高效并查集实现"""
+    def __init__(self, size):
+        # parent 数组，size 通常为 2*N + 1
+        self.parent = list(range(size))
+        # rank 数组用于按秩合并，减少树高度
+        self.rank = [0] * size
+
+    def find(self, i):
+        """查找根节点，使用路径减半优化"""
+        p = self.parent
+        while p[i] != i:
+            p[i] = p[p[i]] # 路径减半
+            i = p[i]
+        return i
+
+    def union(self, root_i, root_j):
+        """合并两个已知的根节点"""
+        if root_i != root_j:
+            p = self.parent
+            r = self.rank
+            if r[root_i] < r[root_j]:
+                p[root_i] = root_j
+            elif r[root_i] > r[root_j]:
+                p[root_j] = root_i
+            else:
+                p[root_i] = root_j
+                r[root_j] += 1
+            return True
+        return False
+
+def solve():
+    # 使用生成器读取所有输入，应对百万级数据，节省内存
+    def get_tokens():
+        for line in sys.stdin:
+            for word in line.split():
+                yield int(word)
+    
+    tokens = get_tokens()
+    
+    try:
+        num_scenarios = next(tokens)
+    except StopIteration:
+        return
+    
+    results = []
+    
+    for s in range(1, num_scenarios + 1):
+        try:
+            n = next(tokens)
+            m = next(tokens)
+        except StopIteration:
+            break
+            
+        # 初始化并查集，大小为 2*n + 1 (扩展域：1..n 为 A，n+1..2n 为 B)
+        uf = UnionFind(2 * n + 1)
+        is_suspicious = False
+        
+        for _ in range(m):
+            u = next(tokens)
+            v = next(tokens)
+            
+            if is_suspicious:
+                continue
+            
+            root_u = uf.find(u)
+            root_v = uf.find(v)
+            
+            if root_u == root_v:
+                # 发现 u 和 v 已经在同一个性别集合中
+                is_suspicious = True
+            else:
+                # u 的性别与 v 的异性集合合并
+                # v 的性别与 u 的异性集合合并
+                root_u_opp = uf.find(u + n)
+                root_v_opp = uf.find(v + n)
+                uf.union(root_u, root_v_opp)
+                uf.union(root_v, root_u_opp)
+        
+        # 记录结果
+        results.append(f"Scenario #{s}:")
+        if is_suspicious:
+            results.append("Suspicious bugs found!")
+        else:
+            results.append("No suspicious bugs found!")
+        # 按照题目样例，每组结果后输出一个空行
+        results.append("")
+
+    # 批量输出提高效率
+    if results:
+        sys.stdout.write("\n".join(results))
+
+if __name__ == '__main__':
+    solve()
+```
+
+> **代码解读：**
+>
+> 1.  **UnionFind 类**：
+>     *   `__init__`：初始化 `parent` 数组。
+>     *   `find`：通过循环实现路径减半。相比递归，它在 Python 中更有效率且不会触碰递归深度限制。
+>     *   `union`：接收两个**已经过 find 的根节点**。在主循环中先判断 `root_u == root_v` 再调用 `union`，可以减少重复计算。
+> 2.  **扩展域逻辑**：
+>     *   我们不关心具体的性别是男是女，只关心“相对关系”。
+>     *   如果 $u$ 与 $v$ 交互，那么 $u$ 与 $v+N$（$v$ 的异性）必定属于同一类。
+>     *   并查集维护的是“同类”关系。
+> 3.  **性能点**：
+>     *   `next(tokens)`：使用 `sys.stdin` 构造的生成器在处理 $2 \times 10^6$ 个整数时非常快。
+>     *   `results.append` + `"\n".join`：避免了频繁的 `print` 调用产生的 IO 耗时。
+>     *   `if is_suspicious: continue`：一旦在当前实验中发现冲突，后续的交互记录只需读入而无需再进行复杂的并查集运算，显著加快运行速度。
+
+
+
+
+
+DFS 染色法是将问题转化为**二分图判定**，提交超内存。核心思想：
+
+*   **染色原理**：尝试给图中的每个节点（虫子）染上两种颜色之一（代表两种性别，比如 0 和 1）。
+*   **规则**：如果给节点 $u$ 染色为 $0$，那么与 $u$ 直接相连（有交互）的所有节点 $v$ 都必须染色为 $1$。反之亦然。
+*   **冲突检测**：如果在染色的过程中，发现某个节点 $v$ 已经被染过色了，且它的颜色和它邻居 $u$ 的颜色相同，说明出现了“同性交互”，即该图不是二分图。
+
+```python
+import sys
+
+def solve():
+    # 使用 generator 快速读取所有数据
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    it = iter(input_data)
+    num_scenarios = int(next(it))
+    
+    output = []
+    
+    for s in range(1, num_scenarios + 1):
+        n = int(next(it))
+        m = int(next(it))
+        
+        # 构建邻接表
+        adj = [[] for _ in range(n + 1)]
+        for _ in range(m):
+            u = int(next(it))
+            v = int(next(it))
+            adj[u].append(v)
+            adj[v].append(u)
+        
+        # sex[i] 存储性别：-1 表示未染色，0 和 1 表示两种性别
+        sex = [-1] * (n + 1)
+        is_suspicious = False
+        
+        # 遍历所有节点，处理不连通的情况
+        for i in range(1, n + 1):
+            if is_suspicious:
+                break
+            
+            if sex[i] == -1:
+                # 发现未染色的连通分量，开始迭代式 DFS
+                stack = [i]
+                sex[i] = 0 # 初始颜色设为 0
+                
+                while stack:
+                    curr = stack.pop()
+                    
+                    for neighbor in adj[curr]:
+                        if sex[neighbor] == -1:
+                            # 如果邻居没染色，染上相反的颜色
+                            sex[neighbor] = 1 - sex[curr]
+                            stack.append(neighbor)
+                        elif sex[neighbor] == sex[curr]:
+                            # 如果邻居已染色且颜色相同，发现冲突
+                            is_suspicious = True
+                            break
+                    if is_suspicious:
+                        break
+        
+        # 结果格式化
+        output.append(f"Scenario #{s}:")
+        if is_suspicious:
+            output.append("Suspicious bugs found!")
+        else:
+            output.append("No suspicious bugs found!")
+        # 题目要求每组数据中间有个空行
+        output.append("")
+
+    # 一次性输出提高效率
+    sys.stdout.write("\n".join(output))
+
+if __name__ == "__main__":
+    solve()
+```
+
+> 需要注意：
+>
+> 1.  **递归深度**：Python 默认递归深度较浅（1000），而虫子有 2000 个，如果递归需要 `sys.setrecursionlimit`。
+> 2.  **性能优化**：对于 $10^6$ 条边，邻接表的构建和遍历压力很大。**迭代式 DFS**（用栈模拟）通常比递归式 DFS 在 Python 中更快且更安全。
+> 3.  **快速 IO**：使用 `sys.stdin.read().split()` 批量读取。
+
+**总结**：算法复杂度为 $O(N + M)$，其中 $N$ 是虫子数，$M$ 是交互数。对于 $N=2000, M=1,000,000$ 的规模，DFS 染色法和并查集法在效率上非常接近，都是解决此题的标准方案。
+
+
+
+思路：dfs 染色。python写的染色法，提交超内存，因为需要构建邻接表。C++对内存的控制紧凑，AC。
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int cnt = 1;
+void solve() {
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> adj(n);
+    while (m--) {
+        int u, v;
+        cin >> u >> v;
+        u--, v--;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    vector<bool> vis(n, false);
+    vector<int> sex(n, -1);
+    auto dfs = [&](auto&& self, int u, int p) -> void {
+        vis[u] = true;
+        for (int v : adj[u]) {
+            if (v == p || vis[v]) continue;
+            if (sex[v] == -1) sex[v] = 1 - sex[u];
+            self(self, v, u);
+        }
+    };
+
+    for (int i = 0; i < n; i++) {
+        if (sex[i] == -1) {
+            sex[i] = 0;
+            dfs(dfs, i, -1);
+        }
+    }
+
+    bool flag = true;
+    for (int u = 0; u < n; u++) {
+        for (int v : adj[u]) {
+            if (sex[v] == sex[u]) {
+                flag = false;
+                break;
+            }
+        }
+    }
+
+    cout << "Scenario #" << cnt << ":\n";
+    if (flag) {
+        cout << "No suspicious bugs found!\n\n";
+    } else {
+        cout << "Suspicious bugs found!\n\n";
+    }
+    cnt++;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+    return 0;
+}
+```
+
+
+
+
+
 ## 07735: 道路
 
 http://cs101.openjudge.cn/practice/07735/
