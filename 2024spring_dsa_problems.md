@@ -5162,7 +5162,7 @@ for r in results:
 
 ## 02337: Catenyms
 
-http://cs101.openjudge.cn/practice/02337/
+Eulerian Path, http://cs101.openjudge.cn/practice/02337/
 
 A catenym is a pair of words separated by a period such that the last letter of the first word is the same as the last letter of the second. For example, the following are catenyms: 
 
@@ -5217,6 +5217,146 @@ aloha.arachnid.dog.gopher.rat.tiger
 Waterloo local 2003.01.25
 
 
+
+这是一道经典的图论问题，可以抽象为在有向图中寻找**欧拉通路**（Eulerian Path）。
+
+**算法分析**
+
+1.  **建图**：
+    *   将 26 个字母看作图的节点。
+    *   每个单词看作从其“首字母”到“尾字母”的一条有向边。
+    *   因为题目要求找到字典序最小的解，我们首先将所有单词按字典序进行**升序排序**。
+
+2.  **判断欧拉通路的存在性**：
+    一个有向图存在欧拉通路的条件是：
+    *   **连通性**：忽略边方向后，所有具有边连接的顶点必须在同一个连通分量中。
+    *   **度数条件**：
+        *   要么所有节点的入度等于出度（此时存在欧拉回路，起点可以是任意有边节点的最小字母）。
+        *   要么恰好有一个节点满足 `出度 - 入度 = 1`（起点），且恰好有一个节点满足 `入度 - 出度 = 1`（终点），其余节点入度等于出度。
+
+3.  **寻找字典序最小的通路**：
+    *   为了得到字典序最小的序列，我们使用 **Hierholzer 算法**（或类似的深度优先搜索 DFS）。
+    *   在 DFS 过程中，当一个节点有多个出边时，为了保证最终结果字典序最小，我们需要通过一种巧妙的策略：**在 DFS 递归时，按单词字典序从小到大选择边，但为了配合 `pop()` 操作和后序遍历，我们需要将出边表按字典序升序排列，并从后往前选择（即先选择字典序大的单词进行递归，这样字典序小的单词会最后被处理并最先在反转后的结果中出现）**。
+    *   **更简单的做法**：将每个节点的出边（单词）按字典序**降序**排列，然后每次 `pop()` 出最后一个单词（即当前最小的单词）进行 DFS，最后将结果列表反转。
+
+4.  **最后验证**：
+    *   如果 DFS 遍历到的边数等于总单词数 $n$，说明找到了覆盖所有单词的路径；否则，说明图不连通，输出 `***`。
+
+Python **代码实现**
+
+```python
+import sys
+
+# 增加递归深度以处理 N=1000 的情况
+sys.setrecursionlimit(10000)
+
+def solve():
+    # 使用 fast I/O 读取所有输入
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    it = iter(input_data)
+    try:
+        t_cases = int(next(it))
+    except StopIteration:
+        return
+    
+    for _ in range(t_cases):
+        try:
+            n = int(next(it))
+        except StopIteration:
+            break
+        
+        words = []
+        for _ in range(n):
+            words.append(next(it))
+        
+        # 1. 字典序排序
+        # 我们希望在 DFS 中先走字典序小的边。
+        # 配合 pop()，我们将单词按降序排列，这样 pop() 拿到的就是最小的单词。
+        words.sort(reverse=True)
+        
+        adj = [[] for _ in range(26)]
+        in_deg = [0] * 26
+        out_deg = [0] * 26
+        chars_present = [False] * 26
+        
+        for w in words:
+            u = ord(w[0]) - ord('a')
+            v = ord(w[-1]) - ord('a')
+            adj[u].append(w)
+            out_deg[u] += 1
+            in_deg[v] += 1
+            chars_present[u] = chars_present[v] = True
+            
+        # 2. 查找起点并检查度数条件
+        start_node = -1
+        out_minus_in_1 = 0
+        in_minus_out_1 = 0
+        possible = True
+        
+        for i in range(26):
+            diff = out_deg[i] - in_deg[i]
+            if diff == 1:
+                out_minus_in_1 += 1
+                start_node = i
+            elif diff == -1:
+                in_minus_out_1 += 1
+            elif diff == 0:
+                continue
+            else:
+                possible = False
+                break
+        
+        # 欧拉通路判别
+        if not ((out_minus_in_1 == 0 and in_minus_out_1 == 0) or 
+                (out_minus_in_1 == 1 and in_minus_out_1 == 1)):
+            possible = False
+
+        if not possible:
+            print("***")
+            continue
+
+        # 如果是欧拉回路，从最小的具有出度的字符开始
+        if start_node == -1:
+            for i in range(26):
+                if out_deg[i] > 0:
+                    start_node = i
+                    break
+        
+        # 3. Hierholzer 算法寻找路径
+        res_path = []
+        
+        def dfs(u):
+            curr_adj = adj[u]
+            while curr_adj:
+                # 弹出当前节点最小的单词（因为之前是 reverse 排序）
+                w = curr_adj.pop()
+                v = ord(w[-1]) - ord('a')
+                dfs(v)
+                # 后序加入路径
+                res_path.append(w)
+        
+        if start_node != -1:
+            dfs(start_node)
+        
+        # 4. 连通性检查及输出
+        if len(res_path) != n:
+            print("***")
+        else:
+            # 路径是后序添加的，需要反转
+            print(".".join(reversed(res_path)))
+
+if __name__ == "__main__":
+    solve()
+```
+
+**关键点总结**
+
+*   **排序与 DFS 的结合**：在 Hierholzer 算法中，想要得到字典序最小的路径，必须在每个节点选择出边时，总是优先选择字典序最小的那条。由于代码使用了 `res_path.append(w)` 后序添加并最终反转的逻辑，在 `while` 循环中**先选择字典序小的单词进入递归**是正确的。
+*   **连通性**：本题中，除了度数判断外，最简单判断连通性的方法就是看最后得到的路径长度是否等于单词总数 $n$。
+*   **性能**：使用 `sys.stdin.read().split()` 能够极大提高 Python 处理大量单词时的速度。排序复杂度为 $O(N \log N)$，DFS 复杂度为 $O(N)$，整体效率很高。
 
 
 
@@ -10702,14 +10842,12 @@ D3，C4，A4，C1
 
 请根据上面的算法，编写一个用队列对扑克牌排序的程序，要求依照上面的排序规则，根据先花色后点数的方法进行排序。
 
-
-
-输入
+**输入**
 
 输入分为两行，第一行为一个整数n，表示一共有n张牌（1<=n<=100）
 第二行用XY的形式表示每一张牌，其中X为A～D，Y为1～9
 
-输出
+**输出**
 
 输出三个部分
 第一个部分为第一次进队出队的结果，用Queue1:...表示，共9行，结果用空格分隔，下同
