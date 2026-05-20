@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-05-19 10:03 GMT+8*
+*Updated 2026-05-20 10:03 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -29391,7 +29391,7 @@ if __name__ == "__main__":
 
 
 
-## T30830:地铁换乘（多组查询版）
+## T30830: 地铁换乘（多组查询版）
 
 倍增法，http://cs101.openjudge.cn/practice/30830/
 
@@ -29558,6 +29558,190 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+
+
+## T30878: 力场叠加模拟
+
+segment tree, lazy propagation, http://cs101.openjudge.cn/practice/30878/
+
+在一个物理仿真系统中，一排 N 个静止的粒子（索引从 1 到 N）初始受力均为 0。系统需要实时处理 Q 次物理力场事件，并反馈指定区域的受力情况。 你需要实现以下两种操作：
+
+1. `Add l r v`：在索引区间 [l, r] 内的每个粒子上叠加一个大小为 v 的恒定力（v 可正可负）。
+2. `Query l r`：查询当前索引区间 [l, r] 内所有粒子受力的**最大值**。 
+
+输入
+
+第一行包含两个整数 N 和 Q。
+接下来 Q 行，每行描述一个操作：
+Add l r v：表示将区间 [l, r] 增加力 v。
+Query l r：表示查询区间 [l, r] 的受力最大值。
+其中 1 <= l <= r <= N, -10^9 <= v <= 10^9。
+
+输出
+
+对于每一个 Query 操作，输出一个整数，表示该区间的最大受力值。
+
+样例输入
+
+```
+Sample input 1:
+5 4
+Add 1 3 10
+Query 2 4
+Add 3 5 5
+Query 2 4
+Sample input 2:
+3 2
+Add 1 3 -5
+Query 1 3
+```
+
+样例输出
+
+```
+Sample output 1:
+10
+15
+Sample output 2:
+-5
+```
+
+提示：segment tree, lazy propagation
+
+来源：2026 TA-lxy
+
+
+
+这个问题是一个典型的**区间修改**和**区间查询最大值**的问题。为了高效处理大量的操作（通常 $N, Q$ 可能达到 $10^5$ 级别），最合适的数据结构是**带懒惰传播（Lazy Propagation）的线段树（Segment Tree）**。
+
+**核心思路**
+
+1.  **线段树节点结构**：
+    *   `tree[node]`：存储当前区间 $[L, R]$ 的最大受力值。
+    *   `lazy[node]`：存储当前区间的懒标记，表示该区间及其子区间尚未更新的增量值。
+2.  **Add 操作（区间更新）**：
+    *   如果当前区间完全被目标区间 $[l, r]$ 覆盖，则直接更新当前节点的 `tree` 值和 `lazy` 标签。
+    *   否则，先通过 `push_down` 将当前的懒标记下传给子节点，然后再递归更新左右子树。
+    *   递归回来后，通过 `push_up` 更新当前节点的最大值。
+3.  **Query 操作（区间查询）**：
+    *   如果当前区间完全被目标区间 $[l, r]$ 覆盖，直接返回 `tree[node]`。
+    *   否则，先执行 `push_down` 下传标记，然后递归查询左右子树，返回两者的最大值。
+
+**Python 代码实现**
+
+由于 Python 递归深度有限，且在大数据量下输入输出较慢，我们需要使用 `sys.stdin.readline` 提高效率，并根据需要增加递归深度限制。
+
+```python
+import sys
+
+# 增加递归深度限制，防止处理大规模 $N$ 时溢出
+sys.setrecursionlimit(200000)
+
+class SegmentTree:
+    def __init__(self, n):
+        self.n = n
+        # tree[i] 存储对应区间的最大值
+        self.tree = [0] * (4 * n)
+        # lazy[i] 存储懒标记（增加的力）
+        self.lazy = [0] * (4 * n)
+
+    def _push_up(self, node):
+        """向上更新，父节点的值等于子节点的最大值"""
+        self.tree[node] = max(self.tree[2 * node], self.tree[2 * node + 1])
+
+    def _push_down(self, node):
+        """向下传播懒标记"""
+        if self.lazy[node] != 0:
+            add_val = self.lazy[node]
+            
+            # 更新左子节点
+            self.tree[2 * node] += add_val
+            self.lazy[2 * node] += add_val
+            
+            # 更新右子节点
+            self.tree[2 * node + 1] += add_val
+            self.lazy[2 * node + 1] += add_val
+            
+            # 清除当前节点的标记
+            self.lazy[node] = 0
+
+    def update(self, node, start, end, l, r, v):
+        """区间更新：将 [l, r] 范围内的值加上 v"""
+        if l <= start and end <= r:
+            self.tree[node] += v
+            self.lazy[node] += v
+            return
+        
+        mid = (start + end) // 2
+        self._push_down(node)
+        
+        if l <= mid:
+            self.update(2 * node, start, mid, l, r, v)
+        if r > mid:
+            self.update(2 * node + 1, mid + 1, end, l, r, v)
+            
+        self._push_up(node)
+
+    def query(self, node, start, end, l, r):
+        """区间查询：获取 [l, r] 范围内的最大值"""
+        if l <= start and end <= r:
+            return self.tree[node]
+        
+        mid = (start + end) // 2
+        self._push_down(node)
+        
+        res = -float('inf')
+        if l <= mid:
+            res = max(res, self.query(2 * node, start, mid, l, r))
+        if r > mid:
+            res = max(res, self.query(2 * node + 1, mid + 1, end, l, r))
+        return res
+
+def solve():
+    # 使用快速读取
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    N = int(input_data[0])
+    Q = int(input_data[1])
+    
+    st = SegmentTree(N)
+    
+    idx = 2
+    results = []
+    
+    for _ in range(Q):
+        op = input_data[idx]
+        if op == "Add":
+            l = int(input_data[idx + 1])
+            r = int(input_data[idx + 2])
+            v = int(input_data[idx + 3])
+            st.update(1, 1, N, l, r, v)
+            idx += 4
+        elif op == "Query":
+            l = int(input_data[idx + 1])
+            r = int(input_data[idx + 2])
+            results.append(str(st.query(1, 1, N, l, r)))
+            idx += 3
+            
+    # 一次性输出所有查询结果
+    sys.stdout.write("\n".join(results) + "\n")
+
+if __name__ == "__main__":
+    solve()
+```
+
+关键点说明：
+
+1.  **复杂度**：
+    *   **建立线段树**：$O(N)$，此处由于初始力为0，我们直接初始化了数组，实际上是 $O(N)$。
+    *   **单次更新/查询**：$O(\log N)$。
+    *   **总复杂度**：$O(Q \log N)$，这对于 $N, Q \le 10^5$ 的规模是完全可以接受的。
+2.  **空间复杂度**：线段树通常需要开 $4 \times N$ 的空间来防止溢出。
+3.  **懒标记的作用**：当我们修改一个很大的区间时，我们并不立即修改到每个叶子节点，而是在该节点打个标记。只有当下次需要访问该节点的子节点时，才把标记传下去。这保证了区间的批量操作依然是对数时间复杂度的。
+4.  **负数处理**：题目提到 $v$ 可能为负。线段树求 `max` 在处理负数时依然有效，只需将查询的初始值设为极小值（`-float('inf')`）。
 
 
 
