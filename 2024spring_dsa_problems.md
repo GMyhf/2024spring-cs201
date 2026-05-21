@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-05-20 10:03 GMT+8*
+*Updated 2026-05-21 15:18 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -11532,6 +11532,253 @@ Meijishinguu Meijishinguu
 Uenokouen->(35)->Ginza->(80)->Sensouji->(60)->Meijishinguu->(35)->Yoyogikouen
 Meijishinguu
 ```
+
+
+
+
+
+### Dijkstra 算法
+
+这是一个经典的**最短路径问题**。由于地点数量较少（$P < 30$），我们可以使用 **Dijkstra 算法** 来解决。
+
+**算法步骤：**
+
+1.  **映射地点名**：由于输入的是字符串，我们需要用一个字典（Map）将地点名称映射为整数索引，方便后续建图。
+2.  **建图**：使用邻接表存储地图，因为是双向道路，所以需要添加两次边。
+3.  **Dijkstra 算法**：
+    *   计算从起点到终点的最短路径。
+    *   在计算过程中，使用一个 `parent` 数组记录每个节点的前驱节点，以及 `edge_weight` 记录到达该节点所经过的那条边的权值。
+4.  **路径回溯与格式化输出**：
+    *   如果起点和终点相同，直接输出起点名。
+    *   否则，从终点逆向回溯到起点，然后按要求的格式 `A->(dist)->B` 输出。
+
+**Python 代码实现：**
+
+```python
+import heapq
+import sys
+
+def solve():
+    # 读取所有输入数据
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    ptr = 0
+    
+    # 1. 处理地点部分
+    P = int(input_data[ptr])
+    ptr += 1
+    place_names = []
+    name_to_idx = {}
+    for i in range(P):
+        name = input_data[ptr]
+        place_names.append(name)
+        name_to_idx[name] = i
+        ptr += 1
+        
+    # 2. 处理道路部分 (无向图)
+    Q = int(input_data[ptr])
+    ptr += 1
+    adj = [[] for _ in range(P)]
+    for _ in range(Q):
+        u_name = input_data[ptr]
+        v_name = input_data[ptr+1]
+        dist = int(input_data[ptr+2])
+        ptr += 3
+        
+        u, v = name_to_idx[u_name], name_to_idx[v_name]
+        adj[u].append((v, dist))
+        adj[v].append((u, dist))
+        
+    # 3. 处理查询部分
+    R = int(input_data[ptr])
+    ptr += 1
+    for _ in range(R):
+        start_name = input_data[ptr]
+        end_name = input_data[ptr+1]
+        ptr += 2
+        
+        if start_name == end_name:
+            print(start_name)
+            continue
+            
+        start_idx = name_to_idx[start_name]
+        end_idx = name_to_idx[end_name]
+        
+        # Dijkstra 算法
+        distances = [float('inf')] * P
+        parent = [-1] * P
+        edge_to_dist = [0] * P # 记录到达该节点时的那段路程
+        
+        distances[start_idx] = 0
+        pq = [(0, start_idx)]
+        
+        while pq:
+            d, u = heapq.heappop(pq)
+            
+            if d > distances[u]:
+                continue
+            if u == end_idx:
+                break
+                
+            for v, weight in adj[u]:
+                if distances[u] + weight < distances[v]:
+                    distances[v] = distances[u] + weight
+                    parent[v] = u
+                    edge_to_dist[v] = weight
+                    heapq.heappush(pq, (distances[v], v))
+        
+        # 路径回溯
+        path_nodes = []
+        path_edges = []
+        curr = end_idx
+        while curr != -1:
+            path_nodes.append(place_names[curr])
+            if parent[curr] != -1:
+                path_edges.append(edge_to_dist[curr])
+            curr = parent[curr]
+            
+        path_nodes.reverse()
+        path_edges.reverse()
+        
+        # 格式化输出
+        output = []
+        for i in range(len(path_nodes)):
+            output.append(path_nodes[i])
+            if i < len(path_edges):
+                output.append(f"->({path_edges[i]})->")
+        
+        print("".join(output))
+
+if __name__ == "__main__":
+    solve()
+```
+
+**代码要点说明：**
+
+1.  **输入处理**：使用 `sys.stdin.read().split()` 可以一次性读取所有内容并按空格/换行切分，这对于处理此类多行且格式固定的题目非常高效。
+2.  **优先队列**：Python 的 `heapq` 模块实现了最小堆，适合 Dijkstra 算法寻找当前距离最小的点。
+3.  **回溯逻辑**：`parent` 数组存储了路径的结构。因为回溯是从终点到起点，所以最后需要使用 `.reverse()` 翻转过来。
+4.  **复杂度分析**：
+    *   时间复杂度：$O(R \times (Q \log P))$。对于 $P<30, Q<50, R<20$ 的规模，该算法运行极快（远小于 1000ms）。
+    *   空间复杂度：$O(P + Q)$，用于存储图结构和地点映射。
+
+
+
+### Floyd算法
+
+使用 Floyd-Warshall 算法解决此题也非常合适。由于地点数量 $P < 30$，Floyd 算法的时间复杂度为 $O(P^3)$，即 $30^3 = 27,000$，这在 1000ms 的限制下绰绰有余。
+
+Floyd 算法的优势在于代码简洁，且一次计算即可得到任意两点之间的最短路径。为了记录路径，我们需要一个额外的二维数组 `nxt` 来存储从 $i$ 到 $j$ 路径上的下一个节点。
+
+**Floyd 算法实现步骤：**
+
+1.  **初始化**：创建一个 $P \times P$ 的距离矩阵 `dist`，初始值为无穷大，对角线为 0。
+2.  **记录路径**：创建一个 `nxt` 矩阵。如果在 $i$ 和 $j$ 之间有边，则 `dist[i][j] = weight`，同时 `nxt[i][j] = j`。
+3.  **三重循环**：通过中间点 $k$ 更新 $i$ 到 $j$ 的距离。如果 `dist[i][k] + dist[k][j] < dist[i][j]`，则更新距离并设 `nxt[i][j] = nxt[i][k]`。
+4.  **输出路径**：通过 `nxt` 矩阵不断寻找下一个节点，直到到达终点。
+
+**Python 代码实现：**
+
+```python
+import sys
+
+def solve():
+    # 读取所有输入
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    ptr = 0
+    
+    # 1. 地点映射
+    P = int(input_data[ptr])
+    ptr += 1
+    place_names = []
+    name_to_idx = {}
+    for i in range(P):
+        name = input_data[ptr]
+        place_names.append(name)
+        name_to_idx[name] = i
+        ptr += 1
+        
+    # 2. 初始化 Floyd 矩阵
+    INF = float('inf')
+    dist = [[INF] * P for _ in range(P)]
+    nxt = [[-1] * P for _ in range(P)]
+    
+    for i in range(P):
+        dist[i][i] = 0
+        
+    # 3. 读取边并初始化
+    Q = int(input_data[ptr])
+    ptr += 1
+    # 存储原始边权重，用于输出格式
+    edge_weight = [[0] * P for _ in range(P)]
+    
+    for _ in range(Q):
+        u_name = input_data[ptr]
+        v_name = input_data[ptr+1]
+        w = int(input_data[ptr+2])
+        ptr += 3
+        u, v = name_to_idx[u_name], name_to_idx[v_name]
+        
+        # 无向图
+        if w < dist[u][v]: # 防止重边
+            dist[u][v] = dist[v][u] = w
+            nxt[u][v] = v
+            nxt[v][u] = u
+            edge_weight[u][v] = edge_weight[v][u] = w
+
+    # 4. Floyd-Warshall 核心算法
+    for k in range(P):
+        for i in range(P):
+            for j in range(P):
+                if dist[i][k] + dist[k][j] < dist[i][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+                    nxt[i][j] = nxt[i][k]
+
+    # 5. 查询与输出
+    R = int(input_data[ptr])
+    ptr += 1
+    for _ in range(R):
+        start_name = input_data[ptr]
+        end_name = input_data[ptr+1]
+        ptr += 2
+        
+        if start_name == end_name:
+            print(start_name)
+            continue
+            
+        u = name_to_idx[start_name]
+        v = name_to_idx[end_name]
+        
+        path = []
+        curr = u
+        while curr != v:
+            next_node = nxt[curr][v]
+            # 获取当前段的距离：注意，直接用 dist[curr][next_node] 即可，
+            # 因为 Floyd 算法保证了 nxt[curr][v] 是直接相连或最优路径的第一步
+            # 在这种路径记录方式下，dist[curr][nxt[curr][v]] 就是原图中的边长
+            d = edge_weight[curr][next_node]
+            path.append(place_names[curr])
+            path.append(f"->({d})->")
+            curr = next_node
+        path.append(place_names[v])
+        
+        print("".join(path))
+
+if __name__ == "__main__":
+    solve()
+```
+
+**Floyd 方法的关键点：**
+
+1.  **`nxt[i][j]` 的含义**：它存储的是从 $i$ 去往 $j$ 的路径上，紧接着 $i$ 的下一个节点。
+2.  **更新逻辑**：当发现经过 $k$ 点路径更短时（`dist[i][k] + dist[k][j] < dist[i][j]`），前往 $j$ 的第一步应该变成前往 $k$ 的第一步，即 `nxt[i][j] = nxt[i][k]`。
+3.  **适用性**：由于本题 $P$ 非常小（最大 29），$O(P^3)$ 的 Floyd 算法比 Dijkstra 编写起来更直观，且能一次性处理所有查询。
+4.  **边权获取**：在输出 `->(距离)->` 时，我们使用的是 `edge_weight[curr][next_node]`。由于 Floyd 路径重构的特性，`curr` 到 `next_node` 必然是原图中存在的一条直接边。
 
 
 
