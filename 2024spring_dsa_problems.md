@@ -31296,6 +31296,114 @@ AOE，拓扑排序，关键路径，http://dsbpython.openjudge.cn/dspythonbook/P
 
 
 
+这个问题是一个典型的**关键路径（Critical Path Method, CPM）**问题。我们可以将科考站看作图的节点，维修保养任务看作带权的有向边。
+
+**解题思路**
+
+1.  **建模**：
+    *   **节点**：$n$ 个科考站。
+    *   **有向边**：如果科考站 $b$ 必须在 $a$ 建完并经过 $c$ 时间的维护后才能开工，则建立一条从 $a$ 到 $b$、权重为 $c$ 的边 $(a, b, c)$。
+    *   **建站时间**：题目提到建站时间忽略不计，因此只需考虑边权（维修时间）。
+
+2.  **计算最早完成时间 (Earliest Time, ET)**：
+    *   使用**拓扑排序**。
+    *   初始化所有节点的 $ET$ 为 0（因为一开始所有设备都可用）。
+    *   对于每条边 $(u, v, w)$，更新 $ET[v] = \max(ET[v], ET[u] + w)$。
+    *   所有科考站建成的最短时间即为 $\max(ET)$。
+
+3.  **计算最晚完成时间 (Latest Time, LT)**：
+    *   设项目总时长为 $T = \max(ET)$。
+    *   初始化所有节点的 $LT$ 为 $T$。
+    *   按照拓扑排序的**逆序**处理节点。
+    *   对于每条边 $(u, v, w)$，更新 $LT[u] = \min(LT[u], LT[v] - w)$。
+
+4.  **确定关键任务**：
+    *   一个任务（边） $(u, v, w)$ 是“必须确定的”（即在关键路径上），当且仅当它的**最早开始时间等于最晚开始时间**。
+    *   数学表达为：$ET[u] == LT[v] - w$。
+    *   收集所有满足该条件的边，按字典序排序后输出。
+
+**Python 代码实现**
+
+```python
+import sys
+from collections import deque
+
+def solve():
+    # 使用 sys.stdin.read().split() 快速读取大数据量
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    n = int(input_data[0])
+    m = int(input_data[1])
+    
+    adj = [[] for _ in range(n + 1)]
+    tasks = [] # 存储原始任务
+    in_degree = [0] * (n + 1)
+    
+    ptr = 2
+    for _ in range(m):
+        u = int(input_data[ptr])
+        v = int(input_data[ptr+1])
+        w = int(input_data[ptr+2])
+        ptr += 3
+        adj[u].append((v, w))
+        tasks.append((u, v, w))
+        in_degree[v] += 1
+        
+    # 1. 拓扑排序计算最早完成时间 (ET)
+    et = [0] * (n + 1)
+    topo_order = []
+    # 入度为 0 的站可以从时间 0 开始
+    queue = deque([i for i in range(1, n + 1) if in_degree[i] == 0])
+    
+    while queue:
+        u = queue.popleft()
+        topo_order.append(u)
+        for v, w in adj[u]:
+            if et[u] + w > et[v]:
+                et[v] = et[u] + w
+            in_degree[v] -= 1
+            if in_degree[v] == 0:
+                queue.append(v)
+                
+    # 最短总工期
+    total_time = max(et) if et else 0
+    print(total_time)
+    
+    # 2. 逆拓扑排序计算最晚完成时间 (LT)
+    # 所有终点站最晚必须在 total_time 完成
+    lt = [total_time] * (n + 1)
+    for u in reversed(topo_order):
+        for v, w in adj[u]:
+            if lt[v] - w < lt[u]:
+                lt[u] = lt[v] - w
+                
+    # 3. 找出关键任务
+    critical_tasks = []
+    for u, v, w in tasks:
+        # 如果最早开始时间 + 持续时间 == 最晚必须完成时间，则该任务不可延期
+        if et[u] == lt[v] - w:
+            critical_tasks.append((u, v))
+            
+    # 4. 按字典序排序输出
+    critical_tasks.sort()
+    for u, v in critical_tasks:
+        print(f"{u} {v}")
+
+if __name__ == "__main__":
+    solve()
+```
+
+**复杂度分析**
+
+*   **时间复杂度**：$O(N + M + M \log M)$。拓扑排序和计算 $ET/LT$ 均为 $O(N+M)$，最后对关键任务排序为 $O(M \log M)$。在 $N, M \le 3000$ 的规模下，运行非常快。
+*   **空间复杂度**：$O(N + M)$，主要用于存储邻接表和各站的时间数组。
+
+
+
+
+
 ```python
 # 李宗远 白衣者
 # 拓扑排序和AOE网络问题
