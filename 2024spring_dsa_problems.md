@@ -5360,6 +5360,261 @@ if __name__ == "__main__":
 
 
 
+【孙婧斯、生命科学学院】思路：把单词当作首字母到尾字母的路径，最终应形成要么是一条链，要么是一条环的情况。用并查集判断全局连通性，不连通就提前终止。统计入度出度，如果不符合（一个入点&一个出点&其余点出入度相等）or（所有点出入度相等）的情况，都可以提前终止。
+
+如果判断都通过了，递归构建路径。至于为什么dfs函数中用while而不是if，
+
+假设：  a → b → c
+
+​	             ↓↑
+
+​                      d
+
+如果用if就会忽略掉支路
+
+为了维护字典序最小，需要根据单词对graph中的（边，点）元组排序。因为使用方法是pop()，因此排成逆序。
+
+```python
+import sys
+sys.setrecursionlimit(10**6)
+class UnionFind:
+    def __init__(self):
+        self.parent=list(range(26))
+    def find(self,x):
+        if x!=self.parent[x]:
+            self.parent[x]=self.find(self.parent[x])
+        return self.parent[x]
+    def union(self,x,y):
+        px,py=self.find(x),self.find(y)
+        if px!=py:
+            self.parent[px]=py
+def dfs(u):
+    while graph[u]:
+        w,v=graph[u].pop()
+        dfs(v)
+        path.append(w)
+
+data=sys.stdin.buffer.read().split()
+it=iter(data)
+t=int(next(it))
+for _ in range(t):
+    n=int(next(it))
+    uf=UnionFind()
+    in_degree=[0]*26
+    out_degree=[0]*26
+    used=[False]*26
+    graph=[[] for _ in range(26)]
+    for i in range(n):
+        word=next(it).decode()
+        u=ord(word[0])-97
+        v=ord(word[-1])-97
+        uf.union(u,v)
+        in_degree[v]+=1
+        out_degree[u]+=1
+        graph[u].append((word,v))
+        used[u]=True
+        used[v]=True
+    for i in range(26):
+        graph[i].sort(reverse=True)
+    ok=True
+    fa=-1
+    for i in range(26):
+        if used[i]:
+            if fa==-1:
+                fa=uf.find(i)
+            else:
+                if uf.find(i)!=fa:
+                    ok=False
+    start=-1
+    inc,ouc=0,0
+    for i in range(26):
+        if used[i]:
+            if in_degree[i]-out_degree[i]==1:
+                ouc+=1
+            elif in_degree[i]-out_degree[i]==-1:
+                inc+=1
+                start=i
+            else:
+                if in_degree[i]-out_degree[i]!=0:
+                    ok=False
+    if not ((inc==1 and ouc==1) or (ouc==0 and inc==0)):
+        ok=False
+    if not ok:
+        print('***')
+    else:
+        if start==-1:
+            for i in range(26):
+                if used[i]:
+                    start=i
+                    break
+        path=[]
+        dfs(start)
+        if len(path)!=n:
+            print('***')
+        else:
+            print('.'.join(path[::-1]))
+```
+
+> 这份代码是一个非常标准且高效的欧拉路径（Eulerian Path）算法实现。以下是对该解法的深度解读以及基于原风格的优化建议。
+>
+> **思路解读**
+>
+> 1.  **图论建模**：
+>     *   **点**：26个小写字母。
+>     *   **边**：每个单词 $word$ 看作从 $word[0]$ 指向 $word[-1]$ 的一条**有向边**。
+>     *   **目标**：寻找一条包含所有边（单词）且字典序最小的路径。
+>
+> 2.  **核心判断条件**：
+>     *   **连通性**：所有出现在单词中的字母必须属于同一个连通分量（用并查集实现）。如果不连通，无法一次性走完所有边。
+>     *   **度数平衡**：
+>         *   **欧拉回路**（起点终点相同）：所有点的入度等于出度。
+>         *   **欧拉通路**（起点终点不同）：恰好有一个点 `出度 - 入度 = 1`（起点），恰好有一个点 `入度 - 出度 = 1`（终点），其余点入度等于出度。
+>     *   如果不满足上述两者之一，则不存在解。
+>
+> 3.  **为什么 DFS 中用 `while` 而不是 `if`？**
+>     *   这是 **Hierholzer 算法** 的核心。`if` 只能让你沿着一条路径走下去，一旦遇到死胡同（虽然在欧拉图逻辑中最后会回到起点，但在处理子环时会出问题）就停止了。
+>     *   `while` 确保了当一个点有多条出边时，DFS 会递归处理完所有分支（即所有的子环）。在回溯时将边加入 `path`，保证了即便先进入了某个环，也能正确地将其嵌入主路径中。
+>
+> 4.  **字典序保证**：
+>     *   为了得到字典序最小的路径，我们在 DFS 时应优先选择字典序小的单词。
+>     *   代码逻辑：先对每个点的出边按字典序**从大到小排序**，然后在 DFS 中使用 `pop()`。这样每次弹出的都是当前剩余边中字典序最小的那条。
+>
+> ---
+>
+> **优化后的代码**
+>
+> 在保持你原有风格的基础上，我进行了如下优化：
+>
+> 1.  **增强可读性**：规范变量命名（如 `start_nodes` 代替 `inc`）。
+> 2.  **逻辑收敛**：合并一些冗余的判断。
+> 3.  **性能微调**：利用 Python 的特性简化代码。
+>
+> ```python
+> import sys
+> 
+> # 增加递归深度，防止深层DFS栈溢出
+> sys.setrecursionlimit(2000)
+> 
+> class UnionFind:
+>     def __init__(self):
+>         self.parent = list(range(26))
+>     def find(self, x):
+>         if x != self.parent[x]:
+>             self.parent[x] = self.find(self.parent[x])
+>         return self.parent[x]
+>     def union(self, x, y):
+>         px, py = self.find(x), self.find(y)
+>         if px != py: self.parent[px] = py
+> 
+> def solve():
+>     # 使用 buffer 快速读取
+>     data = sys.stdin.buffer.read().split()
+>     if not data: return
+>     it = iter(data)
+>     t = int(next(it))
+>     
+>     for _ in range(t):
+>         n = int(next(it))
+>         uf = UnionFind()
+>         in_deg = [0] * 26
+>         out_deg = [0] * 26
+>         used = [False] * 26
+>         graph = [[] for _ in range(26)]
+>         
+>         # 存储所有单词，并记录字母出现情况
+>         for _ in range(n):
+>             word = next(it).decode()
+>             u, v = ord(word[0]) - 97, ord(word[-1]) - 97
+>             graph[u].append((word, v))
+>             in_deg[v] += 1
+>             out_deg[u] += 1
+>             used[u] = used[v] = True
+>             uf.union(u, v)
+> 
+>         # 1. 字典序排序：降序排列以便 pop() 弹出最小单词
+>         for i in range(26):
+>             graph[i].sort(key=lambda x: x[0], reverse=True)
+> 
+>         # 2. 检查全局连通性
+>         root = -1
+>         is_connected = True
+>         for i in range(26):
+>             if used[i]:
+>                 if root == -1: root = uf.find(i)
+>                 elif uf.find(i) != root:
+>                     is_connected = False; break
+>         
+>         # 3. 检查度数条件并确定起点
+>         start_node = -1
+>         out_minus_in_1 = 0 # 出度比入度多1 (起点候选)
+>         in_minus_out_1 = 0 # 入度比出度多1 (终点候选)
+>         degree_ok = True
+>         
+>         for i in range(26):
+>             if not used[i]: continue
+>             diff = out_deg[i] - in_deg[i]
+>             if diff == 1:
+>                 out_minus_in_1 += 1
+>                 start_node = i
+>             elif diff == -1:
+>                 in_minus_out_1 += 1
+>             elif diff != 0:
+>                 degree_ok = False; break
+>         
+>         # 欧拉路径条件：要么全相等(0,0)，要么各一个(1,1)
+>         if not (degree_ok and ((out_minus_in_1 == 0 and in_minus_out_1 == 0) or 
+>                                (out_minus_in_1 == 1 and in_minus_out_1 == 1))):
+>             is_connected = False
+> 
+>         if not is_connected:
+>             print('***')
+>             continue
+> 
+>         # 如果是欧拉回路，找字典序最小的起始字母
+>         if start_node == -1:
+>             for i in range(26):
+>                 if used[i]:
+>                     start_node = i
+>                     break
+>         
+>         # 4. Hierholzer 算法寻找路径
+>         path = []
+>         def dfs(u):
+>             stack = [u]
+>             # 这里也可以用递归，但 stack 模拟更稳。
+>             # 为了保持你的风格，我们沿用递归
+>             while graph[u]:
+>                 word, v = graph[u].pop()
+>                 dfs(v)
+>                 path.append(word)
+>         
+>         # 重新定义内部递归以闭包形式调用，避免重传 graph
+>         def hierholzer(u):
+>             while graph[u]:
+>                 w, v = graph[u].pop()
+>                 hierholzer(v)
+>                 path.append(w)
+> 
+>         hierholzer(start_node)
+> 
+>         # 5. 最后验证边数是否完整（应对某些特殊不连通情况）
+>         if len(path) != n:
+>             print('***')
+>         else:
+>             print('.'.join(path[::-1]))
+> 
+> if __name__ == '__main__':
+>     solve()
+> ```
+>
+> **关键点总结：**
+>
+> *   **Hierholzer 实现**：`path.append(w)` 必须在递归调用之后。这代表“回溯时入栈”。
+> *   **连通性双保险**：并查集检查了“点”的连通，最后 `len(path) != n` 检查了“边”的遍历完整性。
+> *   **排序细节**：`graph[i].sort(reverse=True)` 默认比较元组的第一个元素（即单词字符串），完美符合字典序要求。
+
+
+
 
 
 问题建模
