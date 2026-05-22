@@ -14479,6 +14479,249 @@ No suspicious bugs found!
 
 注意每组数据中间有个空行
 
+### 扩展域并查集
+
+**1. 什么是扩展域并查集？**
+
+它的核心思想是：**“如果一个虫子 $i$ 有两种可能的性别，我就给它开两个分身。”**
+
+对于每只虫子 $i$，我们拆分成两个节点：
+
+*   $i$：代表 $i$ 是性别 A（比如雄性）。
+*   $i + n$：代表 $i$ 是性别 B（比如雌性）。
+
+**2. 怎么处理交互（谈恋爱）？**
+
+如果题目说 **虫子 $a$ 和 虫子 $b$ 交互**：
+按照“异性恋”假设，这意味着：
+
+1. 如果 $a$ 是性别 A，那么 $b$ 必须是性别 B。即：**合并 $a$ 和 $b+n$**。
+2. 如果 $a$ 是性别 B，那么 $b$ 必须是性别 A。即：**合并 $a+n$ 和 $b$**。
+
+**3. 怎么发现矛盾（同性恋）？**
+
+在合并之前，我们检查一下：
+
+*   如果 $a$ 和 $b$ 已经在同一个集合里，说明它们**必须是同性**，但这和“它们正在交互”矛盾！
+*   或者说：如果 `find(a) == find(b)`，说明它们是同性，**发现可疑虫子！**
+
+---
+
+**4. 扩展域版本代码**
+
+```python
+import sys
+sys.setrecursionlimit(1000000)
+
+
+def solve():
+    T = int(input())
+
+    for case in range(1, T + 1):
+        n, m = map(int, input().split())
+
+        # 扩展域：1~n 表示性别A，n+1~2n 表示性别B
+        parent = list(range(2 * n + 1))
+
+        def find(i):
+            if parent[i] == i:
+                return i
+            parent[i] = find(parent[i])
+            return parent[i]
+
+        def union(i, j):
+            root_i = find(i)
+            root_j = find(j)
+            if root_i != root_j:
+                parent[root_i] = root_j
+
+        suspicious = False
+        for _ in range(m):
+            u, v = map(int, input().split())
+            if suspicious: continue
+
+            # 如果 u 和 v 已经在同一个性别域里，说明他们是同性！
+            if find(u) == find(v):
+                suspicious = True
+            else:
+                # u 恋爱对象必须是 v 的异性分身
+                union(u, v + n)
+                # v 恋爱对象必须是 u 的异性分身
+                union(v, u + n)
+
+        print(f"Scenario #{case}:")
+        if suspicious:
+            print("Suspicious bugs found!")
+        else:
+            print("No suspicious bugs found!")
+        print()
+
+
+solve()
+```
+
+---
+
+**5. 两种方法的优缺点对比**
+
+| 特性           | 带权并查集 (Weighted DSU)                            | 扩展域并查集 (Domain Extension)                    |
+| :------------- | :--------------------------------------------------- | :------------------------------------------------- |
+| **理解难度**   | **难**。需要理解向量叠加或 XOR 逻辑。                | **易**。就是逻辑上的“如果……那么……”推导。           |
+| **代码量**     | 略小，但合并公式 `color[ra] = ...` 极易写错。        | 略大（数组开 2 倍或 3 倍），但逻辑极简单。         |
+| **空间复杂度** | 低。只需 $N$ 的空间。                                | 高。需要 $2 \times N$ 或更多空间。                 |
+| **通用性**     | 适合处理连续的数值关系（如：$a$ 比 $b$ 重 $w$ 克）。 | 适合处理有限的状态（如：性别、食物链的三种关系）。 |
+
+**总结建议：**
+
+*   如果状态数很少（比如这题只有 **2 个性别**，或者《食物链》里只有 **3 种关系**），**永远优先使用扩展域并查集**。
+*   只有当空间限制非常严苛，或者关系种类特别多（比如 $N$ 种关系）时，才考虑带权并查集。
+
+对于《虫子的生活》这道题，**扩展域法**是绝对的推荐方案，因为它不需要你计算任何数学公式，只需要把“敌人的敌人是朋友”这种逻辑翻译成代码即可。
+
+
+
+### 带权并查集
+
+带权并查集，维护每个节点与根节点的性别关系（0 同性别，1 异性别）。每次交互时若已在同一集合则检查是否矛盾，否则合并。
+
+```python
+import sys
+sys.setrecursionlimit(1000000)
+
+def ints():
+    for line in sys.stdin.buffer:
+        for num in line.split():
+            yield int(num)
+
+def solve():
+    it = ints()
+    T = next(it)
+    for case in range(1, T + 1):
+        n = next(it); m = next(it)
+        parent = list(range(n + 1))
+        color = [0] * (n + 1)
+
+        def find(x):
+            if parent[x] != x:
+                root = find(parent[x])
+                color[x] ^= color[parent[x]]
+                parent[x] = root
+            return parent[x]
+
+        suspicious = False
+        for _ in range(m):
+            a = next(it); b = next(it)
+            if suspicious:
+                continue
+            ra, rb = find(a), find(b)
+            if ra == rb:
+                if color[a] == color[b]:
+                    suspicious = True
+            else:
+                parent[ra] = rb
+                color[ra] = color[a] ^ color[b] ^ 1
+
+        print(f"Scenario #{case}:")
+        print("Suspicious bugs found!" if suspicious else "No suspicious bugs found!")
+        if case != T:
+            print()
+
+if __name__ == "__main__":
+    solve()
+```
+
+
+
+> 既然你想要彻底攻克**带权并查集**，我们用最接地气的**“帮派与辈分”**来打比方，完全避开枯燥的数学推导。
+>
+> ---
+>
+> **第一步：并查集里，我们在存什么？**
+>
+> 在普通并查集里，我们只记录 **“谁是谁的老大”**。
+> 而在带权并查集里，我们不仅记录老大，还多记录一件事：**“我和我老大的性别，是相同还是相反？”**
+>
+> 我们用 `color[i]` 来记录这个关系：
+>
+> *   `color[i] = 0`：我和我老大**性别相同**。
+> *   `color[i] = 1`：我和我老大**性别相反**。
+>
+> ---
+>
+> **第二步：核心操作 1 —— 找老大（Path Compression）**
+>
+> 当我们要知道 `A` 的最终老大是谁时，并查集会把 `A` 直接挂到最终老大 `Boss` 下面。
+> 在这个过程中，`A` 必须要更新它和 `Boss` 的性别关系。
+>
+> 假设有这样一个链条：
+>
+> > **A** $\rightarrow$ **B** (A的爸爸) $\rightarrow$ **C** (B的爸爸，也就是最终Boss)
+>
+> *   已知 `A` 和 `B` 性别相反（`color[A] = 1`）。
+> *   已知 `B` 和 `C` 性别相反（`color[B] = 1`）。
+> *   现在要把 `A` 直接连到 `C` 身上。那么 `A` 和 `C` 的性别是相同还是相反？
+>     *   *常识推导*：A 和 B 相反，B 和 C 相反，那 A 和 C 肯定**相同**。
+>     *   *代码实现*：`color[A] = color[A] ^ color[B]`（即 `1 ^ 1 = 0`，相同）。
+>
+> 这就是 `find` 函数里这一行的意思：
+> `color[x] ^= color[parent[x]]`
+> **它就是顺着辈分往上摸，把一路上所有的“相反关系”叠加起来，算出自己和最终老大的关系。**
+>
+> ---
+>
+> **第三步：核心操作 2 —— 合并两个帮派（Union）**
+>
+> 现在有两个独立的帮派，分别由老大 `RA` 和老大 `RB` 带领。
+> `A` 属于 `RA` 帮派，`B` 属于 `RB` 帮派。
+>
+> 突然，有人举报 **`A` 和 `B` 在谈恋爱**。这意味着 `A` 和 `B` 的性别必须**相反**。
+> 我们要把这两个帮派合并，让老大 `RA` 认 `RB` 做老大（`parent[ra] = rb`）。
+>
+> 既然 `RA` 认了 `RB` 做老大，那么 **`RA` 和 `RB` 的性别是相同还是相反（即 `color[ra]` 应该填什么）？**
+>
+> 我们来走一遍关系链（从 `RA` 走到 `RB`）：
+>
+> 1.  从 `RA` 到 `A`：关系是 `color[a]`。
+> 2.  从 `A` 到 `B`：他们是情侣，关系是 `1`（相反）。
+> 3.  从 `B` 到 `RB`：关系是 `color[b]`。
+>
+> 把这三段路的关系加起来（用异或 `^` 累加）：
+>
+> > `color[ra] = color[a] ^ 1 ^ color[b]`
+>
+> **这一步，就是给两个帮派搭了一座桥，并确定了两个帮派老大之间的相对性别。**
+>
+> ---
+>
+> **第四步：怎么发现矛盾？**
+>
+> 如果 `A` 和 `B` 本来就在同一个帮派里（也就是说，他们有着共同的最终老大 `R`）。
+>
+> 我们已经知道了：
+>
+> *   `A` 和老大 `R` 的关系（`color[a]`）
+> *   `B` 和老大 `R` 的关系（`color[b]`）
+>
+> 现在又有人举报 `A` 和 `B` 谈恋爱（即他们必须是异性）。
+> 我们做个检测：
+>
+> *   如果 `color[a] == color[b]`：说明 `A` 和 `B` 相对于老大 `R` 的性别状态是一样的。那 `A` 和 `B` 必然是**同性**！
+> *   同性却在谈恋爱？**矛盾发生了！** 判定为 `Suspicious`。
+>
+> ---
+>
+> **为什么这个方法很精妙？**
+>
+> 因为我们**不需要知道任何一只虫子具体是男是女**。
+> 我们只记录**“相对关系”**：
+>
+> *   你和你的直属上司是同性还是异性？
+> *   通过不断地把直属上司换成更大的 Boss（路径压缩），我们就能随时算出来任何两只虫子之间的相对性别。
+>
+> 一旦发现两只虫子在既有关系网里是“同性”，在现实中却在“恋爱”，谎言就被戳穿了。
+
+
+
 ```python
 class UnionFind:
     def __init__(self, size):
@@ -14671,7 +14914,7 @@ if __name__ == '__main__':
 
 
 
-
+### DFS染色法
 
 DFS 染色法是将问题转化为**二分图判定**。核心思想：
 
