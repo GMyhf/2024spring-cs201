@@ -29565,6 +29565,192 @@ print(min_armor(n, m, T, edges))
 
 
 
+## T30313: 0-W 最小生成树
+
+ 补图连通块 + 缩点 Kruskal, http://cs101.openjudge.cn/practice/T30313
+
+给定一张 `n` 个点的完全图。图中大部分边的边权均为 0，但有 `m` 条指定的边，第 `i` 条指定边连接 `ui` 和 `vi`，其权值为 `wi`（`wi>0`）。
+
+保证输入中给出的 `m` 条边两两不同。
+
+请求解该完全图的最小生成树的边权和。
+
+**输入**
+
+第一行两个整数 n,m，表示点数和指定权值的边数。(1≤n≤100,000, 0≤m≤min(200,000,n(n−1)/2))
+
+接下来 m 行，每行三个整数 u,v,w，表示连接 u,v 的边权为 w (1 ≤ u < v ≤ n, 1 ≤ w ≤ 10^9)。
+
+注意：完全图中未在输入中出现的边，权值默认为 0。
+
+**输出**
+
+一行一个整数，表示最小生成树的边权和。
+
+样例输入
+
+```
+6 11
+1 3 10
+1 4 10
+1 5 10
+1 6 10
+2 3 10
+2 4 10
+2 5 10
+2 6 10
+3 4 5
+3 5 6
+3 6 7
+```
+
+样例输出
+
+```
+15
+
+#解释：
+0 边图 把 {1,2}, {4,5,6} 连成一个块。{3}是单独块。
+块数 = 3， 需要 2 条正权边。最小的是：1-3 : 10，3-4 : 5。 10 + 5 = 15
+```
+
+提示
+
+Subtask1 (20%): n <= 500。
+
+Subtask2 (80%): n <= 100000。
+
+来源：2025fall-cs201 yan
+
+
+
+
+
+ **补图连通块 + 缩点 Kruskal** 算法实现。
+
+以下是对该代码的深度解读：
+
+**1. 核心逻辑解读**
+
+**第一部分：补图连通块 (Step 1)**
+
+这是解决本题最关键的技巧。
+
+*   **思想**：由于 0 权边是“隐式”存在的（即不在输入中的边），我们不能直接遍历 0 权边。代码通过维护 `unvisited` 集合，记录尚未分配到连通块的点。
+*   **技巧**：在 BFS 过程中，对于当前点 `u`，所有**不在** `adj[u]` 中的点 `v` 都与 `u` 有 0 权边相连。
+*   **复杂度分析**：
+    *   外层 `while queue` 保证每个点只作为 `u` 出现一次。
+    *   内层 `for v in unvisited` 虽然看起来次数很多，但由于一旦找到 `v` 满足条件，就立刻将其从 `unvisited` 中 `remove` 掉。
+    *   **关键点**：`if v not in forbidden` 的判断次数总计大约是 $O(N + M)$。这是因为对于每个点 $u$，它只会跳过那些在 $adj[u]$ 里的点，而所有 $adj[u]$ 的长度之和是 $2m$。
+
+**第二部分：缩点与 Kruskal (Step 2)**
+
+*   **缩点**：`block[u]` 将原图的点映射到了“超点”（连通块编号）。
+*   **Kruskal**：
+    *   它只关心那些连接了**不同** `block_id` 的边。
+    *   `need = block_id - 1`：这是经典的 MST 停止条件。如果已经连通了所有块，提前 `break` 提高效率。
+    *   并查集使用了迭代版的 `find` 和路径减半（`parent[x] = parent[parent[x]]`），这在 Python 中比递归更安全且高效。
+
+---
+
+**2. 代码的亮点**
+
+1.  **空间效率**：只存储了 $m$ 条边，避开了完全图 $n^2$ 的存储限制。
+2.  **防御性编程**：使用迭代 `find` 避免了 `RecursionError`，即便设置了 `setrecursionlimit`，在大数据下迭代依然更稳健。
+3.  **时间优化**：提前计算 `need` 并在 `need == 0` 时退出循环，在块数较少时能极大地加速。
+
+
+
+```python
+import sys
+input = sys.stdin.readline
+sys.setrecursionlimit(10**7)
+
+n, m = map(int, input().split())
+
+adj = [set() for _ in range(n)]
+edges = []
+
+for _ in range(m):
+    u, v, w = map(int, input().split())
+    u -= 1
+    v -= 1
+    adj[u].add(v)
+    adj[v].add(u)
+    edges.append((w, u, v))
+
+# ---------- Step 1: 补图连通块 ----------
+unvisited = set(range(n))
+block = [-1] * n
+block_id = 0
+
+from collections import deque
+
+for i in range(n):
+    if i not in unvisited:
+        continue
+
+    queue = deque([i])
+    unvisited.remove(i)
+    block[i] = block_id
+
+    while queue:
+        u = queue.popleft()
+        forbidden = adj[u]  # 给定边，不能走
+
+        # 能通过 0 边到达的点
+        can_go = [v for v in unvisited if v not in forbidden]
+
+        for v in can_go:
+            unvisited.remove(v)
+            block[v] = block_id
+            queue.append(v)
+
+    block_id += 1
+
+# ---------- Step 2: Kruskal on blocks ----------
+parent = list(range(block_id))
+
+def find(x):
+    root = x
+    while parent[root] != root:
+        root = parent[root]
+    while parent[x] != root:  # 完整的路径压缩
+        nxt = parent[x]
+        parent[x] = root
+        x = nxt
+    return root
+
+def union(x, y):
+    x, y = find(x), find(y)
+    if x == y:
+        return False
+    parent[y] = x
+    return True
+
+edges.sort()
+ans = 0
+need = block_id - 1
+
+for w, u, v in edges:
+    bu, bv = block[u], block[v]
+    if bu != bv and union(bu, bv):
+        ans += w
+        need -= 1
+        if need == 0:
+            break
+
+print(ans)
+```
+
+**3.总结**
+
+复杂度 $O(M \log M + N + M)$。
+
+
+
+
+
 ## T30720: 败方树的构建与维护
 
 tree, http://cs101.openjudge.cn/practice/30720/
