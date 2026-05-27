@@ -22116,6 +22116,389 @@ math.log2(x) #以小数形式返回x的对数值，注意x不能为0
 
 
 
+这是一个可以使用树上区间维护思想来解决的问题。由于满二叉树的层数 $k \le 15$，整棵树的最大节点数只有 $2^{15} - 1 = 32767$。在这个规模下，我们可以利用满二叉树父子节点编号的倍数关系，结合懒标记（lazy tag）的思想，设计一个高效的单次操作时间复杂度为 $O(k)$ 的算法。
+
+**算法思路**
+
+对于满二叉树中的任意节点 $x$：
+1. 其左孩子编号为 $2x$，右孩子编号为 $2x + 1$。
+2. 其双亲（父亲）节点编号为 $x \gg 1$（即 `x // 2`）。
+3. 我们可以预先计算出以每个节点 $x$ 为根的子树大小 $sz[x]$。对于深度为 $d$ 的节点（根节点深度为 1），其子树大小为 $2^{k - d + 1} - 1$。
+
+我们可以维护两个数组：
+* `sum_tree[x]`：表示以 $x$ 为根的子树内，所有**在其内部或下方**进行的更新操作所累积的重量和。
+* `lazy[x]`：表示对以 $x$ 为根的整个子树内所有节点所累加的懒标记值。
+
+**1. 更新操作 `1 x y`**
+
+当对以 $x$ 为根的子树每个节点增加 $y$ 时：
+* 该操作会导致整个子树的重量增加 $sz[x] \times y$。
+* 我们将更新值累加到 `lazy[x]` 中：`lazy[x] += y`。
+* 同时，该子树的总重量变化会向上影响到 $x$ 的所有祖先节点。因此，我们需要沿着 $x$ 的祖先路径一直向上走到根节点 $1$，将路径上每个节点的 `sum_tree` 加上 $sz[x] \times y$。
+
+**2. 查询操作 `2 x`**
+
+当查询以 $x$ 为根的子树所有节点重量之和时：
+* `sum_tree[x]` 已经记录了在 $x$ 及其子树内部发生的所有更新。
+* 此外，由于 $x$ 所有的祖先节点上可能存在 `lazy` 标记，这些标记也对 $x$ 子树内的所有节点生效。
+* 祖先节点上的每个 `lazy` 标记都会让 $x$ 子树内的每个节点重量增加。由于 $x$ 子树大小为 $sz[x]$，因此每个祖先的 `lazy` 标记对 $x$ 子树的贡献为 $sz[x] \times \text{lazy}$。
+* 我们只需要沿着 $x$ 的严格祖先（即不含 $x$ 本身）向上走到根节点，累加所有的 `lazy` 标记，设为 `lazy_sum`。
+* 最终结果即为 `sum_tree[x] + sz[x] * lazy_sum`。
+
+由于树的高度最大为 15，每次更新和查询最多只需向上走 15 步，因此单次操作复杂度为 $O(k)$，整体复杂度为 $O(n \cdot k)$，能够快速通过所有测试点。
+
+**Python 3 实现代码**
+
+```python
+import sys
+
+
+def solve():
+    # 使用 sys.stdin.read 快速读取所有输入
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+
+    k = int(input_data[0])
+    n = int(input_data[1])
+
+    num_nodes = 1 << k
+    sz = [0] * num_nodes
+
+    # 预计算每个节点的子树大小
+    for i in range(1, num_nodes):
+        depth = i.bit_length()  # i 的二进制长度即为其所在的深度
+        h = k - depth + 1
+        sz[i] = (1 << h) - 1
+
+    sum_tree = [0] * num_nodes
+    lazy = [0] * num_nodes
+
+    idx = 2
+    out = []
+
+    for _ in range(n):
+        op = int(input_data[idx])
+        if op == 1:
+            x = int(input_data[idx + 1])
+            y = int(input_data[idx + 2])
+            idx += 3
+
+            # 1. 更新操作
+            lazy[x] += y
+            add_val = sz[x] * y
+            p = x
+            # 向上更新所有祖先节点的 subtree sum
+            while p > 0:
+                sum_tree[p] += add_val
+                p >>= 1
+        else:
+            x = int(input_data[idx + 1])
+            idx += 2
+
+            # 2. 查询操作
+            lazy_sum = 0
+            p = x >> 1
+            # 向上累加所有严格祖先节点的 lazy 标记
+            while p > 0:
+                lazy_sum += lazy[p]
+                p >>= 1
+            res = sum_tree[x] + sz[x] * lazy_sum
+            out.append(str(res))
+
+    # 批量输出结果
+    sys.stdout.write("\n".join(out) + "\n")
+
+
+if __name__ == "__main__":
+    solve()
+```
+
+
+
+**线段树（Segment Tree）在概念上确实比双树状数组更容易理解。**
+
+1. **直观的区间对应**：线段树的每一个节点都代表一个具体的区间（例如 `[l, r]`）。这与“子树转化为区间”的思想直接契合。
+2. **直观的懒标记（Lazy Tag）思想**：
+   * **懒标记的现实比喻**：老板让你给某个部门（区间）的所有员工每个人发 100 元奖金。你作为经理（线段树节点），不需要立刻跑到每个员工（叶子节点）面前把钱塞给他们。你只需要在账本上写一句：*“本部门每个人待发 100 元”*（这就是**懒标记**）。
+   * **下传（Push Down）**：只有当有人来查询该部门下具体某个小组的资金情况时，你才顺便把这 100 元的指标下发给小组长（子节点）。
+   * 这种“**用到时才下传更新**”的逻辑，非常符合人类的直观思维，而不需要像树状数组那样进行复杂的代数公式拆解。
+
+---
+
+### 线段树版代码及详细注释
+
+下面是基于 **DFS 序 + 线段树（带懒标记）** 的完整实现。
+
+```python
+import sys
+import threading
+
+def main():
+    import sys
+    sys.setrecursionlimit(1000000)
+    
+    k, n = map(int, sys.stdin.readline().split())
+    N = (1 << k)  # 满二叉树节点容量
+    size = N
+    
+    in_time = [0] * size
+    out_time = [0] * size
+    time = 1
+    
+    # 1. 依然通过 DFS 将树扁平化为区间 [in_time, out_time]
+    def dfs(u):
+        nonlocal time
+        in_time[u] = time
+        time += 1
+        left = 2 * u
+        right = 2 * u + 1
+        if left < size:
+            dfs(left)
+        if right < size:
+            dfs(right)
+        out_time[u] = time - 1
+
+    dfs(1)
+
+    # === 线段树部分 ===
+    # 用静态数组存储线段树。由于树是满二叉树，最大节点数用 4 * size 足够安全
+    MAX_SIZE = 4 * (size + 5)
+    tree = [0] * MAX_SIZE  # tree[o] 存储当前节点（区间）的重量总和
+    lazy = [0] * MAX_SIZE  # lazy[o] 存储当前节点的懒标记（待下传的增量值）
+
+    # 向上更新：用左右子节点的值更新父节点的值
+    def push_up(o):
+        tree[o] = tree[o << 1] + tree[o << 1 | 1]
+
+    # 向下传播标记：将当前节点 o 的懒标记下传给左右子节点
+    def push_down(o, l, r):
+        if lazy[o] != 0:
+            mid = (l + r) >> 1
+            add = lazy[o]
+            
+            # 1. 下传给左子节点
+            lazy[o << 1] += add
+            # 左子节点的区间长度是 (mid - l + 1)，所以总重量增加：长度 * 增量
+            tree[o << 1] += add * (mid - l + 1)
+            
+            # 2. 下传给右子节点
+            lazy[o << 1 | 1] += add
+            # 右子节点的区间长度是 (r - mid)，总重量增加：长度 * 增量
+            tree[o << 1 | 1] += add * (r - mid)
+            
+            # 3. 清空当前节点的懒标记
+            lazy[o] = 0
+
+    # 区间修改：将区间 [ql, qr] 内的所有元素加上 val
+    # l, r 是当前节点 o 所代表的区间范围
+    def update(o, l, r, ql, qr, val):
+        # 情况 1：当前节点区间 [l, r] 被完全包含在目标区间 [ql, qr] 内
+        if ql <= l and r <= qr:
+            tree[o] += val * (r - l + 1) # 当前区间总和增加：区间长度 * val
+            lazy[o] += val               # 在当前节点打上懒标记，不再向下递归
+            return
+        
+        # 情况 2：当前区间没有被完全包含，需要向下递归
+        push_down(o, l, r)  # 先把之前积攒的懒标记下传，确保子节点数据正确
+        
+        mid = (l + r) >> 1
+        if ql <= mid:
+            update(o << 1, l, mid, ql, qr, val)     # 递归更新左子树
+        if qr > mid:
+            update(o << 1 | 1, mid + 1, r, ql, qr, val) # 递归更新右子树
+            
+        push_up(o)  # 子树更新完毕后，更新当前节点的值
+
+    # 区间查询：查询区间 [ql, qr] 的总和
+    def query(o, l, r, ql, qr):
+        # 情况 1：当前区间被完全包含，直接返回当前节点记录的总和
+        if ql <= l and r <= qr:
+            return tree[o]
+            
+        # 情况 2：需要向下查询
+        push_down(o, l, r)  # 查询前同样必须下传懒标记，保证子节点数据是最新的
+        
+        mid = (l + r) >> 1
+        res = 0
+        if ql <= mid:
+            res += query(o << 1, l, mid, ql, qr)     # 累加左子树的查询结果
+        if qr > mid:
+            res += query(o << 1 | 1, mid + 1, r, ql, qr) # 累加右子树的查询结果
+        return res
+
+    # === 处理操作输入 ===
+    # 注意：我们的时间戳范围是 1 到 time - 1
+    max_timestamp = time - 1
+
+    for _ in range(n):
+        parts = sys.stdin.readline().split()
+        if parts[0] == '1':
+            x = int(parts[1])
+            y = int(parts[2])
+            l, r = in_time[x], out_time[x]
+            # 在整个线段树（根节点为1，代表区间 [1, max_timestamp]）中更新
+            update(1, 1, max_timestamp, l, r, y)
+        else:
+            x = int(parts[1])
+            l, r = in_time[x], out_time[x]
+            # 查询区间 [l, r] 的重量和
+            print(query(1, 1, max_timestamp, l, r))
+
+# 启动线程运行
+threading.Thread(target=main).start()
+```
+
+---
+
+### 两种方法的对比总结
+
+| 特性         | 树状数组（双数组版）               | 线段树（Lazy-Tag版）                   |
+| :----------- | :--------------------------------- | :------------------------------------- |
+| **思维难度** | **高**（需要复杂的代数公式变换）   | **低**（直观的区间分割与懒惰思想）     |
+| **代码量**   | 较短（约 30 行）                   | 较长（约 60 行）                       |
+| **运行效率** | **极快**（常数非常小，全是位运算） | 较快（由于递归和分支，常数略大）       |
+| **空间消耗** | 极小（只需 2 个大小为 $N$ 的数组） | 偏大（通常需要 4 个大小为 $N$ 的数组） |
+
+如果您在日常刷题或面试中遇到类似的**区间修改+区间查询**问题：
+* **首选线段树**：不仅容易写对，而且调试（Debug）时可以通过打印区间范围清晰地跟踪问题。
+* **只有在时间或空间限制极其苛刻**的情况下，才考虑使用双树状数组进行常数级别的极致优化。
+
+
+
+这段代码采用了**DFS序（Euler Tour / 欧拉序列）**和**树状数组（Fenwick Tree）**相结合的经典算法设计。
+
+### 核心设计思想解读
+
+1. **DFS序（将树转化为区间）**
+   * 在一棵树中，某个节点 $x$ 的子树结构往往不是连续的编号。为了能够使用高效的区间数据结构，代码首先通过一次**深度优先搜索（DFS）**遍历整棵树。
+   * 在遍历过程中，记录每个节点进入的时间戳 `in_time` 和离开的时间戳 `out_time`。
+   * **关键性质**：对于任意节点 $x$，其子树中所有节点的进入时间戳都在闭区间 `[in_time[x], out_time[x]]` 之内。这样，**对子树的操作就完美转化为了对一个连续区间的操作**。
+
+2. **树状数组支持“区间加”与“区间查询”**
+   * 普通的树状数组通常只支持“单点修改+区间查询”或“区间修改+单点查询”。
+   * 这段代码实现了一个**支持“区间修改 + 区间查询”的树状数组**。
+   * 其数学原理是利用差分数组 $D[i] = A[i] - A[i-1]$：
+     $$ \sum_{i=1}^{x} A[i] = x \sum_{i=1}^{x} D[i] - \sum_{i=1}^{x} (i-1) D[i] $$
+     因此，代码中维护了两个树状数组：
+     * `c1` 维护 $D[i]$ 的前缀和。
+     * `c2` 维护 $(i-1) \cdot D[i]$ 的前缀和。
+     通过这两个树状数组，即可在 $O(\log N)$ 的时间内完成区间的增加与求和。
+
+3. **线程与递归深度限制**
+   * Python 默认的递归深度限制较小（通常为 1000）。由于使用了递归 DFS 遍历树，代码使用 `sys.setrecursionlimit` 调大了限制。
+   * 同时，为了防止系统栈溢出，代码使用 `threading.Thread` 在一个新线程中启动主函数（新线程在某些操作系统中具有更大的栈空间）。*注：在本题中由于 $k \le 15$，递归深度最多只有 15 层，此处的线程处理实际上有些防患未然的意味。*
+
+---
+
+添加注释后的完整代码：
+
+```python
+import sys
+import threading
+
+def main():
+    import sys
+    # 提高 Python 的最大递归深度限制，防止在更深的树中发生递归溢出
+    sys.setrecursionlimit(1000000)
+    
+    # 读取层数 k 和操作数 n
+    k, n = map(int, sys.stdin.readline().split())
+    N = (1 << k)  # 满二叉树的节点总容量（包括虚设边界），节点编号为 1 到 2^k - 1
+    size = N
+    
+    # 用于记录 DFS 遍历时每个节点被访问的起始和结束时间戳
+    in_time = [0] * size
+    out_time = [0] * size
+    time = 1  # 全局时间戳，从 1 开始
+    
+    # 深度优先搜索，用于求出每个节点的 DFS 序区间
+    def dfs(u):
+        nonlocal time
+        in_time[u] = time  # 记录进入节点 u 的时间
+        time += 1
+        
+        left = 2 * u       # 左孩子节点编号
+        right = 2 * u + 1  # 右孩子节点编号
+        
+        # 如果子节点编号在有效范围内，则递归遍历
+        if left < size:
+            dfs(left)
+        if right < size:
+            dfs(right)
+            
+        out_time[u] = time - 1  # 记录离开节点 u 时的最后时间戳
+
+    # 从根节点 1 开始进行 DFS 遍历
+    dfs(1)
+
+    # 树状数组类：支持区间加值和区间求和
+    class Fenwick:
+        def __init__(self, n):
+            self.n = n + 2
+            self.c1 = [0] * (self.n)  # 维护差分数组 D[i]
+            self.c2 = [0] * (self.n)  # 维护 (i-1) * D[i]
+
+        # 树状数组的单点增加操作
+        def _add(self, c, x, val):
+            while x < self.n:
+                c[x] += val
+                x += x & -x           # 移动到下一个管理区间
+
+        # 区间增加操作：在区间 [l, r] 的所有元素上加上 val
+        def add_range(self, l, r, val):
+            # 更新 c1
+            self._add(self.c1, l, val)
+            self._add(self.c1, r + 1, -val)
+            # 更新 c2，配合区间查询公式
+            self._add(self.c2, l, val * (l - 1))
+            self._add(self.c2, r + 1, -val * r)
+
+        # 树状数组单点查询前缀和
+        def _sum(self, c, x):
+            res = 0
+            while x > 0:
+                res += c[x]
+                x -= x & -x           # 移动到上一个管理区间
+            return res
+
+        # 查询 [1, x] 的前缀和
+        # 公式：Sum(1..x) = x * sum(c1, x) - sum(c2, x)
+        def prefix_sum(self, x):
+            return self._sum(self.c1, x) * x - self._sum(self.c2, x)
+
+        # 查询区间 [l, r] 的和
+        def query(self, l, r):
+            return self.prefix_sum(r) - self.prefix_sum(l - 1)
+
+    # 初始化树状数组，大小对应 DFS 时间戳的范围
+    bit = Fenwick(size + 2)
+
+    # 处理 n 次操作
+    for _ in range(n):
+        parts = sys.stdin.readline().split()
+        if parts[0] == '1':
+            # 操作 1：给以 x 为根的子树每个节点增加 y
+            x = int(parts[1])
+            y = int(parts[2])
+            # 找到 x 对应子树在 DFS 序中的区间 [l, r]
+            l, r = in_time[x], out_time[x]
+            # 对该区间进行加值
+            bit.add_range(l, r, y)
+        else:
+            # 操作 2：查询以 x 为根的子树节点重量之和
+            x = int(parts[1])
+            # 找到 x 对应子树在 DFS 序中的区间 [l, r]
+            l, r = in_time[x], out_time[x]
+            # 查询该区间内的元素总和
+            print(bit.query(l, r))
+
+# 在一个新线程中启动 main 函数，以便拥有足够大的系统栈空间执行深度递归
+threading.Thread(target=main).start()
+```
+
+
+
 满二叉树是一种特殊的二叉树，其中每个节点要么是叶子节点，要么有两个子节点。  
 
 变量k和n分别代表满二叉树的层数和操作的个数。f和g是两个列表，用于存储每个节点的权重和懒惰标记。dep列表用于存储每个节点的深度。  
