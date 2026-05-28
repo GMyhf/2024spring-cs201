@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-05-21 15:18 GMT+8*
+*Updated 2026-05-28 14:44 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -31203,6 +31203,261 @@ if __name__ == "__main__":
 
 
 
+### T30868:upstairs
+
+同余最短路, http://cs101.openjudge.cn/practice/30868
+
+有一层楼一共有 n 层，小 z 从第 0 层出发，想要前往某一层。 上楼的方式只有一个奇怪的电梯，这个电梯每次只能向上走 a 层，b 层，或 c 层。小 z 想知道，对于某一个楼层，他能否通过这个电梯到达。 由于小 z 想去的楼层数比较多，他会给你多组询问。每次小 z 都会回到第 0 层重新出发。
+
+形式化地，对于给定的 a,b,c，是否存在自然数解 (x,y,z)，使得对于某个询问 hi，满足 hi=ax+by+cz。
+
+**数据范围：**
+
+对于全部数据，0 ≤ hi ≤ n, 0 ≤ q ≤ 10^5, 1 ≤ n ≤ 10^{18}, 0 ≤ a,b,c ≤ 10^6。
+
+对于 1% 的数据，为样例。
+
+对于另外 9% 的数据，a=0, 0 ≤ b,c ≤ 10^3, 1 ≤ q ≤ 10^3,1 ≤ n ≤ 10^5。
+
+对于 30% 的数据，0 ≤ a,b,c ≤ 10^3, 1 ≤ q ≤ 10^3, 1 ≤ n ≤ 10^9。
+
+对于 50% 的数据，0 ≤ a,b,c ≤ 3 * 10^3，且 b,c 互质。
+
+对于 70% 的数据，0 ≤ a ≤ 10^4。
+
+**输入**
+
+一共 q+2 行。
+第一行有 3 个数，分别代表 a,b,c。
+第二行有 1 个数 q，表示接下来有 q 组询问。
+对第 3 行至第 q+2 行，每行一个数 hi(1 ≤ i ≤ q)，表示小 z 想要前往的楼层数。
+
+**输出**
+
+一共 q 行，每行一个字符串。
+如果小 z 能够到达，输出 Yes，否则输出 No。
+
+样例输入
+
+```
+sample1 input:
+7 3 5
+4
+4
+10
+13
+41
+
+sample1 output:
+No
+Yes
+Yes
+Yes
+
+解释：可以证明，第 4 层无法到达，而 10 = 5+5,13 = 7+3+3，41 = 7+7+7+7+7+3+3。
+到达该层的方案不唯一。
+```
+
+样例输出
+
+```
+sample2 input:
+13 53 39
+5
+414
+690
+597
+390
+144
+
+sample2 output:
+No
+Yes
+No
+Yes
+Yes
+```
+
+提示：同余最短路
+
+来源：2026 spring ZHUJingqi
+
+
+
+思路：同余最短路。选择a,b,c中最小的数（不妨a）作为最后叠加的层数，问题转化为在模a意义下，h=by+cz，而当此时的h最小，它是否小于目标的h。因此对每个余数u构建(u+b) mod a和(u+c) mod a的路径，从0开始跑一遍Dijkstra，得到的即为最小的h.
+
+```python
+import heapq
+a,b,c=map(int,input().split())
+query=int(input())
+step=[]
+if(a>0):
+    step.append(a)
+if(b>0):
+    step.append(b)
+if(c>0):
+    step.append(c)
+step.sort()
+if(len(step)>=2):
+    m=step[0]
+    edges=step[1:]
+    dist=[float("inf")]*m
+    dist[0]=0
+    q=[]
+    heapq.heappush(q,(0,0))
+    while(q):
+        d,node=heapq.heappop(q)
+        if(d>dist[node]):
+            continue
+        for i in edges:
+            nxt=(node+i)%m
+            if(dist[nxt]>d+i):
+                dist[nxt]=d+i
+                heapq.heappush(q,(dist[nxt],nxt))
+def solve(h):
+    if(len(step)==0):
+        if(h==0):
+            return True
+        else:
+            return False
+    elif(len(step)==1):
+        if(h%step[0]==0):
+            return True
+        else:
+            return False
+    rem=h%m
+    if(dist[rem]<=h):
+        return True
+    else:
+        return False
+for i in range(query):
+    h=int(input())
+    if(solve(h)):
+        print("Yes")
+    else:
+        print("No")
+```
+
+
+
+这道题是一道典型的**同余最短路**问题。
+
+**1. 为什么使用同余最短路？**
+
+要判断是否存在非负整数解 $(x, y, z)$ 满足 $ax + by + cz = h_i$。由于 $h_i$ 的范围高达 $10^{18}$，直接进行完全背包或暴力搜索显然会超时。
+同余最短路的基本思想是：
+
+* 选择一个非零步长（例如最小的步长 $m$）作为模数。
+* 对于任意一个可以到达的楼层 $H$，它必然可以表示为 $H = k \cdot m + R$，其中 $R = H \pmod m$ 且 $k$ 是非负整数。
+* 只要我们能用其余的步长（$b, c$）组合出某个值 $V$，使得 $V \equiv R \pmod m$，那么所有大于等于 $V$ 且模 $m$ 同余 $R$ 的楼层 $H$ 都可以通过不断累加步长 $m$ 来到达。
+* 因此，我们的目标是求出**在模 $m$ 意义下，能够到达的最小数值**。这个最小值就是源点 $0$ 到余数状态的最短距离。
+
+**2. 建图与状态转移**
+
+* **状态（节点）**：模 $m$ 的余数，共 $m$ 个状态（$0, 1, \dots, m-1$）。
+* **边（转移）**：对于状态 $u$，可以通过加上其他步长 $v$（例如 $b$ 或 $c$）转移到新状态 $(u + v) \pmod m$，边权为 $v$。
+* **算法**：从起点 $0$ 出发，使用 Dijkstra 算法求出单源最短路，记 $dist[r]$ 为到达模 $m$ 余数为 $r$ 的最小楼层数。
+* **查询判断**：对于询问 $h_i$，令 $r = h_i \pmod m$。若 $dist[r] \le h_i$，说明能到达，输出 `Yes`；否则输出 `No`。
+
+**3. 复杂度分析**
+
+* **时间复杂度**：若选择最小的非零步长 $m \le 10^6$，图的点数为 $m$，边数最多为 $2m$。
+  使用堆优化的 Dijkstra 算法，时间复杂度为 $O(m \log m)$。
+  每次查询的时间复杂度为 $O(1)$。
+  总时间复杂度为 $O(m \log m + q)$，在 Python 中需要进行一定的常数优化以避免超时。
+* **空间复杂度**：需要存储距离数组 `dist` 和优先队列，空间复杂度为 $O(m)$。
+
+---
+
+代码优化点
+
+1. **快速 I/O（输入输出优化）**：由于询问次数 $q \le 10^5$，逐行读取和打印在 Python 中开销很大。我们使用 `sys.stdin.read` 一次性读取所有输入，并用 `sys.stdout.write` 或 `'\n'.join()` 批量输出。
+2. **边界条件处理**：
+   * 若所有步长均为 $0$，则只能到达 $0$ 层。
+   * 若只有一个非零步长，则只需判断目标楼层是否是该步长的倍数。
+   * 排除为 $0$ 的步长，避免建图时产生自环或模数为 $0$ 的错误。
+
+
+
+```python
+import sys
+import heapq
+
+def solve():
+    # 使用 sys.stdin.read 一次性读取所有输入，提升 I/O 效率
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    # 解析输入
+    a = int(input_data[0])
+    b = int(input_data[1])
+    c = int(input_data[2])
+    q = int(input_data[3])
+    queries = [int(x) for x in input_data[4 : 4 + q]]
+    
+    # 过滤掉为 0 的步长，并从小到大排序
+    steps = sorted([x for x in (a, b, c) if x > 0])
+    
+    # 特殊情况 1：没有可行的步长
+    if not steps:
+        results = ["Yes" if h == 0 else "No" for h in queries]
+        sys.stdout.write('\n'.join(results) + '\n')
+        return
+        
+    # 特殊情况 2：只有一种步长
+    if len(steps) == 1:
+        step = steps[0]
+        results = ["Yes" if h % step == 0 else "No" for h in queries]
+        sys.stdout.write('\n'.join(results) + '\n')
+        return
+
+    # 同余最短路：选择最小的非零步长作为模数 m
+    m = steps[0]
+    edges = steps[1:] # 剩余的步长作为转移边
+    
+    # dist[r] 表示模 m 余数为 r 时，能到达的最小楼层高度
+    dist = [float('inf')] * m
+    dist[0] = 0
+    
+    # 优先队列 (距离, 节点)
+    pq = [(0, 0)]
+    
+    # 堆优化 Dijkstra 过程
+    while pq:
+        d, u = heapq.heappop(pq)
+        
+        # 剪枝：如果当前取出的距离大于已知最短距离，则跳过
+        if d > dist[u]:
+            continue
+            
+        # 尝试通过其余的步长进行转移
+        for step in edges:
+            nxt = (u + step) % m
+            nd = d + step
+            if dist[nxt] > nd:
+                dist[nxt] = nd
+                heapq.heappush(pq, (nd, nxt))
+    
+    # 处理每组询问
+    results = []
+    for h in queries:
+        rem = h % m
+        # 如果要到达的目标高度 h 大于等于模 m 同余下的最小可达高度，则可行
+        if dist[rem] <= h:
+            results.append("Yes")
+        else:
+            results.append("No")
+            
+    # 批量输出结果
+    sys.stdout.write('\n'.join(results) + '\n')
+
+if __name__ == '__main__':
+    solve()
+```
+
+
+
 ## T30878: 力场叠加模拟
 
 segment tree, lazy propagation, http://cs101.openjudge.cn/practice/30878/
@@ -31384,6 +31639,681 @@ if __name__ == "__main__":
 2.  **空间复杂度**：线段树通常需要开 $4 \times N$ 的空间来防止溢出。
 3.  **懒标记的作用**：当我们修改一个很大的区间时，我们并不立即修改到每个叶子节点，而是在该节点打个标记。只有当下次需要访问该节点的子节点时，才把标记传下去。这保证了区间的批量操作依然是对数时间复杂度的。
 4.  **负数处理**：题目提到 $v$ 可能为负。线段树求 `max` 在处理负数时依然有效，只需将查询的初始值设为极小值（`-float('inf')`）。
+
+
+
+## M30899: 火星大工程
+
+AOE，关键路径，http://cs101.openjudge.cn/practice/30899/
+
+中国要在火星上搞个大工程，即建造n个科考站
+
+建科考站需要很专业的设备，不同的科考站需要不同的设备来完成
+
+有的科考站必须等另外一些科考站建好后才能建。
+
+每个设备参与建完一个科考站后，都需要一定时间来保养维修，才能参与到下一个科考站的建设。
+
+所以，会发生科考站A建好后，必须至少等一定时间才能建科考站B的情况。因为B必须在A之后建，且建B必需的某个设备，参与了建A的工作，它需要一定时间进行维修保养。
+
+一个维修保养任务用三个数a b c表示，意即科考站b必须等a建完才能建。而且，科考站a建好后，建a的某个设备必须经过时长c的维修保养后，才可以开始参与建科考站b。
+
+假设备都很牛，只要设备齐全可用，建站飞快就能完成，建站时间忽略不计。一开始所有设备都齐全可用。
+
+给定一些维修保养任务的描述，求所有科考站都建成，最快需要多长时间。
+
+有的维修保养任务，能开始的时候也可以先不开始，往后推迟一点再开始也不会影响到整个工期。问在不影响最快工期的情况下，哪些维修保养任务的开始时间必须是确定的。按字典序输出这些维修保养工任务，输出的时候不必输出任务所需的时间。
+
+  
+
+**输入**
+
+第一行两个整数n,m，表示有n个科考站，m个维修保养任务。科考站编号为1，2.....n
+接下来m行，每行三个整数a b c，表示一个维修保养任务
+1 < n,m <=3000
+
+**输出**
+
+先输出所有科考站都建成所需的最短时间
+然后按字典序输出开始时间必须确定的维修保养任务
+
+样例输入
+
+```
+9 11
+1 2 6
+1 3 4
+1 4 5
+2 5 1
+3 5 1
+4 6 2
+5 7 9
+5 8 7
+6 8 4
+7 9 2
+8 9 4
+```
+
+样例输出
+
+```
+18
+1 2
+2 5
+5 7
+5 8
+7 9
+8 9
+```
+
+来源
+
+郭炜
+
+
+
+这个问题是一个典型的**关键路径（Critical Path Method, CPM）**问题。我们可以将科考站看作图的节点，维修保养任务看作带权的有向边。
+
+**解题思路**
+
+1.  **建模**：
+    *   **节点**：$n$ 个科考站。
+    *   **有向边**：如果科考站 $b$ 必须在 $a$ 建完并经过 $c$ 时间的维护后才能开工，则建立一条从 $a$ 到 $b$、权重为 $c$ 的边 $(a, b, c)$。
+    *   **建站时间**：题目提到建站时间忽略不计，因此只需考虑边权（维修时间）。
+
+2.  **计算最早完成时间 (Earliest Time, ET)**：
+    *   使用**拓扑排序**。
+    *   初始化所有节点的 $ET$ 为 0（因为一开始所有设备都可用）。
+    *   对于每条边 $(u, v, w)$，更新 $ET[v] = \max(ET[v], ET[u] + w)$。
+    *   所有科考站建成的最短时间即为 $\max(ET)$。
+
+3.  **计算最晚完成时间 (Latest Time, LT)**：
+    *   设项目总时长为 $T = \max(ET)$。
+    *   初始化所有节点的 $LT$ 为 $T$。
+    *   按照拓扑排序的**逆序**处理节点。
+    *   对于每条边 $(u, v, w)$，更新 $LT[u] = \min(LT[u], LT[v] - w)$。
+
+4.  **确定关键任务**：
+    *   一个任务（边） $(u, v, w)$ 是“必须确定的”（即在关键路径上），当且仅当它的**最早开始时间等于最晚开始时间**。
+    *   数学表达为：$ET[u] == LT[v] - w$。
+    *   收集所有满足该条件的边，按字典序排序后输出。
+
+**Python 代码实现**
+
+```python
+import sys
+from collections import deque
+
+def solve():
+    # 使用 sys.stdin.read().split() 快速读取大数据量
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    n = int(input_data[0])
+    m = int(input_data[1])
+    
+    adj = [[] for _ in range(n + 1)]
+    tasks = [] # 存储原始任务
+    in_degree = [0] * (n + 1)
+    
+    ptr = 2
+    for _ in range(m):
+        u = int(input_data[ptr])
+        v = int(input_data[ptr+1])
+        w = int(input_data[ptr+2])
+        ptr += 3
+        adj[u].append((v, w))
+        tasks.append((u, v, w))
+        in_degree[v] += 1
+        
+    # 1. 拓扑排序计算最早完成时间 (ET)
+    et = [0] * (n + 1)
+    topo_order = []
+    # 入度为 0 的站可以从时间 0 开始
+    queue = deque([i for i in range(1, n + 1) if in_degree[i] == 0])
+    
+    while queue:
+        u = queue.popleft()
+        topo_order.append(u)
+        for v, w in adj[u]:
+            if et[u] + w > et[v]:
+                et[v] = et[u] + w
+            in_degree[v] -= 1
+            if in_degree[v] == 0:
+                queue.append(v)
+                
+    # 最短总工期
+    total_time = max(et) if et else 0
+    print(total_time)
+    
+    # 2. 逆拓扑排序计算最晚完成时间 (LT)
+    # 所有终点站最晚必须在 total_time 完成
+    lt = [total_time] * (n + 1)
+    for u in reversed(topo_order):
+        for v, w in adj[u]:
+            if lt[v] - w < lt[u]:
+                lt[u] = lt[v] - w
+                
+    # 3. 找出关键任务
+    critical_tasks = []
+    for u, v, w in tasks:
+        # 如果最早开始时间 + 持续时间 == 最晚必须完成时间，则该任务不可延期
+        if et[u] == lt[v] - w:
+            critical_tasks.append((u, v))
+            
+    # 4. 按字典序排序输出
+    critical_tasks.sort()
+    for u, v in critical_tasks:
+        print(f"{u} {v}")
+
+if __name__ == "__main__":
+    solve()
+```
+
+**复杂度分析**
+
+*   **时间复杂度**：$O(N + M + M \log M)$。拓扑排序和计算 $ET/LT$ 均为 $O(N+M)$，最后对关键任务排序为 $O(M \log M)$。在 $N, M \le 3000$ 的规模下，运行非常快。
+*   **空间复杂度**：$O(N + M)$，主要用于存储邻接表和各站的时间数组。
+
+
+
+
+
+```python
+# 李宗远 白衣者
+# 拓扑排序和AOE网络问题
+# 首先建立edge对象，依据数据得到邻接矩阵
+# 得到拓扑排序序列
+# 依据拓扑排序序列得到时间最早和最晚开始时间和最快时长确定关键事件
+# 进而确定关键活动
+from collections import defaultdict, deque
+
+
+class Edge:
+    def __init__(self, end, weight):
+        self.end = end
+        self.weight = weight
+
+    def __lt__(self, other):
+        return self.end < other.end
+
+def find_critical_activities(n, m, edges):
+    # 构建邻接表和入度数组
+    graph = defaultdict(list)
+    in_degree = [0] * n
+    for s, e, w in edges:
+        graph[s - 1].append(Edge(e - 1, w))
+        in_degree[e - 1] += 1
+
+    # 拓扑排序
+    queue = deque([i for i in range(n) if in_degree[i] == 0])
+    topological_order = []
+    while queue:
+        node = queue.popleft()
+        topological_order.append(node)
+        for edge in graph[node]:
+            in_degree[edge.end] -= 1
+            if in_degree[edge.end] == 0:
+                queue.append(edge.end)
+
+    # 计算最早开始时间
+    earliest = [0] * n
+    for i in topological_order:
+        for edge in graph[i]:
+            earliest[edge.end] = max(earliest[edge.end], earliest[i] + edge.weight)
+    T = max(earliest)
+
+    # 计算最晚开始时间
+    latest = [T] * n
+    for j in reversed(topological_order):
+        for edge in graph[j]:
+            latest[j] = min(latest[j], latest[edge.end] - edge.weight)
+
+    # 确定关键事件
+    critical_events = [i for i in range(n) if earliest[i] == latest[i]]
+
+    # 确定关键活动
+    critical_activities = []
+    for i in critical_events:
+        graph[i].sort()
+        for edge in graph[i]:
+            #关键活动通常指的是导致关键事件发生的活动，而不是所有指向关键事件的活动都是关键活动。
+            if edge.end in critical_events and earliest[edge.end] - earliest[i] == edge.weight:
+                critical_activities.append((i + 1, edge.end + 1))
+
+    return T, critical_activities
+
+
+n, m = map(int, input().split())
+edges = [list(map(int, input().split())) for _ in range(m)]
+
+# 求解关键活动
+T, critical_activities = find_critical_activities(n, m, edges)
+
+print(T)
+for activity in critical_activities:
+    print(*activity)
+```
+
+
+
+```python
+from collections import deque, defaultdict
+from dataclasses import dataclass
+
+
+@dataclass
+class Edge:
+    end: int
+    weight: int
+
+
+def topo_sort(graph, in_degrees, n):
+    queue = deque([i for i in range(n) if in_degrees[i] == 0])
+    topo_order = []
+    while queue:
+        node = queue.popleft()
+        topo_order.append(node)
+        for edge in graph[node]:
+            in_degrees[edge.end] -= 1
+            if in_degrees[edge.end] == 0:
+                queue.append(edge.end)
+    return topo_order
+
+
+def find_critical_activities(n, m, edges):
+    graph = defaultdict(list)
+    in_degrees = [0] * n
+    for u, v, w in edges:
+        graph[u - 1].append(Edge(v - 1, w))
+        in_degrees[v - 1] += 1
+
+    topo_order = topo_sort(graph, in_degrees[:], n)
+    if not topo_order:
+        return ["No"]
+
+    est = [0] * n
+    for node in topo_order:
+        for edge in graph[node]:
+            est[edge.end] = max(est[edge.end], est[node] + edge.weight)
+
+    T = max(est)
+
+    # 计算最晚开始时间
+    lst = [T] * n
+    for node in reversed(topo_order):
+        for edge in graph[node]:
+            lst[node] = min(lst[node], lst[edge.end] - edge.weight)
+
+    # 确定关键事件
+    critical_events = [i for i in range(n) if est[i] == lst[i]]
+
+    # 确定关键活动
+    critical_activities = []
+    for node in critical_events:
+        for edge in graph[node]:
+            # 关键活动通常指的是导致关键事件发生的活动，而不是所有指向关键事件的活动都是关键活动。
+            if edge.end in critical_events and est[node] == est[edge.end] - edge.weight:
+                critical_activities.append((node + 1, edge.end + 1))
+
+    # critical_activities.sort()
+
+    return T, ["{} {}".format(u, v) for u, v in critical_activities]
+
+
+n, m = map(int, input().split())
+edges = [tuple(map(int, input().split())) for _ in range(m)]
+T, critical_activities = find_critical_activities(n, m, edges)
+print(T)
+print('\n'.join(critical_activities))
+
+```
+
+
+
+
+
+## M30912:累加树
+
+构建 BST + 右-根-左累加 + BFS 输出, http://cs101.openjudge.cn/practice/30912
+
+> 给定一个二叉搜索树先序遍历序列，将其转换为一棵累加树，并输出累加树的按层次遍历序列。
+>
+> 累加树和原二叉树形态相同，设原树上结点v在累加树上对应的结点是u，则u的值是原树上所有大于等于v的结点的和。
+>
+> 样例数据如下图所示，原树结点的值在圈内，对应累加树结点的值在圈外
+>
+> <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1749112066.png" alt="img" style="zoom:33%;" />
+>
+> **输入**
+>
+> 第1行：一个整数n,表示二叉搜索树有n个结点( 1 <= n <= 100)。
+> 第2行，n个整数，本行表示二叉搜索树的先序遍历序列。每个整数范围是 [0, 10000]
+>
+> **输出**
+>
+> 对应的累加树的按层次遍历序列
+>
+> 样例输入
+>
+> ```
+> 9
+> 4 1 0 2 3 6 5 7 8
+> ```
+>
+> 样例输出
+>
+> ```
+> 30 36 21 36 35 26 15 33 8
+> ```
+
+
+
+解决该问题的思路可以分为三个主要步骤：
+
+1. **重建二叉搜索树（BST）**：由于输入的是二叉搜索树的先序遍历序列，可以按照该序列的顺序依次将节点插入到树中，从而还原出原二叉树的结构。
+2. **转换为累加树（GST）**：累加树的定义是每个节点的值等于原树中大于或等于该节点值的所有节点值之和。在二叉搜索树中，右子树的所有值都大于当前节点，左子树的所有值都小于当前节点。因此，可以通过**反向中序遍历**（右 -> 中 -> 左）的方式，从大到小遍历所有节点，并使用一个全局累加变量更新每个节点的值。
+3. **层次遍历输出**：使用队列对转换后的累加树进行广度优先搜索（BFS），即可得到层次遍历序列。
+
+Python 代码实现
+
+```python
+import sys
+from collections import deque
+
+# 定义二叉树节点
+class TreeNode:
+    def __init__(self, val=0):
+        self.val = val
+        self.left = None
+        self.right = None
+
+# 将节点插入到二叉搜索树中
+def insert(root, val):
+    if not root:
+        return TreeNode(val)
+    if val < root.val:
+        root.left = insert(root.left, val)
+    else:
+        root.right = insert(root.right, val)
+    return root
+
+# 累加树转换辅助类
+class GSTConverter:
+    def __init__(self):
+        self.running_sum = 0
+
+    def convert(self, root):
+        if not root:
+            return
+        # 反向中序遍历：先右子树，再当前节点，最后左子树
+        self.convert(root.right)
+        
+        # 累加当前节点的值
+        self.running_sum += root.val
+        root.val = self.running_sum
+        
+        self.convert(root.left)
+
+# 层次遍历二叉树
+def level_order_traversal(root):
+    if not root:
+        return []
+    result = []
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        result.append(node.val)
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+    return result
+
+def main():
+    # 读取标准输入
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    n = int(input_data[0])
+    preorder = [int(x) for x in input_data[1:n+1]]
+    
+    if n == 0:
+        return
+
+    # 1. 重建二叉搜索树
+    root = None
+    for val in preorder:
+        root = insert(root, val)
+    
+    # 2. 转换为累加树
+    converter = GSTConverter()
+    converter.convert(root)
+    
+    # 3. 层次遍历
+    ans = level_order_traversal(root)
+    
+    # 输出结果
+    print(*(ans))
+
+if __name__ == '__main__':
+    main()
+```
+
+复杂度分析
+
+- **时间复杂度**：
+  - 重建 BST：在最坏情况下（树退化为链表），插入每个节点需要 $O(n)$ 时间，总时间为 $O(n^2)$。但由于本题 $n \le 100$，该方法在运行时间和空间上都是可行的。
+  - 转换为累加树：反向中序遍历每个节点仅访问一次，时间复杂度为 $O(n)$。
+  - 层次遍历：每个节点仅入队和出队一次，时间复杂度为 $O(n)$。
+  - 总体时间复杂度在 $O(n^2)$ 以内，可轻松通过。
+
+- **空间复杂度**：$O(n)$，用于存储二叉树的节点和层次遍历时的队列。
+
+
+
+**思路**：根据二叉搜索树的先序遍历构建 BST（递归：第一个元素为根，剩余部分中小于根的在左子树，大于根的在右子树）。然后反向中序遍历（右-根-左）累加遍历过的节点值之和，更新每个节点的值为累加和。最后用 BFS 输出层序遍历。
+
+```python
+from collections import deque
+
+def solve():
+    data = list(map(int, sys.stdin.read().split()))
+    n = data[0]
+    pre = data[1:]
+
+    def build(l, r):
+        if l > r:
+            return None
+        root = pre[l]
+        mid = r + 1
+        for i in range(l + 1, r + 1):
+            if pre[i] >= root:
+                mid = i
+                break
+        return [root, build(l + 1, mid - 1), build(mid, r)]
+
+    tree = build(0, n - 1)
+    total = [0]
+
+    def accum(node):
+        if not node:
+            return
+        accum(node[2])
+        total[0] += node[0]
+        node[0] = total[0]
+        accum(node[1])
+
+    accum(tree)
+    q = deque([tree])
+    out = []
+    while q:
+        node = q.popleft()
+        out.append(str(node[0]))
+        if node[1]:
+            q.append(node[1])
+        if node[2]:
+            q.append(node[2])
+    print(" ".join(out))
+
+if __name__ == "__main__":
+    import sys
+    solve()
+```
+
+
+
+## T30921:猫猫搭积木
+
+DSU, http://cs101.openjudge.cn/practice/30921
+
+猫猫爱搭积木。
+
+猫猫一共有 n 块积木。每次猫猫会选择两块积木 x,y，并且将它们所在的积木堆搭起来。不幸的是，一堆积木中如果积木数 $s\ge k$，就会崩塌，导致这一堆积木变成零散的 s 堆。猫猫一共操作了 q 次，它想知道每次操作完之后，当前积木的堆数。
+
+**输入**
+
+第一行包含三个整数 n,q,s（$1 \leq n,q \leq 5\times 10^5,1\le s\le n$），表示积木数目、操作次数和一堆积木的数量上限。
+
+接下来 q 行，没行包含两个整数 xi,yi（$1\le x_i,y_i\le n$），表示一次操作。
+
+**输出**
+
+输出 q 行，每行一个整数，表示第 i 次操作后的总积木堆数。
+
+样例输入
+
+```
+5 10 3
+1 2
+4 2
+1 5
+2 3
+4 1
+5 1
+2 4
+1 3
+2 5
+3 4
+```
+
+样例输出
+
+```
+4
+3
+5
+4
+3
+2
+5
+4
+3
+2
+```
+
+
+
+这道题可以通过**并查集（DSU）**和**启发式合并**的思想来高效解决。
+
+**解题思路**
+
+1. **基本并查集维护**：
+   我们需要维护每个积木堆的大小以及堆内的具体积木。我们可以为每个集合（积木堆）维护一个列表 `elements`，记录该堆中包含的所有积木编号。
+
+2. **合并操作（启发式合并）**：
+   当要合并两个代表元为 $r_u$ 和 $r_v$ 的堆时：
+
+   - 如果合并后的总大小 $\ge s$，则这一堆积木会**崩塌**。崩塌意味着这两堆的所有积木都重新变成大小为 1 的独立堆。我们只需遍历这两堆中的所有积木，将它们各自的父节点设为自己，大小重置为 1，`elements` 列表重置为仅包含自身。
+   - 如果合并后的总大小 $< s$，则正常合并。为了保证效率，采用**启发式合并（小结构合并到大结构）**：将较小堆的积木全部并入较大堆中，并更新它们在并查集中的父节点指向较大堆的代表元。
+
+3. **复杂度分析**：
+
+   - **非崩塌合并**：因为每次我们都是将较小堆合并到较大堆，一个积木所在的堆的大小在每次合并时至少翻倍。由于堆的最大大小不超过 $n$，每个积木最多被合并 $\log_2 n$ 次。因此，整个过程中非崩塌合并带来的总时间复杂度为 $O(n \log n)$。
+
+   - **崩塌合并**：每次崩塌时，我们花 $O(|A| + |B|)$ 的时间将它们拆散。由于每次崩塌都会增加堆的总数，而堆的总数最大为 $n$，可以通过势能分析证明，所有崩塌导致的拆散操作涉及的积木总数不超过 $n + 3q$。因此，所有崩塌操作的总时间复杂度为 $O(n + q)$。
+
+     > **关键点**：一堆积木要达到大小 $L > s$，至少需要经历 $L-1$ 次不触发塌陷的合并。因此，塌陷重置的代价（$O(L)$）可以均摊到之前的合并操作中。可以证明，整个过程中用于重置的总时间复杂度为 $O(q)$。
+
+   - **查询代表元**：在我们的维护方式中，我们直接将子节点的 `parent` 一步到位地更新为了新的根节点，因此 `parent[x]` 始终是当前代表元，单次查询时间复杂度为 $O(1)$。
+
+综上所述，整体时间复杂度为 $O(n \log n + q)$，空间复杂度为 $O(n + q)$。
+
+**Python 代码**
+
+```python
+import sys
+
+def solve():
+    # 快速读取所有输入
+    input_data = list(map(int, sys.stdin.read().split()))
+    if not input_data:
+        return
+    
+    iterator = iter(input_data)
+    n = next(iterator)
+    q = next(iterator)
+    s = next(iterator)
+    
+    # 初始化并查集
+    parent = list(range(n + 1))
+    size = [1] * (n + 1)
+    elements = [[i] for i in range(n + 1)]
+    
+    piles = n
+    out = []
+    
+    for _ in range(q):
+        u = next(iterator)
+        v = next(iterator)
+        
+        r_u = parent[u]
+        r_v = parent[v]
+        
+        if r_u != r_v:
+            sz_u = size[r_u]
+            sz_v = size[r_v]
+            
+            # 判断是否崩塌
+            if sz_u + sz_v >= s:
+                piles += sz_u + sz_v - 2
+                # 拆散堆 r_u 里的积木
+                for x in elements[r_u]:
+                    parent[x] = x
+                    size[x] = 1
+                    elements[x] = [x]
+                # 拆散堆 r_v 里的积木
+                for x in elements[r_v]:
+                    parent[x] = x
+                    size[x] = 1
+                    elements[x] = [x]
+            else:
+                piles -= 1
+                # 启发式合并：将小的堆合并到大的堆中
+                if sz_u < sz_v:
+                    for x in elements[r_u]:
+                        parent[x] = r_v
+                    elements[r_v].extend(elements[r_u])
+                    size[r_v] += sz_u
+                    elements[r_u] = []
+                else:
+                    for x in elements[r_v]:
+                        parent[x] = r_u
+                    elements[r_u].extend(elements[r_v])
+                    size[r_u] += sz_v
+                    elements[r_v] = []
+        
+        out.append(str(piles))
+        
+    sys.stdout.write('\n'.join(out) + '\n')
+
+if __name__ == '__main__':
+    solve()
+```
+
+
 
 
 
@@ -32361,338 +33291,6 @@ if __name__ == "__main__":
 
 
 
-
-
-
-
-
-## P1260: 火星大工程
-
-AOE，拓扑排序，关键路径，http://dsbpython.openjudge.cn/dspythonbook/P1260/
-
-中国要在火星上搞个大工程，即建造n个科考站
-
-建科考站需要很专业的设备，不同的科考站需要不同的设备来完成
-
-有的科考站必须等另外一些科考站建好后才能建。
-
-每个设备参与建完一个科考站后，都需要一定时间来保养维修，才能参与到下一个科考站的建设。
-
-所以，会发生科考站A建好后，必须至少等一定时间才能建科考站B的情况。因为B必须在A之后建，且建B必需的某个设备，参与了建A的工作，它需要一定时间进行维修保养。
-
-一个维修保养任务用三个数a b c表示，意即科考站b必须等a建完才能建。而且，科考站a建好后，建a的某个设备必须经过时长c的维修保养后，才可以开始参与建科考站b。
-
-假设备都很牛，只要设备齐全可用，建站飞快就能完成，建站时间忽略不计。一开始所有设备都齐全可用。
-
-给定一些维修保养任务的描述，求所有科考站都建成，最快需要多长时间。
-
-有的维修保养任务，能开始的时候也可以先不开始，往后推迟一点再开始也不会影响到整个工期。问在不影响最快工期的情况下，哪些维修保养任务的开始时间必须是确定的。按字典序输出这些维修保养工任务，输出的时候不必输出任务所需的时间。
-
-  
-
-**输入**
-
-第一行两个整数n,m，表示有n个科考站，m个维修保养任务。科考站编号为1，2.....n
-接下来m行，每行三个整数a b c，表示一个维修保养任务
-1 < n,m <=3000
-
-**输出**
-
-先输出所有科考站都建成所需的最短时间
-然后按字典序输出开始时间必须确定的维修保养任务
-
-样例输入
-
-```
-9 11
-1 2 6
-1 3 4
-1 4 5
-2 5 1
-3 5 1
-4 6 2
-5 7 9
-5 8 7
-6 8 4
-7 9 2
-8 9 4
-```
-
-样例输出
-
-```
-18
-1 2
-2 5
-5 7
-5 8
-7 9
-8 9
-```
-
-来源
-
-郭炜
-
-
-
-这个问题是一个典型的**关键路径（Critical Path Method, CPM）**问题。我们可以将科考站看作图的节点，维修保养任务看作带权的有向边。
-
-**解题思路**
-
-1.  **建模**：
-    *   **节点**：$n$ 个科考站。
-    *   **有向边**：如果科考站 $b$ 必须在 $a$ 建完并经过 $c$ 时间的维护后才能开工，则建立一条从 $a$ 到 $b$、权重为 $c$ 的边 $(a, b, c)$。
-    *   **建站时间**：题目提到建站时间忽略不计，因此只需考虑边权（维修时间）。
-
-2.  **计算最早完成时间 (Earliest Time, ET)**：
-    *   使用**拓扑排序**。
-    *   初始化所有节点的 $ET$ 为 0（因为一开始所有设备都可用）。
-    *   对于每条边 $(u, v, w)$，更新 $ET[v] = \max(ET[v], ET[u] + w)$。
-    *   所有科考站建成的最短时间即为 $\max(ET)$。
-
-3.  **计算最晚完成时间 (Latest Time, LT)**：
-    *   设项目总时长为 $T = \max(ET)$。
-    *   初始化所有节点的 $LT$ 为 $T$。
-    *   按照拓扑排序的**逆序**处理节点。
-    *   对于每条边 $(u, v, w)$，更新 $LT[u] = \min(LT[u], LT[v] - w)$。
-
-4.  **确定关键任务**：
-    *   一个任务（边） $(u, v, w)$ 是“必须确定的”（即在关键路径上），当且仅当它的**最早开始时间等于最晚开始时间**。
-    *   数学表达为：$ET[u] == LT[v] - w$。
-    *   收集所有满足该条件的边，按字典序排序后输出。
-
-**Python 代码实现**
-
-```python
-import sys
-from collections import deque
-
-def solve():
-    # 使用 sys.stdin.read().split() 快速读取大数据量
-    input_data = sys.stdin.read().split()
-    if not input_data:
-        return
-    
-    n = int(input_data[0])
-    m = int(input_data[1])
-    
-    adj = [[] for _ in range(n + 1)]
-    tasks = [] # 存储原始任务
-    in_degree = [0] * (n + 1)
-    
-    ptr = 2
-    for _ in range(m):
-        u = int(input_data[ptr])
-        v = int(input_data[ptr+1])
-        w = int(input_data[ptr+2])
-        ptr += 3
-        adj[u].append((v, w))
-        tasks.append((u, v, w))
-        in_degree[v] += 1
-        
-    # 1. 拓扑排序计算最早完成时间 (ET)
-    et = [0] * (n + 1)
-    topo_order = []
-    # 入度为 0 的站可以从时间 0 开始
-    queue = deque([i for i in range(1, n + 1) if in_degree[i] == 0])
-    
-    while queue:
-        u = queue.popleft()
-        topo_order.append(u)
-        for v, w in adj[u]:
-            if et[u] + w > et[v]:
-                et[v] = et[u] + w
-            in_degree[v] -= 1
-            if in_degree[v] == 0:
-                queue.append(v)
-                
-    # 最短总工期
-    total_time = max(et) if et else 0
-    print(total_time)
-    
-    # 2. 逆拓扑排序计算最晚完成时间 (LT)
-    # 所有终点站最晚必须在 total_time 完成
-    lt = [total_time] * (n + 1)
-    for u in reversed(topo_order):
-        for v, w in adj[u]:
-            if lt[v] - w < lt[u]:
-                lt[u] = lt[v] - w
-                
-    # 3. 找出关键任务
-    critical_tasks = []
-    for u, v, w in tasks:
-        # 如果最早开始时间 + 持续时间 == 最晚必须完成时间，则该任务不可延期
-        if et[u] == lt[v] - w:
-            critical_tasks.append((u, v))
-            
-    # 4. 按字典序排序输出
-    critical_tasks.sort()
-    for u, v in critical_tasks:
-        print(f"{u} {v}")
-
-if __name__ == "__main__":
-    solve()
-```
-
-**复杂度分析**
-
-*   **时间复杂度**：$O(N + M + M \log M)$。拓扑排序和计算 $ET/LT$ 均为 $O(N+M)$，最后对关键任务排序为 $O(M \log M)$。在 $N, M \le 3000$ 的规模下，运行非常快。
-*   **空间复杂度**：$O(N + M)$，主要用于存储邻接表和各站的时间数组。
-
-
-
-
-
-```python
-# 李宗远 白衣者
-# 拓扑排序和AOE网络问题
-# 首先建立edge对象，依据数据得到邻接矩阵
-# 得到拓扑排序序列
-# 依据拓扑排序序列得到时间最早和最晚开始时间和最快时长确定关键事件
-# 进而确定关键活动
-from collections import defaultdict, deque
-
-
-class Edge:
-    def __init__(self, end, weight):
-        self.end = end
-        self.weight = weight
-
-    def __lt__(self, other):
-        return self.end < other.end
-
-def find_critical_activities(n, m, edges):
-    # 构建邻接表和入度数组
-    graph = defaultdict(list)
-    in_degree = [0] * n
-    for s, e, w in edges:
-        graph[s - 1].append(Edge(e - 1, w))
-        in_degree[e - 1] += 1
-
-    # 拓扑排序
-    queue = deque([i for i in range(n) if in_degree[i] == 0])
-    topological_order = []
-    while queue:
-        node = queue.popleft()
-        topological_order.append(node)
-        for edge in graph[node]:
-            in_degree[edge.end] -= 1
-            if in_degree[edge.end] == 0:
-                queue.append(edge.end)
-
-    # 计算最早开始时间
-    earliest = [0] * n
-    for i in topological_order:
-        for edge in graph[i]:
-            earliest[edge.end] = max(earliest[edge.end], earliest[i] + edge.weight)
-    T = max(earliest)
-
-    # 计算最晚开始时间
-    latest = [T] * n
-    for j in reversed(topological_order):
-        for edge in graph[j]:
-            latest[j] = min(latest[j], latest[edge.end] - edge.weight)
-
-    # 确定关键事件
-    critical_events = [i for i in range(n) if earliest[i] == latest[i]]
-
-    # 确定关键活动
-    critical_activities = []
-    for i in critical_events:
-        graph[i].sort()
-        for edge in graph[i]:
-            #关键活动通常指的是导致关键事件发生的活动，而不是所有指向关键事件的活动都是关键活动。
-            if edge.end in critical_events and earliest[edge.end] - earliest[i] == edge.weight:
-                critical_activities.append((i + 1, edge.end + 1))
-
-    return T, critical_activities
-
-
-n, m = map(int, input().split())
-edges = [list(map(int, input().split())) for _ in range(m)]
-
-# 求解关键活动
-T, critical_activities = find_critical_activities(n, m, edges)
-
-print(T)
-for activity in critical_activities:
-    print(*activity)
-```
-
-
-
-```python
-from collections import deque, defaultdict
-from dataclasses import dataclass
-
-
-@dataclass
-class Edge:
-    end: int
-    weight: int
-
-
-def topo_sort(graph, in_degrees, n):
-    queue = deque([i for i in range(n) if in_degrees[i] == 0])
-    topo_order = []
-    while queue:
-        node = queue.popleft()
-        topo_order.append(node)
-        for edge in graph[node]:
-            in_degrees[edge.end] -= 1
-            if in_degrees[edge.end] == 0:
-                queue.append(edge.end)
-    return topo_order
-
-
-def find_critical_activities(n, m, edges):
-    graph = defaultdict(list)
-    in_degrees = [0] * n
-    for u, v, w in edges:
-        graph[u - 1].append(Edge(v - 1, w))
-        in_degrees[v - 1] += 1
-
-    topo_order = topo_sort(graph, in_degrees[:], n)
-    if not topo_order:
-        return ["No"]
-
-    est = [0] * n
-    for node in topo_order:
-        for edge in graph[node]:
-            est[edge.end] = max(est[edge.end], est[node] + edge.weight)
-
-    T = max(est)
-
-    # 计算最晚开始时间
-    lst = [T] * n
-    for node in reversed(topo_order):
-        for edge in graph[node]:
-            lst[node] = min(lst[node], lst[edge.end] - edge.weight)
-
-    # 确定关键事件
-    critical_events = [i for i in range(n) if est[i] == lst[i]]
-
-    # 确定关键活动
-    critical_activities = []
-    for node in critical_events:
-        for edge in graph[node]:
-            # 关键活动通常指的是导致关键事件发生的活动，而不是所有指向关键事件的活动都是关键活动。
-            if edge.end in critical_events and est[node] == est[edge.end] - edge.weight:
-                critical_activities.append((node + 1, edge.end + 1))
-
-    # critical_activities.sort()
-
-    return T, ["{} {}".format(u, v) for u, v in critical_activities]
-
-
-n, m = map(int, input().split())
-edges = [tuple(map(int, input().split())) for _ in range(m)]
-T, critical_activities = find_critical_activities(n, m, edges)
-print(T)
-print('\n'.join(critical_activities))
-
-```
 
 
 
