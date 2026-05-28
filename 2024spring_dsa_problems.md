@@ -25295,7 +25295,13 @@ O(n)，需要存储所有队列元素及其位置信息。
 
 ## T27351:01最小生成树
 
-mst, http://cs101.openjudge.cn/practice/27351/
+补图连通分量, http://cs101.openjudge.cn/practice/27351/
+
+**30937:01最小生成树 (new data)**
+
+http://cs101.openjudge.cn/practice/30937/
+
+
 
 给定一张 n 个点的完全图. 图中所有边的边权均为 0/1, 且有且仅有 m 条边边权为 1.
 
@@ -25390,65 +25396,106 @@ print(components - 1)
 
 
 
-并查集方法
+使用**并查集（Union-Find）**实现的高效优化版本。
+
+思路：基于连通块大小的并查集
+
+在补图中，如果节点 $i$ 与某个连通块 $C$ 之间**没有**完全重合的边（即原图中 $i$ 到 $C$ 的边数小于 $C$ 的大小 $|C|$），则说明在补图中 $i$ 至少与 $C$ 中的一个节点相连。因此，我们可以在补图中将 $i$ 与该连通块合并。
+
+通过维护当前所有连通块的根节点集合 `active_roots`，我们只需在遍历每个节点 $i$ 时：
+1. 统计 $i$ 到各个连通块的边数。
+2. 遍历 `active_roots`，若 $i$ 到某连通块的边数 $< \text{该连通块大小}$，则进行并查集合并。
+
+**时间复杂度证明**：
+虽然看似有两层循环，但对于节点 $i$，未发生合并的连通块数量不会超过 $i$ 的度数 $deg(i)$；而发生合并的次数在整个算法运行期间最多只有 $N-1$ 次。因此，整体时间复杂度为 $O(N \alpha(N) + M)$，其中 $\alpha$ 为阿克曼反函数，效率极高。
 
 ```python
 import sys
-sys.setrecursionlimit((1 << 30) - 1)
 
-# 输入节点数n和边数m
-n, m = map(int, input().split())
+def solve():
+    # 使用快速输入
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    n = int(input_data[0])
+    m = int(input_data[1])
+    
+    # 初始化原图邻接表
+    adj = [[] for _ in range(n)]
+    idx = 2
+    for _ in range(m):
+        u = int(input_data[idx]) - 1
+        v = int(input_data[idx+1]) - 1
+        adj[u].append(v)
+        adj[v].append(u)
+        idx += 2
+        
+    # 并查集数组：parent 记录父节点，sz 记录连通块大小
+    parent = list(range(n))
+    sz = [1] * n
+    
+    # 并查集查找（迭代版路径压缩，避免递归栈溢出）
+    def find(i):
+        path = []
+        while parent[i] != i:
+            path.append(i)
+            i = parent[i]
+        for node in path:
+            parent[node] = i
+        return i
 
-# 初始化邻接集合（存储每个节点的邻居）
-li = [set() for _ in range(n)]
-for _ in range(m):
-    a, b = map(int, input().split())
-    # 转换为0-based索引
-    li[a-1].add(b-1)
-    li[b-1].add(a-1)
+    # 并查集合并（按秩合并）
+    def union(i, j):
+        root_i = find(i)
+        root_j = find(j)
+        if root_i != root_j:
+            # 将小树合并到大树上
+            if sz[root_i] < sz[root_j]:
+                root_i, root_j = root_j, root_i
+            parent[root_j] = root_i
+            sz[root_i] += sz[root_j]
+            return root_i, root_j  # 返回合并后的根和被合并的根
+        return None
 
-# 并查集父节点数组初始化
-di = list(range(n))
-# 连通n个节点需要的最少边数（初始为n-1）
-edges = n - 1
-# 标记已处理的节点
-checked = set()
+    # 记录当前所有活跃的连通块根节点
+    active_roots = set(range(n))
+    
+    for i in range(n):
+        # 统计节点 i 在原图中到各个连通块的边数
+        comp_edge_count = {}
+        for neighbor in adj[i]:
+            root = find(neighbor)
+            comp_edge_count[root] = comp_edge_count.get(root, 0) + 1
+        
+        root_i = find(i)
+        to_union = []
+        
+        # 遍历所有活跃的连通块
+        for root in active_roots:
+            if root == root_i:
+                continue
+            # 若原图中 i 到该连通块的边数小于该连通块的总大小
+            # 则说明补图中 i 与该连通块至少有一条边相连，可以合并
+            if comp_edge_count.get(root, 0) < sz[root]:
+                to_union.append(root)
+        
+        # 执行合并操作，并更新活跃根节点集合
+        for root in to_union:
+            res = union(i, root)
+            if res:
+                winner, loser = res
+                active_roots.discard(loser)  # 移除已被合并的根
 
-# 并查集查找函数（带路径压缩）
-def fin(i):
-    if di[i] != i:
-        di[i] = fin(di[i])
-    return di[i]
+    # 最终剩余的连通块数量
+    ans = len(active_roots) - 1
+    print(ans)
 
-# 并查集合并函数
-def union(i, j):
-    # 若已连通，返回True；否则合并并返回False
-    if fin(i) == fin(j):
-        return True
-    di[fin(i)] = fin(j)
-    return False
-
-# 遍历所有节点处理补图边
-for i in range(n):
-    if i in checked:
-        continue
-    checked.add(i)
-    # 当前节点的邻居集合
-    j = li[i]
-    # 补图节点：所有非邻居节点（排除自身）
-    for u in set(range(n)) - j:
-        # 合并i和u，若合并成功则减少需要的边数
-        if not union(i, u):
-            edges -= 1
-            checked.add(u)
-        # 提前终止：已满足连通条件
-        if edges == 0:
-            print(0)
-            exit()
-
-# 输出最终需要补充的边数
-print(edges)
+if __name__ == '__main__':
+    solve()
 ```
+
+
 
 
 
