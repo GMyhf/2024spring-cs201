@@ -31974,7 +31974,7 @@ print('\n'.join(critical_activities))
 
 
 
-## M30912:累加树
+## M30912: 累加树
 
 构建 BST + 右-根-左累加 + BFS 输出, http://cs101.openjudge.cn/practice/30912
 
@@ -32165,7 +32165,7 @@ if __name__ == "__main__":
 
 
 
-## T30921:猫猫搭积木
+## T30921: 猫猫搭积木
 
 DSU, http://cs101.openjudge.cn/practice/30921
 
@@ -32312,6 +32312,237 @@ def solve():
 if __name__ == '__main__':
     solve()
 ```
+
+
+
+【李承翰、数学科学学院】思路：使用并查集，本题特点在于，还需要实现连通分支的解散。如果解散时直接处理连通分支的每个点，应该会超时，我们需要实现解散的“懒标记”。
+用num[i]表示以i为根节点的连通分支的点数，如果union之后发现超了，就解散，把i的parent指向一个专门的点destroyed（这个点表示该连通分支已解散），这个“烂摊子”暂时不管。
+当我们查找一个积木所在的连通分支时，如果查到了根是destroyed，就说明它之前的连通分支解散了，此时我们给这块积木赋予一个新的节点，这个节点就是初始状态，自成一个连通分支。原来那个节点就废了。
+我们记录一下每一块积木现在对应的是哪个节点，每个节点现在对应几号积木，每次合并操作都操作那块积木现在对应的节点就可以了。
+总体来看，我们遇到连通分支解散时，不马上处理它的每个节点，而是只给根节点一个懒标记，在以后某一次操作遇到其中的节点时，再去处理它。时间复杂度和普通的并查集在同一量级。
+
+```python
+class UnionFind:  
+    def __init__(self, n, q, s):  
+        self.s = s
+        self.destroyed = n + 2 * q  
+        self.parent = list(range(n + 2 * q + 1))  
+        self.rank = [0] * (n + 2 * q + 1)  
+        self.num = [1] * (n + 2 * q + 1)  
+        self.count = n  
+        self.fakeid = list(range(n))  
+        self.realid = list(range(n + 2 * q))  
+        self.safeplace = n  
+  
+    def _find(self, x):  
+        if self.parent[x] != x:  
+            self.parent[x] = self._find(self.parent[x])  
+        return self.parent[x]  
+  
+    def find(self, x):  
+        if self._find(x) == self.destroyed:  
+            realid = self.realid[x]  
+            self.fakeid[realid] = self.safeplace  
+            self.realid[self.safeplace] = realid  
+            x = self.safeplace  
+            self.safeplace += 1  
+        return self.parent[x]  
+    def union(self, x, y):  
+        x, y = self.fakeid[x], self.fakeid[y]  
+        root_x = self.find(x)  
+        root_y = self.find(y)  
+        if root_x != root_y:  
+            if self.rank[root_x] < self.rank[root_y]:  
+                self.parent[root_x] = root_y  
+                self.num[root_y] += self.num[root_x]  
+                totest = root_y  
+            elif self.rank[root_x] > self.rank[root_y]:  
+                self.parent[root_y] = root_x  
+                self.num[root_x] += self.num[root_y]  
+                totest = root_x  
+            else:  
+                self.parent[root_y] = root_x  
+                self.num[root_x] += self.num[root_y]  
+                self.rank[root_x] += 1  
+                totest = root_x  
+            self.count -= 1  
+            if self.num[totest] >= self.s:  
+                self.count += (self.num[totest] - 1)  
+                self.parent[totest] = self.destroyed  
+  
+n, q, s = map(int, input().split())  
+unionFind = UnionFind(n, q, s)  
+for _ in range(q):  
+    a, b = map(int, input().split())  
+    unionFind.union(a-1, b-1)  
+    print(unionFind.count)
+```
+
+
+
+这道题的设计非常巧妙。上面代码采用了一种**基于虚拟节点重构的“懒标记”（Lazy Tag）**思路。在面对并查集的解散（Collapse）操作时，它没有选择立刻去暴力拆散每一个节点，而是通过标记根节点被销毁，并在后续访问时“按需”动态分配新节点。
+
+下面详细**解读核心机制**、进行**深度优化**（包括消除递归以防栈溢出、精简并查集属性、加速输入输出等），并**添加详尽的注释**。
+
+**一、 核心思路解读（Lazy Tag 的妙处）**
+
+该算法的核心在于解决**“如何低成本地将一个集合中的所有元素恢复为单元素集合”**。
+
+1. **虚拟节点与映射（`fakeid` & `realid`）**：
+   - 因为积木在倒塌后会变成新的独立个体，我们需要给它分配一个新的“干净”的并查集节点。
+   - `fakeid[i]`：记录第 `i` 个积木当前映射到并查集中的哪个**真实物理节点**。
+   - `realid[u]`：记录并查集中的物理节点 `u` 当前对应的是哪一个**积木编号**。
+
+2. **懒标记（`destroyed`）**：
+   - 当一堆积木的数量 $\ge s$ 时，我们直接将该堆的根节点的父节点指向一个特殊的虚拟节点 `destroyed`。
+   - 此时，该堆中的其他子节点并没有立即被修改（它们的父节点依然指向原来的根），这就是**懒标记**。
+
+3. **按需激活（`find` 时的重构）**：
+   - 当我们以后查找某个积木 `x` 时，通过 `_find(x)` 沿着父链向上找。
+   - 如果发现终点是 `destroyed`，说明当前积木所在的堆在过去的某个时刻已经崩塌了。
+   - 此时，我们为该积木分配一个全新的物理节点 `safeplace`（初始化为单元素集合），并将该积木的映射指向 `safeplace`。原来的旧节点则彻底废弃。
+
+4. **空间开销**：
+   - 每次 `union` 操作最多会使 2 个积木发生重新分配（即 `safeplace` 增加）。
+   - 总操作次数为 $q$，因此最多产生 $2q$ 个新节点。所以并查集数组的最大空间为 $n + 2q$，空间复杂度为 $O(n + q)$，完全在内存限制（1GB）以内。
+
+---
+
+**二、 性能优化要点**
+
+为了确保在 $q = 5 \times 10^5$ 的高并发输入下不超时，我们进行了以下优化：
+
+1. **改用迭代版并查集（非递归）**：Python 默认递归深度仅为 1000，且函数调用开销较大。使用双循环迭代实现路径压缩，既安全又高效。
+2. **按大小合并（Union by Size）**：原代码使用了 `rank`。由于我们已经维护了每个集合的大小 `num`，可以直接**按大小合并**（把成员少合并到成员多的根上），这样可以完全省去 `rank` 数组，减少内存开销和维护成本。
+3. **快速 I/O**：使用 `sys.stdin.read().split()` 一次性读入所有数据，并使用 `sys.stdout.write` 批量输出，这是 Python 应对大数据量输入输出的标配。
+
+---
+
+**三、 优化后的完整代码（含详尽注释）**
+
+```python
+import sys
+
+class UnionFind:  
+    def __init__(self, n, q, s):  
+        self.s = s
+        # 虚拟销毁节点：所有崩塌的堆的根节点最终都会指向这里
+        self.destroyed = n + 2 * q  
+        
+        # 数组最大长度：初始 n 个节点 + 最多 2*q 次懒重构分配的节点 + 1 个销毁标记点
+        max_size = n + 2 * q + 1
+        
+        # parent[i] 表示节点 i 的父节点
+        self.parent = list(range(max_size))  
+        # num[i] 表示以 i 为根节点的集合中的积木数量
+        self.num = [1] * max_size  
+        # 当前的总堆数
+        self.count = n  
+        
+        # fakeid[i]：积木 i 当前对应的物理节点编号（随着解散会映射到新节点）
+        self.fakeid = list(range(n))  
+        # realid[u]：物理节点 u 对应的原始积木编号
+        self.realid = list(range(max_size))  
+        
+        # 下一个可用的全新空闲物理节点编号
+        self.safeplace = n  
+  
+    def _find(self, x):  
+        """
+        迭代版并查集寻根（带路径压缩）
+        避免了递归深度限制，并且在 Python 中运行效率更高
+        """
+        parent = self.parent
+        root = x
+        # 第一步：找到根节点
+        while parent[root] != root:
+            root = parent[root]
+        
+        # 第二步：路径压缩，将路径上的所有节点直接指向根节点
+        curr = x
+        while curr != root:
+            nxt = parent[curr]
+            parent[curr] = root
+            curr = nxt
+            
+        return root  
+  
+    def find(self, x):  
+        """
+        外部调用的寻根方法：处理“懒标记”的重构
+        """
+        root = self._find(x)
+        # 如果寻根找到了 destroyed，说明该积木所在的旧堆已经崩塌
+        if root == self.destroyed:  
+            # 找到当前物理节点 x 对应的真实积木编号
+            real_block = self.realid[x]  
+            sp = self.safeplace
+            
+            # 懒处理：为该积木分配一个全新的独立物理节点
+            self.fakeid[real_block] = sp  
+            self.realid[sp] = real_block  
+            self.safeplace += 1  
+            
+            # 新节点初始时自成一堆（parent[sp] = sp，size = 1 已在初始化时配置完成）
+            return sp  
+        return root  
+
+    def union(self, x, y):  
+        # 找到两块积木当前映射到的物理节点
+        u, v = self.fakeid[x], self.fakeid[y]  
+        root_u = self.find(u)  
+        root_v = self.find(v)  
+        
+        if root_u != root_v:  
+            # 按大小（Size）合并：将小堆合并到大堆中
+            if self.num[root_u] < self.num[root_v]:
+                self.parent[root_u] = root_v
+                self.num[root_v] += self.num[root_u]
+                totest = root_v
+            else:
+                self.parent[root_v] = root_u
+                self.num[root_u] += self.num[root_v]
+                totest = root_u
+            
+            # 合并后，总堆数先减少 1
+            self.count -= 1  
+            
+            # 如果新堆的大小达到了崩塌上限 s
+            if self.num[totest] >= self.s:  
+                # 该堆里的所有积木重新变成单元素堆
+                # 堆数变化：原本 1 个大堆，变成了 num[totest] 个单元素堆，净增加 num[totest] - 1
+                self.count += (self.num[totest] - 1)  
+                # 标记该堆的根节点被销毁（懒标记关键一步）
+                self.parent[totest] = self.destroyed  
+  
+def solve():
+    # 一次性读取全部输入以优化 I/O 速度
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    
+    iterator = iter(input_data)
+    n = int(next(iterator))
+    q = int(next(iterator))
+    s = int(next(iterator))
+    
+    uf = UnionFind(n, q, s)
+    out = []
+    
+    for _ in range(q):
+        a = int(next(iterator)) - 1
+        b = int(next(iterator)) - 1
+        uf.union(a, b)
+        out.append(str(uf.count))
+        
+    # 批量输出结果
+    sys.stdout.write('\n'.join(out) + '\n')
+
+if __name__ == '__main__':
+    solve()
+```
+
+
 
 
 
