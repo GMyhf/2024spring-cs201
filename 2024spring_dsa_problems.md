@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-05-28 14:44 GMT+8*
+*Updated 2026-06-04 12:12 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -30765,6 +30765,144 @@ if __name__ == "__main__":
 
 
 
+## M30680:森林局部排序遍历
+
+tree, http://cs101.openjudge.cn/practice/30680/
+
+给定一个**森林**（由一棵或多棵树组成）。对于森林中的每一棵树，遍历规则如下：
+
+1. **局部排序规则**：遍历到每个节点时，将**该节点本身**与其**所有直接子节点**的值放在一起，按从小到大的顺序进行遍历。
+2. **递归规则**：
+   - 如果遇到的是子节点，则递归进入该子节点进行深度遍历。
+   - 如果遇到的是当前节点本身，则输出该节点的值。
+3. **森林规则**：如果森林中存在多棵树，首先找到所有树的根节点，按照**根节点的值从小到大**的顺序依次对每棵树进行上述遍历。
+
+每个节点的值为互不相同的正整数。
+
+**输入**
+
+第一行：节点总个数 n (n < 1000)。
+接下来的 n 行：每行代表一个节点的结构。第一个数是此节点的值，之后的数表示它的所有直接子节点的值。如果没有子节点，该行只有一个数。
+
+**输出**
+
+输出遍历结果，每行一个节点的值。
+
+样例输入
+
+```
+4
+15 2
+2
+8 20
+20
+```
+
+样例输出
+
+```
+8
+20
+2
+15
+# 解释：
+1. 该输入构成了两棵树（一个森林）：
+   - 第一棵树：根为 15，子节点为 2。
+   - 第二棵树：根为 8，子节点为 20。
+2. 根节点集合为 {8, 15}。按规则，先处理较小的根 8。
+3. 局部排序遍历根 8
+4. 局部排序遍历根 15
+```
+
+来源
+
+2026 spring yan
+
+
+
+```python
+import sys
+
+# 增加递归深度限制，防止深层树结构导致溢出
+sys.setrecursionlimit(2000)
+
+def solve():
+    # 读取所有输入并按行处理
+    input_data = sys.stdin.read().splitlines()
+    if not input_data:
+        return
+    
+    # 第一行是节点个数 n
+    try:
+        n = int(input_data[0].strip())
+    except (ValueError, IndexError):
+        return
+
+    adj = {}
+    all_nodes = set()
+    all_children = set()
+    
+    # 处理接下来的 n 行输入
+    line_count = 0
+    for i in range(1, len(input_data)):
+        if line_count >= n:
+            break
+        
+        line = input_data[i].strip()
+        if not line:
+            continue
+        
+        parts = list(map(int, line.split()))
+        parent = parts[0]
+        children = parts[1:]
+        
+        adj[parent] = children
+        all_nodes.add(parent)
+        for child in children:
+            all_children.add(child)
+            
+        line_count += 1
+    
+    # 根节点是所有节点中没有出现在子节点集合里的那个
+    # 注意：即便某些叶子节点在输入中只有一行且没有子节点，它们也会被加入 all_nodes
+    roots = list(all_nodes - all_children)
+    
+    # 如果没有找到根节点（理论上树结构必然有根），直接退出
+    if not roots:
+        return
+    
+    # 虽然题目暗示是一棵树，但如果是森林，我们按根节点大小排序后依次遍历
+    roots.sort()
+
+    def dfs(u):
+        # 获取当前节点的子节点
+        children_list = adj.get(u, [])
+        
+        # 核心规则：将父节点和所有子节点的值放在一起排序
+        items = [u] + children_list
+        items.sort()
+        
+        # 按照排序后的顺序进行遍历
+        for item in items:
+            if item == u:
+                # 如果当前值是父节点，输出它
+                print(item)
+            else:
+                # 如果当前值是子节点，递归进入该子节点
+                dfs(item)
+
+    # 从根节点开始执行
+    for r in roots:
+        dfs(r)
+
+if __name__ == "__main__":
+    solve()
+```
+
+
+
+
+
 ## T30830: 地铁换乘（多组查询版）
 
 倍增法，http://cs101.openjudge.cn/practice/30830/
@@ -31201,7 +31339,7 @@ if __name__ == "__main__":
 
 
 
-### T30868:upstairs
+## T30868:upstairs
 
 同余最短路, http://cs101.openjudge.cn/practice/30868
 
@@ -31453,6 +31591,134 @@ def solve():
 if __name__ == '__main__':
     solve()
 ```
+
+
+
+## M30874: 匹配队友
+
+queue, http://cs101.openjudge.cn/practice/30874/
+
+在某MMORPG游戏的地下城系统中，一个标准小队由 **1 名坦克 (T, Tank)**、**1 名治疗 (H, Healer)** 和 **3 名输出 (D, DPS)** 组成。假设其按照一种简单的方式匹配随机地下城队友：玩家按先后顺序进入匹配队列。每当队列中的剩余玩家满足上述职责要求时，系统会立即从队列中挑选出**最早进入匹配**的 5 名符合条件的玩家组成一支队伍。现给定某时刻的匹配队列，输出每位玩家所属的队伍编号。若有玩家未能成功组队，其队伍编号输出为 0。
+
+**输入**
+
+第一行一个整数 N (1 <= N <= 10^5)。
+第二行 N 个字符，由 T, H, D 组成，用空格隔开。
+
+**输出**
+
+一行由空格隔开的 N 个整数。
+
+样例输入
+
+```
+Sample input 1:
+10
+D D T D H T D D H D
+Sample input 2:
+6
+T H D D D T
+```
+
+样例输出
+
+```
+Sample output 1:
+1 1 1 1 1 2 2 2 2 2
+Sample output 2:
+1 1 1 1 1 0
+```
+
+提示：queue, implementation
+
+来源：2026 spring TA-lxy
+
+
+
+这是一个典型的队列模拟问题。由于需要按照玩家进入队列的先后顺序来组队，可以使用**双端队列（`collections.deque`）**来分别存储坦克（T）、治疗（H）和输出（D）这三种职责的玩家在原输入中的索引。
+
+**解题思路**
+
+1. **初始化数据结构**：
+   - 使用三个队列 `T_q`、`H_q`、`D_q` 分别记录对应职责玩家的索引。
+   - 使用一个长度为 $N$ 的数组 `ans` 来存储每位玩家最终的队伍编号，初始值全部设为 `0`。
+   - 使用一个变量 `team_count` 记录当前已组建的队伍数量（从 1 开始）。
+
+2. **顺序遍历玩家**：
+   - 依次读入每位玩家，将其索引加入对应职责的队列中。
+   - 每次加入新玩家后，检查是否满足组队条件：即 `T_q` 至少有 1 个元素，`H_q` 至少有 1 个元素，且 `D_q` 至少有 3 个元素。
+   - 如果满足条件，说明可以组建一支新队伍：
+     - `team_count` 自增 1。
+     - 从 `T_q` 中取出最先进入的 1 个索引，从 `H_q` 取出 1 个，从 `D_q` 取出 3 个。
+     - 将这 5 个索引在 `ans` 数组中对应的值更新为当前的 `team_count`。
+
+3. **输出结果**：
+   - 遍历结束后，`ans` 数组中未成功组队玩家的值保持为 `0`，其余则是对应的队伍编号。
+
+**Python 代码实现**
+
+```python
+import sys
+from collections import deque
+
+
+def solve():
+    # 使用 sys.stdin.read 快速读取输入，适合处理 N = 10^5 的情况
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+
+    N = int(input_data[0])
+    players = input_data[1:]
+
+    # 初始化存储结果的数组，未组队默认为 0
+    ans = [0] * N
+
+    # 定义三个队列存储不同职责玩家的索引
+    T_q = deque()
+    H_q = deque()
+    D_q = deque()
+
+    team_count = 0
+
+    for i in range(N):
+        role = players[i]
+        if role == "T":
+            T_q.append(i)
+        elif role == "H":
+            H_q.append(i)
+        elif role == "D":
+            D_q.append(i)
+
+        # 检查是否满足组队条件：1 T, 1 H, 3 D
+        if len(T_q) >= 1 and len(H_q) >= 1 and len(D_q) >= 3:
+            team_count += 1
+            # 取出最早进入队列的 5 名符合条件的玩家
+            t_idx = T_q.popleft()
+            h_idx = H_q.popleft()
+            d1_idx = D_q.popleft()
+            d2_idx = D_q.popleft()
+            d3_idx = D_q.popleft()
+
+            # 标记他们的队伍编号
+            ans[t_idx] = team_count
+            ans[h_idx] = team_count
+            ans[d1_idx] = team_count
+            ans[d2_idx] = team_count
+            ans[d3_idx] = team_count
+
+    # 输出结果，以空格分隔
+    print(*(ans))
+
+
+if __name__ == "__main__":
+    solve()
+```
+
+**复杂度分析**
+
+- **时间复杂度**：$O(N)$。每个玩家的索引最多入队一次、出队一次，队列操作的时间复杂度为 $O(1)$，因此整体时间复杂度与 $N$ 呈线性关系，能够高效通过 $N = 10^5$ 的测试。
+- **空间复杂度**：$O(N)$。主要用于存储队列和结果数组 `ans`。
 
 
 
@@ -32160,6 +32426,402 @@ if __name__ == "__main__":
     import sys
     solve()
 ```
+
+
+
+## T30913: 猫猫逛公园 
+
+SCC, http://cs101.openjudge.cn/practice/30913/
+
+> 黄色的树林里分出两条路， 可惜我不能同时去涉足， 我在那路口久久伫立， 向着一条路极目望去， 直到它消失在丛林深处。
+
+猫猫要去公园散步。
+
+公园里有 n 个岔路口，通过 m 条有向路径相互连接。在每条路径上都有一些美丽的风景。猫猫给每条路径上的风景都打了分，第 i 条路径上的风景值为 wi，猫猫经过一次就可以获得 wi 的愉悦度。但是，猫猫对重复的风景也会厌倦，具体地，如果猫猫已经经过了 k 次某条路径，那么在第 k+1 次经过时，风景值会比上一次经过时减少 k。如果风景值被减少到 <= 0，猫猫将不再获得愉悦度。为了方便计算，猫猫帮你推导好了以下公式：
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1779708912.png" alt="img" style="zoom:50%;" />
+
+例如，若某路径上最初的风景值为 9，那么猫猫从第一次到第四次途经时依次能获得 9, 8, 6, 3 的愉悦度。从第五次及以后，猫猫将无法再从这条路径上获得任何愉悦度，但仍然可以经过该路径，也不会获得负的愉悦度。
+
+因为路径是有向的，所以猫猫可能不能完全游览所有的路径直到所有路径的风景值 <= 0，甚至不能游览每一条路径各一次！那些未选择的路，只能成为遗憾了。
+
+猫猫决定从第 s 个岔路口开始出发游览公园。请问猫猫最多能在公园里面获得多少愉悦度？
+
+**输入**
+
+第一行包含两个整数 n 和 m（1 <= n <= 10^5，0 <= m <= 2 * 10^5），分别表示公园里的岔路口数量和有向路径数量。
+接下来的 m 行，每行包含三个整数 xi、yi 和 wi（1 <= xi, yi <= n，0 <= wi <= 10^8），表示一条从岔路口 xi 到岔路口 yi 的有向路径，路径上最初的风景值为 wi。允许从某个岔路口到自身的路径，也允许两个岔路口之间存在多条路径。
+
+最后一行包含一个整数 s（1 <= s <= n），表示猫猫的起始位置。
+
+**输出**
+
+输出一个整数，表示猫猫在游览中最多能够获得的愉悦度。
+
+样例输入
+
+```
+sample1 input:
+2 2
+1 2 4
+2 1 4
+1
+sample2 input:
+3 3
+1 2 4
+2 3 3
+1 3 8
+1
+sample3 input:
+10 11
+1 10 8
+10 9 8
+9 1 8
+1 7 16777216
+8 7 1048576
+3 8 20
+3 6 7
+6 5 10
+5 2 10
+2 6 10
+6 8 3
+3
+```
+
+样例输出
+
+```
+sample1 output:
+16
+
+sample2 output:
+8
+
+sample3 output:
+1048676
+```
+
+提示
+
+SCC, Topological Order, DP（强连通，拓扑排序，动态规划）
+样例 3 是猫猫手动构造的强数据，特意加上方便调试的。
+共 100 个测试点，总输入不超过 100MB
+
+来源：2026 spring, RainFestival
+
+
+
+```python
+import sys
+
+
+def solve():
+    # 使用 sys.stdin.read 快速读取输入，防止 I/O 成为瓶颈
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    n = int(input_data[0])
+    m = int(input_data[1])
+
+    adj = [[] for _ in range(n + 1)]
+    radj = [[] for _ in range(n + 1)]
+
+    idx = 2
+    for _ in range(m):
+        u = int(input_data[idx])
+        v = int(input_data[idx + 1])
+        w = int(input_data[idx + 2])
+        adj[u].append((v, w))
+        radj[v].append(u)
+        idx += 3
+
+    s = int(input_data[idx])
+
+    # ---------------- Kosaraju 算法求强连通分量 (SCC) ----------------
+
+    # 步骤 1：在原图上运行非递归 DFS，求得后序遍历序列
+    visited = [False] * (n + 1)
+    order = []
+
+    for i in range(1, n + 1):
+        if not visited[i]:
+            state_stack = [(i, 0)]
+            visited[i] = True
+            while state_stack:
+                u, edge_idx = state_stack[-1]
+                if edge_idx < len(adj[u]):
+                    v, _ = adj[u][edge_idx]
+                    state_stack[-1] = (u, edge_idx + 1)
+                    if not visited[v]:
+                        visited[v] = True
+                        state_stack.append((v, 0))
+                else:
+                    order.append(u)
+                    state_stack.pop()
+
+    # 步骤 2：在反图上，按照后序遍历的逆序进行非递归 DFS，划分 SCC
+    visited2 = [False] * (n + 1)
+    scc_id = [-1] * (n + 1)
+    scc_count = 0
+
+    for u in reversed(order):
+        if not visited2[u]:
+            stack = [u]
+            visited2[u] = True
+            while stack:
+                curr = stack.pop()
+                scc_id[curr] = scc_count
+                for v in radj[curr]:
+                    if not visited2[v]:
+                        visited2[v] = True
+                        stack.append(v)
+            scc_count += 1
+
+    # ---------------- 榨干单条边能获得的最大愉悦度 ----------------
+    def harvest(w):
+        if w <= 0:
+            return 0
+        # 求解 T * (T - 1) / 2 < w 时的最大正整数 T
+        val = 1 + 8 * w
+        r = int(val**0.5)
+        T = (1 + r) // 2
+        # 对 T 进行微调以确保 100% 精确
+        while T * (T - 1) // 2 >= w:
+            T -= 1
+        while (T + 1) * T // 2 < w:
+            T += 1
+        return T * w - (T - 1) * T * (T + 1) // 6
+
+    # ---------------- 缩点构建 DAG ----------------
+    scc_val = [0] * scc_count
+    dag_edges = [{} for _ in range(scc_count)]
+
+    for u in range(1, n + 1):
+        su = scc_id[u]
+        for v, w in adj[u]:
+            sv = scc_id[v]
+            if su == sv:
+                # 强连通分量内部的边可以被无限次榨干
+                scc_val[su] += harvest(w)
+            else:
+                # 强连通分量之间的跨越边，只能走一次，多条边时保留权值最大的一条
+                if sv not in dag_edges[su] or dag_edges[su][sv] < w:
+                    dag_edges[su][sv] = w
+
+    # ---------------- 拓扑排序 (Kahn 算法) ----------------
+    in_degree = [0] * scc_count
+    for su in range(scc_count):
+        for sv in dag_edges[su]:
+            in_degree[sv] += 1
+
+    from collections import deque
+
+    queue = deque([i for i in range(scc_count) if in_degree[i] == 0])
+    topo_order = []
+    while queue:
+        u = queue.popleft()
+        topo_order.append(u)
+        for v in dag_edges[u]:
+            in_degree[v] -= 1
+            if in_degree[v] == 0:
+                queue.append(v)
+
+    # ---------------- DAG 上的动态规划 (DP) ----------------
+    dp = [-1] * scc_count
+    scc_s = scc_id[s]
+    dp[scc_s] = scc_val[scc_s]
+
+    for u in topo_order:
+        if dp[u] == -1:
+            continue
+        for v, w in dag_edges[u].items():
+            val = dp[u] + w + scc_val[v]
+            if val > dp[v]:
+                dp[v] = val
+
+    # 最大的愉悦度是所有可达节点中 dp 值的最大值
+    print(max(dp))
+
+
+if __name__ == "__main__":
+    solve()
+```
+
+
+
+## T30919: 猫猫去旅行
+
+Heap, Math, http://cs101.openjudge.cn/practice/30919/
+
+猫猫要去旅行。
+
+在一条长为 L 的街道上有 n 处景点，第 i 处位于 x_i。猫猫的旅行计划一共有 i 天，每天要从住处去第 i 处景点。猫猫准备在街道上选择两个地方 s1,s2 住，并且在第 t 天晚上从 s1 搬去 s2（当然猫猫也可以不搬）。猫猫要使得自己每天往返景点的距离之和 
+
+$2 \times (\sum\limits_{i=1}^{t} |x_i-s_1|+\sum\limits_{i=t+1}^{n}|x_i-s_2|)$ 
+
+最短。问这个距离是多少。
+
+**输入**
+
+第一行包含一个整数 $n$（$1 \leq n \leq 5\times 10^5$），表示房屋数目。
+
+第二行包含 $n$ 个整数 $x_i$（$1\le x_i\le 10^9$），两两互不相同，表示每天要去的位置。
+
+**输出**
+
+输出一个整数，表示最短距离。
+
+样例输入
+
+```
+9
+3 4 1 9 2 12 6 5 7
+```
+
+样例输出
+
+```
+36
+```
+
+提示：
+
+1、Heap, Math（堆，数学）
+2、共 50 个测试点，单个测试点输入不超过 5MB，总输入不超过 120MB。
+
+来源：2026 spring, RainFestival
+
+
+
+为了解决这个问题，我们需要在街道上选择两个住处 $s_1, s_2$ 和一个搬家的时间 $t$（$0 \leq t \leq n$），以最小化猫猫每日往返景点的总距离。
+
+根据绝对值不等式的性质，对于给定的天数区间，要使往返景点的距离之和最小，住处的位置应当选择为这些天所去景点位置的中位数。
+
+定义：
+
+- $L(t)$ 为前 $t$ 天景点位置的中位数对应的最小绝对偏差和。
+- $R(t)$ 为后 $n-t$ 天（即第 $t+1$ 到 $n$ 天）景点位置的中位数对应的最小绝对偏差和。
+
+则我们需要计算出所有的 $L(t)$ 和 $R(t)$，并找出使 $L(t) + R(t)$ 最小的 $t$。通过双堆（一个大顶堆维护较小的一半元素，一个小顶堆维护较大的一半元素）可以动态地在 $O(n \log n)$ 的时间内求出所有前缀和后缀的中位数偏差和。
+
+ Python 代码
+
+```python
+import sys
+import heapq
+
+def solve():
+    # 快速读取输入
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+    n = int(input_data[0])
+    x = [int(v) for v in input_data[1:n+1]]
+    
+    # 预分配数组
+    L = [0] * (n + 1)
+    D = [0] * (n + 1)
+    
+    heappush = heapq.heappush
+    heappop = heapq.heappop
+    
+    # 1. 计算前缀偏差和 L
+    left = []
+    right = []
+    sum_left = 0
+    sum_right = 0
+    
+    if n > 0:
+        val = x[0]
+        heappush(left, -val)
+        sum_left = val
+        L[1] = 0
+        
+    for i in range(1, n):
+        val = x[i]
+        if val <= -left[0]:
+            heappush(left, -val)
+            sum_left += val
+        else:
+            heappush(right, val)
+            sum_right += val
+            
+        len_l = len(left)
+        len_r = len(right)
+        if len_l > len_r + 1:
+            moved = -heappop(left)
+            sum_left -= moved
+            heappush(right, moved)
+            sum_right += moved
+            len_l -= 1
+            len_r += 1
+        elif len_r > len_l:
+            moved = heappop(right)
+            sum_right -= moved
+            heappush(left, -moved)
+            sum_left += moved
+            len_l += 1
+            len_r -= 1
+            
+        L[i + 1] = sum_right - sum_left - left[0] * (len_l - len_r)
+        
+    # 2. 计算后缀偏差和 D (对反转数组运行相同逻辑)
+    left = []
+    right = []
+    sum_left = 0
+    sum_right = 0
+    x_rev = x[::-1]
+    
+    if n > 0:
+        val = x_rev[0]
+        heappush(left, -val)
+        sum_left = val
+        D[1] = 0
+        
+    for i in range(1, n):
+        val = x_rev[i]
+        if val <= -left[0]:
+            heappush(left, -val)
+            sum_left += val
+        else:
+            heappush(right, val)
+            sum_right += val
+            
+        len_l = len(left)
+        len_r = len(right)
+        if len_l > len_r + 1:
+            moved = -heappop(left)
+            sum_left -= moved
+            heappush(right, moved)
+            sum_right += moved
+            len_l -= 1
+            len_r += 1
+        elif len_r > len_l:
+            moved = heappop(right)
+            sum_right -= moved
+            heappush(left, -moved)
+            sum_left += moved
+            len_l += 1
+            len_r -= 1
+            
+        D[i + 1] = sum_right - sum_left - left[0] * (len_l - len_r)
+        
+    # 3. 寻找最优分割点 t
+    min_dist = float('inf')
+    for t in range(n + 1):
+        val = L[t] + D[n - t]
+        if val < min_dist:
+            min_dist = val
+            
+    # 如果 OJ 要求的输出包含公式中的系数 2，则输出 2 * min_dist
+    # 如果 OJ 存在描述与数据不符的情况（即样例输出为 18），则此处改为 print(min_dist)
+    print(2 * min_dist)
+
+if __name__ == '__main__':
+    solve()
+```
+
+
 
 
 
