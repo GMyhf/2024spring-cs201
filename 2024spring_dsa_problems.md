@@ -1,6 +1,6 @@
 # 数算（数据结构与算法）题目
 
-*Updated 2026-06-04 12:12 GMT+8*
+*Updated 2026-07-26 07:30 GMT+8*
  *Compiled by Hongfei Yan (2024 Spring)*
 
 
@@ -8284,6 +8284,863 @@ if __name__ == '__main__':
             print()
 
 ```
+
+
+
+## T03750:魔兽世界
+
+http://cs101.openjudge.cn/practice/03750/
+
+魔兽世界的西面是红魔军的司令部，东面是蓝魔军的司令部。两个司令部之间是依次排列的若干城市，城市从西向东依次编号为1,2,3 .... N ( N <= 20)。 
+
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/202607260703652.jpg)
+
+两军的司令部都会制造武士。武士一共有 dragon 、ninja、iceman、lion、wolf 五种。每种武士都有编号、生命值、攻击力这三种属性。
+
+双方的武士编号都是从1开始计算。红方制造出来的第 n 个武士，编号就是n。同样，蓝方制造出来的第 n 个武士，编号也是n。
+
+武士在刚降生的时候有一个初始的生命值，生命值在战斗中会发生变化，如果生命值减少到0或少于0，则武士死亡（消失）。
+
+在每个整点，即每个小时的第0分， 双方的司令部中各有一个武士降生。
+
+红方司令部按照 iceman、lion、wolf、ninja、dragon 的顺序制造武士。
+
+蓝方司令部按照 lion、dragon、ninja、iceman、wolf 的顺序制造武士。
+
+制造武士需要生命元。
+
+制造一个初始生命值为 m 的武士，司令部中的生命元就要减少 m 个。
+
+如果司令部中的生命元不足以制造某武士，那么司令部就等待，直到获得足够生命元后的第一个整点，才制造该武士。例如，在2:00，红方司令部本该制造一个 wolf ，如果此时生命元不足，那么就会等待，直到生命元足够后的下一个整点，才制造一个 wolf。
+
+在每个小时的第10分：所有的武士朝敌人司令部方向前进一步。即从己方司令部走到相邻城市，或从一个城市走到下一个城市。或从和敌军司令部相邻的城市到达敌军司令部。
+
+在每个小时的第20分：每个城市产出10个生命元。生命元留在城市，直到被武士取走。
+
+在每个小时的第30分：如果某个城市中只有一个武士，那么该武士取走该城市中的所有生命元，并立即将这些生命元传送到其所属的司令部。
+
+在每个小时的第40分：在有两个武士的城市，会发生战斗。
+在每个小时的第50分，司令部报告它拥有的生命元数量。
+
+每次战斗有且只有一方武士主动进攻。被攻击者生命值会减去进攻者的攻击力值。如果被攻击者生命值减至小于等于0，则其被杀死。
+
+如果被攻击者没有被杀死，则会发动反击，被反击者的生命值要减去反击者攻击力值的一半(去尾取整)。反击当然可能致敌人于死地。
+
+如果武士在战斗中杀死敌人（不论是主动进攻杀死还是反击杀死），则其司令部会立即向其发送8个生命元作为奖励，使其生命值增加8。当然前提是司令部得有8个生命元。如果司令部的生命元不足以奖励所有的武士，则优先奖励距离敌方司令部近的武士。
+
+如果某武士在某城市的战斗中杀死了敌人，则该武士的司令部立即取得该城市中所有的生命元。注意，司令部总是先奖励武士，然后再收回打了胜仗的城市的生命元。对于因司令部生命元不足而领不到奖励的武士，司令部也不会在取得战利品生命元后为其补发奖励。
+
+每次战斗都只有一方主动进攻一次。战斗并非是你死我活的，可能是双方都幸存。如果双方都幸存，则双方都不能拿走发生战斗的城市的生命元
+
+
+在插红旗的城市，以及编号为奇数的无旗城市，由红武士主动发起进攻。
+
+在插蓝旗的城市，以及编号为偶数的无旗城市，由蓝武士主动发起进攻。
+
+一开始所有的城市都是无旗的。当某个城市有连续两场战斗都是同一方的武士杀死敌人(两场战斗中间如果有若干个战斗时刻并没有发生战斗，则这两场战斗仍然算是连续的) ，那么该城市就会插上胜方的旗帜，若原来插着败方的旗帜，则败方旗帜落下。旗帜一旦插上，就一直插着，直到被敌人更换。一个城市最多只能插一面旗帜，旗帜没被敌人更换前，也不会再次插同颜色的旗。
+
+不同的武士各有其特点：
+
+dragon 在一次在它主动进攻的战斗结束后，如果还没有战死，就会欢呼。
+
+ninja 挨打了也从不反击敌人。
+
+iceman 每前进两步，在第2步完成的时候，生命值会减少9，攻击力会增加20。但是若生命值减9后会小于等于0，则生命值不减9,而是变为1。即iceman不会因走多了而死。
+
+lion 若是战死，则其战斗前的生命值就会转移到对手身上。
+
+在一个 wolf 通过主动攻击杀死敌人的次数达到偶数的时刻（次数从1开始算），在战斗完成后，该 wolf 生命值和攻击力都增加1倍。如果其杀死的敌人是lion,则攻击力和生命值先加倍，然后才吸取lion的生命值。获取总部的生命元奖励，发生在加倍之后。只有在主动攻击杀死敌人时才能有加倍的事情，反击杀死敌人则不不会发生加倍。
+
+武士到达对方司令部后就算完成任务了，从此就呆在那里无所事事。
+
+任何一方的司令部里若是出现了2个敌人，则认为该司令部已被敌人占领。
+任何一方的司令部被敌人占领，则战争结束。战争结束之后就不会发生任何事情了。
+
+
+给定一个时间，要求你将从0点0分开始到此时间为止的所有事件按顺序输出。事件及其对应的输出样例如下：
+
+
+
+1) 武士降生
+
+
+输出样例： 000:00 blue lion 1 born
+表示在 0点0分，编号为1的蓝魔lion武士降生
+
+2) 武士前进到某一城市
+
+
+输出样例： 000:10 red iceman 1 marched to city 1 with 20 elements and force 30
+表示在 0点10分，红魔1号武士iceman前进到1号城市，此时他生命值为20,攻击力为30
+对于iceman,输出的生命值和攻击力应该是变化后的数值
+
+3) 武士主动进攻
+
+输出样例：000:40 red iceman 1 attacked blue lion 1 in city 1 with 20 elements and force 30
+表示在0点40分，1号城市中，红魔1号武士iceman 进攻蓝魔1号武士lion,在发起进攻前，红魔1号武士iceman生命值为20，攻击力为 30
+
+
+
+4) 武士反击
+
+输出样例：001:40 blue dragon 2 fought back against red lion 2 in city 1
+表示在1点40分，1号城市中，蓝魔2号武士dragon反击红魔2号武士lion
+
+5) 武士战死
+
+输出样例：001:40 red lion 2 was killed in city 1
+
+6) 武士欢呼
+
+输出样例：003:40 blue dragon 2 yelled in city 4
+
+7) 武士获取生命元( elements )
+
+输出样例：001:40 blue dragon 2 earned 10 elements for his headquarter
+
+8) 旗帜升起
+
+输出样例：004:40 blue flag raised in city 4
+
+9) 武士抵达敌军司令部
+
+输出样例：001:10 red iceman 1 reached blue headquarter with 20 elements and force 30
+（此时他生命值为20,攻击力为30）对于iceman,输出的生命值和攻击力应该是变化后的数值
+
+
+
+10) 司令部被占领
+
+输出样例：003:10 blue headquarter was taken
+
+11)司令部报告生命元数量
+000:50 100 elements in red headquarter
+000:50 120 elements in blue headquarter
+表示在0点50分，红方司令部有100个生命元，蓝方有120个
+
+
+输出事件时：
+
+首先按时间顺序输出；
+
+同一时间发生的事件，按发生地点从西向东依次输出. 武士前进的事件, 算是发生在目的地。
+
+
+在一次战斗中有可能发生上面的 3 至 8 号事件。这些事件都算同时发生，其时间就是战斗开始时间。一次战斗中的这些事件，序号小的应该先输出。
+
+两个武士同时抵达同一城市，则先输出红武士的前进事件，后输出蓝武士的。
+
+显然，10号事件发生之前的一瞬间一定发生了9号事件。输出时，这两件事算同一时间发生，但是应先输出9号事件
+虽然任何一方的司令部被占领之后，就不会有任何事情发生了。但和司令部被占领同时发生的事件，全都要输出。 
+
+**输入**
+
+第一行是一个整数,代表测试数据组数
+每组测试数据共三行。
+
+第一行，三个整数 M,N,T。其含义为：
+
+每个司令部一开始都有M个生命元( 1 <= M <= 1000)
+两个司令部之间一共有N个城市( 1 <= N <= 20 )
+要求输出从0时0分开始，到时间T为止(包括T) 的所有事件。T以分钟为单位，0 <= T <= 1000
+
+第二行：五个整数，依次是 dragon 、ninja、iceman、lion、wolf 的初始生命值。它们都大于0小于等于100
+
+第三行：五个整数，依次是 dragon 、ninja、iceman、lion、wolf 的攻击力。它们都大于0小于等于100 
+
+**输出**
+
+对每组测试数据，首先输出“Case:n" n是测试数据的编号，从1开始
+接下来按恰当的顺序和格式输出到时间T为止发生的所有事件。每个事件都以事件发生的时间开头，时间格式是“时: 分”，“时”有三位，“分”有两位。 
+
+样例输入
+
+```
+2
+99 2 1000
+10 20 50 50  30
+20 50 50 50  50
+40 1 1000
+20 20 20 20 20
+20 20 20 20 20
+```
+
+样例输出
+
+```
+Case:1
+000:00 red iceman 1 born
+000:00 blue lion 1 born
+000:10 red iceman 1 marched to city 1 with 50 elements and force 50
+000:10 blue lion 1 marched to city 2 with 50 elements and force 50
+000:30 red iceman 1 earned 10 elements for his headquarter
+000:30 blue lion 1 earned 10 elements for his headquarter
+000:50 59 elements in red headquarter
+000:50 59 elements in blue headquarter
+001:00 red lion 2 born
+001:00 blue dragon 2 born
+001:10 red lion 2 marched to city 1 with 50 elements and force 50
+001:10 blue lion 1 marched to city 1 with 50 elements and force 50
+001:10 red iceman 1 marched to city 2 with 41 elements and force 70
+001:10 blue dragon 2 marched to city 2 with 10 elements and force 20
+001:40 red lion 2 attacked blue lion 1 in city 1 with 50 elements and force 50
+001:40 blue lion 1 was killed in city 1
+001:40 red lion 2 earned 10 elements for his headquarter
+001:40 blue dragon 2 attacked red iceman 1 in city 2 with 10 elements and force 20
+001:40 red iceman 1 fought back against blue dragon 2 in city 2
+001:40 blue dragon 2 was killed in city 2
+001:40 red iceman 1 earned 10 elements for his headquarter
+001:50 21 elements in red headquarter
+001:50 49 elements in blue headquarter
+002:00 blue ninja 3 born
+002:10 red lion 2 marched to city 2 with 100 elements and force 50
+002:10 blue ninja 3 marched to city 2 with 20 elements and force 50
+002:10 red iceman 1 reached blue headquarter with 29 elements and force 70
+002:40 blue ninja 3 attacked red lion 2 in city 2 with 20 elements and force 50
+002:40 red lion 2 fought back against blue ninja 3 in city 2
+002:40 blue ninja 3 was killed in city 2
+002:40 red lion 2 earned 10 elements for his headquarter
+002:40 red flag raised in city 2
+002:50 23 elements in red headquarter
+002:50 29 elements in blue headquarter
+003:10 red lion 2 reached blue headquarter with 58 elements and force 50
+003:10 blue headquarter was taken
+Case:2
+000:00 red iceman 1 born
+000:00 blue lion 1 born
+000:10 red iceman 1 marched to city 1 with 20 elements and force 20
+000:10 blue lion 1 marched to city 1 with 20 elements and force 20
+000:40 red iceman 1 attacked blue lion 1 in city 1 with 20 elements and force 20
+000:40 blue lion 1 was killed in city 1
+000:40 red iceman 1 earned 10 elements for his headquarter
+000:50 22 elements in red headquarter
+000:50 20 elements in blue headquarter
+001:00 red lion 2 born
+001:00 blue dragon 2 born
+001:10 red lion 2 marched to city 1 with 20 elements and force 20
+001:10 blue dragon 2 marched to city 1 with 20 elements and force 20
+001:10 red iceman 1 reached blue headquarter with 39 elements and force 40
+001:40 red lion 2 attacked blue dragon 2 in city 1 with 20 elements and force 20
+001:40 blue dragon 2 was killed in city 1
+001:40 red lion 2 earned 10 elements for his headquarter
+001:40 red flag raised in city 1
+001:50 12 elements in red headquarter
+001:50 0 elements in blue headquarter
+002:10 red lion 2 reached blue headquarter with 20 elements and force 20
+002:10 blue headquarter was taken
+```
+
+
+
+**解题思路：离散事件模拟**
+
+这道题规则很多，但事件只会发生在每小时的：
+
+- `00` 分：制造武士
+- `10` 分：武士移动
+- `20` 分：城市产生生命元
+- `30` 分：独占城市的武士收取生命元
+- `40` 分：战斗
+- `50` 分：司令部报告生命元
+
+因此按照时间顺序模拟即可。
+
+**最容易出错的地方**
+
+1. **制造失败后不能跳过当前兵种**  
+   必须一直等待制造当前兵种，成功后才轮到下一个。
+
+2. **移动事件按目的地从西向东输出**  
+   同一城市红、蓝同时到达时，红方先输出。
+
+3. **Iceman 的属性变化发生在移动完成后**  
+   每走两步，生命值减少 9（最低变成 1），攻击力增加 20。
+
+4. **战斗奖励不能直接按城市从西向东发放**  
+   如果生命元不足：
+   - 红方优先奖励城市编号较大的武士；
+   - 蓝方优先奖励城市编号较小的武士。
+
+5. **必须先发放 8 点奖励，再收取获胜城市的生命元**。
+
+6. **城市连续胜利记录**
+   - 没有发生战斗：不打断连续胜利；
+   - 发生战斗但无人死亡：打断连续胜利；
+   - 有一方杀敌：更新连续胜利方。
+
+7. **司令部被占领的同一时刻，仍要输出所有移动事件**。
+
+---
+
+**Python 代码**
+
+```python
+import sys
+from dataclasses import dataclass
+
+# 兵种编号：
+# 0 dragon
+# 1 ninja
+# 2 iceman
+# 3 lion
+# 4 wolf
+NAMES = ["dragon", "ninja", "iceman", "lion", "wolf"]
+
+RED_ORDER = [2, 3, 4, 1, 0]
+BLUE_ORDER = [3, 0, 1, 2, 4]
+
+@dataclass
+class Warrior:
+    side: str
+    kind: int
+    number: int
+    hp: int
+    attack: int
+    position: int
+
+    steps: int = 0
+    wolf_kills: int = 0
+    alive: bool = True
+    reached: bool = False
+
+class Headquarter:
+    def __init__(self, side, elements, position):
+        self.side = side
+        self.elements = elements
+        self.position = position
+
+        # 下一次应制造序列中的哪个兵种
+        self.next_index = 0
+
+        # 已制造武士总数，也是下一个武士的编号基础
+        self.warrior_count = 0
+
+        # 已进入本司令部的敌军数量
+        self.invaders = 0
+
+class City:
+    def __init__(self):
+        self.elements = 0
+
+        # None、"red" 或 "blue"
+        self.flag = None
+
+        # 上一场发生战斗且有人被杀时的胜方
+        # 如果发生战斗但无人死亡，则清空
+        # 如果没有发生战斗，则保持不变
+        self.last_winner = None
+
+class World:
+    def __init__(self, initial_elements, city_count, time_limit,
+                 initial_hp, initial_attack):
+        self.n = city_count
+        self.time_limit = time_limit
+        self.initial_hp = initial_hp
+        self.initial_attack = initial_attack
+
+        # 城市使用下标 1...N
+        self.cities = [City() for _ in range(self.n + 1)]
+
+        # 红方司令部位置为 0，蓝方司令部位置为 N+1
+        self.headquarters = {
+            "red": Headquarter("red", initial_elements, 0),
+            "blue": Headquarter("blue", initial_elements, self.n + 1)
+        }
+
+        self.warriors = []
+        self.answer = []
+        self.war_ended = False
+
+    @staticmethod
+    def format_time(current_time):
+        hour = current_time // 60
+        minute = current_time % 60
+        return f"{hour:03d}:{minute:02d}"
+
+    @staticmethod
+    def warrior_name(warrior):
+        return (
+            f"{warrior.side} "
+            f"{NAMES[warrior.kind]} "
+            f"{warrior.number}"
+        )
+
+    def create_warrior(self, current_time, side):
+        hq = self.headquarters[side]
+        order = RED_ORDER if side == "red" else BLUE_ORDER
+
+        kind = order[hq.next_index]
+        cost = self.initial_hp[kind]
+
+        # 生命元不足：等待，不能换下一个兵种
+        if hq.elements < cost:
+            return
+
+        hq.elements -= cost
+        hq.warrior_count += 1
+
+        warrior = Warrior(
+            side=side,
+            kind=kind,
+            number=hq.warrior_count,
+            hp=self.initial_hp[kind],
+            attack=self.initial_attack[kind],
+            position=hq.position
+        )
+
+        self.warriors.append(warrior)
+        hq.next_index = (hq.next_index + 1) % 5
+
+        self.answer.append(
+            f"{self.format_time(current_time)} "
+            f"{self.warrior_name(warrior)} born"
+        )
+
+    def march(self, current_time):
+        moved = []
+
+        # 先统一完成所有武士的移动和属性变化
+        for warrior in self.warriors:
+            if not warrior.alive or warrior.reached:
+                continue
+
+            if warrior.side == "red":
+                warrior.position += 1
+            else:
+                warrior.position -= 1
+
+            warrior.steps += 1
+
+            # Iceman 每走两步发生一次属性变化
+            if warrior.kind == 2 and warrior.steps % 2 == 0:
+                warrior.hp = max(1, warrior.hp - 9)
+                warrior.attack += 20
+
+            # 判断是否到达敌方司令部
+            reached_enemy_hq = (
+                warrior.side == "red"
+                and warrior.position == self.n + 1
+            ) or (
+                warrior.side == "blue"
+                and warrior.position == 0
+            )
+
+            if reached_enemy_hq:
+                warrior.reached = True
+
+                enemy_side = (
+                    "blue" if warrior.side == "red" else "red"
+                )
+                self.headquarters[enemy_side].invaders += 1
+
+            moved.append(warrior)
+
+        # 按目的地组织移动事件
+        moved_by_position = {}
+
+        for warrior in moved:
+            moved_by_position.setdefault(
+                warrior.position, []
+            ).append(warrior)
+
+        captured = False
+
+        # 从西向东输出：红方司令部、城市1...N、蓝方司令部
+        for position in range(self.n + 2):
+            group = moved_by_position.get(position, [])
+
+            # 同一目的地红方先输出
+            group.sort(
+                key=lambda warrior:
+                0 if warrior.side == "red" else 1
+            )
+
+            for warrior in group:
+                if position == 0 or position == self.n + 1:
+                    enemy_side = (
+                        "blue"
+                        if warrior.side == "red"
+                        else "red"
+                    )
+
+                    self.answer.append(
+                        f"{self.format_time(current_time)} "
+                        f"{self.warrior_name(warrior)} reached "
+                        f"{enemy_side} headquarter with "
+                        f"{warrior.hp} elements and force "
+                        f"{warrior.attack}"
+                    )
+                else:
+                    self.answer.append(
+                        f"{self.format_time(current_time)} "
+                        f"{self.warrior_name(warrior)} marched "
+                        f"to city {position} with "
+                        f"{warrior.hp} elements and force "
+                        f"{warrior.attack}"
+                    )
+
+            # 到达事件输出完之后，再输出司令部被占领
+            if (
+                position == 0
+                and self.headquarters["red"].invaders >= 2
+            ):
+                self.answer.append(
+                    f"{self.format_time(current_time)} "
+                    f"red headquarter was taken"
+                )
+                captured = True
+
+            if (
+                position == self.n + 1
+                and self.headquarters["blue"].invaders >= 2
+            ):
+                self.answer.append(
+                    f"{self.format_time(current_time)} "
+                    f"blue headquarter was taken"
+                )
+                captured = True
+
+        # 必须先输出完这个时刻的全部移动事件，再结束战争
+        self.war_ended = captured
+
+    def get_city_warriors(self, city_number):
+        red_warrior = None
+        blue_warrior = None
+
+        for warrior in self.warriors:
+            if (
+                warrior.alive
+                and not warrior.reached
+                and warrior.position == city_number
+            ):
+                if warrior.side == "red":
+                    red_warrior = warrior
+                else:
+                    blue_warrior = warrior
+
+        return red_warrior, blue_warrior
+
+    def collect_city_elements(self, current_time):
+        for city_number in range(1, self.n + 1):
+            red_warrior, blue_warrior = self.get_city_warriors(
+                city_number
+            )
+
+            # 恰好只有一方武士
+            if (red_warrior is None) != (blue_warrior is None):
+                warrior = (
+                    red_warrior
+                    if red_warrior is not None
+                    else blue_warrior
+                )
+
+                amount = self.cities[city_number].elements
+
+                if amount > 0:
+                    self.headquarters[warrior.side].elements += amount
+                    self.cities[city_number].elements = 0
+
+                    self.answer.append(
+                        f"{self.format_time(current_time)} "
+                        f"{self.warrior_name(warrior)} earned "
+                        f"{amount} elements for his headquarter"
+                    )
+
+    def battle(self, current_time):
+        # 每项记录：
+        # 城市编号、战斗日志、胜者、城市生命元、升旗日志
+        battle_records = []
+
+        # 记录两方的胜利者，用于之后按优先级发放奖励
+        winners = {
+            "red": [],
+            "blue": []
+        }
+
+        for city_number in range(1, self.n + 1):
+            red_warrior, blue_warrior = self.get_city_warriors(
+                city_number
+            )
+
+            if red_warrior is None or blue_warrior is None:
+                # 没有发生战斗，不修改连续胜利记录
+                continue
+
+            city = self.cities[city_number]
+
+            # 确定主动进攻方
+            red_attacks = (
+                city.flag == "red"
+                or (
+                    city.flag is None
+                    and city_number % 2 == 1
+                )
+            )
+
+            if red_attacks:
+                attacker = red_warrior
+                defender = blue_warrior
+            else:
+                attacker = blue_warrior
+                defender = red_warrior
+
+            logs = []
+
+            logs.append(
+                f"{self.format_time(current_time)} "
+                f"{self.warrior_name(attacker)} attacked "
+                f"{self.warrior_name(defender)} in city "
+                f"{city_number} with {attacker.hp} elements "
+                f"and force {attacker.attack}"
+            )
+
+            # Lion 转移的是战斗开始前的生命值
+            attacker_lion_hp = attacker.hp
+            defender_lion_hp = defender.hp
+
+            winner = None
+
+            # 主动攻击
+            defender.hp -= attacker.attack
+
+            if defender.hp <= 0:
+                defender.alive = False
+
+                logs.append(
+                    f"{self.format_time(current_time)} "
+                    f"{self.warrior_name(defender)} was killed "
+                    f"in city {city_number}"
+                )
+
+                winner = attacker
+
+                # Wolf 主动攻击杀敌次数达到偶数时加倍
+                if attacker.kind == 4:
+                    attacker.wolf_kills += 1
+
+                    if attacker.wolf_kills % 2 == 0:
+                        attacker.hp *= 2
+                        attacker.attack *= 2
+
+                # Lion 的生命值在 Wolf 加倍之后转移
+                if defender.kind == 3:
+                    attacker.hp += defender_lion_hp
+
+            else:
+                # Ninja 不反击
+                if defender.kind != 1:
+                    logs.append(
+                        f"{self.format_time(current_time)} "
+                        f"{self.warrior_name(defender)} fought "
+                        f"back against "
+                        f"{self.warrior_name(attacker)} "
+                        f"in city {city_number}"
+                    )
+
+                    attacker.hp -= defender.attack // 2
+
+                    if attacker.hp <= 0:
+                        attacker.alive = False
+
+                        logs.append(
+                            f"{self.format_time(current_time)} "
+                            f"{self.warrior_name(attacker)} "
+                            f"was killed in city {city_number}"
+                        )
+
+                        winner = defender
+
+                        # 主动攻击方 Lion 被反击杀死
+                        if attacker.kind == 3:
+                            defender.hp += attacker_lion_hp
+
+            # Dragon 主动攻击结束后仍存活则欢呼
+            if attacker.kind == 0 and attacker.alive:
+                logs.append(
+                    f"{self.format_time(current_time)} "
+                    f"{self.warrior_name(attacker)} yelled "
+                    f"in city {city_number}"
+                )
+
+            flag_log = None
+
+            if winner is not None:
+                side = winner.side
+                winners[side].append((city_number, winner))
+
+                # 连续两次杀敌，且当前没有同色旗帜
+                if (
+                    city.last_winner == side
+                    and city.flag != side
+                ):
+                    city.flag = side
+                    flag_log = (
+                        f"{self.format_time(current_time)} "
+                        f"{side} flag raised in city "
+                        f"{city_number}"
+                    )
+
+                city.last_winner = side
+
+            else:
+                # 发生战斗但没有人死亡，连续胜利被打断
+                city.last_winner = None
+
+            battle_records.append(
+                (
+                    city_number,
+                    logs,
+                    winner,
+                    city.elements,
+                    flag_log
+                )
+            )
+
+        # 第一阶段：发放奖励
+        #
+        # 红方距离蓝方司令部越近，城市编号越大
+        for city_number, warrior in sorted(
+            winners["red"],
+            key=lambda item: -item[0]
+        ):
+            red_hq = self.headquarters["red"]
+
+            if red_hq.elements >= 8:
+                red_hq.elements -= 8
+                warrior.hp += 8
+
+        # 蓝方距离红方司令部越近，城市编号越小
+        for city_number, warrior in sorted(
+            winners["blue"],
+            key=lambda item: item[0]
+        ):
+            blue_hq = self.headquarters["blue"]
+
+            if blue_hq.elements >= 8:
+                blue_hq.elements -= 8
+                warrior.hp += 8
+
+        # 第二阶段：收取获胜城市中的生命元
+        for (
+            city_number,
+            logs,
+            winner,
+            amount,
+            flag_log
+        ) in battle_records:
+            if winner is not None:
+                self.headquarters[winner.side].elements += amount
+                self.cities[city_number].elements = 0
+
+        # 第三阶段：按照城市从西向东输出战斗日志
+        for (
+            city_number,
+            logs,
+            winner,
+            amount,
+            flag_log
+        ) in battle_records:
+            self.answer.extend(logs)
+
+            if winner is not None:
+                self.answer.append(
+                    f"{self.format_time(current_time)} "
+                    f"{self.warrior_name(winner)} earned "
+                    f"{amount} elements for his headquarter"
+                )
+
+            if flag_log is not None:
+                self.answer.append(flag_log)
+
+    def simulate(self):
+        for current_time in range(self.time_limit + 1):
+            if self.war_ended:
+                break
+
+            minute = current_time % 60
+
+            if minute == 0:
+                self.create_warrior(current_time, "red")
+                self.create_warrior(current_time, "blue")
+
+            elif minute == 10:
+                self.march(current_time)
+
+            elif minute == 20:
+                for city_number in range(1, self.n + 1):
+                    self.cities[city_number].elements += 10
+
+            elif minute == 30:
+                self.collect_city_elements(current_time)
+
+            elif minute == 40:
+                self.battle(current_time)
+
+            elif minute == 50:
+                red_elements = self.headquarters["red"].elements
+                blue_elements = self.headquarters["blue"].elements
+
+                self.answer.append(
+                    f"{self.format_time(current_time)} "
+                    f"{red_elements} elements in red headquarter"
+                )
+
+                self.answer.append(
+                    f"{self.format_time(current_time)} "
+                    f"{blue_elements} elements in blue headquarter"
+                )
+
+        return self.answer
+
+def solve():
+    data = list(map(int, sys.stdin.buffer.read().split()))
+    iterator = iter(data)
+
+    case_count = next(iterator)
+    output = []
+
+    for case_number in range(1, case_count + 1):
+        initial_elements = next(iterator)
+        city_count = next(iterator)
+        time_limit = next(iterator)
+
+        initial_hp = [next(iterator) for _ in range(5)]
+        initial_attack = [next(iterator) for _ in range(5)]
+
+        world = World(
+            initial_elements,
+            city_count,
+            time_limit,
+            initial_hp,
+            initial_attack
+        )
+
+        output.append(f"Case:{case_number}")
+        output.extend(world.simulate())
+
+    sys.stdout.write("\n".join(output))
+
+if __name__ == "__main__":
+    solve()
+```
+
+**复杂度分析**
+
+设武士总数为 \(W\)。由于 \(T\le 1000\)，每方最多制造约 17 个武士，因此 \(W\) 很小。
+
+当前实现查询城市武士时会遍历所有武士：
+
+$$
+O(TNW)
+$$
+
+在本题数据范围下远小于限制。空间复杂度为：
+
+$$
+O(N+W)
+$$
+
+该代码已按题目样例验证，输出与样例完全一致。
 
 
 
